@@ -177,72 +177,14 @@ public class GridToolEditor : EditorWindow
             {
                 if(_editorGrid[x,y].type == PrefabType.Wall)
                 {
-                    if (_editorGrid[x,y].type == PrefabType.Wall)
-                    {
-                        float rotationY = 0;
-                        // Miramos si hay conexión horizontal
-                        bool tieneVecinoHorizontal = GetTypeAt(x - 1, y) == PrefabType.Wall || GetTypeAt(x + 1, y) == PrefabType.Wall 
-                                                    || GetTypeAt(x - 1, y) == PrefabType.Corner || GetTypeAt(x + 1, y) == PrefabType.Corner;
-
-                        if (tieneVecinoHorizontal) 
-                            rotationY = 90f; // Ajusta según la orientación original de tu FBX
-                        
-                        Instantiate(_wallPrefab, new Vector3(x,0,y), Quaternion.Euler(-90, rotationY, 0), wallFolder);
-                    }
+                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x, _wallPrefab.transform.localScale.y / 2, y), Quaternion.identity, wallFolder.transform);
                 }
                 else if(_editorGrid[x,y].type == PrefabType.Floor)
                 {
-                    GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0f, y), Quaternion.identity, floorFolder.transform);
+                    GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0, y), Quaternion.identity, floorFolder.transform);
                 }
-                else if(_editorGrid[x,y].type == PrefabType.Corner)
-                {
-                    float rotationY = 0;
-                    bool up = IsWallOrCorner(x, y + 1);
-                    bool down = IsWallOrCorner(x, y - 1);
-                    bool left = IsWallOrCorner(x - 1, y);
-                    bool right = IsWallOrCorner(x + 1, y);
-
-                    if (up && right)
-                    {
-                        Debug.Log("Arriba-Derecha");
-                        rotationY = 180f;
-                    } 
-                    else if (right && down)
-                    {
-                        Debug.Log("Abajo-Derecha");
-                        rotationY = -90f;   
-                    }
-                    else if (down && left)
-                    {
-                        Debug.Log("Abajo-Izquierda");
-                         rotationY = 0f;
-                    }
-                    else if (left && up)
-                    {
-                        Debug.Log("Arriba-Izquierda");
-                         rotationY = -270f;
-                    }
-
-                    Instantiate(_cornerPrefab, new Vector3(x,0,y), Quaternion.Euler(-90, rotationY, 0), cornerFolder);
-
-                }
-                resultado += "[" + _editorGrid[x,y].type + "]" + "\t";
-
             }
-            resultado += "\n";
-
         }
-        Debug.Log(resultado);
-    }
-    private bool IsWallOrCorner(int x, int y) {
-    PrefabType t = GetTypeAt(x, y);
-    return t == PrefabType.Wall || t == PrefabType.Corner;
-}
-    private PrefabType GetTypeAt(int x, int y)
-    {
-        if (x < 0 || x >= _gridWidth || y < 0 || y >= _gridHeight)
-            return PrefabType.None;
-        return _editorGrid[x, y].type;
     }
     // Borra los objetos vacios creados en GenerateChiringuito con todo lo que hay dentro
     private void EraseChiringuito()
