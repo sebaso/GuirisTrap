@@ -11,6 +11,7 @@ public class GridToolEditor : EditorWindow
     private int _gridHeight;
     private GameObject _wallPrefab;
     private GameObject _floorPrefab;
+    private GameObject _squarePrefab;
     private GridCell[,] _editorGrid;
     #endregion
     #region Editor
@@ -28,7 +29,8 @@ public class GridToolEditor : EditorWindow
         _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
         _wallPrefab = (GameObject)EditorGUILayout.ObjectField("Wall Prefab", _wallPrefab, typeof(GameObject), false);
         _floorPrefab = (GameObject)EditorGUILayout.ObjectField("Floor Prefab", _floorPrefab, typeof(GameObject), false);
-
+        _squarePrefab = (GameObject)EditorGUILayout.ObjectField("Square Prefab", _squarePrefab, typeof(GameObject), false);
+        
         GUILayout.Space(10);
         if(GUILayout.Button("Genereate Grid"))
         {
@@ -92,6 +94,10 @@ public class GridToolEditor : EditorWindow
         {
             label = "W";
         }
+        else if(cell.type == PrefabType.Square)
+        {
+            label = "S";
+        }
         if(GUILayout.Button(label, style))
         {
             ShowOptionsMenu(cell);
@@ -127,6 +133,11 @@ public class GridToolEditor : EditorWindow
             cell.type = PrefabType.Wall;
         });
 
+        optionsMenu.AddItem(new GUIContent("Square"), cell.type == PrefabType.Square, () =>
+        {
+           cell.type = PrefabType.Square; 
+        });
+
         optionsMenu.AddSeparator("");
 
         optionsMenu.AddItem(new GUIContent("None"), cell.type == PrefabType.None, () =>
@@ -149,10 +160,13 @@ public class GridToolEditor : EditorWindow
     {
         EraseChiringuito();
         GameObject wallFolder = new GameObject();
-        wallFolder.name = "walls";
+        wallFolder.name = "Walls";
         
         GameObject floorFolder = new GameObject();
-        floorFolder.name = "floors";
+        floorFolder.name = "Floors";
+
+        GameObject squareFolder = new GameObject();
+        floorFolder.name = "Squares";
 
         for(int y = 0; y < _gridHeight; y++)
         {
@@ -160,11 +174,18 @@ public class GridToolEditor : EditorWindow
             {
                 if(_editorGrid[x,y].type == PrefabType.Wall)
                 {
-                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x, _wallPrefab.transform.localScale.y / 2, y), Quaternion.identity, wallFolder.transform);
+                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x,0f, y), Quaternion.identity, wallFolder.transform);
+                    wall.transform.rotation = Quaternion.Euler(-90,0,0);
                 }
                 else if(_editorGrid[x,y].type == PrefabType.Floor)
                 {
-                    GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0, y), Quaternion.identity, floorFolder.transform);
+                    GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0f, y), Quaternion.identity, floorFolder.transform);
+                }
+                else if(_editorGrid[x,y].type == PrefabType.Square)
+                {
+                    GameObject square = Instantiate(_squarePrefab, new Vector3(x,0f, y), Quaternion.identity, squareFolder.transform);
+                    square.transform.rotation = Quaternion.Euler(-90,0,0);
+
                 }
             }
         }
@@ -172,8 +193,9 @@ public class GridToolEditor : EditorWindow
     // Borra los objetos vacios creados en GenerateChiringuito con todo lo que hay dentro
     private void EraseChiringuito()
     {
-        var walls = GameObject.Find("walls");
-        var floors = GameObject.Find("floors");
+        var walls = GameObject.Find("Walls");
+        var floors = GameObject.Find("Floors");
+        var squares = GameObject.Find("Squares");
         if (walls != null)
         {
             DestroyImmediate(walls);
@@ -181,7 +203,11 @@ public class GridToolEditor : EditorWindow
         if (floors != null)
         {
             DestroyImmediate(floors);
-        }    
+        }
+        if  (squares != null)
+        {
+            DestroyImmediate(squares);
+        }
     }
     #endregion
 }
