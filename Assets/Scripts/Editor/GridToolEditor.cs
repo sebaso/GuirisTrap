@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class GridToolEditor : EditorWindow
     private int _gridHeight;
     private GameObject _wallPrefab;
     private GameObject _floorPrefab;
-    private GameObject _squarePrefab;
+    private GameObject _cornerPrefab;
     private GridCell[,] _editorGrid;
     #endregion
     #region Editor
@@ -29,7 +30,7 @@ public class GridToolEditor : EditorWindow
         _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
         _wallPrefab = (GameObject)EditorGUILayout.ObjectField("Wall Prefab", _wallPrefab, typeof(GameObject), false);
         _floorPrefab = (GameObject)EditorGUILayout.ObjectField("Floor Prefab", _floorPrefab, typeof(GameObject), false);
-        _squarePrefab = (GameObject)EditorGUILayout.ObjectField("Square Prefab", _squarePrefab, typeof(GameObject), false);
+        _cornerPrefab = (GameObject)EditorGUILayout.ObjectField("Corner Prefab", _cornerPrefab, typeof(GameObject), false);
         
         GUILayout.Space(10);
         if(GUILayout.Button("Genereate Grid"))
@@ -69,15 +70,20 @@ public class GridToolEditor : EditorWindow
     private void CreateGrid()
     {
         _editorGrid = new GridCell[_gridWidth, _gridHeight];
+        string resultado = "";
 
-        for(int y = 0; y < _gridHeight; y++)
+        for (int y = _gridHeight - 1; y >= 0; y--)
         {
-            for(int x = 0; x < _gridWidth; x++)
+            for (int x = 0; x < _gridWidth; x++)
             {
-                _editorGrid[x,y] = new GridCell();
+                _editorGrid[x, y] = new GridCell();
+                resultado += $"[{x},{y}]\t";
             }
+            resultado += "\n";
         }
+        Debug.Log(resultado);
     }
+
     // Crea cada botón de la matriz
     private void DrawCell(int x, int y)
     {
@@ -94,9 +100,9 @@ public class GridToolEditor : EditorWindow
         {
             label = "W";
         }
-        else if(cell.type == PrefabType.Square)
+        else if(cell.type == PrefabType.Corner)
         {
-            label = "S";
+            label = "C";
         }
         if(GUILayout.Button(label, style))
         {
@@ -108,12 +114,12 @@ public class GridToolEditor : EditorWindow
     {
         if(_editorGrid == null) return;
 
-        for(int y = _gridHeight - 1; y >= 0; y--)
+        for (int y = _gridHeight - 1; y >= 0; y--)
         {
             EditorGUILayout.BeginHorizontal();
-            for(int x = 0; x < _gridWidth; x++)
+            for (int x = 0; x < _gridWidth; x++)
             {
-                DrawCell(x,y);
+                DrawCell(x, y);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -133,9 +139,9 @@ public class GridToolEditor : EditorWindow
             cell.type = PrefabType.Wall;
         });
 
-        optionsMenu.AddItem(new GUIContent("Square"), cell.type == PrefabType.Square, () =>
+        optionsMenu.AddItem(new GUIContent("Corner"), cell.type == PrefabType.Corner, () =>
         {
-           cell.type = PrefabType.Square; 
+           cell.type = PrefabType.Corner; 
         });
 
         optionsMenu.AddSeparator("");
@@ -159,43 +165,91 @@ public class GridToolEditor : EditorWindow
     private void GenerateChiringuito()
     {
         EraseChiringuito();
-        GameObject wallFolder = new GameObject();
-        wallFolder.name = "Walls";
-        
-        GameObject floorFolder = new GameObject();
-        floorFolder.name = "Floors";
 
-        GameObject squareFolder = new GameObject();
-        floorFolder.name = "Squares";
+        Transform wallFolder = new GameObject("Walls").transform;
+        Transform floorFolder = new GameObject("Floors").transform;
+        Transform cornerFolder = new GameObject("Corners").transform;
+        string resultado = "";
 
-        for(int y = 0; y < _gridHeight; y++)
+        for(int y = _gridHeight - 1; y >= 0; y--)
         {
             for(int x = 0; x < _gridWidth; x++)
             {
                 if(_editorGrid[x,y].type == PrefabType.Wall)
                 {
-                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x,0f, y), Quaternion.identity, wallFolder.transform);
-                    wall.transform.rotation = Quaternion.Euler(-90,0,0);
+                    if (_editorGrid[x,y].type == PrefabType.Wall)
+                    {
+                        float rotationY = 0;
+                        // Miramos si hay conexión horizontal
+                        bool tieneVecinoHorizontal = GetTypeAt(x - 1, y) == PrefabType.Wall || GetTypeAt(x + 1, y) == PrefabType.Wall 
+                                                    || GetTypeAt(x - 1, y) == PrefabType.Corner || GetTypeAt(x + 1, y) == PrefabType.Corner;
+
+                        if (tieneVecinoHorizontal) 
+                            rotationY = 90f; // Ajusta según la orientación original de tu FBX
+                        
+                        Instantiate(_wallPrefab, new Vector3(x,0,y), Quaternion.Euler(-90, rotationY, 0), wallFolder);
+                    }
                 }
                 else if(_editorGrid[x,y].type == PrefabType.Floor)
                 {
                     GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0f, y), Quaternion.identity, floorFolder.transform);
                 }
-                else if(_editorGrid[x,y].type == PrefabType.Square)
+                else if(_editorGrid[x,y].type == PrefabType.Corner)
                 {
-                    GameObject square = Instantiate(_squarePrefab, new Vector3(x,0f, y), Quaternion.identity, squareFolder.transform);
-                    square.transform.rotation = Quaternion.Euler(-90,0,0);
+                    float rotationY = 0;
+                    bool up = IsWallOrCorner(x, y + 1);
+                    bool down = IsWallOrCorner(x, y - 1);
+                    bool left = IsWallOrCorner(x - 1, y);
+                    bool right = IsWallOrCorner(x + 1, y);
+
+                    if (up && right)
+                    {
+                        Debug.Log("Arriba-Derecha");
+                        rotationY = 180f;
+                    } 
+                    else if (right && down)
+                    {
+                        Debug.Log("Abajo-Derecha");
+                        rotationY = -90f;   
+                    }
+                    else if (down && left)
+                    {
+                        Debug.Log("Abajo-Izquierda");
+                         rotationY = 0f;
+                    }
+                    else if (left && up)
+                    {
+                        Debug.Log("Arriba-Izquierda");
+                         rotationY = -270f;
+                    }
+
+                    Instantiate(_cornerPrefab, new Vector3(x,0,y), Quaternion.Euler(-90, rotationY, 0), cornerFolder);
 
                 }
+                resultado += "[" + _editorGrid[x,y].type + "]" + "\t";
+
             }
+            resultado += "\n";
+
         }
+        Debug.Log(resultado);
+    }
+    private bool IsWallOrCorner(int x, int y) {
+    PrefabType t = GetTypeAt(x, y);
+    return t == PrefabType.Wall || t == PrefabType.Corner;
+}
+    private PrefabType GetTypeAt(int x, int y)
+    {
+        if (x < 0 || x >= _gridWidth || y < 0 || y >= _gridHeight)
+            return PrefabType.None;
+        return _editorGrid[x, y].type;
     }
     // Borra los objetos vacios creados en GenerateChiringuito con todo lo que hay dentro
     private void EraseChiringuito()
     {
         var walls = GameObject.Find("Walls");
         var floors = GameObject.Find("Floors");
-        var squares = GameObject.Find("Squares");
+        var corners = GameObject.Find("Corners");
         if (walls != null)
         {
             DestroyImmediate(walls);
@@ -204,9 +258,9 @@ public class GridToolEditor : EditorWindow
         {
             DestroyImmediate(floors);
         }
-        if  (squares != null)
+        if  (corners != null)
         {
-            DestroyImmediate(squares);
+            DestroyImmediate(corners);
         }
     }
     #endregion

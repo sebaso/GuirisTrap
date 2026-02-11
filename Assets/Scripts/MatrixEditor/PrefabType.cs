@@ -2,6 +2,6 @@ public enum PrefabType
 {
     None,
     Floor,
-    Square,
+    Corner,
     Wall
 }
