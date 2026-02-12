@@ -169,7 +169,6 @@ public class GridToolEditor : EditorWindow
         Transform wallFolder = new GameObject("Walls").transform;
         Transform floorFolder = new GameObject("Floors").transform;
         Transform cornerFolder = new GameObject("Corners").transform;
-        string resultado = "";
 
         for(int y = _gridHeight - 1; y >= 0; y--)
         {
@@ -177,14 +176,70 @@ public class GridToolEditor : EditorWindow
             {
                 if(_editorGrid[x,y].type == PrefabType.Wall)
                 {
-                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x, _wallPrefab.transform.localScale.y / 2, y), Quaternion.identity, wallFolder.transform);
+                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x, 0f, y), Quaternion.identity, wallFolder.transform);
+                    if (CheckHorizontal(x, y))
+                    {
+                        float rotationZ = 90f;
+                        if (y + 1 < _gridHeight && IsFloor(x, y + 1)) rotationZ = 90f;
+                        else if (y - 1 >= 0 && IsFloor(x, y - 1)) rotationZ = -90f;
+                        else rotationZ = 90f;
+                        wall.transform.rotation = Quaternion.Euler(-90,0,rotationZ);
+                    }
+                    else if(CheckVertical(x, y))
+                    {
+                        float rotationZ = 0f;
+                        if(x - 1 < 0) rotationZ = 180f;
+                        else if(!IsStructure(x - 1, y) && !IsFloor(x-1,y)) rotationZ = 180f;
+                        else rotationZ = 0f;
+                        wall.transform.rotation = Quaternion.Euler(-90,0,rotationZ);
+                    }
                 }
                 else if(_editorGrid[x,y].type == PrefabType.Floor)
                 {
                     GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0, y), Quaternion.identity, floorFolder.transform);
                 }
+                if(_editorGrid[x,y].type == PrefabType.Corner)
+                {
+                    GameObject corner = Instantiate(_cornerPrefab, new Vector3(x, 0f, y), Quaternion.identity, cornerFolder.transform);
+                    float rotationZ = 0f;
+                    bool down = y - 1 >= 0 && IsStructure(x, y-1);
+                    bool up = y + 1 < _gridHeight && IsStructure(x,y+1);
+                    bool left = x - 1 >= 0 && IsStructure(x-1,y);
+                    bool right = x + 1 < _gridWidth && IsStructure(x+1,y);
+
+                    if(down && left) rotationZ = 0f;
+                    if(down && right) rotationZ = -90f;
+                    if(up && left) rotationZ = 90f;
+                    if(up && right) rotationZ = 180f;
+                    corner.transform.rotation = Quaternion.Euler(-90,0,rotationZ);
+                }
             }
         }
+    }
+    private bool IsStructure(int x, int y)
+    {
+        if(_editorGrid[x,y].type == PrefabType.Wall || _editorGrid[x,y].type == PrefabType.Corner)
+        {
+            return true;
+        }
+        return false;
+    }
+    private bool IsFloor(int x, int y)
+    {
+        if(_editorGrid[x,y].type == PrefabType.Floor) return true;
+        return false;
+    }
+    private bool CheckHorizontal(int x, int y)
+    {
+        if( x - 1 >= 0  && IsStructure(x-1,y) ) return true;
+        else if( x + 1 < _gridWidth  && IsStructure(x+1,y) ) return true;
+        return false;
+    }
+    private bool CheckVertical(int x, int y)
+    {
+        if( y - 1 >= 0  && IsStructure(x,y-1) ) return true;
+        else if( y + 1 < _gridHeight  && IsStructure(x,y+1)) return true;
+        return false;
     }
     // Borra los objetos vacios creados en GenerateChiringuito con todo lo que hay dentro
     private void EraseChiringuito()
