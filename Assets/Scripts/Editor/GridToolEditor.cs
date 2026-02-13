@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -90,7 +91,24 @@ public class GridToolEditor : EditorWindow
             }
         }
     }
+    private void LoadGridFromData(GridData data)
+    {
+        _gridWidth = data._widht;
+        _gridHeight = data._height;
 
+        _editorGrid = new GridCell[_gridWidth, _gridHeight];
+
+        for(int y = 0; y < _gridHeight; y++)
+        {
+            for(int x = 0; x < _gridWidth; x++)
+            {
+                _editorGrid[x,y] = new GridCell
+                {
+                    type = data.Get(x,y)
+                };
+            }
+        }
+    }
     // Crea cada botón de la matriz
     private void DrawCell(int x, int y)
     {
