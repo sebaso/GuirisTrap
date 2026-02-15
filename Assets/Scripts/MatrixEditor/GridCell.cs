@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public class GridCell
-{
-    public CellType type = CellType.Empty;
-}
+
+public class GridCell{ public CellType type = CellType.Empty; }
+
 

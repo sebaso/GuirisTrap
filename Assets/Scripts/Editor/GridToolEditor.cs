@@ -75,7 +75,14 @@ public class GridToolEditor : EditorWindow
         DrawGrid();
 
         GUILayout.Space(10);
-
+        if(GUILayout.Button("Empty Occuped Grid"))
+        {
+        if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
+            {
+                EmptyOccupiedGrid(gridData);
+                Repaint();
+            }        
+        }
         if(GUILayout.Button("Save Grid"))
         {
             if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
@@ -99,6 +106,7 @@ public class GridToolEditor : EditorWindow
             }
         }
     }
+    //  Guarda el grid en el scriptable object
     private void SaveGrid(GridData data)
     {
         data._widht = _gridWidth;
@@ -114,6 +122,7 @@ public class GridToolEditor : EditorWindow
         EditorUtility.SetDirty(data);
         AssetDatabase.SaveAssets();
     }
+    //  Carga en el visualizador el grid
     private void LoadGridFromData(GridData data)
     {
         _gridWidth = data._widht;
@@ -198,7 +207,18 @@ public class GridToolEditor : EditorWindow
 
         optionsMenu.ShowAsContext();
     }
-    //Guarda el grid en el scriptable object
+    //  Libera las celdas ocupadas
+    private void EmptyOccupiedGrid(GridData gridData)
+    {
+        for (int y = _gridHeight - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < _gridWidth; x++)
+            {
+                if(_editorGrid[x,y].type == CellType.Occupied)
+                    _editorGrid[x,y].type = CellType.Empty;
+            }
+        }    
+    }
 
     // Borra la matriz
     private void EraseGrid()

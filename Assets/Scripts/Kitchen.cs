@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Kitchen : MonoBehaviour
 {
@@ -71,8 +72,9 @@ public class Kitchen : MonoBehaviour
     {
         GameObject foodObj;
 
-        if (foodPrefab != null)
+        if (foodPrefab != null && SceneManager.GetActiveScene().name == "GameScene")
         {
+            Debug.Log("Hace comida");
             foodObj = Instantiate(foodPrefab, spawnPoint.position, Quaternion.identity);
         }
         else
