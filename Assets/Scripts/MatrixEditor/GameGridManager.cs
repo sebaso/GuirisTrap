@@ -12,6 +12,7 @@ public class GameGridManager : MonoBehaviour
 
     private GridVisualCell[,] _cells;
 
+    public GridData GetGridData => _gridData;
 
     void Start()
     {
@@ -38,7 +39,7 @@ public class GameGridManager : MonoBehaviour
     {
         if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData._widht || newPlaceableObjectY >= _gridData._height) return false;
 
-        CellType type = _gridData.Get(newPlaceableObjectX, newPlaceableObjectY);
+        CellType type = _gridData.GetType(newPlaceableObjectX, newPlaceableObjectY);
 
         if(type == CellType.Empty)
         {
@@ -65,10 +66,10 @@ public class GameGridManager : MonoBehaviour
 
         if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData._widht || newPlaceableObjectY >= _gridData._height) return;
 
-        _gridData.Set(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
+        _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
 
         if(startPlaceableObjectX != -1 && starPlaceableObjectY != -1)
-            _gridData.Set(startPlaceableObjectX, starPlaceableObjectY, CellType.Empty);
+            _gridData.SetType(startPlaceableObjectX, starPlaceableObjectY, CellType.Empty);
     }
     public void TableGenerator()
     {
@@ -76,7 +77,7 @@ public class GameGridManager : MonoBehaviour
         {
             for(int x = 0; x < _gridData._widht; x++)
             {
-                if(_gridData.Get(x,y) == CellType.Occupied)
+                if(_gridData.GetType(x,y) == CellType.Occupied)
                 {
                     Vector3 pos = new Vector3(x + 0.5f, 0f, y + 0.5f);
                     GameObject tableInstance = Instantiate(_tablePrefab, pos, Quaternion.identity);

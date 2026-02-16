@@ -13,6 +13,9 @@ public class GridToolEditor : EditorWindow
     private int _gridWidth;
     private int _gridHeight;
     
+    private int _gridWarehouseStartY = 9;
+    private int _gridWarehouseEndY = 9;
+
     private GridCell[,] _editorGrid;
 
     private GridData gridData;
@@ -31,6 +34,9 @@ public class GridToolEditor : EditorWindow
 
         _fieldWidth = EditorGUILayout.IntField("Widht", _fieldWidth);
         _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
+
+        _gridWarehouseStartY = EditorGUILayout.IntField("Start Warehouse Y",_gridWarehouseStartY);
+        _gridWarehouseEndY = EditorGUILayout.IntField("End Warehouse Y",_gridWarehouseEndY);
 
         GUILayout.Space(10);
 
@@ -111,12 +117,20 @@ public class GridToolEditor : EditorWindow
     {
         data._widht = _gridWidth;
         data._height = _gridHeight;
-        data.cells = new CellType [_gridWidth * _gridHeight];
+        data._cells = new GridCell [_gridWidth * _gridHeight];
+        for (int i = 0; i < data._cells.Length; i++)
+        {
+            data._cells[i] = new GridCell();
+        }
         for(int y = 0; y < _gridHeight; y++)
         {
             for(int x = 0; x < _gridWidth; x++)
             {
-                data.Set(x,y,_editorGrid[x,y].type);
+                if(y >= _gridWarehouseStartY && y <= _gridWarehouseEndY)
+                {
+                    data.SetIsWarehouse(x,y,true);
+                }
+                data.SetType(x,y,_editorGrid[x,y].type);
             }
         }
         EditorUtility.SetDirty(data);
@@ -138,7 +152,8 @@ public class GridToolEditor : EditorWindow
             {
                 _editorGrid[x,y] = new GridCell
                 {
-                    type = data.Get(x,y)
+                    type = data.GetType(x,y),
+                    isWarehouse = data.GetIsWarehouse(x,y)
                 };
             }
         }

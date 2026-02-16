@@ -5,15 +5,26 @@ public class GridData : ScriptableObject
 {
     public int _widht;
     public int _height;
-    public CellType[] cells;
+    public GridCell[] _cells;
 
-    public CellType Get(int x, int y)
+    public CellType GetType(int x, int y)
     {
-        return cells[y * _widht + x];
+        return _cells[y * _widht + x].type;
     }
 
-    public void Set(int x, int y, CellType type)
+    public void SetType(int x, int y, CellType type)
     {
-        cells[y * _widht + x] = type;
+        _cells[y * _widht + x].type = type;
     }
+
+    public bool GetIsWarehouse(int x, int y)
+    {
+        return _cells[y * _widht + x].isWarehouse;
+    }
+
+    public void SetIsWarehouse(int x, int y, bool isWarehouse)
+    {
+        _cells[y * _widht + x].isWarehouse = isWarehouse;
+    }
+
 }
