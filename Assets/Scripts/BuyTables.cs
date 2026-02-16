@@ -18,21 +18,14 @@ public class BuyTables : MonoBehaviour
             {
                 if(_gridManager.GetGridData.GetIsWarehouse(x,y) == true && _gridManager.GetGridData.GetType(x,y) == CellType.Empty)
                 {
-                    Vector3 initialPosition = new Vector3(x, 0f, y);
+                    Vector3 initialPosition = new Vector3(x+0.5f, 0f, y+0.5f);
 
                     GameObject tableInstance = Instantiate(_tablePrefab, initialPosition, Quaternion.identity);
 
                     PlaceableObject placeable = tableInstance.GetComponent<PlaceableObject>();
                     _gridManager.GetGridData.SetType(x,y, CellType.Occupied);
-                    if (placeable == null)
-                    {
-                        Debug.LogWarning("El prefab no tiene PlaceableObject");
-                        return;
-                    }
-
                     placeable.SetGridManager(_gridManager);
-
-                    tableInstance.transform.position = initialPosition;
+                    placeable.InstancePlaceableObjectCreated(x,y);
                     return;
                 }
             }
