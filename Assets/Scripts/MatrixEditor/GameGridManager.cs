@@ -18,14 +18,12 @@ public class GameGridManager : MonoBehaviour
     {
         if(_gridData == null) return;
         
-        TableGenerator();
-
         if(SceneManager.GetActiveScene().name != "PreparationScene") return;
-        _cells = new GridVisualCell[_gridData._widht, _gridData._height];
+        _cells = new GridVisualCell[_gridData.widht, _gridData.height];
 
-        for(int y = 0; y < _gridData._height; y++)
+        for(int y = 0; y < _gridData.height; y++)
         {
-            for(int x = 0; x < _gridData._widht; x++)
+            for(int x = 0; x < _gridData.widht; x++)
             {
                 Vector3 position = new Vector3 (x + 0.5f, 0f, y + 0.5f);
                 GridVisualCell cell = Instantiate(_gridViewCellPrefab, position, Quaternion.identity, transform);
@@ -37,7 +35,7 @@ public class GameGridManager : MonoBehaviour
 
     public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY)
     {
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData._widht || newPlaceableObjectY >= _gridData._height) return false;
+        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.widht || newPlaceableObjectY >= _gridData.height) return false;
 
         CellType type = _gridData.GetType(newPlaceableObjectX, newPlaceableObjectY);
 
@@ -56,7 +54,7 @@ public class GameGridManager : MonoBehaviour
 
     public void ClearLastCell(int lastCellX, int lastCellY)
     {
-        if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData._widht || lastCellY >= _gridData._height) return;
+        if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData.widht || lastCellY >= _gridData.height) return;
 
         _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
     }
@@ -64,7 +62,7 @@ public class GameGridManager : MonoBehaviour
     {
         if(_gridData == null ) return;
 
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData._widht || newPlaceableObjectY >= _gridData._height) return;
+        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.widht || newPlaceableObjectY >= _gridData.height) return;
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
 
@@ -73,14 +71,16 @@ public class GameGridManager : MonoBehaviour
     }
     public void TableGenerator()
     {
-        for(int y = 0; y < _gridData._height; y++)
+        Transform tableFolder = new GameObject("Tables").transform;
+
+        for(int y = 0; y < _gridData.height; y++)
         {
-            for(int x = 0; x < _gridData._widht; x++)
+            for(int x = 0; x < _gridData.widht; x++)
             {
                 if(_gridData.GetType(x,y) == CellType.Occupied)
                 {
                     Vector3 pos = new Vector3(x + 0.5f, 0f, y + 0.5f);
-                    GameObject tableInstance = Instantiate(_tablePrefab, pos, Quaternion.identity);
+                    GameObject tableInstance = Instantiate(_tablePrefab, pos, Quaternion.identity, tableFolder.transform);
                     PlaceableObject placeable = tableInstance.GetComponent<PlaceableObject>();
                     placeable.SetGridManager(this);
                     placeable.InstancePlaceableObjectCreated(x,y);

@@ -13,8 +13,8 @@ public class GridToolEditor : EditorWindow
     private int _gridWidth;
     private int _gridHeight;
     
-    private int _gridWarehouseStartY = 9;
-    private int _gridWarehouseEndY = 9;
+    private int _fieldWarehouseStartY = 9;
+    private int _fieldWarehouseEndY = 9;
 
     private GridCell[,] _editorGrid;
 
@@ -35,8 +35,8 @@ public class GridToolEditor : EditorWindow
         _fieldWidth = EditorGUILayout.IntField("Widht", _fieldWidth);
         _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
 
-        _gridWarehouseStartY = EditorGUILayout.IntField("Start Warehouse Y",_gridWarehouseStartY);
-        _gridWarehouseEndY = EditorGUILayout.IntField("End Warehouse Y",_gridWarehouseEndY);
+        _fieldWarehouseStartY = EditorGUILayout.IntField("Start Warehouse Y",_fieldWarehouseStartY);
+        _fieldWarehouseEndY = EditorGUILayout.IntField("End Warehouse Y",_fieldWarehouseEndY);
 
         GUILayout.Space(10);
 
@@ -115,8 +115,10 @@ public class GridToolEditor : EditorWindow
     //  Guarda el grid en el scriptable object
     private void SaveGrid(GridData data)
     {
-        data._widht = _gridWidth;
-        data._height = _gridHeight;
+        data.widht = _gridWidth;
+        data.height = _gridHeight;
+        data.gridWarehouseStartY = _fieldWarehouseStartY;
+        data.gridWarehouseEndY = _fieldWarehouseEndY;
         data._cells = new GridCell [_gridWidth * _gridHeight];
         for (int i = 0; i < data._cells.Length; i++)
         {
@@ -126,7 +128,7 @@ public class GridToolEditor : EditorWindow
         {
             for(int x = 0; x < _gridWidth; x++)
             {
-                if(y >= _gridWarehouseStartY && y <= _gridWarehouseEndY)
+                if(y >= _fieldWarehouseStartY && y <= _fieldWarehouseEndY)
                 {
                     data.SetIsWarehouse(x,y,true);
                 }
@@ -139,11 +141,12 @@ public class GridToolEditor : EditorWindow
     //  Carga en el visualizador el grid
     private void LoadGridFromData(GridData data)
     {
-        _gridWidth = data._widht;
-        _gridHeight = data._height;
+        _gridWidth = data.widht;
+        _gridHeight = data.height;
         _fieldWidth = _gridWidth;
         _fieldHeight = _gridHeight;
-
+        _fieldWarehouseStartY = data.gridWarehouseStartY;
+        _fieldWarehouseEndY = data.gridWarehouseEndY;
         _editorGrid = new GridCell[_gridWidth, _gridHeight];
 
         for(int y = 0; y < _gridHeight; y++)

@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310f2845e9e0605469a0de00286a8f59, type: 3}
   m_Name: GridData
   m_EditorClassIdentifier: Assembly-CSharp::GridData
-  _widht: 9
-  _height: 14
+  widht: 9
+  height: 14
+  gridWarehouseStartY: 9
+  gridWarehouseEndY: 13
   _cells:
   - type: 1
     isWarehouse: 0
