@@ -1,4 +1,7 @@
+using System;
+using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Overlays;
 using UnityEngine;
 
 
@@ -9,9 +12,14 @@ public class GridToolEditor : EditorWindow
     private int _fieldHeight = 5;
     private int _gridWidth;
     private int _gridHeight;
-    private GameObject _wallPrefab;
-    private GameObject _floorPrefab;
+    
+    private int _fieldWarehouseStartY = 9;
+    private int _fieldWarehouseEndY = 9;
+
     private GridCell[,] _editorGrid;
+
+    private GridData gridData;
+
     #endregion
     #region Editor
     [MenuItem("Tools/Grid Generator")]
@@ -26,11 +34,31 @@ public class GridToolEditor : EditorWindow
 
         _fieldWidth = EditorGUILayout.IntField("Widht", _fieldWidth);
         _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
-        _wallPrefab = (GameObject)EditorGUILayout.ObjectField("Wall Prefab", _wallPrefab, typeof(GameObject), false);
-        _floorPrefab = (GameObject)EditorGUILayout.ObjectField("Floor Prefab", _floorPrefab, typeof(GameObject), false);
+
+        _fieldWarehouseStartY = EditorGUILayout.IntField("Start Warehouse Y",_fieldWarehouseStartY);
+        _fieldWarehouseEndY = EditorGUILayout.IntField("End Warehouse Y",_fieldWarehouseEndY);
 
         GUILayout.Space(10);
-        if(GUILayout.Button("Genereate Grid"))
+
+        gridData= (GridData)EditorGUILayout.ObjectField(
+            "Grid Data",
+            gridData,
+            typeof(GridData),
+            false
+        );
+
+        if(GUILayout.Button("Load Grid"))
+        {
+            if(gridData == null)
+            {
+                Debug.LogWarning("No GridData assigned");
+                return;
+            }
+            LoadGridFromData(gridData);
+            Repaint();
+        }
+        
+        if(GUILayout.Button("Create New Grid"))
         {
             if(_fieldWidth > 0 && _fieldHeight > 0)
             {
@@ -40,25 +68,33 @@ public class GridToolEditor : EditorWindow
                 Repaint();
             }
         }
-        if (GUILayout.Button("Clear"))
+        if (GUILayout.Button("Erase Grid"))
         {
-            Clear();
+            EraseGrid();
         }
         GUILayout.Space(10);
+
         GUILayout.Label("Grid", EditorStyles.boldLabel);
+
         GUILayout.Space(10);
+
         DrawGrid();
+
         GUILayout.Space(10);
-        if(GUILayout.Button("Generate chiringuito"))
+        if(GUILayout.Button("Empty Occuped Grid"))
+        {
+        if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
+            {
+                EmptyOccupiedGrid(gridData);
+                Repaint();
+            }        
+        }
+        if(GUILayout.Button("Save Grid"))
         {
             if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
             {
-                GenerateChiringuito();
+                SaveGrid(gridData);
             }
-        }
-        if(GUILayout.Button("Erase chiringuito"))
-        {
-            EraseChiringuito();
         }
     }
     #endregion
@@ -68,11 +104,60 @@ public class GridToolEditor : EditorWindow
     {
         _editorGrid = new GridCell[_gridWidth, _gridHeight];
 
+        for (int y = _gridHeight - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < _gridWidth; x++)
+            {
+                _editorGrid[x, y] = new GridCell();
+            }
+        }
+    }
+    //  Guarda el grid en el scriptable object
+    private void SaveGrid(GridData data)
+    {
+        data.widht = _gridWidth;
+        data.height = _gridHeight;
+        data.gridWarehouseStartY = _fieldWarehouseStartY;
+        data.gridWarehouseEndY = _fieldWarehouseEndY;
+        data._cells = new GridCell [_gridWidth * _gridHeight];
+        for (int i = 0; i < data._cells.Length; i++)
+        {
+            data._cells[i] = new GridCell();
+        }
         for(int y = 0; y < _gridHeight; y++)
         {
             for(int x = 0; x < _gridWidth; x++)
             {
-                _editorGrid[x,y] = new GridCell();
+                if(y >= _fieldWarehouseStartY && y <= _fieldWarehouseEndY)
+                {
+                    data.SetIsWarehouse(x,y,true);
+                }
+                data.SetType(x,y,_editorGrid[x,y].type);
+            }
+        }
+        EditorUtility.SetDirty(data);
+        AssetDatabase.SaveAssets();
+    }
+    //  Carga en el visualizador el grid
+    private void LoadGridFromData(GridData data)
+    {
+        _gridWidth = data.widht;
+        _gridHeight = data.height;
+        _fieldWidth = _gridWidth;
+        _fieldHeight = _gridHeight;
+        _fieldWarehouseStartY = data.gridWarehouseStartY;
+        _fieldWarehouseEndY = data.gridWarehouseEndY;
+        _editorGrid = new GridCell[_gridWidth, _gridHeight];
+
+        for(int y = 0; y < _gridHeight; y++)
+        {
+            for(int x = 0; x < _gridWidth; x++)
+            {
+                _editorGrid[x,y] = new GridCell
+                {
+                    type = data.GetType(x,y),
+                    isWarehouse = data.GetIsWarehouse(x,y)
+                };
             }
         }
     }
@@ -84,13 +169,17 @@ public class GridToolEditor : EditorWindow
         GUIStyle style = new GUIStyle(GUI.skin.button);
         style.fixedHeight = 40;
         style.fixedWidth = 40;
-        string label = "-";
-        if(cell.type == PrefabType.Floor)
+        string label = "E";
+        if(cell.type == CellType.Blocked)
         {
-            label = "F";
-        }else if(cell.type == PrefabType.Wall)
+            label = "B";
+        }else if(cell.type == CellType.Empty)
         {
-            label = "W";
+            label = "E";
+        }
+        else if(cell.type == CellType.Occupied)
+        {
+            label = "O";
         }
         if(GUILayout.Button(label, style))
         {
@@ -102,12 +191,12 @@ public class GridToolEditor : EditorWindow
     {
         if(_editorGrid == null) return;
 
-        for(int y = _gridHeight - 1; y >= 0; y--)
+        for (int y = _gridHeight - 1; y >= 0; y--)
         {
             EditorGUILayout.BeginHorizontal();
-            for(int x = 0; x < _gridWidth; x++)
+            for (int x = 0; x < _gridWidth; x++)
             {
-                DrawCell(x,y);
+                DrawCell(x, y);
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -117,71 +206,42 @@ public class GridToolEditor : EditorWindow
     {
         GenericMenu optionsMenu = new GenericMenu();
 
-        optionsMenu.AddItem(new GUIContent("Floor"), cell.type == PrefabType.Floor, () =>
+        optionsMenu.AddItem(new GUIContent("Blocked"), cell.type == CellType.Blocked, () =>
         {
-            cell.type = PrefabType.Floor;
+            cell.type = CellType.Blocked;
         });
 
-        optionsMenu.AddItem(new GUIContent("Wall"), cell.type == PrefabType.Wall, () =>
+        optionsMenu.AddItem(new GUIContent("Occupied"), cell.type == CellType.Occupied, () =>
         {
-            cell.type = PrefabType.Wall;
+            cell.type = CellType.Occupied;
         });
 
         optionsMenu.AddSeparator("");
 
-        optionsMenu.AddItem(new GUIContent("None"), cell.type == PrefabType.None, () =>
+        optionsMenu.AddItem(new GUIContent("Empty"), cell.type == CellType.Empty, () =>
         {
-            cell.type = PrefabType.None;
+            cell.type = CellType.Empty;
         });
 
         optionsMenu.ShowAsContext();
     }
+    //  Libera las celdas ocupadas
+    private void EmptyOccupiedGrid(GridData gridData)
+    {
+        for (int y = _gridHeight - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < _gridWidth; x++)
+            {
+                if(_editorGrid[x,y].type == CellType.Occupied)
+                    _editorGrid[x,y].type = CellType.Empty;
+            }
+        }    
+    }
+
     // Borra la matriz
-    private void Clear()
+    private void EraseGrid()
     {
         _editorGrid = null;
-    }
-    #endregion
-    #region Chiringuito
-    // Crea dos obbjetos vacios para organizar mejor la Hierarchy e instancia dentro los prefab de las paredes y suelos con la posición de la matriz como position
-    // (anotación: como pasamos de 2D a 3D, la Y de la matriz es la Z del mundo 3D)
-    private void GenerateChiringuito()
-    {
-        EraseChiringuito();
-        GameObject wallFolder = new GameObject();
-        wallFolder.name = "walls";
-        
-        GameObject floorFolder = new GameObject();
-        floorFolder.name = "floors";
-
-        for(int y = 0; y < _gridHeight; y++)
-        {
-            for(int x = 0; x < _gridWidth; x++)
-            {
-                if(_editorGrid[x,y].type == PrefabType.Wall)
-                {
-                    GameObject wall = Instantiate(_wallPrefab, new Vector3(x, _wallPrefab.transform.localScale.y / 2, y), Quaternion.identity, wallFolder.transform);
-                }
-                else if(_editorGrid[x,y].type == PrefabType.Floor)
-                {
-                    GameObject floor = Instantiate(_floorPrefab, new Vector3(x, 0, y), Quaternion.identity, floorFolder.transform);
-                }
-            }
-        }
-    }
-    // Borra los objetos vacios creados en GenerateChiringuito con todo lo que hay dentro
-    private void EraseChiringuito()
-    {
-        var walls = GameObject.Find("walls");
-        var floors = GameObject.Find("floors");
-        if (walls != null)
-        {
-            DestroyImmediate(walls);
-        }
-        if (floors != null)
-        {
-            DestroyImmediate(floors);
-        }    
     }
     #endregion
 }

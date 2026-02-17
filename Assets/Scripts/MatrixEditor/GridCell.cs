@@ -1,7 +1,10 @@
 using UnityEngine;
 
+[System.Serializable]
 public class GridCell
-{
-    public PrefabType type = PrefabType.None;
+{ 
+    public CellType type = CellType.Empty;
+    public bool isWarehouse = false;
 }
+
 
