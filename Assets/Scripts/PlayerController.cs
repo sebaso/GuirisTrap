@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour
     
     private Food heldFood;
 
+    [Header("Minigame System")]
+    public RecipeData currentRecipe;
+    public GameObject redCubeIngredient; 
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -133,4 +137,18 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, interactionRange);
     }
+    
+    public void SetCurrentIngredients(RecipeData data)
+    {
+    currentRecipe = data;
+    if(redCubeIngredient != null) 
+    {
+        redCubeIngredient.SetActive(true); 
+    }
+}
+
+    public void ResetInput()
+    {
+    Input.ResetInputAxes();
+}
 }
