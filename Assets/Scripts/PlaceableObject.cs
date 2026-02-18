@@ -12,6 +12,7 @@ public class PlaceableObject : MonoBehaviour
 
     private int _actualCellX = -1;
     private int _actualCellY = -1;
+    private bool _isSelected = false;
     private bool _isMoved = false;
     public bool OnMoved => _isMoved;
     public int CurrentCellX => _actualCellX;
@@ -38,22 +39,7 @@ public class PlaceableObject : MonoBehaviour
 
     void Update()
     {
-        _actualCellX = Mathf.FloorToInt(transform.position.x);
-        _actualCellY = Mathf.FloorToInt(transform.position.z);
-
-        if(_actualCellX == _lastCellX && _actualCellY == _lastCellY) return;
-
-        _gridManager.ClearLastCell(_lastCellX,_lastCellY);
-
-        _lastCellX = -1;
-        _lastCellY = -1;
-
-       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY))
-        {
-            _lastCellX = _actualCellX;
-            _lastCellY = _actualCellY;
-        }
-        _isMoved = true;
+        movePlaceableObject();
     }
     public void SetGridManager(GameGridManager gridManager)
     {
@@ -76,4 +62,27 @@ public class PlaceableObject : MonoBehaviour
         _lastCellY = y;
         _isMoved = false;
     }
+
+    private void movePlaceableObject()
+    {
+        _actualCellX = Mathf.FloorToInt(transform.position.x);
+        _actualCellY = Mathf.FloorToInt(transform.position.z);
+
+        if(_actualCellX == _lastCellX && _actualCellY == _lastCellY) return;
+
+        _gridManager.ClearLastCell(_lastCellX,_lastCellY);
+
+        _lastCellX = -1;
+        _lastCellY = -1;
+
+       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY))
+        {
+            _lastCellX = _actualCellX;
+            _lastCellY = _actualCellY;
+        }
+        _isMoved = true;
+    }
+
+    public bool IsSelected () { return _isSelected; }
+    public void Select(bool isSelected) { _isSelected = isSelected; }
 }
