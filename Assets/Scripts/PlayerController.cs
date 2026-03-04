@@ -96,10 +96,15 @@ public class PlayerController : MonoBehaviour
     private void TryPlaceOrDropFood()
     {
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, interactionRange);
+        print("Nearby objects: " + nearbyObjects.Length);
         
         foreach (Collider col in nearbyObjects)
         {
             Table table = col.GetComponent<Table>();
+            if(table == null){
+                table = col.GetComponentInParent<Table>();
+            }
+            
             if (table != null && table.CanPlaceFood())
             {
                 table.PlaceFood(heldFood);
