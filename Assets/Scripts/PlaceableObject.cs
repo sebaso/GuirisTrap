@@ -22,7 +22,8 @@ public class PlaceableObject : MonoBehaviour
     public int LastCellX => _lastCellX;
     public int LastCellY => _lastCellY;
     private GameGridManager _gridManager;
-
+    private bool _isStoraged = false;
+    public bool Storaged => _isStoraged;
     void Awake()
     {
         _gridManager = FindFirstObjectByType<GameGridManager>();
@@ -41,6 +42,7 @@ public class PlaceableObject : MonoBehaviour
     void Update()
     {
         movePlaceableObject();
+        SetStorage();
     }
     public void SetGridManager(GameGridManager gridManager)
     {
@@ -88,6 +90,20 @@ public class PlaceableObject : MonoBehaviour
         _actualCellX = _cellOccupiedAtStartX;
         _actualCellY = _cellOccupiedAtStartY;
     }
+    public void SetStorage()
+    {
+        if(_gridManager.GetGridData.GetIsWarehouse(_cellOccupiedAtStartX, _cellOccupiedAtStartY) == true)
+        {
+            _isStoraged = true;
+            Debug.Log("Esta la mesa almacenada");
+        }
+        else
+        {
+            Debug.Log("NO Esta la mesa almacenada");
+            _isStoraged = false;
+        }
+    }
+
     public bool IsSelected () { return _isSelected; }
     public void Select(bool isSelected) { _isSelected = isSelected; }
 }

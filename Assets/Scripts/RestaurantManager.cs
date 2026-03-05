@@ -88,7 +88,7 @@ public class RestaurantManager : MonoBehaviour
     {
         foreach (Table t in _tables)
         {
-            if (!t.IsOccupied)
+            if (!t.IsOccupied && !t.GetComponent<PlaceableObject>().Storaged)
                 return t;
         }
         return null;
