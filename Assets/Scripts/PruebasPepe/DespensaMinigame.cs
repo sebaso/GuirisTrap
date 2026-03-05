@@ -18,6 +18,7 @@ public class DespensaMinigame : MonoBehaviour
     private float timer;
     private float currentClicks;
     private float requiredClicks;
+    public GameObject food;
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
@@ -81,7 +82,10 @@ public class DespensaMinigame : MonoBehaviour
         minigamePanel.SetActive(false);
         player.enabled = true;
         
-        if (success) Debug.Log("¡CORTADO A TIEMPO! OLE MI NIÑO");
+        if (success) {
+            Debug.Log("¡Éxito!");
+            Instantiate(food, player.transform.position, Quaternion.identity);
+        }
         else Debug.Log("¡SE TE ACABÓ EL TIEMPO! PRINGAO");
     }
 }

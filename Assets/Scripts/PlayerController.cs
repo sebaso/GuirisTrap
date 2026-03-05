@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
         HandleInteraction();
+        if(Input.GetKeyDown(KeyCode.Escape)) 
+        Application.Quit();
     }
 
     public void Movement()

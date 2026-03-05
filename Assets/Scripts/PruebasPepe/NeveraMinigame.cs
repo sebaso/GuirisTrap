@@ -7,7 +7,8 @@ public class NeveraMinigame : MonoBehaviour
     [Header("UI References")]
     public GameObject minigamePanel; 
     public TMP_Text sequenceDisplay; 
-    public TMP_Text timerText;      
+    public TMP_Text timerText;
+    public GameObject food;    
     
     [Header("Settings")]
     public bool allowWASD = true;
@@ -107,7 +108,10 @@ public class NeveraMinigame : MonoBehaviour
         minigamePanel.SetActive(false);
         player.enabled = true;
 
-        if (success) Debug.Log("¡Éxito!");
+        if (success) {
+            Debug.Log("¡Éxito!");
+            Instantiate(food, player.transform.position, Quaternion.identity);
+        }
         else Debug.Log("¡Fallo!");
     }
 

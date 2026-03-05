@@ -12,6 +12,11 @@ public class Food : MonoBehaviour
 
     public bool IsBeingHeld => isBeingHeld;
 
+    void Start(){
+        rb = GetComponent<Rigidbody>();
+        foodCollider = GetComponent<Collider>();
+    }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -31,10 +36,8 @@ public class Food : MonoBehaviour
     public void PickUp(Transform holdPoint)
     {
         isBeingHeld = true;
-
         rb.isKinematic = true;
         foodCollider.enabled = false;
-
         transform.SetParent(holdPoint);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
@@ -43,7 +46,6 @@ public class Food : MonoBehaviour
     public void Drop()
     {
         isBeingHeld = false;
-
         transform.SetParent(null);
         rb.isKinematic = false;
         foodCollider.enabled = true;

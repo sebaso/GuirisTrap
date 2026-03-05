@@ -29,6 +29,7 @@ public class CongeladorMinigame : MonoBehaviour
     private float timeElapsed;
     private float inputCooldown;
     private PlayerController player;    
+    public GameObject food;
 
 public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
@@ -91,6 +92,7 @@ public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
         if (finalPos >= winMin && finalPos <= winMax)
         {
             Debug.Log($"¡CONGELADO PERFECTO! Pos: {finalPos} (Target: {winMin}-{winMax})");
+            Instantiate(food, player.transform.position, Quaternion.identity);
             EndGame(true);
         }
         else

@@ -38,9 +38,6 @@ public class Client : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _patience = maxPatience;
-
-
-        
     }
 
     void Start()
