@@ -33,13 +33,13 @@ public class GameGridManager : MonoBehaviour
         }
     }
 
-    public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY)
+    public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY)
     {
         if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.widht || newPlaceableObjectY >= _gridData.height) return false;
 
         CellType type = _gridData.GetType(newPlaceableObjectX, newPlaceableObjectY);
 
-        if(type == CellType.Empty)
+        if(type == CellType.Empty || _gridData._cells[newPlaceableObjectY * _gridData.widht + newPlaceableObjectX] == _gridData._cells[newPlaceableObjectStartAtY * _gridData.widht + newPlaceableObjectStartAtX])
         {
             _cells[newPlaceableObjectX, newPlaceableObjectY].SetState(CellVisualState.Empty);
         }
@@ -51,14 +51,23 @@ public class GameGridManager : MonoBehaviour
         return true;
 
     }
-
+    public void ResetVisualGrid()
+    {
+        for(int y = 0; y < _gridData.height; y++)
+        {
+            for(int x = 0; x < _gridData.widht; x++)
+            {
+                _cells[x,y].SetState(CellVisualState.Default);
+            }
+        }
+    }
     public void ClearLastCell(int lastCellX, int lastCellY)
     {
         if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData.widht || lastCellY >= _gridData.height) return;
 
         _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
     }
-    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int starPlaceableObjectY)
+    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY)
     {
         if(_gridData == null ) return;
 
@@ -66,8 +75,8 @@ public class GameGridManager : MonoBehaviour
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
 
-        if(startPlaceableObjectX != -1 && starPlaceableObjectY != -1)
-            _gridData.SetType(startPlaceableObjectX, starPlaceableObjectY, CellType.Empty);
+        if(startPlaceableObjectX != -1 && startPlaceableObjectY != -1 && startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY)
+            _gridData.SetType(startPlaceableObjectX, startPlaceableObjectY, CellType.Empty);
     }
     public void TableGenerator()
     {
