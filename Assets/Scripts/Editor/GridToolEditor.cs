@@ -19,6 +19,7 @@ public class GridToolEditor : EditorWindow
     private GridCell[,] _editorGrid;
 
     private GridData gridData;
+    private Vector2 _scrollbar;
 
     #endregion
     #region Editor
@@ -74,6 +75,8 @@ public class GridToolEditor : EditorWindow
         }
         GUILayout.Space(10);
 
+        _scrollbar = EditorGUILayout.BeginScrollView(_scrollbar);
+
         GUILayout.Label("Grid", EditorStyles.boldLabel);
 
         GUILayout.Space(10);
@@ -96,6 +99,7 @@ public class GridToolEditor : EditorWindow
                 SaveGrid(gridData);
             }
         }
+        EditorGUILayout.EndScrollView();
     }
     #endregion
     #region Grid
