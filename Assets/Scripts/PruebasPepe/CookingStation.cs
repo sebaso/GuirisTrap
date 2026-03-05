@@ -7,6 +7,8 @@ public class CookingStation : MonoBehaviour
     public float interactionDistance = 2.5f; // Radio para que pille la E
 
     private PlayerController playerRef;
+    [SerializeField]
+    private Food _food;
 
     private void Start()
     {
@@ -46,6 +48,8 @@ public class CookingStation : MonoBehaviour
                 // QUITAR LOS INGREDIENTES DE ENCIMA
                 if (playerRef.redCubeIngredient != null)
                     playerRef.redCubeIngredient.SetActive(false);
+
+                playerRef.CoockFood(_food);
 
                 // LANZAR MINIWEBO CORRESPONDIENTE
                 MinigameManager.Instance.LaunchMinigame(playerRef.currentRecipe, playerRef);

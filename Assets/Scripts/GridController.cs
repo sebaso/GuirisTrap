@@ -36,6 +36,7 @@ public class GridController : MonoBehaviour
             RaycastHit hitInfo;
 
             bool hit = Physics.Raycast(ray, out hitInfo);
+            
             if (hit)
             {
                 placeableObject = hitInfo.transform.GetComponent<PlaceableObject>();

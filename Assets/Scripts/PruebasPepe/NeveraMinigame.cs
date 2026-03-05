@@ -107,7 +107,7 @@ public class NeveraMinigame : MonoBehaviour
         isPlaying = false;
         minigamePanel.SetActive(false);
         player.enabled = true;
-
+        
         if (success) Debug.Log("¡Éxito!");
         else Debug.Log("¡Fallo!");
     }

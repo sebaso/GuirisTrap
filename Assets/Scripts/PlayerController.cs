@@ -80,9 +80,19 @@ public class PlayerController : MonoBehaviour
             Food food = col.GetComponent<Food>();
             if (food != null && !food.IsBeingHeld)
             {
+                Debug.Log("COCINAMOS LA COMIDA");
                 PickUpFood(food);
                 return;
             }
+        }
+    }
+
+    public void CoockFood(Food food)
+    {
+        if (food != null)
+        {
+            PickUpFood(food);
+            return;
         }
     }
 

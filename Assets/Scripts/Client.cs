@@ -96,7 +96,7 @@ public class Client : MonoBehaviour
     public void initialize()
     {
         int randomIndex = Random.Range(0, clientModels.Length);
-        GameObject selectedModel = Instantiate(clientModels[randomIndex-1], transform.position, Quaternion.Euler(0, 0, 0));
+        GameObject selectedModel = Instantiate(clientModels[randomIndex], transform.position, Quaternion.Euler(0, 0, 0));
         selectedModel.transform.localRotation = Quaternion.Euler(-90, 0, 0);
         selectedModel.transform.SetParent(transform);
         Initialized = true;
