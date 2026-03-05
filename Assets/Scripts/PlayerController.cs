@@ -87,15 +87,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void CoockFood(Food food)
-    {
-        if (food != null)
-        {
-            PickUpFood(food);
-            return;
-        }
-    }
-
     private void PickUpFood(Food food)
     {
         heldFood = food;

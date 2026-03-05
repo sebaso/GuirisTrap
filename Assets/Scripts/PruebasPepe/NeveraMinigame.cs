@@ -17,7 +17,6 @@ public class NeveraMinigame : MonoBehaviour
     private bool isPlaying = false;
     private float timer;
     private PlayerController player; 
-
     private KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.LeftArrow, KeyCode.RightArrow };
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
@@ -107,7 +106,7 @@ public class NeveraMinigame : MonoBehaviour
         isPlaying = false;
         minigamePanel.SetActive(false);
         player.enabled = true;
-        
+
         if (success) Debug.Log("¡Éxito!");
         else Debug.Log("¡Fallo!");
     }
