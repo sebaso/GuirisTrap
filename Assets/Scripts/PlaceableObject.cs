@@ -19,7 +19,8 @@ public class PlaceableObject : MonoBehaviour
     public int CurrentCellY => _actualCellY;
     public int StartCellX => _cellOccupiedAtStartX;
     public int StartCellY => _cellOccupiedAtStartY;
-
+    public int LastCellX => _lastCellX;
+    public int LastCellY => _lastCellY;
     private GameGridManager _gridManager;
 
     void Awake()
@@ -65,24 +66,28 @@ public class PlaceableObject : MonoBehaviour
 
     private void movePlaceableObject()
     {
+        if(!_isSelected) return;
+
         _actualCellX = Mathf.FloorToInt(transform.position.x);
         _actualCellY = Mathf.FloorToInt(transform.position.z);
-
-        if(_actualCellX == _lastCellX && _actualCellY == _lastCellY) return;
 
         _gridManager.ClearLastCell(_lastCellX,_lastCellY);
 
         _lastCellX = -1;
         _lastCellY = -1;
 
-       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY))
+       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY, _cellOccupiedAtStartX, _cellOccupiedAtStartY))
         {
             _lastCellX = _actualCellX;
             _lastCellY = _actualCellY;
         }
         _isMoved = true;
     }
-
+    public void RestartCell()
+    {
+        _actualCellX = _cellOccupiedAtStartX;
+        _actualCellY = _cellOccupiedAtStartY;
+    }
     public bool IsSelected () { return _isSelected; }
     public void Select(bool isSelected) { _isSelected = isSelected; }
 }
