@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class Client : MonoBehaviour
 {
+    public GameObject[] clientModels;
     public enum State
     {
         WalkingToEntrance,  // Heading from spawn to restaurant entrance
@@ -28,6 +30,7 @@ public class Client : MonoBehaviour
     private Transform _entrancePoint;
     private NavMeshAgent _agent;
     private Vector3 _queueSlotPosition;
+    private bool Initialized = false;
 
     public float PatienceRatio => _patience / maxPatience;
 
@@ -35,6 +38,9 @@ public class Client : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _patience = maxPatience;
+
+
+        
     }
 
     void Start()
@@ -49,6 +55,10 @@ public class Client : MonoBehaviour
 
     void Update()
     {
+        if (!Initialized)
+        {
+            initialize();
+        }
         switch (CurrentState)
         {
             case State.WalkingToEntrance:
@@ -83,7 +93,15 @@ public class Client : MonoBehaviour
         Freeze();
         RestaurantManager.Instance?.ClientArrived(this);
     }
-
+    public void initialize()
+    {
+        int randomIndex = Random.Range(0, clientModels.Length);
+        GameObject selectedModel = Instantiate(clientModels[randomIndex-1], transform.position, Quaternion.Euler(0, 0, 0));
+        selectedModel.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+        selectedModel.transform.SetParent(transform);
+        Initialized = true;
+        selectedModel.transform.position = selectedModel.transform.position + new Vector3(0, -0.5f, 0);
+    }
     public void EnterWaitQueue(Vector3 slotPosition)
     {
         _queueSlotPosition = slotPosition;
