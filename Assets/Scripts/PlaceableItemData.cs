@@ -4,5 +4,7 @@ using UnityEngine;
 public class PlaceableItemData : ScriptableObject
 {
     public GameObject prefab;
+    public Sprite icon;
     public int cost;
+    public int maxStack;
 }
