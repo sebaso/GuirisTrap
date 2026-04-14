@@ -8,7 +8,6 @@ public class NeveraMinigame : MonoBehaviour
     public GameObject minigamePanel; 
     public TMP_Text sequenceDisplay; 
     public TMP_Text timerText;
-    public GameObject food;    
     
     [Header("Settings")]
     public bool allowWASD = true;
@@ -18,11 +17,13 @@ public class NeveraMinigame : MonoBehaviour
     private bool isPlaying = false;
     private float timer;
     private PlayerController player; 
+    private RecipeData currentRecipe;
     private KeyCode[] arrowKeys = { KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.LeftArrow, KeyCode.RightArrow };
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
         player = currentPlayer;
+        currentRecipe = recipe;
         player.enabled = false; 
         
         minigamePanel.SetActive(true);
@@ -39,9 +40,7 @@ public class NeveraMinigame : MonoBehaviour
     {
         currentSequence.Clear();
         for (int i = 0; i < length; i++)
-        {
             currentSequence.Add(arrowKeys[Random.Range(0, arrowKeys.Length)]);
-        }
     }
 
     void Update()
@@ -51,11 +50,7 @@ public class NeveraMinigame : MonoBehaviour
         timer -= Time.deltaTime;
         timerText.text = timer.ToString("F1");
         
-        if (timer <= 0)
-        {
-            EndGame(false);
-            return;
-        }
+        if (timer <= 0) { EndGame(false); return; }
 
         if (Input.anyKeyDown)
         {
@@ -69,10 +64,7 @@ public class NeveraMinigame : MonoBehaviour
             }
             else
             {
-                if (IsAnyControlKeyDown())
-                {
-                    EndGame(false);
-                }
+                if (IsAnyControlKeyDown()) EndGame(false);
             }
         }
     }
@@ -80,12 +72,11 @@ public class NeveraMinigame : MonoBehaviour
     bool IsCorrectKey(KeyCode arrow)
     {
         if (Input.GetKeyDown(arrow)) return true;
-
         if (allowWASD)
         {
-            if (arrow == KeyCode.UpArrow && Input.GetKeyDown(KeyCode.W)) return true;
-            if (arrow == KeyCode.DownArrow && Input.GetKeyDown(KeyCode.S)) return true;
-            if (arrow == KeyCode.LeftArrow && Input.GetKeyDown(KeyCode.A)) return true;
+            if (arrow == KeyCode.UpArrow    && Input.GetKeyDown(KeyCode.W)) return true;
+            if (arrow == KeyCode.DownArrow  && Input.GetKeyDown(KeyCode.S)) return true;
+            if (arrow == KeyCode.LeftArrow  && Input.GetKeyDown(KeyCode.A)) return true;
             if (arrow == KeyCode.RightArrow && Input.GetKeyDown(KeyCode.D)) return true;
         }
         return false;
@@ -108,9 +99,13 @@ public class NeveraMinigame : MonoBehaviour
         minigamePanel.SetActive(false);
         player.enabled = true;
 
-        if (success) {
+        if (success)
+        {
             Debug.Log("¡Éxito!");
-            Instantiate(food, player.transform.position, Quaternion.identity);
+            if (currentRecipe.foodPrefab != null)
+                Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
+            else
+                Debug.LogWarning($"[NeveraMinigame] {currentRecipe.dishName} no tiene foodPrefab asignado.");
         }
         else Debug.Log("¡Fallo!");
     }
@@ -121,13 +116,9 @@ public class NeveraMinigame : MonoBehaviour
         for (int i = 0; i < currentSequence.Count; i++)
         {
             string arrowSymbol = GetArrowSymbol(currentSequence[i]);
-
-            if (i < currentIndex) 
-                display += $"<color=green>{arrowSymbol} </color>";
-            else if (i == currentIndex) 
-                display += $"<color=yellow><b>[{arrowSymbol}]</b></color> ";
-            else 
-                display += $"{arrowSymbol} ";
+            if      (i < currentIndex)  display += $"<color=green>{arrowSymbol} </color>";
+            else if (i == currentIndex) display += $"<color=yellow><b>[{arrowSymbol}]</b></color> ";
+            else                        display += $"{arrowSymbol} ";
         }
         sequenceDisplay.text = display;
     }
@@ -136,9 +127,9 @@ public class NeveraMinigame : MonoBehaviour
     {
         switch (key)
         {
-            case KeyCode.UpArrow: return "↑";
-            case KeyCode.DownArrow: return "↓";
-            case KeyCode.LeftArrow: return "←";
+            case KeyCode.UpArrow:    return "↑";
+            case KeyCode.DownArrow:  return "↓";
+            case KeyCode.LeftArrow:  return "←";
             case KeyCode.RightArrow: return "→";
             default: return key.ToString();
         }
