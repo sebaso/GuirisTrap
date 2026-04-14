@@ -12919,12 +12919,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1174440876}
-        m_TargetAssemblyTypeName: BuyTables, Assembly-CSharp
-        m_MethodName: BuyTable
-        m_Mode: 1
+        m_TargetAssemblyTypeName: BuyPlaceable, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
+          m_ObjectArgumentAssemblyTypeName: PlaceableItemData, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -14307,7 +14307,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuyTables
   _gridManager: {fileID: 1086291168}
-  _tablePrefab: {fileID: 4810302218073276568, guid: 6e727a69144f10843bf9c99778b044d2, type: 3}
 --- !u!114 &1174440877
 MonoBehaviour:
   m_ObjectHideFlags: 0

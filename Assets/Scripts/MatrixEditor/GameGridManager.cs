@@ -19,11 +19,11 @@ public class GameGridManager : MonoBehaviour
         if(_gridData == null) return;
         
         if(SceneManager.GetActiveScene().name != "PreparationScene") return;
-        _cells = new GridVisualCell[_gridData.widht, _gridData.height];
+        _cells = new GridVisualCell[_gridData.width, _gridData.height];
 
         for(int y = 0; y < _gridData.height; y++)
         {
-            for(int x = 0; x < _gridData.widht; x++)
+            for(int x = 0; x < _gridData.width; x++)
             {
                 Vector3 position = new Vector3 (x + 0.5f, 0f, y + 0.5f);
                 GridVisualCell cell = Instantiate(_gridViewCellPrefab, position, Quaternion.identity, transform);
@@ -35,11 +35,11 @@ public class GameGridManager : MonoBehaviour
 
     public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY)
     {
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.widht || newPlaceableObjectY >= _gridData.height) return false;
+        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return false;
 
         CellType type = _gridData.GetType(newPlaceableObjectX, newPlaceableObjectY);
 
-        if(type == CellType.Empty || _gridData._cells[newPlaceableObjectY * _gridData.widht + newPlaceableObjectX] == _gridData._cells[newPlaceableObjectStartAtY * _gridData.widht + newPlaceableObjectStartAtX])
+        if(type == CellType.Empty || _gridData._cells[newPlaceableObjectY * _gridData.width + newPlaceableObjectX] == _gridData._cells[newPlaceableObjectStartAtY * _gridData.width + newPlaceableObjectStartAtX])
         {
             _cells[newPlaceableObjectX, newPlaceableObjectY].SetState(CellVisualState.Empty);
         }
@@ -55,7 +55,7 @@ public class GameGridManager : MonoBehaviour
     {
         for(int y = 0; y < _gridData.height; y++)
         {
-            for(int x = 0; x < _gridData.widht; x++)
+            for(int x = 0; x < _gridData.width; x++)
             {
                 _cells[x,y].SetState(CellVisualState.Default);
             }
@@ -63,7 +63,7 @@ public class GameGridManager : MonoBehaviour
     }
     public void ClearLastCell(int lastCellX, int lastCellY)
     {
-        if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData.widht || lastCellY >= _gridData.height) return;
+        if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData.width || lastCellY >= _gridData.height) return;
 
         _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
     }
@@ -71,7 +71,7 @@ public class GameGridManager : MonoBehaviour
     {
         if(_gridData == null ) return;
 
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.widht || newPlaceableObjectY >= _gridData.height) return;
+        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
 
@@ -80,11 +80,11 @@ public class GameGridManager : MonoBehaviour
     }
     public void TableGenerator()
     {
-        Transform tableFolder = new GameObject("Tables").transform;
+        Transform tableFolder = new GameObject("PlaceableItems").transform;
 
         for(int y = 0; y < _gridData.height; y++)
         {
-            for(int x = 0; x < _gridData.widht; x++)
+            for(int x = 0; x < _gridData.width; x++)
             {
                 if(_gridData.GetType(x,y) == CellType.Occupied)
                 {

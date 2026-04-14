@@ -69,7 +69,7 @@ public class GridController : MonoBehaviour
         {
             if (placeableObject.IsSelected() && Input.GetMouseButtonUp(0))
             {
-                if(placeableObject.CurrentCellX >= 0 && placeableObject.CurrentCellX <_gridData.widht && placeableObject.CurrentCellY >= 0 && placeableObject.CurrentCellY < _gridData.height && (
+                if(placeableObject.CurrentCellX >= 0 && placeableObject.CurrentCellX <_gridData.width && placeableObject.CurrentCellY >= 0 && placeableObject.CurrentCellY < _gridData.height && (
                     _gridData.GetType(placeableObject.CurrentCellX, placeableObject.CurrentCellY) == CellType.Empty  || (placeableObject.CurrentCellX == placeableObject.StartCellX && placeableObject.CurrentCellY ==  placeableObject.StartCellY) ) )
                 {
                     Vector3 pos = new Vector3(placeableObject.CurrentCellX + 0.5f, 0f, placeableObject.CurrentCellY + 0.5f);

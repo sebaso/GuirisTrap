@@ -119,7 +119,7 @@ public class GridToolEditor : EditorWindow
     //  Guarda el grid en el scriptable object
     private void SaveGrid(GridData data)
     {
-        data.widht = _gridWidth;
+        data.width = _gridWidth;
         data.height = _gridHeight;
         data.gridWarehouseStartY = _fieldWarehouseStartY;
         data.gridWarehouseEndY = _fieldWarehouseEndY;
@@ -145,7 +145,7 @@ public class GridToolEditor : EditorWindow
     //  Carga en el visualizador el grid
     private void LoadGridFromData(GridData data)
     {
-        _gridWidth = data.widht;
+        _gridWidth = data.width;
         _gridHeight = data.height;
         _fieldWidth = _gridWidth;
         _fieldHeight = _gridHeight;
