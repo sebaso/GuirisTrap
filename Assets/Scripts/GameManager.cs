@@ -57,9 +57,9 @@ public class GameManager : MonoBehaviour
             {
                 if(_gridManager.GetGridData.GetIsWarehouse(x,y) == true && _gridManager.GetGridData.GetType(x,y) == CellType.Empty)
                 {
-                    Vector3 initialPosition = new Vector3(x+0.5f, 0f, y+0.5f);
-
-                    GameObject obj = Instantiate(itemData.prefab, initialPosition, Quaternion.identity, folder);
+                    Vector3 initialPosition = new Vector3(x, 0f, y);
+                    Vector3 finalPosition = initialPosition + itemData.placementOffset;
+                    GameObject obj = Instantiate(itemData.prefab, finalPosition, Quaternion.identity, folder);
 
                     PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
                     _gridManager.GetGridData.SetType(x,y, CellType.Occupied);
