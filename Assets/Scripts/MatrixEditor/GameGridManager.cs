@@ -7,8 +7,6 @@ public class GameGridManager : MonoBehaviour
     private GridData _gridData;
     [SerializeField]
     private GridVisualCell _gridViewCellPrefab;
-    [SerializeField]
-    private GameObject _tablePrefab;
 
     private GridVisualCell[,] _cells;
 
@@ -67,32 +65,42 @@ public class GameGridManager : MonoBehaviour
 
         _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
     }
-    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY)
+    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY, PlaceableItemData itemData)
     {
         if(_gridData == null ) return;
 
         if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
-
+        _gridData.SetItem(newPlaceableObjectX, newPlaceableObjectY, itemData);
         if(startPlaceableObjectX != -1 && startPlaceableObjectY != -1 && startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY)
             _gridData.SetType(startPlaceableObjectX, startPlaceableObjectY, CellType.Empty);
+            _gridData.SetItem(startPlaceableObjectX, startPlaceableObjectY, null);
     }
-    public void TableGenerator()
+    public void PlaceableGenerator()
     {
-        Transform tableFolder = new GameObject("PlaceableItems").transform;
-
+        Transform placeableFolder = new GameObject("PlaceableItems").transform;
+        Debug.Log("Vamoh a crear objetos");
         for(int y = 0; y < _gridData.height; y++)
         {
             for(int x = 0; x < _gridData.width; x++)
             {
-                if(_gridData.GetType(x,y) == CellType.Occupied)
+                GridCell cell = _gridData._cells[y * _gridData.width + x];
+                if(cell.item == null)
+                    Debug.Log("El item está vacio");
+                if(_gridData.GetType(x,y) == CellType.Occupied && cell.item != null)
                 {
-                    Vector3 pos = new Vector3(x + 0.5f, 0f, y + 0.5f);
-                    GameObject tableInstance = Instantiate(_tablePrefab, pos, Quaternion.identity, tableFolder.transform);
+                                    Debug.Log("Vamoh a crear un: "+ cell.item);
+                    Vector3 pos = new Vector3(x, 0f, y);
+                    Vector3 finalPos = pos + cell.item.placementOffset;
+                    GameObject tableInstance = Instantiate(cell.item.prefab, finalPos, Quaternion.identity, placeableFolder);
                     PlaceableObject placeable = tableInstance.GetComponent<PlaceableObject>();
-                    placeable.SetGridManager(this);
-                    placeable.InstancePlaceableObjectCreated(x,y);
+                    if (placeable != null)
+                    {
+                        placeable.SetGridManager(this);
+                        placeable.InstancePlaceableObjectCreated(x,y);
+                        placeable.Init(cell.item);
+                    }
                 }
             }
         }

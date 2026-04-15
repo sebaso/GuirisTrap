@@ -62,9 +62,11 @@ public class GameManager : MonoBehaviour
                     GameObject obj = Instantiate(itemData.prefab, finalPosition, Quaternion.identity, folder);
 
                     PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
-                    _gridManager.GetGridData.SetType(x,y, CellType.Occupied);
+                    _gridManager.GetGridData.SetType(x, y, CellType.Occupied);
+                    _gridManager.GetGridData.SetItem(x, y, itemData);
                     placeable.SetGridManager(_gridManager);
                     placeable.InstancePlaceableObjectCreated(x,y);
+                    placeable.Init(itemData);
                     _inventory.RemoveItem(posX, posY);
                     return;
                 }

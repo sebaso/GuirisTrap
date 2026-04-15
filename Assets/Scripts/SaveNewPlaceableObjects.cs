@@ -18,7 +18,7 @@ public class SaveNewPlaceableObjects : MonoBehaviour
         {
             if (placeable.OnMoved)
             {                
-                _gridManager.SaveGrid( placeable.CurrentCellX, placeable.CurrentCellY, placeable.StartCellX, placeable.StartCellY);
+                _gridManager.SaveGrid( placeable.CurrentCellX, placeable.CurrentCellY, placeable.StartCellX, placeable.StartCellY, placeable.GetItemData());
                 placeable.IsPlacedAtCell();
             }
         }

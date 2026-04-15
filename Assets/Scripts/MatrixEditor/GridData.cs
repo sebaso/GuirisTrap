@@ -18,7 +18,10 @@ public class GridData : ScriptableObject
     {
         _cells[y * width + x].type = type;
     }
-
+    public void SetItem(int x, int y, PlaceableItemData item)
+    {
+        _cells[y * width + x].item = item;
+    }
     public bool GetIsWarehouse(int x, int y)
     {
         return _cells[y * width + x].isWarehouse;

@@ -77,7 +77,7 @@ public class GridController : MonoBehaviour
                     placeableObject.GetComponent<Collider>().enabled = true;
                     _hasObjectSelected = false;
                     placeableObject.Select(false);
-                    _gridManager.SaveGrid(placeableObject.CurrentCellX, placeableObject.CurrentCellY, placeableObject.StartCellX, placeableObject.StartCellY );
+                    _gridManager.SaveGrid(placeableObject.CurrentCellX, placeableObject.CurrentCellY, placeableObject.StartCellX, placeableObject.StartCellY, placeableObject.GetItemData());
                     placeableObject.IsPlacedAtCell();
                 }
                 else

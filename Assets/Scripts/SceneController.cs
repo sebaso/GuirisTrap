@@ -33,7 +33,7 @@ public class SceneController : MonoBehaviour
         GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
         if (gridManager != null)
         {
-            gridManager.TableGenerator();
+            gridManager.PlaceableGenerator();
         }
     }
 }

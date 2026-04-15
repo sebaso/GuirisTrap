@@ -24,6 +24,7 @@ public class PlaceableObject : MonoBehaviour
     private GameGridManager _gridManager;
     private bool _isStoraged = false;
     public bool Storaged => _isStoraged;
+    private PlaceableItemData _itemData;
     void Awake()
     {
         _gridManager = FindFirstObjectByType<GameGridManager>();
@@ -39,6 +40,10 @@ public class PlaceableObject : MonoBehaviour
         }
     }
 
+    public void Init(PlaceableItemData itemData)
+    {
+        _itemData = itemData;
+    }
     void Update()
     {
         movePlaceableObject();
@@ -106,4 +111,5 @@ public class PlaceableObject : MonoBehaviour
 
     public bool IsSelected () { return _isSelected; }
     public void Select(bool isSelected) { _isSelected = isSelected; }
+    public PlaceableItemData GetItemData() { return _itemData; }
 }
