@@ -4,6 +4,7 @@ using TMPro;
 
 public class EspetoMinigame : MonoBehaviour
 {
+
     public enum EspetoState { Empty, Cooking, Done, Burned }
 
     [System.Serializable]
@@ -14,13 +15,14 @@ public class EspetoMinigame : MonoBehaviour
         public float burnTimer      = 0f;   
         public float zonePosition   = 0.5f; 
         public float espetoPosition = 0.5f; 
-        public float zoneShiftTimer = 0f;   
+        public float zoneShiftTimer = 0f;  
     }
 
+
     [Header("Configuración Espetos")]
-    public float cookDuration      = 20f;  
-    public float burnDuration      = 10f;  
-    public float zoneShiftInterval = 12f;  
+    public float cookDuration      = 45f;  
+    public float burnDuration      = 30f;  
+    public float zoneShiftInterval = 25f;  
     public float zoneHalfSize      = 0.12f;
     public float moveSpeed         = 0.6f; 
     public int   espetoCount       = 3;    
@@ -40,7 +42,7 @@ public class EspetoMinigame : MonoBehaviour
     public RectTransform[] espetoHandleRects; 
     public Image[]         espetoTrackImages; 
     public TMP_Text[]      timerTexts;       
-    public GameObject[]    selectionFrames;  
+    public GameObject[]    selectionFrames;   
 
     [Header("UI - Global")]
     public TMP_Text instructionText;
@@ -74,7 +76,6 @@ public class EspetoMinigame : MonoBehaviour
 
         if (minigamePanel) minigamePanel.SetActive(false);
     }
-
 
     void Start()
     {
@@ -121,10 +122,6 @@ public class EspetoMinigame : MonoBehaviour
 
     void ClosePanel()
     {
-        for (int i = 0; i < espetoCount; i++)
-            if (_espetos[i].state == EspetoState.Cooking)
-                ShiftZone(i);
-
         _isPanelOpen      = false;
         _isRepositioning  = false;
         minigamePanel.SetActive(false);
@@ -142,7 +139,7 @@ public class EspetoMinigame : MonoBehaviour
 
             if (inZone)
             {
-                // En zona verde: progresa la cocción, regenera burn timer
+                // En zona verde
                 e.cookProgress  += Time.deltaTime;
                 e.burnTimer      = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, burnDuration);
 
@@ -155,7 +152,7 @@ public class EspetoMinigame : MonoBehaviour
             }
             else
             {
-                // Fuera de zona: el timer de quemado baja
+                // Fuera de zona
                 e.burnTimer -= Time.deltaTime;
 
                 if (e.burnTimer <= 0f)
@@ -176,6 +173,7 @@ public class EspetoMinigame : MonoBehaviour
         }
     }
 
+
     void HandlePanelInput()
     {
         // Cerrar panel
@@ -187,6 +185,7 @@ public class EspetoMinigame : MonoBehaviour
 
         Espeto sel = _espetos[_selectedIndex];
 
+        // Navegar entre espetos 
         if (!_isRepositioning)
         {
             if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)))
@@ -197,7 +196,6 @@ public class EspetoMinigame : MonoBehaviour
             sel = _espetos[_selectedIndex]; // refrescar tras navegar
         }
 
-        // Acción con E según estado
         if (Input.GetKeyDown(KeyCode.E))
         {
             switch (sel.state)
@@ -220,7 +218,6 @@ public class EspetoMinigame : MonoBehaviour
             }
         }
 
-        // Mover espeto con W/S 
         if (_isRepositioning && sel.state == EspetoState.Cooking)
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
@@ -285,7 +282,6 @@ public class EspetoMinigame : MonoBehaviour
         {
             Espeto e = _espetos[i];
 
-            // Fondo de la varilla 
             if (espetoTrackImages != null && i < espetoTrackImages.Length && espetoTrackImages[i])
             {
                 espetoTrackImages[i].color = e.state switch
@@ -298,7 +294,7 @@ public class EspetoMinigame : MonoBehaviour
                 };
             }
 
-            // — Zona verde
+            // — Zona verde 
             if (greenZoneRects != null && i < greenZoneRects.Length && greenZoneRects[i])
             {
                 float min = Mathf.Clamp01(e.zonePosition - zoneHalfSize);
@@ -310,7 +306,7 @@ public class EspetoMinigame : MonoBehaviour
                 greenZoneRects[i].gameObject.SetActive(e.state == EspetoState.Cooking);
             }
 
-            // — Handle del espeto
+            // — Handle del espeto 
             if (espetoHandleRects != null && i < espetoHandleRects.Length && espetoHandleRects[i])
             {
                 float pos = e.espetoPosition;
@@ -327,17 +323,19 @@ public class EspetoMinigame : MonoBehaviour
                 timerTexts[i].text = e.state switch
                 {
                     EspetoState.Empty   => "[E] Poner espeto",
-                    EspetoState.Cooking => $" {e.burnTimer:F1}s | ✅ {e.cookProgress / cookDuration * 100f:F0}%",
+                    EspetoState.Cooking => $"🔥 {e.burnTimer:F1}s | ✅ {e.cookProgress / cookDuration * 100f:F0}%",
                     EspetoState.Done    => "¡LISTO! [E] Recoger",
                     EspetoState.Burned  => "QUEMADO [E] Tirar",
                     _                   => ""
                 };
             }
 
-            // — Highlight del seleccionado —
+            // Highlight del seleccionado 
             if (selectionFrames != null && i < selectionFrames.Length && selectionFrames[i])
                 selectionFrames[i].SetActive(i == _selectedIndex);
         }
+
+        //  Instrucción global 
         if (instructionText)
         {
             Espeto sel = _espetos[_selectedIndex];
