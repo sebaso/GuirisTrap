@@ -67,7 +67,10 @@ public class GameManager : MonoBehaviour
                     placeable.SetGridManager(_gridManager);
                     placeable.InstancePlaceableObjectCreated(x,y);
                     placeable.Init(itemData);
+                    _gridManager.SetPlaceableAt(x,y, placeable);
                     _inventory.RemoveItem(posX, posY);
+                    if(itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
+                        _gridManager.ValidateAllChairs();
                     return;
                 }
             }

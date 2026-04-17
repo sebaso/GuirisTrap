@@ -7,7 +7,8 @@ public class PlaceableItemData : ScriptableObject
     public Sprite icon;
     public int cost;
     public int maxStack;
-
+    public PlaceableCategory category;
+    
     [Header("Placement")]
     public Vector3 placementOffset;
 }

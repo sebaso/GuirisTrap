@@ -22,6 +22,13 @@ public class SceneController : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+        if(sceneName == "GameScene")
+        {
+            GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
+            if(!gridManager.CanStartDay())
+                return;
+        }
+
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.LoadScene(sceneName);
     }
@@ -31,9 +38,16 @@ public class SceneController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
         GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
+        gridManager.Init();
         if (gridManager != null)
         {
             gridManager.PlaceableGenerator();
         }
+    }
+    public bool IsSceneLoaded(string sceneName)
+    {
+        if(sceneName == SceneManager.GetActiveScene().name)
+            return true;
+        return false;
     }
 }

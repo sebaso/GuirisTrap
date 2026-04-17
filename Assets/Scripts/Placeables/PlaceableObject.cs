@@ -25,6 +25,9 @@ public class PlaceableObject : MonoBehaviour
     private bool _isStoraged = false;
     public bool Storaged => _isStoraged;
     private PlaceableItemData _itemData;
+    private bool _isValid = true;
+    public bool IsValid => _isValid;
+
     void Awake()
     {
         _gridManager = FindFirstObjectByType<GameGridManager>();
@@ -83,7 +86,7 @@ public class PlaceableObject : MonoBehaviour
         _lastCellX = -1;
         _lastCellY = -1;
 
-       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY, _cellOccupiedAtStartX, _cellOccupiedAtStartY))
+       if( _gridManager.UpdateVisualCell(_actualCellX, _actualCellY, _cellOccupiedAtStartX, _cellOccupiedAtStartY, _itemData))
         {
             _lastCellX = _actualCellX;
             _lastCellY = _actualCellY;
@@ -112,4 +115,18 @@ public class PlaceableObject : MonoBehaviour
     public bool IsSelected () { return _isSelected; }
     public void Select(bool isSelected) { _isSelected = isSelected; }
     public PlaceableItemData GetItemData() { return _itemData; }
+    public void SetValid(bool valid)
+    {
+        _isValid = valid;
+        Renderer[] renders = GetComponentsInChildren<Renderer>();
+        if (renders == null) return;
+
+        foreach (var r in renders)
+        {
+            if(valid)
+                r.material.color = Color.green;
+            else
+                r.material.color = Color.red;   
+        }
+    }
 }
