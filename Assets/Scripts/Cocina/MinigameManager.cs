@@ -5,9 +5,10 @@ public class MinigameManager : MonoBehaviour
     public static MinigameManager Instance;
 
     [Header("Minigame Scripts")]
-    public NeveraMinigame fridgeGame;     // NEVERA A SARTEN
-    public CongeladorMinigame freezerGame; // CONGELADOR A HORNO
-    public DespensaMinigame pantryGame; // DESPENSA A MESA
+    public NeveraMinigame    fridgeGame;
+    public CongeladorMinigame freezerGame;
+    public DespensaMinigame   pantryGame;
+    public EspeciasMinigame   especiasGame;
 
     void Awake() { Instance = this; }
 
@@ -18,14 +19,14 @@ public class MinigameManager : MonoBehaviour
             case MinigameType.Nevera:
                 fridgeGame.StartMinigame(recipe, player);
                 break;
-                
             case MinigameType.Congelador:
-                // AQUI LLAMAMOS AL NUEVO
                 freezerGame.StartMinigame(recipe, player);
                 break;
-                
             case MinigameType.Despensa:
                 pantryGame.StartMinigame(recipe, player);
+                break;
+            case MinigameType.Especias:
+                especiasGame.StartMinigame(recipe, player);
                 break;
         }
     }
