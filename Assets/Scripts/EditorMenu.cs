@@ -6,6 +6,7 @@ public class EditorMenu : MonoBehaviour
 
     public void OnClickButton(string sceneName)
     {
+        Debug.Log(sceneName);
         SceneController.Instance.ChangeScene(sceneName);
     }
 
