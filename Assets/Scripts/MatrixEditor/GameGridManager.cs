@@ -66,17 +66,22 @@ public class GameGridManager : MonoBehaviour
     }
     public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY, PlaceableItemData itemData)
     {
-        if(_gridData == null ) return;
-
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
+        if (_gridData == null) return;
+        if (newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
         _gridData.SetItem(newPlaceableObjectX, newPlaceableObjectY, itemData);
-        if(startPlaceableObjectX != -1 && startPlaceableObjectY != -1 && startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY)
+
+        bool hasValidStart = startPlaceableObjectX != -1 && startPlaceableObjectY != -1;
+        bool movedToNewCell = startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY;
+
+        if (hasValidStart && movedToNewCell)
+        {
             _gridData.SetType(startPlaceableObjectX, startPlaceableObjectY, CellType.Empty);
             _gridData.SetItem(startPlaceableObjectX, startPlaceableObjectY, null);
-        _placeables[newPlaceableObjectX, newPlaceableObjectY] = _placeables[startPlaceableObjectX, startPlaceableObjectY];
-        _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
+            _placeables[newPlaceableObjectX, newPlaceableObjectY] = _placeables[startPlaceableObjectX, startPlaceableObjectY];
+            _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
+        }
     }
     public void PlaceableGenerator()
     {
