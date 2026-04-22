@@ -13,6 +13,8 @@ public class GameGridManager : MonoBehaviour
     private PlaceableObject[,] _placeables;
     public GridData GetGridData => _gridData;
 
+    const int MIN_DISTANCE = 4;
+
     public void Init()
     {
         if (_gridData == null) return;
@@ -78,34 +80,54 @@ public class GameGridManager : MonoBehaviour
     }
     public void PlaceableGenerator()
     {
-        Transform placeableFolder = new GameObject("PlaceableItems").transform;
+        Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
+
+        if (placeableFolder == null)
+            placeableFolder = new GameObject("PlaceableItems").transform;
+
         for(int y = 0; y < _gridData.height; y++)
         {
             for(int x = 0; x < _gridData.width; x++)
             {
                 GridCell cell = _gridData.GetCell(x,y);
+
                 if(_gridData.GetType(x,y) == CellType.Occupied && cell.item != null)
                 {
                     Vector3 pos = new Vector3(x, 0f, y);
                     Vector3 finalPos = pos + cell.item.placementOffset;
+
                     GameObject tableInstance = Instantiate(cell.item.prefab, finalPos, Quaternion.identity, placeableFolder);
+
                     PlaceableObject placeable = tableInstance.GetComponent<PlaceableObject>();
+
                     if (placeable != null)
                     {
                         placeable.SetGridManager(this);
                         placeable.InstancePlaceableObjectCreated(x,y);
                         placeable.Init(cell.item);
+
                         _placeables[x, y] = placeable;
-                        if (cell.item.category == PlaceableCategory.Chair)
-                        {
-                            RotateTowardsTable(placeable, x, y);
-                            if(SceneController.Instance.IsSceneLoaded("PreparationScene"))
-                                ValidateAllChairs();
-                        }
                     }
                 }
             }
         }
+        for (int y = 0; y < _gridData.height; y++)
+        {
+            for (int x = 0; x < _gridData.width; x++)
+            {
+                PlaceableObject placeable = _placeables[x, y];
+                if (placeable == null) continue;
+
+                PlaceableItemData item = placeable.GetItemData();
+
+                if (item.category == PlaceableCategory.Chair)
+                {
+                    RotateTowardsTable(placeable, x, y);
+                }
+            }
+        }
+        if(SceneController.Instance.IsSceneLoaded("PreparationScene"))
+            ValidateAllChairs();
     }
     public void ValidateAllChairs()
     {
@@ -128,6 +150,37 @@ public class GameGridManager : MonoBehaviour
             }
         }
     }
+
+    public bool IsValidTablePlacement(int posX, int posY, int startX, int startY)
+    {
+        if(HasAdjacentTable(posX, posY, startX, startY))
+            return true;
+        for(int y = 0; y < _gridData.height; y++)
+        {
+            for(int x = 0; x < _gridData.width; x++)
+            {
+                if (x == startX && y == startY)
+                    continue;
+
+                GridCell cell = _gridData.GetCell(x,y);
+
+                if(cell.item == null || cell.item.category != PlaceableCategory.Table) 
+                    continue;
+
+                int dx = Mathf.Abs(x - posX);
+                int dy = Mathf.Abs(y - posY);
+                
+                int dist = dx + dy;
+
+                if(dist == 1)
+                    continue;
+                if(dist < MIN_DISTANCE)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public void RotateTowardsTable(PlaceableObject obj, int x, int y)
     {
         Vector2Int dir = GetAdjacentTableDirection(x, y);
@@ -158,7 +211,7 @@ public class GameGridManager : MonoBehaviour
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                 {
-                    if (!HasAdjacentTable(x, y))
+                    if (!CanPlaceItem(x, y, x, y, cell.item ))
                         return false;
                 }
             }
@@ -176,28 +229,34 @@ public class GameGridManager : MonoBehaviour
 
         if (item.category == PlaceableCategory.Chair)
         {
-            if (!HasAdjacentTable(x, y))
+            if (!HasAdjacentTable(x, y, startX, startY))
+                return false;
+        }
+        if(item.category == PlaceableCategory.Table)
+        {
+            if(!IsValidTablePlacement(x, y, startX, startY))
                 return false;
         }
 
         return true;
     }
-    public bool HasAdjacentTable(int x, int y)
+    public bool HasAdjacentTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
     {
+        Debug.Log($"Ignoring: {ignoreX},{ignoreY} | Checking: {x},{y}");
         // Arriba
-        if (IsTable(x, y + 1)) 
+        if (IsTable(x, y + 1, ignoreX, ignoreY)) 
             return true;
 
         // Abajo
-        if (IsTable(x, y - 1)) 
+        if (IsTable(x, y - 1, ignoreX, ignoreY)) 
             return true;
 
         // Derecha
-        if (IsTable(x + 1, y)) 
+        if (IsTable(x + 1, y, ignoreX, ignoreY)) 
             return true;
 
         // Izquierda
-        if (IsTable(x - 1, y)) 
+        if (IsTable(x - 1, y, ignoreX, ignoreY)) 
             return true;
 
         return false;
@@ -215,9 +274,12 @@ public class GameGridManager : MonoBehaviour
 
         return Vector2Int.zero;
     }
-    private bool IsTable(int x, int y)
+    private bool IsTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
     {
         if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+            return false;
+
+        if (x == ignoreX && y == ignoreY)
             return false;
 
         GridCell cell = _gridData.GetCell(x,y);

@@ -34,7 +34,6 @@ public class InventorySlotUI : MonoBehaviour
     }
     public void OnClick()
     {
-        Debug.Log("Definitivamente ha clickado");
         GameManager.Instance.Place(_posX, _posY);
     }
 }

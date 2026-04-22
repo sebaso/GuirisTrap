@@ -69,7 +69,6 @@ public class Inventory : MonoBehaviour
         if (slot == null) return false;
 
         slot.quantity--;
-                Debug.Log("Vamos a borrar: "+ slot.item.name);
 
         if (slot.quantity <= 0)
         {

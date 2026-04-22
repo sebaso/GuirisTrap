@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     private GameGridManager _gridManager;
     private static GameManager _instance;
     public static GameManager Instance => _instance; 
-
+    
     void Awake()
     {
         if(_instance == null)
@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (itemData == null)
         {
-            Debug.LogWarning("Item Invalido");
             return;
         }
         // añadir el sistema de dinero y que compruebe el coste de los objetos antes de poder comprarlos

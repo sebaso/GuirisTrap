@@ -103,7 +103,11 @@ public class GridController : MonoBehaviour
 
         if (item.category == PlaceableCategory.Chair)
         {
-            if (!_gridManager.HasAdjacentTable(x, y))
+            if (!_gridManager.HasAdjacentTable(x, y, placeableObject.StartCellX, placeableObject.StartCellY))
+                return false;
+        }else if(item.category == PlaceableCategory.Table)
+        {
+            if(!_gridManager.IsValidTablePlacement(x,y, placeableObject.StartCellX, placeableObject.StartCellY))
                 return false;
         }
 
