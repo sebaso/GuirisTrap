@@ -1,10 +1,13 @@
 {
   "dependencies": {
-    "com.unity.2d.sprite": {
-      "version": "1.0.0",
+    "com.luca3317.tmpeffects": {
+      "version": "https://github.com/Luca3317/TMPEffects.git?path=/Package",
       "depth": 0,
-      "source": "builtin",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {
+        "com.unity.textmeshpro": "3.0.6"
+      },
+      "hash": "812baba3047c7f9c7432ec5e4e3794e0a90b4694"
     },
     "com.unity.ai.navigation": {
       "version": "2.0.12",
@@ -16,7 +19,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.burst": {
-      "version": "1.8.29",
+      "version": "1.8.28",
       "depth": 2,
       "source": "registry",
       "dependencies": {
@@ -185,7 +188,7 @@
       }
     },
     "com.unity.test-framework.performance": {
-      "version": "3.4.0",
+      "version": "3.3.0",
       "depth": 3,
       "source": "registry",
       "dependencies": {
@@ -193,6 +196,14 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.textmeshpro": {
+      "version": "5.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
     },
     "com.unity.ugui": {
       "version": "2.0.0",

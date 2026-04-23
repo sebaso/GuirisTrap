@@ -8,7 +8,7 @@ public class DespensaMinigame : MonoBehaviour
     public GameObject minigamePanel;
     public Image progressBarFill;
     public TMP_Text timerText;
-    public TMP_Text mashText;
+    public TMP_Text mashText; // Pon <rainbow>¡Aprieta E muchas veces!</rainbow> en el Inspector, no desde código
 
     [Header("Settings")]
     public float baseClicks = 10f;
@@ -17,6 +17,7 @@ public class DespensaMinigame : MonoBehaviour
     private RecipeData currentRecipe;
     private bool isPlaying = false;
     private float timer;
+    private float maxTimer; // guardamos el tiempo máximo para calcular el ratio
     private float currentClicks;
     private float requiredClicks;
 
@@ -28,13 +29,16 @@ public class DespensaMinigame : MonoBehaviour
         minigamePanel.SetActive(true);
 
         requiredClicks = baseClicks + (recipe.difficulty * 5);
-        timer = Mathf.Max(3f, recipe.timeLimit - (recipe.difficulty * 0.5f));
+        timer    = Mathf.Max(3f, recipe.timeLimit - (recipe.difficulty * 0.5f));
+        maxTimer = timer;
 
         currentClicks = 0;
         progressBarFill.fillAmount = 0f;
         isPlaying = true;
         
+        // NO tocamos mashText desde código — el <rainbow> está en el Inspector
         if(mashText) mashText.transform.localScale = Vector3.one;
+        if(timerText) timerText.color = Color.white;
     }
 
     void Update()
@@ -42,7 +46,14 @@ public class DespensaMinigame : MonoBehaviour
         if (!isPlaying) return;
 
         timer -= Time.deltaTime;
-        if(timerText) timerText.text = timer.ToString("F1");
+
+        if(timerText)
+        {
+            timerText.text = timer.ToString("F1");
+            // Lerp de blanco a rojo según el tiempo restante
+            float ratio = Mathf.Clamp01(timer / maxTimer);
+            timerText.color = Color.Lerp(Color.red, Color.white, ratio);
+        }
 
         if (timer <= 0) { EndGame(false); return; }
 
@@ -54,9 +65,7 @@ public class DespensaMinigame : MonoBehaviour
     {
         currentClicks++;
         progressBarFill.fillAmount = currentClicks / requiredClicks;
-
         if(mashText) mashText.transform.localScale = Vector3.one * 1.2f;
-
         if (currentClicks >= requiredClicks) EndGame(true);
     }
     
@@ -70,6 +79,7 @@ public class DespensaMinigame : MonoBehaviour
     {
         isPlaying = false;
         minigamePanel.SetActive(false);
+        if(timerText) timerText.color = Color.white; // reset color
         player.enabled = true;
         
         if (success)

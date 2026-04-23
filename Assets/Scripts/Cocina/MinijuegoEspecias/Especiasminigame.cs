@@ -302,7 +302,7 @@ void HandleShoot()
     {
         if (balasText)      
         {
-            balasText.text      = $"Balas: {_balasRestantes}";
+            balasText.text      = $"Balas: <bounce>{_balasRestantes}</bounce>";
         }
         if (instruccionText) 
         {

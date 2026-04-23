@@ -110,17 +110,19 @@ public class NeveraMinigame : MonoBehaviour
 
     void UpdateUI()
     {
-        string display = "";
-        for (int i = 0; i < currentSequence.Count; i++)
-        {
-            string arrowSymbol = GetArrowSymbol(currentSequence[i]);
-            if      (i < currentIndex)  display += $"<color=green>{arrowSymbol} </color>";
-            else if (i == currentIndex) display += $"<color=yellow><b>[{arrowSymbol}]</b></color> ";
-            else                        display += $"{arrowSymbol} ";
-        }
-        sequenceDisplay.text = display;
+    string display = "";
+    for (int i = 0; i < currentSequence.Count; i++)
+    {
+        string arrowSymbol = GetArrowSymbol(currentSequence[i]);
+        if      (i < currentIndex)  
+            display += $"<color=green>{arrowSymbol} </color>";
+        else if (i == currentIndex) 
+            display += $"<color=yellow><b><grow>{arrowSymbol}</grow></b></color> ";
+        else                        
+            display += $"{arrowSymbol} ";
     }
-
+    sequenceDisplay.text = display;
+}
     string GetArrowSymbol(KeyCode key)
     {
         switch (key)

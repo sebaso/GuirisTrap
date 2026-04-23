@@ -323,7 +323,7 @@ public class EspetoMinigame : MonoBehaviour
                 timerTexts[i].text = e.state switch
                 {
                     EspetoState.Empty   => "[E] Poner espeto",
-                    EspetoState.Cooking => $" {e.burnTimer:F1}s  {e.cookProgress / DuracionCocina * 100f:F0}%",
+                    EspetoState.Cooking => $" {e.burnTimer:F1}s  <wave>{e.cookProgress / DuracionCocina * 100f:F0}%</wave>",
                     EspetoState.Done    => "¡LISTO! [E] Recoger",
                     EspetoState.Burned  => "QUEMADO [E] Tirar",
                     _                   => ""
