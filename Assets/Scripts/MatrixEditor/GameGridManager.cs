@@ -39,6 +39,8 @@ public class GameGridManager : MonoBehaviour
 
     public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY, PlaceableItemData item)
     {
+        if(newPlaceableObjectX < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY < 0 || newPlaceableObjectY >= _gridData.height)
+            return false;
         bool valid = CanPlaceItem( newPlaceableObjectX, newPlaceableObjectY, newPlaceableObjectStartAtX, newPlaceableObjectStartAtY, item );
         
         if(valid)
