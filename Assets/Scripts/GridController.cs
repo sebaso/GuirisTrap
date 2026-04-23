@@ -12,6 +12,8 @@ public class GridController : MonoBehaviour
     [SerializeField]
     private GridData _gridData;
     private GameGridManager _gridManager;
+    [SerializeField]
+    private GameObject chairPrefab;
     void Start()
     {
         _gridManager = GetComponent<GameGridManager>();
@@ -65,32 +67,83 @@ public class GridController : MonoBehaviour
     }
     private void PlacePlaceableObject()
     {
-        if(placeableObject && _hasObjectSelected)
+        if (!placeableObject || !_hasObjectSelected) 
+            return;
+        if (!placeableObject.IsSelected() || !Input.GetMouseButtonUp(0))
         {
-            if (placeableObject.IsSelected() && Input.GetMouseButtonUp(0))
-            {
-                if(placeableObject.CurrentCellX >= 0 && placeableObject.CurrentCellX <_gridData.widht && placeableObject.CurrentCellY >= 0 && placeableObject.CurrentCellY < _gridData.height && (
-                    _gridData.GetType(placeableObject.CurrentCellX, placeableObject.CurrentCellY) == CellType.Empty  || (placeableObject.CurrentCellX == placeableObject.StartCellX && placeableObject.CurrentCellY ==  placeableObject.StartCellY) ) )
-                {
-                    Vector3 pos = new Vector3(placeableObject.CurrentCellX + 0.5f, 0f, placeableObject.CurrentCellY + 0.5f);
-                    placeableObject.transform.position = pos;
-                    placeableObject.GetComponent<Collider>().enabled = true;
-                    _hasObjectSelected = false;
-                    placeableObject.Select(false);
-                    _gridManager.SaveGrid(placeableObject.CurrentCellX, placeableObject.CurrentCellY, placeableObject.StartCellX, placeableObject.StartCellY );
-                    placeableObject.IsPlacedAtCell();
-                }
-                else
-                {
-                    Vector3 pos = new Vector3(placeableObject.StartCellX + 0.5f, 0f, placeableObject.StartCellY + 0.5f);
-                    placeableObject.transform.position = pos;
-                    placeableObject.RestartCell();
-                    placeableObject.GetComponent<Collider>().enabled = true;
-                    _hasObjectSelected = false;
-                    placeableObject.Select(false);
-                }
-                _gridManager.ResetVisualGrid();
-            }
+            _gridManager.ResetVisualGrid();
+            return;
         }
+
+        int x = placeableObject.CurrentCellX;
+        int y = placeableObject.CurrentCellY;
+
+        if (CanPlace(x, y))
+        {
+            PlaceObject(x, y);
+            if(placeableObject.GetItemData().category == PlaceableCategory.Table || placeableObject.GetItemData().category == PlaceableCategory.Chair)
+                _gridManager.ValidateAllChairs();
+        }
+        else
+        {
+            RevertObject();
+        }
+
+        _gridManager.ResetVisualGrid();
+    }
+    private bool CanPlace(int x, int y)
+    {
+        if (x < 0 || x >= _gridData.width || y < 0 || y >= _gridData.height)
+            return false;
+
+        if (_gridData.GetType(x, y) != CellType.Empty || (x == placeableObject.StartCellX && y == placeableObject.StartCellY))
+            return false;
+
+        PlaceableItemData item = placeableObject.GetItemData();
+
+        if (item.category == PlaceableCategory.Chair)
+        {
+            if (!_gridManager.HasAdjacentTable(x, y, placeableObject.StartCellX, placeableObject.StartCellY))
+                return false;
+        }else if(item.category == PlaceableCategory.Table)
+        {
+            if(!_gridManager.IsValidTablePlacement(x,y, placeableObject.StartCellX, placeableObject.StartCellY))
+                return false;
+        }
+
+        return true;
+    }
+    private void PlaceObject(int x, int y)
+    {
+        PlaceableItemData item = placeableObject.GetItemData();
+
+        Vector3 pos = new Vector3(x, 0f, y);
+        Vector3 finalPos = pos + item.placementOffset;
+
+        placeableObject.transform.position = finalPos;
+        placeableObject.GetComponent<Collider>().enabled = true;
+
+        _hasObjectSelected = false;
+        placeableObject.Select(false);
+        if (item.category == PlaceableCategory.Chair)
+            _gridManager.RotateTowardsTable(placeableObject, x, y);
+
+        _gridManager.SaveGrid( x, y, placeableObject.StartCellX, placeableObject.StartCellY, item );
+
+        placeableObject.IsPlacedAtCell();
+    }
+    private void RevertObject()
+    {
+        PlaceableItemData item = placeableObject.GetItemData();
+
+        Vector3 pos = new Vector3(placeableObject.StartCellX, 0f, placeableObject.StartCellY);
+        Vector3 finalPos = pos + item.placementOffset;
+
+        placeableObject.transform.position = finalPos;
+        placeableObject.RestartCell();
+        placeableObject.GetComponent<Collider>().enabled = true;
+
+        _hasObjectSelected = false;
+        placeableObject.Select(false);
     }
 }

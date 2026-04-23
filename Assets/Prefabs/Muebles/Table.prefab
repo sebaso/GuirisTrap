@@ -398,8 +398,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Table
   tableNumber: 1
-  foodPlacementPoint: {fileID: 0}
-  seatPoint: {fileID: 0}
+  chairDetectionDistance: 1.1
+  chairDetectionRadius: 0.5
+  chairLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _registeredChairs: []
+  foodPoint: {fileID: 0}
+  autoGenerateSeats: 0
+  seatRadius: 1.5
 --- !u!65 &1431962567037335996
 BoxCollider:
   m_ObjectHideFlags: 0
