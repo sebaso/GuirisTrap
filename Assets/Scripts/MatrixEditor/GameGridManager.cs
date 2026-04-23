@@ -247,7 +247,6 @@ public class GameGridManager : MonoBehaviour
     }
     public bool HasAdjacentTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
     {
-        Debug.Log($"Ignoring: {ignoreX},{ignoreY} | Checking: {x},{y}");
         // Arriba
         if (IsTable(x, y + 1, ignoreX, ignoreY)) 
             return true;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -48,8 +49,48 @@ public class GridController : MonoBehaviour
                     placeableObject.Select(true);
                 }
             }
+        }else if(Input.GetMouseButtonDown(1) && !_hasObjectSelected)
+        {
+            Vector3 moussePos = Input.mousePosition;
+            Ray ray = _mainCamera.ScreenPointToRay(moussePos);
+
+            RaycastHit hitInfo;
+
+            bool hit = Physics.Raycast(ray, out hitInfo);
+            
+            if (hit)
+            {
+        PlaceableObject hitObject = hitInfo.transform.GetComponent<PlaceableObject>();
+        if (hitObject != null && hitObject.GetItemData() != null)
+        {
+            PlaceableItemData itemData = hitObject.GetItemData();
+            Inventory.Instance.AddItem(itemData);
+            RemovePlaceableObject(hitObject);
+            _gridManager.ValidateAllChairs();
+        }
+            }
         }
     }
+
+    private void RemovePlaceableObject(PlaceableObject placeableObject)
+    {
+        if (placeableObject == null) 
+            return;
+
+        int x = placeableObject.CurrentCellX;
+        int y = placeableObject.CurrentCellY;
+        if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+        {
+            Destroy(placeableObject.gameObject);
+            return;
+        }
+        _gridData.SetType(x, y, CellType.Empty);
+        _gridData.SetItem(x, y, null);
+        if (_gridManager.GetPlaceableAt(x,y) != null)
+            _gridManager.SetPlaceableAt(x,y, null);
+        Destroy(placeableObject.gameObject);
+    }
+
     private void MovePlaceableObject()
     {
        if (placeableObject && _hasObjectSelected)
