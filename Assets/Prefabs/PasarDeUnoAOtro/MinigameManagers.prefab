@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5121450483604173185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8416364807050250092}
+  - component: {fileID: 2303750495842487321}
+  - component: {fileID: 5797423715435791458}
+  - component: {fileID: 7628214325001316133}
+  - component: {fileID: 5516500163094940812}
+  - component: {fileID: 4548467256511604951}
+  m_Layer: 0
+  m_Name: MinigameManagers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8416364807050250092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2303750495842487321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bff7228b4e7cb84a837d5ba925166cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinigameManager
+  fridgeGame: {fileID: 5797423715435791458}
+  freezerGame: {fileID: 7628214325001316133}
+  pantryGame: {fileID: 5516500163094940812}
+  especiasGame: {fileID: 4548467256511604951}
+--- !u!114 &5797423715435791458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 194e0591fd3a1624ab5688dff8a52b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QTEMinigame
+  minigamePanel: {fileID: 0}
+  sequenceDisplay: {fileID: 0}
+  timerText: {fileID: 0}
+  allowWASD: 1
+--- !u!114 &7628214325001316133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bbc468ed057c414180f4c11f8808384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FreezerMinigame
+  minigamePanel: {fileID: 0}
+  cursorRect: {fileID: 0}
+  targetZone: {fileID: 0}
+  baseSpeed: 2
+  speedMultiplierPerLevel: 1.2
+  baseZoneSize: 0.3
+  cursorWidth: 5
+--- !u!114 &5516500163094940812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ecfa1e4cfeb2d047bc92353ffb2f1b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DespensaMinigame
+  minigamePanel: {fileID: 0}
+  progressBarFill: {fileID: 0}
+  timerText: {fileID: 0}
+  mashText: {fileID: 0}
+  baseClicks: 10
+--- !u!114 &4548467256511604951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121450483604173185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb16a2672a3a31478e2a438445c1ad1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EspeciasMinigame
+  interactionDistance: 2.5
+  cucharaRect: {fileID: 0}
+  cucharaSpeed: 600
+  cucharaMinX: -400
+  cucharaMaxX: 400
+  balaPrefabRect: {fileID: 0}
+  balaSpeed: 1000
+  layoutsFacil:
+  - {fileID: 0}
+  layoutsNormal:
+  - {fileID: 0}
+  layoutsDificil:
+  - {fileID: 0}
+  layoutsImposible:
+  - {fileID: 0}
+  baseEspeciaSpeed: 150
+  speedPerDifficulty: 50
+  minigamePanel: {fileID: 0}
+  balasText: {fileID: 0}
+  instruccionText: {fileID: 0}
