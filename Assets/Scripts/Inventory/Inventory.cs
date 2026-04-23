@@ -10,6 +10,22 @@ public class Inventory : MonoBehaviour
     private InventorySlot[,] _inventory;
     public int Width => _width;
     public int Height => _height;
+    private static Inventory _instance;
+    public static Inventory Instance => _instance; 
+    
+    void Awake()
+    {
+        if(_instance == null)
+        {
+            _instance = this;
+                    Debug.Log($"Inventory creado en escena: {gameObject.scene.name}");
+        }
+        else
+        {
+                    Debug.Log($"Inventory duplicado destruido en escena: {gameObject.scene.name}");
+            Destroy(this);
+        }
+    }
     public void Init()
     {
         _inventory = new InventorySlot[_width,_height];
@@ -50,7 +66,6 @@ public class Inventory : MonoBehaviour
             }
         }
         //Si no puedo, el inventario está lleno
-        Debug.Log("El inventario está lleno");
         return false;
     }
     public InventorySlot GetSlot(int x, int y)
