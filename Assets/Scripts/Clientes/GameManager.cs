@@ -4,14 +4,14 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private Inventory _inventory;
-    [SerializeField] 
+    [SerializeField]
     private GameGridManager _gridManager;
     private static GameManager _instance;
-    public static GameManager Instance => _instance; 
-    
+    public static GameManager Instance => _instance;
+
     void Awake()
     {
-        if(_instance == null)
+        if (_instance == null)
         {
             _instance = this;
         }
@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (itemData == null)
         {
+            Debug.LogWarning("Item Invalido");
             return;
         }
         // añadir el sistema de dinero y que compruebe el coste de los objetos antes de poder comprarlos
@@ -50,11 +51,11 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("No hay prefab o grid asignado en BuildManager");
             return;
         }
-        for(int y = 0; y < _gridManager.GetGridData.height; y++)
+        for (int y = 0; y < _gridManager.GetGridData.height; y++)
         {
-            for(int x = 0; x < _gridManager.GetGridData.width; x++)
+            for (int x = 0; x < _gridManager.GetGridData.width; x++)
             {
-                if(_gridManager.GetGridData.GetIsWarehouse(x,y) == true && _gridManager.GetGridData.GetType(x,y) == CellType.Empty)
+                if (_gridManager.GetGridData.GetIsWarehouse(x, y) == true && _gridManager.GetGridData.GetType(x, y) == CellType.Empty)
                 {
                     Vector3 initialPosition = new Vector3(x, 0f, y);
                     Vector3 finalPosition = initialPosition + itemData.placementOffset;
@@ -64,11 +65,11 @@ public class GameManager : MonoBehaviour
                     _gridManager.GetGridData.SetType(x, y, CellType.Occupied);
                     _gridManager.GetGridData.SetItem(x, y, itemData);
                     placeable.SetGridManager(_gridManager);
-                    placeable.InstancePlaceableObjectCreated(x,y);
+                    placeable.InstancePlaceableObjectCreated(x, y);
                     placeable.Init(itemData);
-                    _gridManager.SetPlaceableAt(x,y, placeable);
+                    _gridManager.SetPlaceableAt(x, y, placeable);
                     _inventory.RemoveItem(posX, posY);
-                    if(itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
+                    if (itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
                         _gridManager.ValidateAllChairs();
                     return;
                 }

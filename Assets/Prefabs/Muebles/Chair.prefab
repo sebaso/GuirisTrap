@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1490234645798547847}
   - component: {fileID: 488814092820423036}
   - component: {fileID: 4326245099280660400}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 9008443326404009932}
   - component: {fileID: 3795247133355422086}
   - component: {fileID: 4357735154302473140}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 4863600247693317991}
   - component: {fileID: 3538659656880971710}
   - component: {fileID: 2412341705962393447}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 7482711955171435101}
   - component: {fileID: 7483789710706221555}
   - component: {fileID: 587268909645226917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,6 +360,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6697097066572606378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 842923079548403103}
+  m_Layer: 6
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &842923079548403103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6697097066572606378}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4731216459064392770}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8325509421265129429
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,7 +402,7 @@ GameObject:
   - component: {fileID: 4595008747924923444}
   - component: {fileID: 9078587194004403518}
   - component: {fileID: 4636185487290976025}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -461,7 +492,8 @@ GameObject:
   - component: {fileID: 4731216459064392770}
   - component: {fileID: 8135854371527884350}
   - component: {fileID: 1918570960508067243}
-  m_Layer: 0
+  - component: {fileID: -1922133660464054222}
+  m_Layer: 6
   m_Name: Chair
   m_TagString: PlaceableObject
   m_Icon: {fileID: 0}
@@ -482,6 +514,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7463169387021778968}
+  - {fileID: 842923079548403103}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8135854371527884350
@@ -517,6 +550,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0169398, y: 1.0841337, z: 1.0163745}
   m_Center: {x: 0.0014507362, y: 0.18201014, z: 0.0010756254}
+--- !u!114 &-1922133660464054222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8398346995212949416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac996f89c8ef94457999526d463e9531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Chair
+  seatPoint: {fileID: 842923079548403103}
 --- !u!1 &8783267479419326705
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,7 +574,7 @@ GameObject:
   - component: {fileID: 7243708368613990148}
   - component: {fileID: 4397150748952452614}
   - component: {fileID: 5611646047662853662}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -616,7 +662,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7463169387021778968}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
