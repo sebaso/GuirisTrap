@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void PickUpFood(Food food)
+    public void PickUpFood(Food food)
     {
         heldFood = food;
         food.PickUp(holdPoint);
