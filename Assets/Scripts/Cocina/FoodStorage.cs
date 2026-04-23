@@ -28,7 +28,12 @@ public class FoodStorage : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) ChangeSelection(1);
             if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) ChangeSelection(-1);
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) ConfirmSelection();
+            
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Return)) 
+        {
+            ConfirmSelection();
+        }
+
             if (Input.GetKeyDown(KeyCode.Escape)) CloseSelection();
         }
     }
@@ -62,7 +67,7 @@ public class FoodStorage : MonoBehaviour
     void CloseSelection()
     {
         isSelecting = false;
-        if(playerRef) playerRef.enabled = true; // DEBLOQUEAMOS MOVIMIENTO
+        if(playerRef) playerRef.enabled = true; // DESBLOQUEAR MOVIMIENTO
         selectionPopup.SetActive(false);
     }
 

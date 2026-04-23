@@ -5,14 +5,13 @@ using System.Collections.Generic;
 public class Especia : MonoBehaviour
 {
     [Header("Waypoints")]
-    [Tooltip("transform waypoint en orden, La especia los recorre en bucle rebotando.")]
     public List<Transform> waypoints = new List<Transform>();
 
     [Header("Velocidad")]
     public float speed = 2f;
 
     private int   _currentWaypoint = 0;
-    private int   _direction        = 1; // 1 avanzar -1 retroceder
+    private int   _direction        = 1; // 1 PA ALANTE -1 PA ATRÁS
     private bool  _congelada        = false;
     private Rigidbody _rb;
 
@@ -48,7 +47,7 @@ public class Especia : MonoBehaviour
 
         if (next >= waypoints.Count || next < 0)
         {
-            _direction *= -1; // rebota
+            _direction *= -1; // rebota rebota y en tu cara explota. (Solo rebota. No explota. Era una rima.)
             next = _currentWaypoint + _direction;
         }
 
@@ -69,7 +68,7 @@ public class Especia : MonoBehaviour
     public void Congelar()
     {
         _congelada = true;
-        // Detener en posición actual
+        // DETENER MOVIMIENTO
     }
 
     // LO LLAMA ESPECIASMINIGAME 

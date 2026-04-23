@@ -20,11 +20,11 @@ public class EspetoMinigame : MonoBehaviour
 
 
     [Header("Configuración Espetos")]
-    public float cookDuration      = 45f;  
-    public float burnDuration      = 30f;  
-    public float zoneShiftInterval = 25f;  
-    public float zoneHalfSize      = 0.12f;
-    public float moveSpeed         = 0.6f; 
+    public float DuracionCocina      = 45f;  
+    public float DuracionQuema      = 30f;  
+    public float intervaloCambioZona = 25f;  
+    public float margenZonaVerde      = 0.15f;
+    public float velocidadMovimiento         = 0.6f; 
     public int   espetoCount       = 3;    
 
     [Header("Food Output")]
@@ -70,7 +70,7 @@ public class EspetoMinigame : MonoBehaviour
             {
                 zonePosition   = Random.Range(0.2f, 0.8f),
                 espetoPosition = 0.5f,
-                zoneShiftTimer = zoneShiftInterval
+                zoneShiftTimer = intervaloCambioZona
             };
         }
 
@@ -141,9 +141,9 @@ public class EspetoMinigame : MonoBehaviour
             {
                 // En zona verde
                 e.cookProgress  += Time.deltaTime;
-                e.burnTimer      = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, burnDuration);
+                e.burnTimer      = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, DuracionQuema);
 
-                if (e.cookProgress >= cookDuration)
+                if (e.cookProgress >= DuracionCocina)
                 {
                     e.state = EspetoState.Done;
                     Debug.Log($"[Espetera] Espeto {i} ¡LISTO!");
@@ -168,7 +168,7 @@ public class EspetoMinigame : MonoBehaviour
             if (e.zoneShiftTimer <= 0f)
             {
                 ShiftZone(i);
-                e.zoneShiftTimer = zoneShiftInterval;
+                e.zoneShiftTimer = intervaloCambioZona;
             }
         }
     }
@@ -177,7 +177,7 @@ public class EspetoMinigame : MonoBehaviour
     void HandlePanelInput()
     {
         // Cerrar panel
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             ClosePanel();
             return;
@@ -221,9 +221,9 @@ public class EspetoMinigame : MonoBehaviour
         if (_isRepositioning && sel.state == EspetoState.Cooking)
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition + moveSpeed * Time.deltaTime);
+                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition + velocidadMovimiento * Time.deltaTime);
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition - moveSpeed * Time.deltaTime);
+                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition - velocidadMovimiento * Time.deltaTime);
         }
     }
 
@@ -232,10 +232,10 @@ public class EspetoMinigame : MonoBehaviour
         Espeto e = _espetos[index];
         e.state          = EspetoState.Cooking;
         e.cookProgress   = 0f;
-        e.burnTimer      = burnDuration;
+        e.burnTimer      = DuracionQuema;
         e.espetoPosition = 0.5f;
         e.zonePosition   = Random.Range(0.2f, 0.8f);
-        e.zoneShiftTimer = zoneShiftInterval;
+        e.zoneShiftTimer = intervaloCambioZona;
         Debug.Log($"[Espetera] Espeto {index} colocado.");
     }
 
@@ -273,7 +273,7 @@ public class EspetoMinigame : MonoBehaviour
     bool IsInGreenZone(int index)
     {
         Espeto e = _espetos[index];
-        return Mathf.Abs(e.espetoPosition - e.zonePosition) <= zoneHalfSize;
+        return Mathf.Abs(e.espetoPosition - e.zonePosition) <= margenZonaVerde;
     }
 
     void RefreshUI()
@@ -297,8 +297,8 @@ public class EspetoMinigame : MonoBehaviour
             // — Zona verde 
             if (greenZoneRects != null && i < greenZoneRects.Length && greenZoneRects[i])
             {
-                float min = Mathf.Clamp01(e.zonePosition - zoneHalfSize);
-                float max = Mathf.Clamp01(e.zonePosition + zoneHalfSize);
+                float min = Mathf.Clamp01(e.zonePosition - margenZonaVerde);
+                float max = Mathf.Clamp01(e.zonePosition + margenZonaVerde);
                 greenZoneRects[i].anchorMin  = new Vector2(0, min);
                 greenZoneRects[i].anchorMax  = new Vector2(1, max);
                 greenZoneRects[i].offsetMin  = Vector2.zero;
@@ -323,7 +323,7 @@ public class EspetoMinigame : MonoBehaviour
                 timerTexts[i].text = e.state switch
                 {
                     EspetoState.Empty   => "[E] Poner espeto",
-                    EspetoState.Cooking => $"🔥 {e.burnTimer:F1}s | ✅ {e.cookProgress / cookDuration * 100f:F0}%",
+                    EspetoState.Cooking => $" {e.burnTimer:F1}s | ✅ {e.cookProgress / DuracionCocina * 100f:F0}%",
                     EspetoState.Done    => "¡LISTO! [E] Recoger",
                     EspetoState.Burned  => "QUEMADO [E] Tirar",
                     _                   => ""
@@ -341,12 +341,12 @@ public class EspetoMinigame : MonoBehaviour
             Espeto sel = _espetos[_selectedIndex];
             instructionText.text = sel.state switch
             {
-                EspetoState.Empty   => "A/D Navegar  |  E Poner espeto  |  ESC Cerrar",
+                EspetoState.Empty   => "A/D Navegar  |  E Poner espeto  |  Q Cerrar",
                 EspetoState.Cooking => _isRepositioning
-                                        ? "W/S Mover espeto  |  E Soltar  |  ESC Cerrar"
-                                        : "A/D Navegar  |  E Reposicionar  |  ESC Cerrar",
-                EspetoState.Done    => "A/D Navegar  |  E Recoger espeto  |  ESC Cerrar",
-                EspetoState.Burned  => "A/D Navegar  |  E Tirar  |  ESC Cerrar",
+                                        ? "W/S Mover espeto  |  E Soltar  |  Q Cerrar"
+                                        : "A/D Navegar  |  E Reposicionar  |  Q Cerrar",
+                EspetoState.Done    => "A/D Navegar  |  E Recoger espeto  |  Q Cerrar",
+                EspetoState.Burned  => "A/D Navegar  |  E Tirar  |  Q Cerrar",
                 _                   => ""
             };
         }

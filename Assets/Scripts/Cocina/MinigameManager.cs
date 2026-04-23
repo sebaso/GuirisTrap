@@ -5,7 +5,7 @@ public class MinigameManager : MonoBehaviour
     public static MinigameManager Instance;
 
     [Header("Minigame Scripts")]
-    public NeveraMinigame    fridgeGame;
+    public NeveraMinigame     fridgeGame;
     public CongeladorMinigame freezerGame;
     public DespensaMinigame   pantryGame;
     public EspeciasMinigame   especiasGame;

@@ -8,8 +8,6 @@ public class NeveraMinigame : MonoBehaviour
     public GameObject minigamePanel; 
     public TMP_Text sequenceDisplay; 
     public TMP_Text timerText;
-    
-    [Header("Settings")]
     public bool allowWASD = true;
 
     private List<KeyCode> currentSequence = new List<KeyCode>();
