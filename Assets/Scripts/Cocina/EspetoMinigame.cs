@@ -248,10 +248,9 @@ public class EspetoMinigame : MonoBehaviour
             GameObject foodObj = Instantiate(espetoFoodPrefab,
                 _player.transform.position + Vector3.up,
                 Quaternion.identity);
-
             Food food = foodObj.GetComponent<Food>();
             if (food != null)
-                food.PickUp(_player.holdPoint);
+          _player.PickUpFood(food);
         }
 
         Debug.Log($"[Espetera] Espeto {index} recogido.");
