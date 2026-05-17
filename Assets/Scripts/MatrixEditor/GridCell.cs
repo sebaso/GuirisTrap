@@ -5,6 +5,6 @@ public class GridCell
 { 
     public CellType type = CellType.Empty;
     public bool isWarehouse = false;
-
+    public bool isEntrance = false;
     public PlaceableItemData item;
 }

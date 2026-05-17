@@ -34,6 +34,6 @@ public class InventorySlotUI : MonoBehaviour
     }
     public void OnClick()
     {
-        GameManager.Instance.Place(_posX, _posY);
+        //GameManager.Instance.Place(_posX, _posY);
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 310f2845e9e0605469a0de00286a8f59, type: 3}
-  m_Name: GridData
+  m_Name: FloorGridData
   m_EditorClassIdentifier: Assembly-CSharp::GridData
   width: 28
   height: 19
@@ -19,1597 +19,2129 @@ MonoBehaviour:
   _cells:
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
-  - type: 0
+  - type: 2
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 0
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 1
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
   - type: 1
     isWarehouse: 0
+    isEntrance: 0
     item: {fileID: 0}
