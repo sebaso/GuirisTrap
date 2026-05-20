@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System.Collections.Generic;
 public class GameGridManager : MonoBehaviour
 {
     [SerializeField]
@@ -39,8 +39,7 @@ public class GameGridManager : MonoBehaviour
 
     public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY, PlaceableItemData item)
     {
-        if(newPlaceableObjectX < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY < 0 || newPlaceableObjectY >= _gridData.height)
-            return false;
+        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return false;
         bool valid = CanPlaceItem( newPlaceableObjectX, newPlaceableObjectY, newPlaceableObjectStartAtX, newPlaceableObjectStartAtY, item );
         
         if(valid)
@@ -57,6 +56,10 @@ public class GameGridManager : MonoBehaviour
             for(int x = 0; x < _gridData.width; x++)
             {
                 _cells[x,y].SetState(CellVisualState.Default);
+                if (_gridData.GetIsEntrance(x, y))
+                {
+                    _cells[x,y].SetState(CellVisualState.Blocked);
+                }
             }
         }
     }
@@ -151,16 +154,59 @@ public class GameGridManager : MonoBehaviour
                     if (chair == null) 
                         continue;
 
-                    bool valid = HasAdjacentTable(x, y);
-                    chair.SetValid(valid);
+                    if(CountAdjacentTables(x, y) == 1 && IsCellReachableFromEntrance(x,y))
+                        chair.SetValid(true);
+                    else
+                        chair.SetValid(false);
                 }
             }
         }
     }
 
+    public bool CheckPlaceables()
+    {
+        if(CountChairs() > 0 && CountTables() > 0)
+            return true;
+        return false;
+    }
+
+    public int CountChairs()
+    {
+        int numChairs = 0;
+        for (int y = 0; y < _gridData.height; y++)
+        {
+            for (int x = 0; x < _gridData.width; x++)
+            {
+                GridCell cell = _gridData.GetCell(x, y);
+
+                if (cell.item != null && !cell.isWarehouse && cell.item.category == PlaceableCategory.Chair)
+                {
+                    numChairs++;
+                }
+            }
+        }
+        return numChairs;
+    }
+    public int CountTables()
+    {
+        int numTables = 0;
+        for (int y = 0; y < _gridData.height; y++)
+        {
+            for (int x = 0; x < _gridData.width; x++)
+            {
+                GridCell cell = _gridData.GetCell(x, y);
+
+                if (cell.item != null && !cell.isWarehouse && cell.item.category == PlaceableCategory.Table)
+                {
+                    numTables++;
+                }
+            }
+        }
+        return numTables;
+    }
     public bool IsValidTablePlacement(int posX, int posY, int startX, int startY)
     {
-        if(HasAdjacentTable(posX, posY, startX, startY))
+        if(CountAdjacentTables(posX, posY, startX, startY) > 0)
             return true;
         for(int y = 0; y < _gridData.height; y++)
         {
@@ -223,6 +269,8 @@ public class GameGridManager : MonoBehaviour
                 }
             }
         }
+        if(!CheckPlaceables())
+            return false;
         return true;
     }
 
@@ -236,7 +284,9 @@ public class GameGridManager : MonoBehaviour
 
         if (item.category == PlaceableCategory.Chair)
         {
-            if (!HasAdjacentTable(x, y, startX, startY))
+            if (CountAdjacentTables(x, y, startX, startY) != 1)
+                return false;
+            if(!IsCellReachableFromEntrance(x,y))
                 return false;
         }
         if(item.category == PlaceableCategory.Table)
@@ -247,25 +297,23 @@ public class GameGridManager : MonoBehaviour
 
         return true;
     }
-    public bool HasAdjacentTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
+    public int CountAdjacentTables(int x, int y, int ignoreX = -1, int ignoreY = -1)
     {
+        int count = 0;
+
         // Arriba
-        if (IsTable(x, y + 1, ignoreX, ignoreY)) 
-            return true;
-
+        if (IsTable(x, y + 1, ignoreX, ignoreY))
+            count++;
         // Abajo
-        if (IsTable(x, y - 1, ignoreX, ignoreY)) 
-            return true;
-
+        if (IsTable(x, y - 1, ignoreX, ignoreY))
+            count++;
         // Derecha
-        if (IsTable(x + 1, y, ignoreX, ignoreY)) 
-            return true;
-
+        if (IsTable(x + 1, y, ignoreX, ignoreY))
+            count++;
         // Izquierda
-        if (IsTable(x - 1, y, ignoreX, ignoreY)) 
-            return true;
-
-        return false;
+        if (IsTable(x - 1, y, ignoreX, ignoreY))
+            count++;
+        return count;
     }
     public Vector2Int GetAdjacentTableDirection(int x, int y)
     {
@@ -294,6 +342,50 @@ public class GameGridManager : MonoBehaviour
         {
             if(cell.item.category == PlaceableCategory.Table)
                 return true;
+        }
+        return false;
+    }
+    public bool IsCellReachableFromEntrance(int targetX, int targetY)
+    {
+        bool[,] visited = new bool[_gridData.width, _gridData.height];
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        for (int y = 0; y < _gridData.height; y++)
+        {
+            for (int x = 0; x < _gridData.width; x++)
+            {
+                if (_gridData.GetIsEntrance(x, y))
+                {
+                    queue.Enqueue(new Vector2Int(x, y));
+                    visited[x, y] = true;
+                }
+            }
+        }
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+
+            if (current.x == targetX && current.y == targetY)
+                return true;
+
+            foreach (var dir in directions)
+            {
+                int nx = current.x + dir.x;
+                int ny = current.y + dir.y;
+
+                if (nx < 0 || ny < 0 || nx >= _gridData.width || ny >= _gridData.height) continue;
+                if (visited[nx, ny]) continue;
+
+                bool isTarget  = (nx == targetX && ny == targetY);
+                bool isWalkable = _gridData.GetType(nx, ny) == CellType.Empty 
+                            || _gridData.GetIsEntrance(nx, ny);
+
+                if ( isTarget || isWalkable)
+                {
+                    visited[nx, ny] = true;
+                    queue.Enqueue(new Vector2Int(nx, ny));
+                }
+            }
         }
         return false;
     }
