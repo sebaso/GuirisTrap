@@ -12,7 +12,9 @@ public class GameGridManager : MonoBehaviour
     private GridVisualCell[,] _cells;
     private PlaceableObject[,] _placeables;
     public GridData GetGridData => _gridData;
-
+    [SerializeField] 
+    private PlaceableSurface _surface = PlaceableSurface.Floor;
+    public PlaceableSurface Surface => _surface;
     const int MIN_DISTANCE = 4;
 
     public void Init()
@@ -29,12 +31,25 @@ public class GameGridManager : MonoBehaviour
         {
             for (int x = 0; x < _gridData.width; x++)
             {
-                Vector3 position = new Vector3(x + 0.5f, 0f, y + 0.5f);
-                GridVisualCell cell = Instantiate(_gridViewCellPrefab, position, Quaternion.identity, transform);
+                Vector3 localPos = new Vector3(x + 0.5f, 0f, y + 0.5f);
+
+                Vector3 worldPos = transform.TransformPoint(localPos);
+
+                GridVisualCell cell = Instantiate( _gridViewCellPrefab, worldPos, transform.rotation, transform );
+
                 cell.Init(x, y);
                 _cells[x, y] = cell;
             }
         }
+    }
+    public void SetGridVisible(bool visible)
+    {
+        if (_cells == null) return;
+        
+        for (int y = 0; y < _gridData.height; y++)
+            for (int x = 0; x < _gridData.width; x++)
+                if (_cells[x, y] != null)
+                    _cells[x, y].gameObject.SetActive(visible);
     }
 
     public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY, PlaceableItemData item)
@@ -88,59 +103,57 @@ public class GameGridManager : MonoBehaviour
             _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
         }
     }
-    public void PlaceableGenerator()
+public void PlaceableGenerator()
+{
+    Transform placeableFolder = GameObject.Find("")?.transform;
+    if (placeableFolder == null)
+        placeableFolder = new GameObject("PlaceableItems").transform;
+
+    for (int y = 0; y < _gridData.height; y++)
     {
-        Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
-
-        if (placeableFolder == null)
-            placeableFolder = new GameObject("PlaceableItems").transform;
-
-        for(int y = 0; y < _gridData.height; y++)
+        for (int x = 0; x < _gridData.width; x++)
         {
-            for(int x = 0; x < _gridData.width; x++)
+            GridCell cell = _gridData.GetCell(x, y);
+            if (_gridData.GetType(x, y) != CellType.Occupied || cell.item == null) continue;
+
+            Vector3 localPos = new Vector3(x, 0f, y) + cell.item.placementOffset;
+            Vector3 worldPos = transform.TransformPoint(localPos);
+
+            GameObject instance = Instantiate( cell.item.prefab, worldPos, transform.rotation, placeableFolder );
+
+            PlaceableObject placeable = instance.GetComponent<PlaceableObject>();
+
+            if (placeable != null)
             {
-                GridCell cell = _gridData.GetCell(x,y);
-
-                if(_gridData.GetType(x,y) == CellType.Occupied && cell.item != null)
-                {
-                    Vector3 pos = new Vector3(x, 0.3f, y);
-                    Vector3 finalPos = pos + cell.item.placementOffset;
-
-                    GameObject tableInstance = Instantiate(cell.item.prefab, finalPos, Quaternion.identity, placeableFolder);
-
-                    PlaceableObject placeable = tableInstance.GetComponent<PlaceableObject>();
-
-                    if (placeable != null)
-                    {
-                        placeable.SetGridManager(this);
-                        placeable.InstancePlaceableObjectCreated(x,y);
-                        placeable.Init(cell.item);
-
-                        _placeables[x, y] = placeable;
-                    }
-                }
+                placeable.SetGridManager(this);
+                placeable.InstancePlaceableObjectCreated(x, y);
+                placeable.Init(cell.item);
+                _placeables[x, y] = placeable;
             }
         }
+    }
+
+    if (_surface == PlaceableSurface.Floor)
+    {
         for (int y = 0; y < _gridData.height; y++)
         {
             for (int x = 0; x < _gridData.width; x++)
             {
                 PlaceableObject placeable = _placeables[x, y];
                 if (placeable == null) continue;
-
-                PlaceableItemData item = placeable.GetItemData();
-
-                if (item.category == PlaceableCategory.Chair)
-                {
+                if (placeable.GetItemData().category == PlaceableCategory.Chair)
                     RotateTowardsTable(placeable, x, y);
-                }
             }
         }
-        if(SceneController.Instance.IsSceneLoaded("PreparationScene"))
+
+        if (SceneController.Instance.IsSceneLoaded("PreparationScene"))
             ValidateAllChairs();
     }
+}
     public void ValidateAllChairs()
     {
+        if (_surface != PlaceableSurface.Floor) return;
+
         for (int y = 0; y < _gridData.height; y++)
         {
             for (int x = 0; x < _gridData.width; x++)
@@ -151,13 +164,10 @@ public class GameGridManager : MonoBehaviour
                 {
                     PlaceableObject chair = _placeables[x, y];
 
-                    if (chair == null) 
-                        continue;
+                    if (chair == null) continue;
 
-                    if(CountAdjacentTables(x, y) == 1 && IsCellReachableFromEntrance(x,y))
-                        chair.SetValid(true);
-                    else
-                        chair.SetValid(false);
+                    if(CountAdjacentTables(x, y) == 1 && IsCellReachableFromEntrance(x,y)) chair.SetValid(true);
+                    else chair.SetValid(false);
                 }
             }
         }
@@ -212,23 +222,19 @@ public class GameGridManager : MonoBehaviour
         {
             for(int x = 0; x < _gridData.width; x++)
             {
-                if (x == startX && y == startY)
-                    continue;
+                if (x == startX && y == startY) continue;
 
                 GridCell cell = _gridData.GetCell(x,y);
 
-                if(cell.item == null || cell.item.category != PlaceableCategory.Table) 
-                    continue;
+                if(cell.item == null || cell.item.category != PlaceableCategory.Table) continue;
 
                 int dx = Mathf.Abs(x - posX);
                 int dy = Mathf.Abs(y - posY);
                 
                 int dist = dx + dy;
 
-                if(dist == 1)
-                    continue;
-                if(dist < MIN_DISTANCE)
-                    return false;
+                if(dist == 1) continue;
+                if(dist < MIN_DISTANCE) return false;
             }
         }
         return true;

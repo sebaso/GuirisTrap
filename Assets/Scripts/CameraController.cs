@@ -14,6 +14,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private float _transitionSpeed = 3f;
     private Vector3 _velocityPos;
+    public System.Action<CameraView> OnViewChanged;
 
     [Header("Pivots")]
     [SerializeField] private Transform _pivotPerspective;
@@ -65,6 +66,7 @@ public class CameraController : MonoBehaviour
                 break;
         }
         _mainCamera.orthographic = view == CameraView.TopDown;
+        OnViewChanged?.Invoke(view);
     }
 
     public void CycleWalls(int direction)

@@ -309,6 +309,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 2105170903}
   _quantityText: {fileID: 2051633110}
+  _button: {fileID: 0}
 --- !u!1 &44567359
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,6 +883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1215649141}
   _quantityText: {fileID: 1056230927}
+  _button: {fileID: 0}
 --- !u!1 &106045712
 GameObject:
   m_ObjectHideFlags: 0
@@ -1425,6 +1427,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165706496}
   m_CullTransparentMesh: 1
+--- !u!1 &166612227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 166612229}
+  - component: {fileID: 166612228}
+  m_Layer: 0
+  m_Name: SWallGridManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &166612228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166612227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
+  _gridData: {fileID: 11400000, guid: ce37d692c4588f746b76c90481c7ab33, type: 2}
+  _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _surface: 1
+--- !u!4 &166612229
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166612227}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.09, y: -0.538, z: 8.36}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &197842353
 GameObject:
   m_ObjectHideFlags: 0
@@ -2241,6 +2290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1543211008}
   _quantityText: {fileID: 1263847255}
+  _button: {fileID: 0}
 --- !u!1 &330387193
 GameObject:
   m_ObjectHideFlags: 0
@@ -2431,6 +2481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1433861516}
   _quantityText: {fileID: 1725980030}
+  _button: {fileID: 0}
 --- !u!1 &347436184
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,6 +2557,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 347436184}
   m_CullTransparentMesh: 1
+--- !u!1 &408479831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408479833}
+  - component: {fileID: 408479832}
+  m_Layer: 0
+  m_Name: WWallGridManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &408479832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408479831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
+  _gridData: {fileID: 11400000, guid: 3dcbc45132361ad4faa2db9f845cb1b9, type: 2}
+  _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _surface: 1
+--- !u!4 &408479833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408479831}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -0.29, y: 3.464, z: 8.06}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!1 &435229533
 GameObject:
   m_ObjectHideFlags: 0
@@ -2934,6 +3032,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1264692617}
   _quantityText: {fileID: 534902934}
+  _button: {fileID: 0}
 --- !u!1 &515187772
 GameObject:
   m_ObjectHideFlags: 0
@@ -3737,6 +3836,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1009329059}
   _quantityText: {fileID: 2008756398}
+  _button: {fileID: 0}
 --- !u!1 &653309399
 GameObject:
   m_ObjectHideFlags: 0
@@ -3947,6 +4047,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1249093012}
   _quantityText: {fileID: 1383046518}
+  _button: {fileID: 0}
 --- !u!1 &699538029
 GameObject:
   m_ObjectHideFlags: 0
@@ -4493,6 +4594,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720105186}
   m_CullTransparentMesh: 1
+--- !u!1 &758461036
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 758461038}
+  - component: {fileID: 758461037}
+  m_Layer: 0
+  m_Name: EWallGridManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &758461037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 758461036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
+  _gridData: {fileID: 11400000, guid: 06f0d4e6119282d46a4d6517ba3c3e46, type: 2}
+  _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _surface: 1
+--- !u!4 &758461038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 758461036}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 11.84, y: 3.45, z: 8.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!1 &773410144
 GameObject:
   m_ObjectHideFlags: 0
@@ -5028,6 +5176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 2023785553}
   _quantityText: {fileID: 1451894745}
+  _button: {fileID: 0}
 --- !u!1 &833304416
 GameObject:
   m_ObjectHideFlags: 0
@@ -6876,6 +7025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 976194302}
   _quantityText: {fileID: 1470923061}
+  _button: {fileID: 0}
 --- !u!1 &1041348737
 GameObject:
   m_ObjectHideFlags: 0
@@ -7424,29 +7574,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1086291169}
-  - component: {fileID: 1086291168}
   - component: {fileID: 1086291170}
   m_Layer: 0
-  m_Name: FloorGridManager
+  m_Name: GridController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1086291168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1086291167}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
-  _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
 --- !u!4 &1086291169
 Transform:
   m_ObjectHideFlags: 0
@@ -7478,8 +7613,11 @@ MonoBehaviour:
   _floorMask:
     serializedVersion: 2
     m_Bits: 8
-  _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
-  chairPrefab: {fileID: 8398346995212949416, guid: f2901646f32ac5a4fb3e755737abd455, type: 3}
+  _floorGridManager: {fileID: 1471377500}
+  _wallSouthGridManager: {fileID: 166612228}
+  _wallEastGridManager: {fileID: 758461037}
+  _wallWestGridManager: {fileID: 408479832}
+  _cameraController: {fileID: 833304417}
 --- !u!1 &1086489733
 GameObject:
   m_ObjectHideFlags: 0
@@ -7665,6 +7803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 347436186}
   _quantityText: {fileID: 597559421}
+  _button: {fileID: 0}
 --- !u!1 &1112930047
 GameObject:
   m_ObjectHideFlags: 0
@@ -8066,7 +8205,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e86d209c4dad3641be8c66e8293a126, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveNewPlaceableObjects
-  _gridManager: {fileID: 1086291168}
 --- !u!114 &1174440878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9396,6 +9534,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1516773134}
   _quantityText: {fileID: 712778928}
+  _button: {fileID: 0}
 --- !u!1 &1292531559
 GameObject:
   m_ObjectHideFlags: 0
@@ -9581,6 +9720,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 198761980}
   _quantityText: {fileID: 468562765}
+  _button: {fileID: 0}
 --- !u!1 &1304380532
 GameObject:
   m_ObjectHideFlags: 0
@@ -9984,6 +10124,7 @@ MonoBehaviour:
   - {fileID: 1301501077}
   - {fileID: 502124349}
   - {fileID: 1548437926}
+  _gridController: {fileID: 1086291170}
 --- !u!1 &1338950308
 GameObject:
   m_ObjectHideFlags: 0
@@ -10306,6 +10447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1722680982}
   _quantityText: {fileID: 1463032668}
+  _button: {fileID: 0}
 --- !u!1 &1383046516
 GameObject:
   m_ObjectHideFlags: 0
@@ -11348,6 +11490,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470923059}
   m_CullTransparentMesh: 1
+--- !u!1 &1471377499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1471377501}
+  - component: {fileID: 1471377500}
+  m_Layer: 0
+  m_Name: FloorGridManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1471377500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471377499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
+  _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
+  _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _surface: 0
+--- !u!4 &1471377501
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471377499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.12, y: 0.35, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1489889590
 GameObject:
   m_ObjectHideFlags: 0
@@ -11980,6 +12169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 2140486115}
   _quantityText: {fileID: 1804069487}
+  _button: {fileID: 0}
 --- !u!1 &1558410204
 GameObject:
   m_ObjectHideFlags: 0
@@ -12466,6 +12656,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 2083732812}
   _quantityText: {fileID: 1076663552}
+  _button: {fileID: 0}
 --- !u!1 &1680374046
 GameObject:
   m_ObjectHideFlags: 0
@@ -12726,6 +12917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1534629400}
   _quantityText: {fileID: 141990581}
+  _button: {fileID: 0}
 --- !u!1 &1686565388
 GameObject:
   m_ObjectHideFlags: 0
@@ -12779,6 +12971,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1770301160}
   _quantityText: {fileID: 1938118981}
+  _button: {fileID: 0}
 --- !u!1 &1688071113
 GameObject:
   m_ObjectHideFlags: 0
@@ -13779,6 +13972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 787204030}
   _quantityText: {fileID: 854633053}
+  _button: {fileID: 0}
 --- !u!1 &1775759864
 GameObject:
   m_ObjectHideFlags: 0
@@ -13832,6 +14026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 435229535}
   _quantityText: {fileID: 786745002}
+  _button: {fileID: 0}
 --- !u!1 &1777044550
 GameObject:
   m_ObjectHideFlags: 0
@@ -14150,6 +14345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 2054385165}
   _quantityText: {fileID: 1923757938}
+  _button: {fileID: 0}
 --- !u!1 &1804069485
 GameObject:
   m_ObjectHideFlags: 0
@@ -14340,6 +14536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 916454537}
   _quantityText: {fileID: 1179307705}
+  _button: {fileID: 0}
 --- !u!1 &1845150332
 GameObject:
   m_ObjectHideFlags: 0
@@ -14393,6 +14590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1515817425}
   _quantityText: {fileID: 1542808121}
+  _button: {fileID: 0}
 --- !u!1 &1861931218
 GameObject:
   m_ObjectHideFlags: 0
@@ -14423,7 +14621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _inventory: {fileID: 1334428759}
-  _gridManager: {fileID: 1086291168}
+  _gridController: {fileID: 1086291170}
 --- !u!4 &1861931220
 Transform:
   m_ObjectHideFlags: 0
@@ -14862,6 +15060,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1680374048}
   _quantityText: {fileID: 330387195}
+  _button: {fileID: 0}
 --- !u!1 &1923757936
 GameObject:
   m_ObjectHideFlags: 0
@@ -15052,6 +15251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1415581118}
   _quantityText: {fileID: 1304380534}
+  _button: {fileID: 0}
 --- !u!1 &1938118979
 GameObject:
   m_ObjectHideFlags: 0
@@ -15506,6 +15706,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 302693661}
   _quantityText: {fileID: 916800599}
+  _button: {fileID: 0}
 --- !u!1 &2008756396
 GameObject:
   m_ObjectHideFlags: 0
@@ -15696,6 +15897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 1489889592}
   _quantityText: {fileID: 1766525958}
+  _button: {fileID: 0}
 --- !u!1 &2009654988
 GameObject:
   m_ObjectHideFlags: 0
@@ -16832,6 +17034,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 197842355}
   _quantityText: {fileID: 635092984}
+  _button: {fileID: 0}
 --- !u!1 &2124839626
 GameObject:
   m_ObjectHideFlags: 0
@@ -17083,6 +17286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
   _icon: {fileID: 515187774}
   _quantityText: {fileID: 1032295757}
+  _button: {fileID: 0}
 --- !u!1 &2140486113
 GameObject:
   m_ObjectHideFlags: 0
@@ -17172,3 +17376,7 @@ SceneRoots:
   - {fileID: 2013340619}
   - {fileID: 833304418}
   - {fileID: 1224248946}
+  - {fileID: 1471377501}
+  - {fileID: 166612229}
+  - {fileID: 758461038}
+  - {fileID: 408479833}
