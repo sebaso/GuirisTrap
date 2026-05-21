@@ -2,32 +2,27 @@ using UnityEngine;
 
 public class InteractableFeedback : MonoBehaviour
 {
-    public Color highlightColor = Color.yellow; 
-    private Color originalColor;
-    private Renderer targetRenderer;
-
-    void Start()
-    {
-        targetRenderer = GetComponentInChildren<Renderer>();
-        if (targetRenderer != null)
-        {
-            originalColor = targetRenderer.material.color;
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && targetRenderer != null)
+        if (other.CompareTag("Player"))
         {
-            targetRenderer.material.color = highlightColor;
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.SetNearInteractable(true);
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && targetRenderer != null)
+        if (other.CompareTag("Player"))
         {
-            targetRenderer.material.color = originalColor;
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.SetNearInteractable(false);
+            }
         }
     }
 }

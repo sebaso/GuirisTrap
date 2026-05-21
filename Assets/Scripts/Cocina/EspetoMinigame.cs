@@ -41,6 +41,16 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     public TMP_Text[]      timerTexts;
     public GameObject[]    selectionFrames;
 
+    [Header("UI - Flechas de Selección")]
+    [Tooltip("Las 3 flechas fijas de arriba.")]
+    public GameObject[]    selectionArrows;
+    [Tooltip("Las 3 mini flechas hijas.")]
+    public GameObject[]    controlArrows;
+
+    [Header("UI - Colores de Flecha ")]
+    public Color colorFlechaVacia      = Color.white;
+    public Color colorFlechaConEspeto  = new Color(1f, 0.6f, 0f); 
+
     [Header("UI - Global")]
     public TMP_Text instructionText;
 
@@ -75,10 +85,20 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         TickTimers();
         if (_navCooldown > 0f) _navCooldown -= Time.deltaTime;
+
+        if (_isPanelOpen && _isRepositioning)
+        {
+            Espeto sel = _espetos[_selectedIndex];
+            if (sel.state == EspetoState.Cooking)
+            {
+                sel.espetoPosition = Mathf.Clamp01(
+                    sel.espetoPosition + _currentNav.y * velocidadMovimiento * Time.deltaTime);
+            }
+        }
+
         if (_isPanelOpen) RefreshUI();
     }
 
-    // Llamado desde PlayerController.OnInteractDown
     public void TryOpen(PlayerController player)
     {
         float dist = Vector3.Distance(transform.position, player.transform.position);
@@ -197,7 +217,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
                 timerTexts[i].text = e.state switch
                 {
                     EspetoState.Empty   => "[E] Poner espeto",
-                    EspetoState.Cooking => $"{e.burnTimer:F1}s  <wave>{e.cookProgress / DuracionCocina * 100f:F0}%</wave>",
+                    EspetoState.Cooking => $"{e.burnTimer:F1}s  {e.cookProgress / DuracionCocina * 100f:F0}%",
                     EspetoState.Done    => "¡LISTO! [E] Recoger",
                     EspetoState.Burned  => "QUEMADO [E] Tirar",
                     _                   => ""
@@ -205,6 +225,26 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
             if (selectionFrames != null && i < selectionFrames.Length && selectionFrames[i])
                 selectionFrames[i].SetActive(i == _selectedIndex);
+
+            bool isCurrent = (i == _selectedIndex);
+
+            // Flechas de arriba fijas
+            if (selectionArrows != null && i < selectionArrows.Length && selectionArrows[i])
+            {
+                selectionArrows[i].SetActive(isCurrent && !_isRepositioning);
+                
+                Image arrowImg = selectionArrows[i].GetComponent<Image>();
+                if (arrowImg != null)
+                {
+                    arrowImg.color = (e.state == EspetoState.Empty) ? colorFlechaVacia : colorFlechaConEspeto;
+                }
+            }
+
+            // Mini flechas del cubo blanco
+            if (controlArrows != null && i < controlArrows.Length && controlArrows[i])
+            {
+                controlArrows[i].SetActive(isCurrent && _isRepositioning);
+            }
         }
 
         if (instructionText)
@@ -212,12 +252,12 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             Espeto sel = _espetos[_selectedIndex];
             instructionText.text = sel.state switch
             {
-                EspetoState.Empty   => "← → Navegar  |  E Poner espeto  |  ESC Cerrar",
+                EspetoState.Empty   => "← → Navegar  |  E Poner espeto  |  Q Cerrar",
                 EspetoState.Cooking => _isRepositioning
-                    ? "↑ ↓ Mover espeto  |  E Soltar  |  ESC Cerrar"
-                    : "← → Navegar  |  E Reposicionar  |  ESC Cerrar",
-                EspetoState.Done    => "← → Navegar  |  E Recoger espeto  |  ESC Cerrar",
-                EspetoState.Burned  => "← → Navegar  |  E Tirar  |  ESC Cerrar",
+                    ? "↑ ↓ Mover espeto  |  E Soltar  |  Q Cerrar"
+                    : "← → Navegar  |  E Reposicionar  |  Q Cerrar",
+                EspetoState.Done    => "← → Navegar  |  E Recoger espeto  |  Q Cerrar",
+                EspetoState.Burned  => "← → Navegar  |  E Tirar  |  Q Cerrar",
                 _                   => ""
             };
         }
@@ -241,17 +281,8 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         _currentNav = direction;
 
-        Espeto sel = _espetos[_selectedIndex];
+        if (_isRepositioning) return;
 
-        // Reposicionamiento vertical continuo
-        if (_isRepositioning && sel.state == EspetoState.Cooking)
-        {
-            sel.espetoPosition = Mathf.Clamp01(
-                sel.espetoPosition + direction.y * velocidadMovimiento * Time.deltaTime);
-            return;
-        }
-
-        // Navegación horizontal con cooldown
         if (_navCooldown > 0f) return;
         if (direction.x > 0.5f)
         {

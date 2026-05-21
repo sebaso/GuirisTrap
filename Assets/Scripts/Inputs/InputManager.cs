@@ -10,7 +10,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
     [SerializeField] private ControllableMonoBehaviour _playerControllable;
     [SerializeField] private MinigameControllable      _minigameControllable;
 
-    private InputSystem_Actions _inputs;
+    private InputSystem_Actions       _inputs;
     private ControllableMonoBehaviour _current;
 
     void Awake()
@@ -28,16 +28,12 @@ public class InputManager : MonoBehaviour, IPlayerActions
         _current = _playerControllable;
     }
 
-    //  Cambio de contexto 
-
-    /// Activa un minijuego/menú y pasa el control a MinigameControllable.
     public void EnterMinigame(IMinigameControllable minigame)
     {
         _minigameControllable.SetActive(minigame);
         _current = _minigameControllable;
     }
 
-    /// Devuelve el control al jugador.
     public void ExitMinigame()
     {
         _minigameControllable.ClearActive();
@@ -50,42 +46,34 @@ public class InputManager : MonoBehaviour, IPlayerActions
         else       _inputs.Player.Disable();
     }
 
-    //  Callbacks del Input System 
+    //  Callbacks 
 
     public void OnMove(InputAction.CallbackContext context)
-    {
-        _current?.OnMove(context.ReadValue<Vector2>());
-    }
+        => _current?.OnMove(context.ReadValue<Vector2>());
 
     public void OnLook(InputAction.CallbackContext context)
-    {
-        _current?.OnLook(context.ReadValue<Vector2>());
-    }
+        => _current?.OnLook(context.ReadValue<Vector2>());
 
     public void OnInteract(InputAction.CallbackContext context)
     {
-        if (context.performed) _current?.OnInteractDown();
-        else if (context.canceled) _current?.OnInteractUp();
+        if (context.performed)      _current?.OnInteractDown();
+        else if (context.canceled)  _current?.OnInteractUp();
     }
 
-    public void OnAttack(InputAction.CallbackContext context)
+    // Cancel = Q 
+    public void OnCancel(InputAction.CallbackContext context)
     {
-        if (context.performed) _current?.OnAttackDown();
-        else if (context.canceled) _current?.OnAttackUp();
+        if (context.performed) _current?.OnCancelDown();
     }
 
-    public void OnCrouch(InputAction.CallbackContext context)
-    {
-        if (context.performed) _current?.OnCrouchDown();
-        else if (context.canceled) _current?.OnCrouchUp();
-    }
-
+    // Todavia no tienen nada... 
+    public void OnAttack(InputAction.CallbackContext context)   { }
+    public void OnCrouch(InputAction.CallbackContext context)   { }
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed) _current?.OnJumpDown();
+        if (context.performed)     _current?.OnJumpDown();
         else if (context.canceled) _current?.OnJumpUp();
     }
-
     public void OnPrevious(InputAction.CallbackContext context) { }
     public void OnNext(InputAction.CallbackContext context)     { }
     public void OnSprint(InputAction.CallbackContext context)   { }

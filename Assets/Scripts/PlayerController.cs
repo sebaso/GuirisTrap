@@ -17,6 +17,12 @@ public class PlayerController : ControllableMonoBehaviour
     public RecipeData currentRecipe;
     public GameObject redCubeIngredient;
 
+    [Header("UI Interaction Feedback")]
+    public GameObject interactPrompt; // Arrastra aquí el Quad/Sprite flotante que harás de hijo
+    public float promptPopupSpeed = 12f; // Velocidad del escalado suave
+    private bool isNearInteractable = false;
+    private Vector3 originalPromptScale;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -28,6 +34,12 @@ public class PlayerController : ControllableMonoBehaviour
             holdObj.transform.localPosition = new Vector3(0, 1.5f, 0.5f);
             holdPoint = holdObj.transform;
         }
+
+        if (interactPrompt != null)
+        {
+        originalPromptScale = interactPrompt.transform.localScale;
+        interactPrompt.transform.localScale = Vector3.zero; 
+        }
     }
 
     void FixedUpdate()
@@ -37,6 +49,16 @@ public class PlayerController : ControllableMonoBehaviour
             rb.linearVelocity.y,
             movementDirection.z * speed
         );
+        
+        if (interactPrompt != null)
+    {
+        Vector3 targetScale = isNearInteractable ? originalPromptScale : Vector3.zero;
+        interactPrompt.transform.localScale = Vector3.Lerp(
+            interactPrompt.transform.localScale, 
+            targetScale, 
+            Time.deltaTime * promptPopupSpeed
+        );
+    }
     }
 
     // ── ControllableMonoBehaviour ─────────────────────────────────────────
@@ -138,6 +160,10 @@ public class PlayerController : ControllableMonoBehaviour
     {
         currentRecipe = data;
         if (redCubeIngredient != null) redCubeIngredient.SetActive(true);
+    }
+    public void SetNearInteractable(bool near)
+    {
+    isNearInteractable = near;
     }
 
     public void ResetInput() { }
