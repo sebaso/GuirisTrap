@@ -23,20 +23,26 @@ public class GameManager : MonoBehaviour
     }
     public void Buy(PlaceableItemData itemData)
     {
-        Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (itemData == null)
+            return;
+
+        // Check and deduct cost before buying
+        if (CashManager.Instance != null && !CashManager.Instance.TrySpend(itemData.cost))
         {
+            Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {itemData.prefab.name} (coste: {itemData.cost}€)");
             return;
         }
-        // añadir el sistema de dinero y que compruebe el coste de los objetos antes de poder comprarlos
+
         bool added = _inventory.AddItem(itemData);
         if (added)
         {
-            Debug.Log("Has comprado un item: " + itemData.prefab.name);
+            Debug.Log($"[GameManager] Has comprado: {itemData.prefab.name} por {itemData.cost}€");
         }
         else
         {
-            Debug.Log("No has podido comprar el item, inventario lleno");
+            // Refund if inventory is full
+            CashManager.Instance?.Earn(itemData.cost);
+            Debug.Log("[GameManager] No has podido comprar el item, inventario lleno. Dinero devuelto.");
         }
     }
     public void Place(int posX, int posY)
