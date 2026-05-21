@@ -3,12 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-
     public static SceneController _instance;
     public static SceneController Instance => _instance;
+
     private void Awake()
     {
-        if(_instance == null)
+        if (_instance == null)
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
@@ -18,12 +18,13 @@ public class SceneController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     public void ChangeScene(string sceneName)
     {
-        if(sceneName == "GameScene")
+        if (sceneName == "GameScene")
         {
-            GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
-            if(!gridManager.CanStartDay())
+            GameGridManager floorManager = GetFloorManager();
+            if (floorManager != null && !floorManager.CanStartDay())
                 return;
         }
 
@@ -34,20 +35,32 @@ public class SceneController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        if(scene.name != "MainMenu")
+
+        if (scene.name == "MainMenu") return;
+
+        // Inicializar TODOS los managers
+        GameGridManager[] allManagers = FindObjectsByType<GameGridManager>(FindObjectsSortMode.None);
+
+        foreach (GameGridManager manager in allManagers)
         {
-            GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
-            gridManager.Init();
-            if (gridManager != null)
-            {
-                gridManager.PlaceableGenerator();
-            }
+            manager.Init();
+            manager.PlaceableGenerator();
         }
     }
+
     public bool IsSceneLoaded(string sceneName)
     {
-        if(sceneName == SceneManager.GetActiveScene().name)
-            return true;
-        return false;
+        return sceneName == SceneManager.GetActiveScene().name;
+    }
+
+    private GameGridManager GetFloorManager()
+    {
+        GameGridManager[] allManagers = FindObjectsByType<GameGridManager>(FindObjectsSortMode.None);
+        foreach (GameGridManager manager in allManagers)
+        {
+            if (manager.Surface == PlaceableSurface.Floor)
+                return manager;
+        }
+        return null;
     }
 }

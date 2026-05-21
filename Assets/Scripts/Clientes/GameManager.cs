@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Inventory _inventory;
     [SerializeField] 
-    private GameGridManager _gridManager;
+    private  GridController _gridController;
     private static GameManager _instance;
     public static GameManager Instance => _instance; 
     
@@ -47,40 +47,58 @@ public class GameManager : MonoBehaviour
     }
     public void Place(int posX, int posY)
     {
-        var slot = _inventory.GetSlot(posX, posY);
+        InventorySlot slot = _inventory.GetSlot(posX, posY);
+        if (slot == null) return;
+
         PlaceableItemData itemData = slot.item;
-        Transform folder = GameObject.Find("PlaceableItems")?.transform;
-        if (itemData == null || itemData.prefab == null || _gridManager == null)
+        Transform folder = GameObject.Find("")?.transform;
+
+        if (itemData == null || itemData.prefab == null || _gridController == null)
         {
-            Debug.LogWarning("No hay prefab o grid asignado en BuildManager");
+            Debug.LogWarning("No hay prefab o GridController asignado en GameManager");
             return;
         }
-        for(int y = 0; y < _gridManager.GetGridData.height; y++)
+
+        GameGridManager activeManager = _gridController.ActiveGridManager;
+        if (activeManager == null) return;
+
+        if (!itemData.IsCompatibleWith(activeManager.Surface))
         {
-            for(int x = 0; x < _gridManager.GetGridData.width; x++)
+            Debug.Log("El objeto no es compatible con la superficie activa");
+            return;
+        }
+
+        GridData gridData = activeManager.GetGridData;
+
+        for (int y = 0; y < gridData.height; y++)
+        {
+            for (int x = 0; x < gridData.width; x++)
             {
-                if(_gridManager.GetGridData.GetType(x,y) == CellType.Empty)
-                {
-                    Vector3 initialPosition = new Vector3(x, 0.3f, y);
-                    Vector3 finalPosition = initialPosition + itemData.placementOffset;
-                    GameObject obj = Instantiate(itemData.prefab, finalPosition, Quaternion.identity, folder);
+                if (gridData.GetType(x, y) != CellType.Empty) continue;
 
-                    PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
+                Vector3 localPos = new Vector3(x, 0f, y) + itemData.placementOffset;
+                Vector3 worldPos = activeManager.transform.TransformPoint(localPos);
 
-                    _gridManager.GetGridData.SetType(x, y, CellType.Occupied);
-                    _gridManager.GetGridData.SetItem(x, y, itemData);
+                GameObject obj = Instantiate(itemData.prefab, worldPos, activeManager.transform.rotation, folder);
+                PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
 
-                    placeable.SetGridManager(_gridManager);
-                    placeable.InstancePlaceableObjectCreated(x,y);
-                    placeable.Init(itemData);
+                gridData.SetType(x, y, CellType.Occupied);
+                gridData.SetItem(x, y, itemData);
 
-                    _gridManager.SetPlaceableAt(x,y, placeable);
-                    _inventory.RemoveItem(posX, posY);
-                    if(itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
-                        _gridManager.ValidateAllChairs();
-                    return;
-                }
+                placeable.SetGridManager(activeManager);
+                placeable.InstancePlaceableObjectCreated(x, y);
+                placeable.Init(itemData);
+
+                activeManager.SetPlaceableAt(x, y, placeable);
+                _inventory.RemoveItem(posX, posY);
+
+                if (itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
+                    activeManager.ValidateAllChairs();
+
+                return;
             }
         }
+
+        Debug.Log("No hay espacio en el grid activo");
     }
 }

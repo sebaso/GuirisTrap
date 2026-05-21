@@ -818,7 +818,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 48
+  field of view: 29.4
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -844,8 +844,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.44860452, y: 0, z: 0, w: 0.8937304}
-  m_LocalPosition: {x: 3.59, y: 3.83, z: -3.6200004}
+  m_LocalRotation: {x: 0, y: 0.89373183, z: -0.44860166, w: 0}
+  m_LocalPosition: {x: 3.59, y: 3.83, z: 1.2599998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3971,7 +3971,7 @@ Transform:
   m_GameObject: {fileID: 1444769654}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.83, z: -4.06}
+  m_LocalPosition: {x: 0, y: 5.83, z: 4.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4567,13 +4567,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1652043005}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.44860452, y: -0, z: -0, w: 0.8937304}
-  m_LocalPosition: {x: 3.59, y: 3.83, z: -3.6200004}
+  m_LocalRotation: {x: 0, y: 0.89373183, z: -0.44860166, w: 0}
+  m_LocalPosition: {x: 3.59, y: 3.83, z: 1.2599998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1444769655}
-  m_LocalEulerAnglesHint: {x: 53.308, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 53.308, y: 180, z: 0}
 --- !u!114 &1652043007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4598,7 +4598,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 48
+    FieldOfView: 29.4
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -4635,7 +4635,7 @@ MonoBehaviour:
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 8.94, z: -6.8}
+  FollowOffset: {x: 0, y: 8.94, z: 6.44}
 --- !u!1 &1676961552
 GameObject:
   m_ObjectHideFlags: 0
@@ -5633,7 +5633,7 @@ GameObject:
   - component: {fileID: 2016097450}
   - component: {fileID: 2016097449}
   m_Layer: 0
-  m_Name: GameGridManager
+  m_Name: FloorGridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5653,6 +5653,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
   _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _surface: 0
 --- !u!4 &2016097450
 Transform:
   m_ObjectHideFlags: 0
@@ -5662,7 +5663,7 @@ Transform:
   m_GameObject: {fileID: 2016097448}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.33838, y: -0, z: 4.60821}
+  m_LocalPosition: {x: 0.12, y: 0.35, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
