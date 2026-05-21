@@ -1,48 +1,41 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; 
+using TMPro;
 
-public class CongeladorMinigame : MonoBehaviour
+public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
-    public GameObject minigamePanel;
+    public GameObject    minigamePanel;
     public RectTransform cursorRect;
     public RectTransform targetZone;
 
     [Header("Ajustes de Dificultad Base")]
-    [Tooltip("Velocidad en Nivel 1")]
-    public float baseSpeed = 1.5f; 
-    [Tooltip("Cuánto aumenta la velocidad por cada nivel de dificultad (1.2 = +20%)")]
+    public float baseSpeed              = 1.5f;
     public float speedMultiplierPerLevel = 1.2f;
-    [Tooltip("Ancho de la zona verde en Nivel 1 (0.1 a 0.5 recomendado)")]
-    public float baseZoneSize = 0.3f;
-    [Tooltip("Ancho visual de la aguja blanca")]
-    public float cursorWidth = 10f;
+    public float baseZoneSize           = 0.3f;
+    public float cursorWidth            = 10f;
 
-    private float currentSpeed;
-    private float winMin;
-    private float winMax;
-    private bool isPlaying = false;
-    private float timeElapsed;
-    private float inputCooldown;
+    private float            currentSpeed;
+    private float            winMin, winMax;
+    private bool             isPlaying  = false;
+    private float            timeElapsed;
+    private float            inputCooldown;
     private PlayerController player;
-    private RecipeData currentRecipe;
+    private RecipeData       currentRecipe;
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
-        player = currentPlayer;
+        player        = currentPlayer;
         currentRecipe = recipe;
-        player.enabled = false;
+
+        InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
-   
+
         currentSpeed = baseSpeed * Mathf.Pow(speedMultiplierPerLevel, recipe.difficulty - 1);
-
-        float zoneSize = baseZoneSize * Mathf.Pow(0.85f, recipe.difficulty - 1);
-        zoneSize = Mathf.Max(zoneSize, 0.05f); 
-
-        float randomPos = Random.Range(0.1f + (zoneSize/2), 0.9f - (zoneSize/2));
-        winMin = randomPos - (zoneSize / 2);
-        winMax = randomPos + (zoneSize / 2);
+        float zoneSize  = Mathf.Max(baseZoneSize * Mathf.Pow(0.85f, recipe.difficulty - 1), 0.05f);
+        float randomPos = Random.Range(0.1f + zoneSize / 2, 0.9f - zoneSize / 2);
+        winMin = randomPos - zoneSize / 2;
+        winMax = randomPos + zoneSize / 2;
 
         targetZone.anchorMin = new Vector2(winMin, 0);
         targetZone.anchorMax = new Vector2(winMax, 1);
@@ -50,8 +43,8 @@ public class CongeladorMinigame : MonoBehaviour
         targetZone.offsetMax = Vector2.zero;
 
         inputCooldown = 0.5f;
-        isPlaying = true;
-        timeElapsed = 0f;
+        isPlaying     = true;
+        timeElapsed   = 0f;
     }
 
     void Update()
@@ -61,46 +54,42 @@ public class CongeladorMinigame : MonoBehaviour
         if (inputCooldown > 0) inputCooldown -= Time.deltaTime;
 
         timeElapsed += Time.deltaTime * currentSpeed;
+        float currentPos = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(timeElapsed, 1f));
 
-        float rawPingPong = Mathf.PingPong(timeElapsed, 1f);
-        float currentPos = Mathf.SmoothStep(0f, 1f, rawPingPong);
-
-        cursorRect.anchorMin = new Vector2(currentPos, 0);
-        cursorRect.anchorMax = new Vector2(currentPos, 1);
-        cursorRect.anchoredPosition = Vector2.zero; 
-        cursorRect.sizeDelta = new Vector2(cursorWidth, 0); 
-
-        if (inputCooldown <= 0 && (Input.GetKeyDown(KeyCode.Space) 
-                                || Input.GetKeyDown(KeyCode.Return) 
-                                || Input.GetKeyDown(KeyCode.E)))
-        {
-            CheckWin(currentPos);
-        }
+        cursorRect.anchorMin      = new Vector2(currentPos, 0);
+        cursorRect.anchorMax      = new Vector2(currentPos, 1);
+        cursorRect.anchoredPosition = Vector2.zero;
+        cursorRect.sizeDelta      = new Vector2(cursorWidth, 0);
     }
 
     void CheckWin(float finalPos)
     {
         isPlaying = false;
-        
         if (finalPos >= winMin && finalPos <= winMax)
         {
-            Debug.Log($"¡CONGELADO PERFECTO! Pos: {finalPos} (Target: {winMin}-{winMax})");
+            Debug.Log($"¡CONGELADO PERFECTO!");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
-                Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab asignado.");
-            EndGame(true);
+                Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
-        else
-        {
-            Debug.Log($"FALLASTE. Pos: {finalPos} (Target: {winMin}-{winMax})");
-            EndGame(false);
-        }
+        else Debug.Log("FALLASTE.");
+
+        minigamePanel.SetActive(false);
+        InputManager.Instance.ExitMinigame();
     }
 
-    void EndGame(bool success)
+    //  IMinigameControllable 
+
+    public void OnNavigate(Vector2 direction) { }
+    public void OnCancel()  { }
+    public void OnSubmit()  => OnInteract();
+
+    public void OnInteract()
     {
-        minigamePanel.SetActive(false);
-        player.enabled = true;
+        if (!isPlaying || inputCooldown > 0) return;
+        float currentPos = Mathf.SmoothStep(0f, 1f,
+            Mathf.PingPong(timeElapsed, 1f));
+        CheckWin(currentPos);
     }
 }

@@ -2,130 +2,106 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class EspetoMinigame : MonoBehaviour
+public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 {
-
     public enum EspetoState { Empty, Cooking, Done, Burned }
 
     [System.Serializable]
     public class Espeto
     {
-        public EspetoState state    = EspetoState.Empty;
-        public float cookProgress   = 0f;  
-        public float burnTimer      = 0f;   
-        public float zonePosition   = 0.5f; 
-        public float espetoPosition = 0.5f; 
-        public float zoneShiftTimer = 0f;  
+        public EspetoState state         = EspetoState.Empty;
+        public float cookProgress        = 0f;
+        public float burnTimer           = 0f;
+        public float zonePosition        = 0.5f;
+        public float espetoPosition      = 0.5f;
+        public float zoneShiftTimer      = 0f;
     }
 
-
     [Header("Configuración Espetos")]
-    public float DuracionCocina      = 45f;  
-    public float DuracionQuema      = 30f;  
-    public float intervaloCambioZona = 25f;  
-    public float margenZonaVerde      = 0.15f;
-    public float velocidadMovimiento         = 0.6f; 
-    public int   espetoCount       = 3;    
+    public float DuracionCocina      = 45f;
+    public float DuracionQuema       = 30f;
+    public float intervaloCambioZona = 25f;
+    public float margenZonaVerde     = 0.15f;
+    public float velocidadMovimiento = 0.6f;
+    public int   espetoCount         = 3;
 
     [Header("Food Output")]
-    public GameObject espetoFoodPrefab; 
+    public GameObject espetoFoodPrefab;
 
     [Header("Interacción en Escena")]
     public float interactionDistance = 2.5f;
-
 
     [Header("UI - Panel")]
     public GameObject minigamePanel;
 
     [Header("UI - Por Espeto")]
-    public RectTransform[] greenZoneRects;    
-    public RectTransform[] espetoHandleRects; 
-    public Image[]         espetoTrackImages; 
-    public TMP_Text[]      timerTexts;       
-    public GameObject[]    selectionFrames;   
+    public RectTransform[] greenZoneRects;
+    public RectTransform[] espetoHandleRects;
+    public Image[]         espetoTrackImages;
+    public TMP_Text[]      timerTexts;
+    public GameObject[]    selectionFrames;
 
     [Header("UI - Global")]
     public TMP_Text instructionText;
 
-
-    private Espeto[]      _espetos;
-    private int           _selectedIndex    = 0;
-    private bool          _isRepositioning  = false;
-    private bool          _isPanelOpen      = false;
+    private Espeto[]         _espetos;
+    private int              _selectedIndex   = 0;
+    private bool             _isRepositioning = false;
+    private bool             _isPanelOpen     = false;
     private PlayerController _player;
-
+    private float            _navCooldown     = 0f;
+    private Vector2          _currentNav      = Vector2.zero;
 
     private static readonly Color ColEmpty   = new Color(0.6f, 0.6f, 0.6f);
     private static readonly Color ColCooking = new Color(1f, 0.55f, 0.1f);
     private static readonly Color ColDone    = new Color(0.2f, 0.85f, 0.2f);
     private static readonly Color ColBurned  = new Color(0.15f, 0.1f, 0.1f);
 
-
     void Awake()
     {
         _espetos = new Espeto[espetoCount];
         for (int i = 0; i < espetoCount; i++)
-        {
             _espetos[i] = new Espeto
             {
                 zonePosition   = Random.Range(0.2f, 0.8f),
                 espetoPosition = 0.5f,
                 zoneShiftTimer = intervaloCambioZona
             };
-        }
 
         if (minigamePanel) minigamePanel.SetActive(false);
-    }
-
-    void Start()
-    {
-
     }
 
     void Update()
     {
         TickTimers();
-
-        if (!_isPanelOpen)
-        {
-            DetectPlayerInteraction();
-            return;
-        }
-
-        HandlePanelInput();
-        RefreshUI();
+        if (_navCooldown > 0f) _navCooldown -= Time.deltaTime;
+        if (_isPanelOpen) RefreshUI();
     }
 
-    private void DetectPlayerInteraction()
+    // Llamado desde PlayerController.OnInteractDown
+    public void TryOpen(PlayerController player)
     {
-        if (_player == null)
-        {
-            GameObject obj = GameObject.FindGameObjectWithTag("Player");
-            if (obj) _player = obj.GetComponent<PlayerController>();
-        }
-        if (_player == null) return;
-
-        float dist = Vector3.Distance(transform.position, _player.transform.position);
-        if (dist <= interactionDistance && Input.GetKeyDown(KeyCode.E))
-            OpenPanel();
+        float dist = Vector3.Distance(transform.position, player.transform.position);
+        if (dist <= interactionDistance) OpenPanel(player);
     }
 
-    void OpenPanel()
+    void OpenPanel(PlayerController player)
     {
-        _isPanelOpen      = true;
-        _isRepositioning  = false;
-        _selectedIndex    = 0;
-        _player.enabled   = false;
+        _player          = player;
+        _isPanelOpen     = true;
+        _isRepositioning = false;
+        _selectedIndex   = 0;
+        InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
         RefreshUI();
     }
 
     void ClosePanel()
     {
-        _isPanelOpen      = false;
-        _isRepositioning  = false;
+        _isPanelOpen     = false;
+        _isRepositioning = false;
         minigamePanel.SetActive(false);
-        if (_player) _player.enabled = true;
+        InputManager.Instance.ExitMinigame();
     }
 
     void TickTimers()
@@ -136,144 +112,51 @@ public class EspetoMinigame : MonoBehaviour
             if (e.state != EspetoState.Cooking) continue;
 
             bool inZone = IsInGreenZone(i);
-
             if (inZone)
             {
-                // En zona verde
-                e.cookProgress  += Time.deltaTime;
-                e.burnTimer      = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, DuracionQuema);
-
-                if (e.cookProgress >= DuracionCocina)
-                {
-                    e.state = EspetoState.Done;
-                    Debug.Log($"[Espetera] Espeto {i} ¡LISTO!");
-                    continue;
-                }
+                e.cookProgress += Time.deltaTime;
+                e.burnTimer     = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, DuracionQuema);
+                if (e.cookProgress >= DuracionCocina) { e.state = EspetoState.Done; continue; }
             }
             else
             {
-                // Fuera de zona
                 e.burnTimer -= Time.deltaTime;
-
-                if (e.burnTimer <= 0f)
-                {
-                    e.state = EspetoState.Burned;
-                    Debug.Log($"[Espetera] Espeto {i} ¡QUEMADO!");
-                    continue;
-                }
+                if (e.burnTimer <= 0f) { e.state = EspetoState.Burned; continue; }
             }
 
-            // Timer de desplazamiento de zona verde
             e.zoneShiftTimer -= Time.deltaTime;
-            if (e.zoneShiftTimer <= 0f)
-            {
-                ShiftZone(i);
-                e.zoneShiftTimer = intervaloCambioZona;
-            }
-        }
-    }
-
-
-    void HandlePanelInput()
-    {
-        // Cerrar panel
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ClosePanel();
-            return;
-        }
-
-        Espeto sel = _espetos[_selectedIndex];
-
-        // Navegar entre espetos 
-        if (!_isRepositioning)
-        {
-            if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)))
-                _selectedIndex = (_selectedIndex - 1 + espetoCount) % espetoCount;
-            if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)))
-                _selectedIndex = (_selectedIndex + 1) % espetoCount;
-
-            sel = _espetos[_selectedIndex]; // refrescar tras navegar
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            switch (sel.state)
-            {
-                case EspetoState.Empty:
-                    PlaceEspeto(_selectedIndex);
-                    break;
-
-                case EspetoState.Cooking:
-                    _isRepositioning = !_isRepositioning; // toggle reposicionamiento
-                    break;
-
-                case EspetoState.Done:
-                    PickupEspeto(_selectedIndex);
-                    return; // cierra panel
-                    
-                case EspetoState.Burned:
-                    DiscardEspeto(_selectedIndex);
-                    break;
-            }
-        }
-
-        if (_isRepositioning && sel.state == EspetoState.Cooking)
-        {
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition + velocidadMovimiento * Time.deltaTime);
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-                sel.espetoPosition = Mathf.Clamp01(sel.espetoPosition - velocidadMovimiento * Time.deltaTime);
+            if (e.zoneShiftTimer <= 0f) { ShiftZone(i); e.zoneShiftTimer = intervaloCambioZona; }
         }
     }
 
     void PlaceEspeto(int index)
     {
-        Espeto e = _espetos[index];
+        Espeto e         = _espetos[index];
         e.state          = EspetoState.Cooking;
         e.cookProgress   = 0f;
         e.burnTimer      = DuracionQuema;
         e.espetoPosition = 0.5f;
         e.zonePosition   = Random.Range(0.2f, 0.8f);
         e.zoneShiftTimer = intervaloCambioZona;
-        Debug.Log($"[Espetera] Espeto {index} colocado.");
     }
 
     void PickupEspeto(int index)
     {
         _espetos[index].state = EspetoState.Empty;
-
         if (espetoFoodPrefab != null && _player != null)
         {
             GameObject foodObj = Instantiate(espetoFoodPrefab,
-                _player.transform.position + Vector3.up,
-                Quaternion.identity);
+                _player.transform.position + Vector3.up, Quaternion.identity);
             Food food = foodObj.GetComponent<Food>();
-            if (food != null)
-          _player.PickUpFood(food);
+            if (food != null) food.PickUp(_player.holdPoint);
         }
-
-        Debug.Log($"[Espetera] Espeto {index} recogido.");
         ClosePanel();
     }
 
-    void DiscardEspeto(int index)
-    {
-        _espetos[index].state = EspetoState.Empty;
-        Debug.Log($"[Espetera] Espeto {index} tirado a la basura.");
-    }
-
-    void ShiftZone(int index)
-    {
-        _espetos[index].zonePosition = Random.Range(0.2f, 0.8f);
-        Debug.Log($"[Espetera] Espeto {index}: zona verde movida a {_espetos[index].zonePosition:F2}");
-    }
-
-    bool IsInGreenZone(int index)
-    {
-        Espeto e = _espetos[index];
-        return Mathf.Abs(e.espetoPosition - e.zonePosition) <= margenZonaVerde;
-    }
+    void DiscardEspeto(int index) => _espetos[index].state = EspetoState.Empty;
+    void ShiftZone(int index)     => _espetos[index].zonePosition = Random.Range(0.2f, 0.8f);
+    bool IsInGreenZone(int index) =>
+        Mathf.Abs(_espetos[index].espetoPosition - _espetos[index].zonePosition) <= margenZonaVerde;
 
     void RefreshUI()
     {
@@ -282,7 +165,6 @@ public class EspetoMinigame : MonoBehaviour
             Espeto e = _espetos[i];
 
             if (espetoTrackImages != null && i < espetoTrackImages.Length && espetoTrackImages[i])
-            {
                 espetoTrackImages[i].color = e.state switch
                 {
                     EspetoState.Empty   => ColEmpty,
@@ -291,65 +173,100 @@ public class EspetoMinigame : MonoBehaviour
                     EspetoState.Burned  => ColBurned,
                     _                   => ColEmpty
                 };
-            }
 
-            // — Zona verde 
             if (greenZoneRects != null && i < greenZoneRects.Length && greenZoneRects[i])
             {
-                float min = Mathf.Clamp01(e.zonePosition - margenZonaVerde);
-                float max = Mathf.Clamp01(e.zonePosition + margenZonaVerde);
-                greenZoneRects[i].anchorMin  = new Vector2(0, min);
-                greenZoneRects[i].anchorMax  = new Vector2(1, max);
-                greenZoneRects[i].offsetMin  = Vector2.zero;
-                greenZoneRects[i].offsetMax  = Vector2.zero;
+                greenZoneRects[i].anchorMin = new Vector2(0, Mathf.Clamp01(e.zonePosition - margenZonaVerde));
+                greenZoneRects[i].anchorMax = new Vector2(1, Mathf.Clamp01(e.zonePosition + margenZonaVerde));
+                greenZoneRects[i].offsetMin = Vector2.zero;
+                greenZoneRects[i].offsetMax = Vector2.zero;
                 greenZoneRects[i].gameObject.SetActive(e.state == EspetoState.Cooking);
             }
 
-            // — Handle del espeto 
             if (espetoHandleRects != null && i < espetoHandleRects.Length && espetoHandleRects[i])
             {
                 float pos = e.espetoPosition;
-                espetoHandleRects[i].anchorMin  = new Vector2(0f, pos - 0.06f);
-                espetoHandleRects[i].anchorMax  = new Vector2(1f, pos + 0.06f);
-                espetoHandleRects[i].offsetMin  = Vector2.zero;
-                espetoHandleRects[i].offsetMax  = Vector2.zero;
+                espetoHandleRects[i].anchorMin = new Vector2(0f, pos - 0.06f);
+                espetoHandleRects[i].anchorMax = new Vector2(1f, pos + 0.06f);
+                espetoHandleRects[i].offsetMin = Vector2.zero;
+                espetoHandleRects[i].offsetMax = Vector2.zero;
                 espetoHandleRects[i].gameObject.SetActive(e.state != EspetoState.Empty);
             }
 
-            // Texto de timer 
             if (timerTexts != null && i < timerTexts.Length && timerTexts[i])
-            {
                 timerTexts[i].text = e.state switch
                 {
                     EspetoState.Empty   => "[E] Poner espeto",
-                    EspetoState.Cooking => $" {e.burnTimer:F1}s  <wave>{e.cookProgress / DuracionCocina * 100f:F0}%</wave>",
+                    EspetoState.Cooking => $"{e.burnTimer:F1}s  <wave>{e.cookProgress / DuracionCocina * 100f:F0}%</wave>",
                     EspetoState.Done    => "¡LISTO! [E] Recoger",
                     EspetoState.Burned  => "QUEMADO [E] Tirar",
                     _                   => ""
                 };
-            }
 
-            // Highlight del seleccionado 
             if (selectionFrames != null && i < selectionFrames.Length && selectionFrames[i])
                 selectionFrames[i].SetActive(i == _selectedIndex);
         }
 
-        //  Instrucción global 
         if (instructionText)
         {
             Espeto sel = _espetos[_selectedIndex];
             instructionText.text = sel.state switch
             {
-                EspetoState.Empty   => "A/D Navegar  |  E Poner espeto  |  Q Cerrar",
+                EspetoState.Empty   => "← → Navegar  |  E Poner espeto  |  ESC Cerrar",
                 EspetoState.Cooking => _isRepositioning
-                                        ? "W/S Mover espeto  |  E Soltar  |  Q Cerrar"
-                                        : "A/D Navegar  |  E Reposicionar  |  Q Cerrar",
-                EspetoState.Done    => "A/D Navegar  |  E Recoger espeto  |  Q Cerrar",
-                EspetoState.Burned  => "A/D Navegar  |  E Tirar  |  Q Cerrar",
+                    ? "↑ ↓ Mover espeto  |  E Soltar  |  ESC Cerrar"
+                    : "← → Navegar  |  E Reposicionar  |  ESC Cerrar",
+                EspetoState.Done    => "← → Navegar  |  E Recoger espeto  |  ESC Cerrar",
+                EspetoState.Burned  => "← → Navegar  |  E Tirar  |  ESC Cerrar",
                 _                   => ""
             };
         }
     }
+
+    //  IMinigameControllable
+
+    public void OnInteract()
+    {
+        Espeto sel = _espetos[_selectedIndex];
+        switch (sel.state)
+        {
+            case EspetoState.Empty:   PlaceEspeto(_selectedIndex);           break;
+            case EspetoState.Cooking: _isRepositioning = !_isRepositioning;  break;
+            case EspetoState.Done:    PickupEspeto(_selectedIndex);          break;
+            case EspetoState.Burned:  DiscardEspeto(_selectedIndex);         break;
+        }
+    }
+
+    public void OnNavigate(Vector2 direction)
+    {
+        _currentNav = direction;
+
+        Espeto sel = _espetos[_selectedIndex];
+
+        // Reposicionamiento vertical continuo
+        if (_isRepositioning && sel.state == EspetoState.Cooking)
+        {
+            sel.espetoPosition = Mathf.Clamp01(
+                sel.espetoPosition + direction.y * velocidadMovimiento * Time.deltaTime);
+            return;
+        }
+
+        // Navegación horizontal con cooldown
+        if (_navCooldown > 0f) return;
+        if (direction.x > 0.5f)
+        {
+            _selectedIndex = (_selectedIndex + 1) % espetoCount;
+            _navCooldown   = 0.25f;
+        }
+        else if (direction.x < -0.5f)
+        {
+            _selectedIndex = (_selectedIndex - 1 + espetoCount) % espetoCount;
+            _navCooldown   = 0.25f;
+        }
+    }
+
+    public void OnCancel() => ClosePanel();
+    public void OnSubmit() => OnInteract();
 
     void OnDrawGizmosSelected()
     {

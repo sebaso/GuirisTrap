@@ -1,18 +1,16 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : ControllableMonoBehaviour
 {
     [Header("Movement")]
-    public float speed = 5f;
-    private Rigidbody rb;
+    public float speed    = 5f;
     public float maxSpeed = 10f;
+    private Rigidbody rb;
     private Vector3 movementDirection;
 
     [Header("Pickup System")]
     public Transform holdPoint;
     public float interactionRange = 2f;
-    public KeyCode interactKey = KeyCode.E;
-
     private Food heldFood;
 
     [Header("Minigame System")]
@@ -32,64 +30,61 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        movementDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f, Input.GetAxisRaw("Vertical")).normalized;
-        HandleInteraction();
-        
-        if (Input.GetKeyDown(KeyCode.Escape)) 
-            Application.Quit();
-    }
-
     void FixedUpdate()
     {
-        Movement();
+        rb.linearVelocity = new Vector3(
+            movementDirection.x * speed,
+            rb.linearVelocity.y,
+            movementDirection.z * speed
+        );
     }
 
-    public void Movement()
+    // ── ControllableMonoBehaviour ─────────────────────────────────────────
+
+    public override void OnMove(Vector2 direction)
     {
-        rb.linearVelocity = new Vector3(movementDirection.x * speed, rb.linearVelocity.y, movementDirection.z * speed);
+        movementDirection = new Vector3(direction.x, 0f, direction.y).normalized;
     }
 
-    private void HandleInteraction()
+    public override void OnInteractDown()
     {
-        if (Input.GetKeyDown(interactKey))
+        // 1. Intentar abrir FoodStorage cercano
+        Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
+        foreach (Collider col in nearby)
         {
-            if (heldFood != null)
-            {
-                TryPlaceOrDropFood();
-            }
-            else
-            {
-                TryPickUpFood();
-            }
+            FoodStorage fs = col.GetComponent<FoodStorage>();
+            if (fs != null) { fs.TryOpen(); return; }
+
+            EspetoMinigame esp = col.GetComponent<EspetoMinigame>();
+            if (esp != null) { esp.TryOpen(this); return; }
+
+            CookingStation cs = col.GetComponent<CookingStation>();
+            if (cs != null) { cs.TryInteract(); return; }
         }
+
+        // 2. Si lleva comida, intentar colocarla
+        if (heldFood != null) { TryPlaceOrDropFood(); return; }
+
+        // 3. Intentar recoger comida del suelo
+        TryPickUpFood();
     }
+
+    // ── Pickup System ─────────────────────────────────────────────────────
 
     private void TryPickUpFood()
     {
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, interactionRange);
-
         foreach (Collider col in nearbyObjects)
         {
             Kitchen kitchen = col.GetComponent<Kitchen>();
             if (kitchen != null)
             {
                 Food newFood = kitchen.GetFood();
-                if (newFood != null)
-                {
-                    PickUpFood(newFood);
-                    return;
-                }
+                if (newFood != null) { PickUpFood(newFood); return; }
             }
 
             Food food = col.GetComponent<Food>();
-            if (food != null && !food.IsBeingHeld)
-            {
-                Debug.Log("COCINAMOS LA COMIDA");
-                PickUpFood(food);
-                return;
-            }
+            if (food != null && !food.IsBeingHeld) { PickUpFood(food); return; }
         }
     }
 
@@ -103,59 +98,35 @@ public class PlayerController : MonoBehaviour
     private void TryPlaceOrDropFood()
     {
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, interactionRange);
-        
         bool foundAnyTable = false;
+
         foreach (Collider col in nearbyObjects)
         {
-            Table table = col.GetComponent<Table>();
-            if (table == null)
+            Table table = col.GetComponent<Table>() ?? col.GetComponentInParent<Table>();
+            if (table == null) continue;
+
+            foundAnyTable = true;
+            if (table.CanPlaceFood())
             {
-                table = col.GetComponentInParent<Table>();
-            }
-            
-            if (table != null)
-            {
-                foundAnyTable = true;
-                if (table.CanPlaceFood())
-                {
-                    table.PlaceFood(heldFood);
-                    heldFood = null;
-                    Debug.Log("Placed food on table");
-                    return;
-                }
+                table.PlaceFood(heldFood);
+                heldFood = null;
+                Debug.Log("Placed food on table");
+                return;
             }
         }
-        
-        // Only drop if no table is nearby, even if it's full/not ready
-        if (!foundAnyTable)
-        {
-            DropFood();
-        }
-        else
-        {
-            Debug.Log("Cannot place food on nearby table (not ready or full).");
-        }
+
+        if (!foundAnyTable) DropFood();
     }
 
     private void DropFood()
     {
-        if (heldFood != null)
-        {
-            heldFood.Drop();
-            Debug.Log($"Dropped: {heldFood.foodName}");
-            heldFood = null;
-        }
+        if (heldFood == null) return;
+        heldFood.Drop();
+        heldFood = null;
     }
 
-    public bool IsHoldingFood()
-    {
-        return heldFood != null;
-    }
-
-    public Food GetHeldFood()
-    {
-        return heldFood;
-    }
+    public bool IsHoldingFood() => heldFood != null;
+    public Food GetHeldFood()   => heldFood;
 
     private void OnDrawGizmosSelected()
     {
@@ -166,14 +137,8 @@ public class PlayerController : MonoBehaviour
     public void SetCurrentIngredients(RecipeData data)
     {
         currentRecipe = data;
-        if (redCubeIngredient != null) 
-        {
-            redCubeIngredient.SetActive(true); 
-        }
+        if (redCubeIngredient != null) redCubeIngredient.SetActive(true);
     }
 
-    public void ResetInput()
-    {
-        Input.ResetInputAxes();
-    }
+    public void ResetInput() { }
 }

@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class InteractableFeedback : MonoBehaviour
 {
-    public Color highlightColor = Color.yellow; // Color al estar cerca
+    public Color highlightColor = Color.yellow; 
     private Color originalColor;
     private Renderer targetRenderer;
 
     void Start()
     {
-        // Buscamos el renderer en este objeto o en sus hijos
         targetRenderer = GetComponentInChildren<Renderer>();
         if (targetRenderer != null)
         {

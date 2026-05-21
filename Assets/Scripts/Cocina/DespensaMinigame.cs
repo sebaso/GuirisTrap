@@ -1,44 +1,47 @@
 using UnityEngine;
-using UnityEngine.UI; 
-using TMPro; 
+using UnityEngine.UI;
+using TMPro;
+using TMPEffects.Components;
 
-public class DespensaMinigame : MonoBehaviour
+public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
-    public GameObject minigamePanel;
-    public Image progressBarFill;
-    public TMP_Text timerText;
-    public TMP_Text mashText; // Pon <rainbow>¡Aprieta E muchas veces!</rainbow> en el Inspector, no desde código
+    public GameObject  minigamePanel;
+    public Image       progressBarFill;
+    public TMP_Text    timerText;
+    public TMP_Text    mashText;
+    public TMPAnimator mashAnimator;
 
     [Header("Settings")]
     public float baseClicks = 10f;
 
     private PlayerController player;
-    private RecipeData currentRecipe;
-    private bool isPlaying = false;
-    private float timer;
-    private float maxTimer; // guardamos el tiempo máximo para calcular el ratio
-    private float currentClicks;
-    private float requiredClicks;
+    private RecipeData       currentRecipe;
+    private bool             isPlaying = false;
+    private float            timer;
+    private float            maxTimer;
+    private float            currentClicks;
+    private float            requiredClicks;
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
-        player = currentPlayer;
+        player        = currentPlayer;
         currentRecipe = recipe;
-        player.enabled = false;
+
+        InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
 
-        requiredClicks = baseClicks + (recipe.difficulty * 5);
-        timer    = Mathf.Max(3f, recipe.timeLimit - (recipe.difficulty * 0.5f));
+        requiredClicks = baseClicks + recipe.difficulty * 5;
+        timer    = Mathf.Max(3f, recipe.timeLimit - recipe.difficulty * 0.5f);
         maxTimer = timer;
 
-        currentClicks = 0;
+        currentClicks          = 0;
         progressBarFill.fillAmount = 0f;
-        isPlaying = true;
-        
-        // NO tocamos mashText desde código — el <rainbow> está en el Inspector
-        if(mashText) mashText.transform.localScale = Vector3.one;
-        if(timerText) timerText.color = Color.white;
+        isPlaying              = true;
+
+        if (mashAnimator) mashAnimator.ResetTime();
+        if (mashText)     mashText.transform.localScale = Vector3.one;
+        if (timerText)    timerText.color = Color.white;
     }
 
     void Update()
@@ -46,50 +49,55 @@ public class DespensaMinigame : MonoBehaviour
         if (!isPlaying) return;
 
         timer -= Time.deltaTime;
-
-        if(timerText)
+        if (timerText)
         {
-            timerText.text = timer.ToString("F1");
-            // Lerp de blanco a rojo según el tiempo restante
-            float ratio = Mathf.Clamp01(timer / maxTimer);
-            timerText.color = Color.Lerp(Color.red, Color.white, ratio);
+            timerText.text  = timer.ToString("F1");
+            float ratio     = Mathf.Clamp01(timer / maxTimer);
+            timerText.color = ratio > 0.5f
+                ? Color.Lerp(new Color(1f, 0.6f, 0f), Color.white, (ratio - 0.5f) * 2f)
+                : Color.Lerp(Color.red, new Color(1f, 0.6f, 0f), ratio * 2f);
         }
 
-        if (timer <= 0) { EndGame(false); return; }
+        if (timer <= 0) EndGame(false);
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E))
-            AddProgress();
+    void LateUpdate()
+    {
+        if (mashText && isPlaying)
+            mashText.transform.localScale = Vector3.Lerp(
+                mashText.transform.localScale, Vector3.one, Time.deltaTime * 10f);
     }
 
     void AddProgress()
     {
         currentClicks++;
         progressBarFill.fillAmount = currentClicks / requiredClicks;
-        if(mashText) mashText.transform.localScale = Vector3.one * 1.2f;
+        if (mashText) mashText.transform.localScale = Vector3.one * 1.2f;
         if (currentClicks >= requiredClicks) EndGame(true);
-    }
-    
-    void LateUpdate()
-    {
-        if(mashText && isPlaying)
-            mashText.transform.localScale = Vector3.Lerp(mashText.transform.localScale, Vector3.one, Time.deltaTime * 10f);
     }
 
     void EndGame(bool success)
     {
         isPlaying = false;
         minigamePanel.SetActive(false);
-        if(timerText) timerText.color = Color.white; // reset color
-        player.enabled = true;
-        
+        if (timerText) timerText.color = Color.white;
+        InputManager.Instance.ExitMinigame();
+
         if (success)
         {
             Debug.Log("¡Éxito!");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
-                Debug.LogWarning($"[DespensaMinigame] {currentRecipe.dishName} no tiene foodPrefab asignado.");
+                Debug.LogWarning($"[DespensaMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
         else Debug.Log("¡SE TE ACABÓ EL TIEMPO! PRINGAO");
     }
+
+    //  IMinigameControllable
+
+    public void OnNavigate(Vector2 direction) { }
+    public void OnCancel()  { }
+    public void OnSubmit()  => AddProgress();
+    public void OnInteract() => AddProgress();
 }

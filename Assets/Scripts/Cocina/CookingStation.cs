@@ -3,65 +3,37 @@ using UnityEngine;
 public class CookingStation : MonoBehaviour
 {
     [Header("Configuración")]
-    public MinigameType stationType; // Nevera (Sartén), Congelador (Horno) o Despensa (Tabla)
-    public float interactionDistance = 2.5f; // Radio para que pille la E
+    public MinigameType stationType;
+    public float        interactionDistance = 2.5f;
 
     private PlayerController playerRef;
 
     private void Start()
     {
-        // Buscamos al jugador al iniciar
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            playerRef = playerObj.GetComponent<PlayerController>();
-        }
+        if (playerObj) playerRef = playerObj.GetComponent<PlayerController>();
     }
 
-    private void Update()
+    public void TryInteract()
     {
-        if (playerRef == null) return;
-
-        // CALCULAR DISTANCIA ENTRE JUGADOR Y ESTACIÓN
-        float dist = Vector3.Distance(transform.position, playerRef.transform.position);
-
-        // PARA CUANDO ESTE CERCA
-        if (dist <= interactionDistance)
+        if (playerRef == null || playerRef.currentRecipe == null)
         {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                TryStartCooking();
-            }
+            Debug.Log("No llevas nada en las manos.");
+            return;
         }
-    }
 
-    private void TryStartCooking()
-    {
-        if (playerRef.currentRecipe != null)
+        if (playerRef.currentRecipe.type == stationType)
         {
-            if (playerRef.currentRecipe.type == stationType)
-            {
-                Debug.Log($"<color=green>¡Éxito! Iniciando {playerRef.currentRecipe.dishName}</color>");
-                
-                // QUITAR LOS INGREDIENTES DE ENCIMA
-                if (playerRef.redCubeIngredient != null)
-                    playerRef.redCubeIngredient.SetActive(false);
+            Debug.Log($"<color=green>¡Éxito! Iniciando {playerRef.currentRecipe.dishName}</color>");
+            if (playerRef.redCubeIngredient != null)
+                playerRef.redCubeIngredient.SetActive(false);
 
-                // LANZAR MINIWEBO CORRESPONDIENTE
-                MinigameManager.Instance.LaunchMinigame(playerRef.currentRecipe, playerRef);
-                
-                // LIMPIAR TODO
-                playerRef.currentRecipe = null;
-                playerRef.ResetInput(); 
-            }
-            else
-            {
-                Debug.Log($"<color=red>c¡CAGASTE! Esta estación no es para {playerRef.currentRecipe.dishName}.</color>");
-            }
+            MinigameManager.Instance.LaunchMinigame(playerRef.currentRecipe, playerRef);
+            playerRef.currentRecipe = null;
         }
         else
         {
-            Debug.Log("No llevas nada en las manos. LOL");
+            Debug.Log($"<color=red>Esta estación no es para {playerRef.currentRecipe.dishName}.</color>");
         }
     }
 
