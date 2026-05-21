@@ -50,7 +50,7 @@ public class GridController : MonoBehaviour
                 }
             }
         }
-        /*else if(Input.GetMouseButtonDown(1) && !_hasObjectSelected)
+        else if(Input.GetMouseButtonDown(1) && !_hasObjectSelected)
         {
             Vector3 moussePos = Input.mousePosition;
             Ray ray = _mainCamera.ScreenPointToRay(moussePos);
@@ -70,10 +70,10 @@ public class GridController : MonoBehaviour
             _gridManager.ValidateAllChairs();
         }
             }
-        }*/
+        }
     }
 
-    /*private void RemovePlaceableObject(PlaceableObject placeableObject)
+    private void RemovePlaceableObject(PlaceableObject placeableObject)
     {
         if (placeableObject == null) 
             return;
@@ -90,7 +90,7 @@ public class GridController : MonoBehaviour
         if (_gridManager.GetPlaceableAt(x,y) != null)
             _gridManager.SetPlaceableAt(x,y, null);
         Destroy(placeableObject.gameObject);
-    }*/
+    }
 
     private void MovePlaceableObject()
     {
@@ -159,7 +159,7 @@ public class GridController : MonoBehaviour
     {
         PlaceableItemData item = placeableObject.GetItemData();
 
-        Vector3 pos = new Vector3(x, 0f, y);
+        Vector3 pos = new Vector3(x, 0.3f, y);
         Vector3 finalPos = pos + item.placementOffset;
 
         placeableObject.transform.position = finalPos;
@@ -178,7 +178,7 @@ public class GridController : MonoBehaviour
     {
         PlaceableItemData item = placeableObject.GetItemData();
 
-        Vector3 pos = new Vector3(placeableObject.StartCellX, 0f, placeableObject.StartCellY);
+        Vector3 pos = new Vector3(placeableObject.StartCellX, 0.3f, placeableObject.StartCellY);
         Vector3 finalPos = pos + item.placementOffset;
 
         placeableObject.transform.position = finalPos;

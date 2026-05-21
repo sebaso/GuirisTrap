@@ -103,7 +103,7 @@ public class GameGridManager : MonoBehaviour
 
                 if(_gridData.GetType(x,y) == CellType.Occupied && cell.item != null)
                 {
-                    Vector3 pos = new Vector3(x, 0f, y);
+                    Vector3 pos = new Vector3(x, 0.3f, y);
                     Vector3 finalPos = pos + cell.item.placementOffset;
 
                     GameObject tableInstance = Instantiate(cell.item.prefab, finalPos, Quaternion.identity, placeableFolder);

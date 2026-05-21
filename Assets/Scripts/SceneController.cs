@@ -6,7 +6,6 @@ public class SceneController : MonoBehaviour
 
     public static SceneController _instance;
     public static SceneController Instance => _instance;
-    
     private void Awake()
     {
         if(_instance == null)
@@ -19,7 +18,6 @@ public class SceneController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     public void ChangeScene(string sceneName)
     {
         if(sceneName == "GameScene")
@@ -36,12 +34,14 @@ public class SceneController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-
-        GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
-        if (gridManager != null)
+        if(scene.name != "MainMenu")
         {
+            GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
             gridManager.Init();
-            gridManager.PlaceableGenerator();
+            if (gridManager != null)
+            {
+                gridManager.PlaceableGenerator();
+            }
         }
     }
     public bool IsSceneLoaded(string sceneName)
