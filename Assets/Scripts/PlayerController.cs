@@ -44,6 +44,7 @@ public class PlayerController : ControllableMonoBehaviour
 
     void FixedUpdate()
     {
+        Debug.Log(Time.deltaTime);
         rb.linearVelocity = new Vector3(
             movementDirection.x * speed,
             rb.linearVelocity.y,
