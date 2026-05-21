@@ -38,9 +38,9 @@ public class SceneController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
         GameGridManager gridManager = FindFirstObjectByType<GameGridManager>();
-        gridManager.Init();
         if (gridManager != null)
         {
+            gridManager.Init();
             gridManager.PlaceableGenerator();
         }
     }

@@ -31,6 +31,15 @@ public class GridData : ScriptableObject
     {
         _cells[y * width + x].isWarehouse = isWarehouse;
     }
+    public bool GetIsEntrance(int x, int y)
+    {
+        return _cells[y * width + x].isEntrance;
+    }
+
+    public void SetIsEntrance(int x, int y, bool isEntrance)
+    {
+        _cells[y * width + x].isEntrance = isEntrance;
+    }
     public GridCell GetCell(int x, int y)
     {
         return _cells[y * width + x];

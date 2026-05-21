@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ClientSpawner : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class ClientSpawner : MonoBehaviour
     [Header("Timing")]
     public float spawnInterval = 12f;
     public int maxClients = 10;
+
 
     [Header("Queue")]
     public Vector3 queueDirection = Vector3.zero;
@@ -128,6 +130,9 @@ public class ClientSpawner : MonoBehaviour
 
             if (entrancePoint != null)
                 client.SetEntrancePoint(entrancePoint);
+
+            // Assign a random payout this client will pay when served
+            client.money = Random.Range(10, 22);
 
             group.AddMember(client);
             _activeClients.Add(client);

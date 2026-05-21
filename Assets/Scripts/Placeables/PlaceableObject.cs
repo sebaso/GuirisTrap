@@ -103,11 +103,9 @@ public class PlaceableObject : MonoBehaviour
         if(_gridManager.GetGridData.GetIsWarehouse(_cellOccupiedAtStartX, _cellOccupiedAtStartY) == true)
         {
             _isStoraged = true;
-           // Debug.Log("Esta la mesa almacenada");
         }
         else
         {
-            // Debug.Log("NO Esta la mesa almacenada");
             _isStoraged = false;
         }
     }

@@ -185,14 +185,25 @@ public class Client : MonoBehaviour
     private void LeaveHappy()
     {
         happiness += 10;
-        Debug.Log($"[Client] Finished eating. Leaving happy. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+
+        // Pay the restaurant
+        if (money > 0)
+        {
+            CashManager.Instance?.Earn(money);
+            Debug.Log($"[Client] Finished eating. Leaving happy. Paid {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+        }
+        else
+        {
+            Debug.Log($"[Client] Finished eating. Leaving happy. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+        }
+
         StartLeaving();
     }
 
     private void LeaveAngry()
     {
         happiness -= 10;
-        Debug.Log($"[Client] Patience ran out! Leaving angry. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+        Debug.Log($"[Client] Patience ran out! Leaving WITHOUT paying {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)

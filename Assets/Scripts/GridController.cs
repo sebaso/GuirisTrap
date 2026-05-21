@@ -49,7 +49,8 @@ public class GridController : MonoBehaviour
                     placeableObject.Select(true);
                 }
             }
-        }else if(Input.GetMouseButtonDown(1) && !_hasObjectSelected)
+        }
+        /*else if(Input.GetMouseButtonDown(1) && !_hasObjectSelected)
         {
             Vector3 moussePos = Input.mousePosition;
             Ray ray = _mainCamera.ScreenPointToRay(moussePos);
@@ -69,10 +70,10 @@ public class GridController : MonoBehaviour
             _gridManager.ValidateAllChairs();
         }
             }
-        }
+        }*/
     }
 
-    private void RemovePlaceableObject(PlaceableObject placeableObject)
+    /*private void RemovePlaceableObject(PlaceableObject placeableObject)
     {
         if (placeableObject == null) 
             return;
@@ -89,7 +90,7 @@ public class GridController : MonoBehaviour
         if (_gridManager.GetPlaceableAt(x,y) != null)
             _gridManager.SetPlaceableAt(x,y, null);
         Destroy(placeableObject.gameObject);
-    }
+    }*/
 
     private void MovePlaceableObject()
     {
@@ -144,7 +145,7 @@ public class GridController : MonoBehaviour
 
         if (item.category == PlaceableCategory.Chair)
         {
-            if (!_gridManager.HasAdjacentTable(x, y, placeableObject.StartCellX, placeableObject.StartCellY))
+            if (_gridManager.CountAdjacentTables(x, y, placeableObject.StartCellX, placeableObject.StartCellY) <= 0)
                 return false;
         }else if(item.category == PlaceableCategory.Table)
         {
