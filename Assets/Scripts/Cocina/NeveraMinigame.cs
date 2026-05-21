@@ -80,7 +80,7 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         {
             string symbol = GetArrowSymbol(currentSequence[i]);
             if      (i < currentIndex)  display += $"<color=green>{symbol} </color>";
-            else if (i == currentIndex) display += $"<color=yellow><b><grow>[{symbol}]</grow></b></color> ";
+            else if (i == currentIndex) display += $"<color=yellow><b>[{symbol}]</b></color> ";
             else                        display += $"{symbol} ";
         }
         sequenceDisplay.text = display;

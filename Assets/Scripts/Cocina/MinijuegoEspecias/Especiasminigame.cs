@@ -219,7 +219,7 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 
     void RefreshUI()
     {
-        if (balasText)       balasText.text      = $"Balas: <bounce>{_balasRestantes}</bounce>";
+        if (balasText)       balasText.text      = $"Balas: {_balasRestantes}";
         if (instruccionText) instruccionText.text = "← → Mover  |  E Disparar";
     }
 
