@@ -1,17 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// HUD element that reflects the CashManager balance.
-/// Attach to a Canvas GameObject that has:
-///   - a TMP_Text child called "MoneyText"  (shows current balance)
-///   - a TMP_Text child called "PopupText"  (floating +/- popup)
-/// 
-/// The popup prefab/child should start with alpha 0 and be positioned
-/// above the balance label; this script animates it on every change.
-/// </summary>
 public class CashUI : MonoBehaviour
 {
     [Header("Balance Display")]
@@ -23,8 +13,8 @@ public class CashUI : MonoBehaviour
     [SerializeField] private float popupDuration  = 1.1f;
 
     [Header("Colors")]
-    [SerializeField] private Color earnColor  = new Color(0.18f, 0.85f, 0.45f);
-    [SerializeField] private Color spendColor = new Color(0.95f, 0.25f, 0.25f);
+    [SerializeField] private Color earnColor  = Color.green;
+    [SerializeField] private Color spendColor = Color.red;
     [SerializeField] private Color neutralColor = Color.white;
 
     private RectTransform _popupRect;
@@ -56,7 +46,6 @@ public class CashUI : MonoBehaviour
             CashManager.Instance.OnMoneyChanged -= HandleMoneyChanged;
     }
 
-    // Called by CashManager: (newBalance, delta)
     private void HandleMoneyChanged(int newBalance, int delta)
     {
         RefreshDisplay(newBalance);
@@ -85,7 +74,6 @@ public class CashUI : MonoBehaviour
             popupText.color = spendColor;
         }
 
-        // Restart animation
         if (_popupCoroutine != null) StopCoroutine(_popupCoroutine);
         _popupCoroutine = StartCoroutine(AnimatePopup());
     }
@@ -104,7 +92,6 @@ public class CashUI : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / popupDuration;
 
-            // Rise linearly, fade out in the second half
             _popupRect.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             float alpha = t < 0.5f ? 1f : 1f - ((t - 0.5f) / 0.5f);
             SetPopupAlpha(alpha);
