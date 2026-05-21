@@ -34,6 +34,13 @@ public class GameManager : MonoBehaviour
         }
 
         bool added = PlaceInWarehouse(itemData);
+=======
+        if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(itemData.cost))
+        {
+            return;
+        }
+
+        bool added = _inventory.AddItem(itemData);
         if (added)
         {
             Debug.Log($"[GameManager] Has comprado: {itemData.prefab.name} por {itemData.cost}€");
@@ -43,6 +50,11 @@ public class GameManager : MonoBehaviour
             // Refund if we couldn't actually place it
             CashManager.Instance?.Earn(itemData.cost);
             Debug.Log("[GameManager] No has podido comprar el item, inventario lleno. Dinero devuelto.");
+            if (MoneyManager.Instance != null)
+            {
+                MoneyManager.Instance.AddMoney(itemData.cost);
+            }
+            Debug.Log("No has podido comprar el item, inventario lleno");
         }
     }
     public bool PlaceInWarehouse(PlaceableItemData itemData)
