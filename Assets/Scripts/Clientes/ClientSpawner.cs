@@ -129,6 +129,9 @@ public class ClientSpawner : MonoBehaviour
             if (entrancePoint != null)
                 client.SetEntrancePoint(entrancePoint);
 
+            // Assign a random payout this client will pay when served
+            client.money = Random.Range(10, 22);
+
             group.AddMember(client);
             _activeClients.Add(client);
             spawnedClients.Add(client);
