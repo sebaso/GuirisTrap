@@ -44,13 +44,12 @@ public class PlayerController : ControllableMonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.Log(Time.deltaTime);
         rb.linearVelocity = new Vector3(
-            movementDirection.x * speed,
+            -movementDirection.x * speed,
             rb.linearVelocity.y,
-            movementDirection.z * speed
+            -movementDirection.z * speed
         );
-        
+       
         if (interactPrompt != null)
     {
         Vector3 targetScale = isNearInteractable ? originalPromptScale : Vector3.zero;

@@ -1,5 +1,6 @@
 public enum PlaceableCategory
 {
     Table,
-    Chair
+    Chair,
+    Picture
 }

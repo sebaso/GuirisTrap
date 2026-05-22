@@ -81,6 +81,7 @@ void Start()
     }
     private void SelectPlaceableObject()
     {
+        if (_cameraController.IsTransitioning) return;
         if (Input.GetMouseButtonDown(0) && !_hasObjectSelected)
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -140,6 +141,7 @@ void Start()
         if (_placeableObject == null || !_hasObjectSelected || !_placeableObject.IsSelected()) return;
 
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        Debug.Log(Physics.Raycast(ray, out RaycastHit hito, 1000f, _floorMask));
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, _floorMask))
         {
             _placeableObject.transform.position = hit.point;
@@ -161,7 +163,6 @@ void Start()
         int y = _placeableObject.CurrentCellY;
 
         PlaceableCategory category = _placeableObject.GetItemData().category;
-
         if (CanPlace(x, y))
         {
             PlaceObject(x, y);
@@ -178,12 +179,12 @@ void Start()
     private bool CanPlace(int x, int y)
     {
         GridData gridData = _activeGridManager.GetGridData;
-
+        Debug.Log("X: " + x + " Y: " + y + " GRIDDATA.WITH: " + gridData.width + " GRIDDATA.HEIGHT: " + gridData.height);
         if (x < 0 || y < 0 || x >= gridData.width || y >= gridData.height)
         {
             return false;
         }
-
+        Debug.Log("DE MOMENTO CANPLACE");
         bool isStartCell = false;
 
         if (x == _placeableObject.StartCellX && y == _placeableObject.StartCellY) {   isStartCell = true; }
@@ -193,7 +194,7 @@ void Start()
         if (cellType != CellType.Empty && !isStartCell) {   return false; }
 
         bool canPlace = _activeGridManager.CanPlaceItem(x, y, _placeableObject.StartCellX, _placeableObject.StartCellY, _placeableObject.GetItemData());
-
+        Debug.Log("¿CAN PLACE FINALMENTE?" + canPlace);
         if (!canPlace) { return false; }
 
         return true;

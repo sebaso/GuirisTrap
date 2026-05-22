@@ -8,7 +8,7 @@ public class EditorMenu : MonoBehaviour
     void Update()
     {
         // hasta que cambiemos de sistema de control, mantenemos esta porqueria
-        if ((SceneManager.GetActiveScene().name == "PreparationScene" || SceneManager.GetActiveScene().name == "GameScene") && Input.GetKeyDown(KeyCode.Escape))
+        if ((SceneManager.GetActiveScene().name == "PreparationScene" || SceneManager.GetActiveScene().name == "GameScene" || SceneManager.GetActiveScene().name == "ZonaDePruebas")  && Input.GetKeyDown(KeyCode.Escape))
         {
             Debug.Log(_pausePanel.activeInHierarchy);
             if(!_pausePanel.activeInHierarchy)

@@ -3,7 +3,6 @@ public enum CameraView
 {
     Perspective,
     TopDown,
-    WallNorth,
     WallSouth,
     WallEast,
     WallWest
@@ -25,6 +24,7 @@ public class CameraController : MonoBehaviour
 
     private Transform _currentTarget;
     private CameraView _currentView = CameraView.Perspective;
+    public bool IsTransitioning { get; private set; }
 
     void Start()
     {
@@ -36,9 +36,12 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        if (_currentTarget == null) return;
         _mainCamera.transform.position = Vector3.SmoothDamp(_mainCamera.transform.position,_currentTarget.position,ref _velocityPos,1f / _transitionSpeed);
 
         _mainCamera.transform.rotation = Quaternion.SlerpUnclamped(_mainCamera.transform.rotation,_currentTarget.rotation,Time.deltaTime * _transitionSpeed);
+        
+        IsTransitioning = Vector3.Distance(_mainCamera.transform.position, _currentTarget.position) > 0.05f;
     }
 
     public void SetView(CameraView view)

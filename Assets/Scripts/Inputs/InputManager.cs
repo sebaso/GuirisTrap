@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static InputSystem_Actions;
 
 public class InputManager : MonoBehaviour, IPlayerActions
@@ -7,7 +8,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
     public static InputManager Instance { get; private set; }
 
     [Header("Controllables")]
-    [SerializeField] private ControllableMonoBehaviour _playerControllable;
+    private ControllableMonoBehaviour _playerControllable;
     [SerializeField] private MinigameControllable      _minigameControllable;
 
     private InputSystem_Actions       _inputs;
@@ -17,7 +18,6 @@ public class InputManager : MonoBehaviour, IPlayerActions
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         _inputs = new InputSystem_Actions();
         _inputs.Enable();
@@ -25,9 +25,27 @@ public class InputManager : MonoBehaviour, IPlayerActions
         _inputs.Player.AddCallbacks(this);
         _inputs.UI.Disable();
 
-        _current = _playerControllable;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name + " modo: " + mode);
+        PlayerController player = FindFirstObjectByType<PlayerController>();
 
+        if (player != null)
+        {
+            Debug.Log("ENCUENTRA EL PLAYER");
+            _playerControllable = player;
+            _current = _playerControllable;
+        }
+        else
+        {
+                        Debug.Log("NOOOO ENCUENTRA EL PLAYER");
+
+            _playerControllable = null;
+            _current = null;
+        }
+    }
     public void EnterMinigame(IMinigameControllable minigame)
     {
         _minigameControllable.SetActive(minigame);
@@ -49,7 +67,10 @@ public class InputManager : MonoBehaviour, IPlayerActions
     //  Callbacks 
 
     public void OnMove(InputAction.CallbackContext context)
-        => _current?.OnMove(context.ReadValue<Vector2>());
+    {
+            Debug.Log("OnMove: " + context.ReadValue<Vector2>() + " current: " + _current?.name);
+_current?.OnMove(context.ReadValue<Vector2>());
+    }
 
     public void OnLook(InputAction.CallbackContext context)
         => _current?.OnLook(context.ReadValue<Vector2>());

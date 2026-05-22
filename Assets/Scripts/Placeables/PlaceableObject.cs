@@ -89,11 +89,12 @@ public void Init(PlaceableItemData itemData)
     {
         if (!_isSelected) return;
 
-        _actualCellX = Mathf.FloorToInt(transform.position.x);
-        _actualCellY = Mathf.FloorToInt(transform.position.z);
+        Vector3 localPos = _gridManager.transform.InverseTransformPoint(transform.position);
+
+        _actualCellX = Mathf.FloorToInt(localPos.x);
+        _actualCellY = Mathf.FloorToInt(localPos.z);
 
         _gridManager.ClearLastCell(_lastCellX, _lastCellY);
-
         _lastCellX = -1;
         _lastCellY = -1;
 
