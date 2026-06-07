@@ -1220,8 +1220,6 @@ MonoBehaviour:
   _wallLayer:
     serializedVersion: 2
     m_Bits: 128
-  _fadeSpeed: 5
-  _minAlpha: 0.15
 --- !u!1 &342911634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4365,12 +4363,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5148817236446094103, guid: 139ba8cc484255e42985599397d97e30, type: 3}
       insertIndex: -1
       addedObject: {fileID: 81612176}
+    - targetCorrespondingSourceObject: {fileID: 5148817236446094103, guid: 139ba8cc484255e42985599397d97e30, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5148817237388844205}
     - targetCorrespondingSourceObject: {fileID: 6592401360930831907, guid: 139ba8cc484255e42985599397d97e30, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1480556482}
     - targetCorrespondingSourceObject: {fileID: -2375790043943120996, guid: 139ba8cc484255e42985599397d97e30, type: 3}
       insertIndex: -1
       addedObject: {fileID: 81612175}
+    - targetCorrespondingSourceObject: {fileID: -2375790043943120996, guid: 139ba8cc484255e42985599397d97e30, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6847581992241016872}
   m_SourcePrefab: {fileID: 100100000, guid: 139ba8cc484255e42985599397d97e30, type: 3}
 --- !u!114 &1480556478
 MonoBehaviour:
@@ -5497,6 +5501,7 @@ GameObject:
   - component: {fileID: 1897252414}
   - component: {fileID: 1897252413}
   - component: {fileID: 1897252412}
+  - component: {fileID: 1897252415}
   m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
@@ -5597,6 +5602,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1897252410}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1897252415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897252410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 1
 --- !u!1 &1905271154
 GameObject:
   m_ObjectHideFlags: 0
@@ -6739,6 +6759,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5148817236446094103, guid: 139ba8cc484255e42985599397d97e30, type: 3}
   m_PrefabInstance: {fileID: 1480556475}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5148817237388844205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5148817237388844204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 1
 --- !u!1 &6592401361871700376 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6592401360930831907, guid: 139ba8cc484255e42985599397d97e30, type: 3}
@@ -6749,6 +6784,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -2375790043943120996, guid: 139ba8cc484255e42985599397d97e30, type: 3}
   m_PrefabInstance: {fileID: 1480556475}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6847581992241016872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847581992241016871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 1
 --- !u!1 &7045030353181686889 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7045030354117346258, guid: 139ba8cc484255e42985599397d97e30, type: 3}

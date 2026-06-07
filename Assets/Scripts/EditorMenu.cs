@@ -10,7 +10,6 @@ public class EditorMenu : MonoBehaviour
         // hasta que cambiemos de sistema de control, mantenemos esta porqueria
         if ((SceneManager.GetActiveScene().name == "PreparationScene" || SceneManager.GetActiveScene().name == "GameScene" || SceneManager.GetActiveScene().name == "ZonaDePruebas")  && Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log(_pausePanel.activeInHierarchy);
             if(!_pausePanel.activeInHierarchy)
                 _pausePanel.SetActive(true);
             else
@@ -19,7 +18,6 @@ public class EditorMenu : MonoBehaviour
     }
     public void OnClickButton(string sceneName)
     {
-        Debug.Log(sceneName);
         SceneController.Instance.ChangeScene(sceneName);
     }
 
