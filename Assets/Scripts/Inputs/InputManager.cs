@@ -30,7 +30,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("OnSceneLoaded: " + scene.name + " modo: " + mode);
-        PlayerController player = FindFirstObjectByType<PlayerController>();
+        PlayerController player = FindAnyObjectByType<PlayerController>();
 
         if (player != null)
         {
@@ -48,6 +48,9 @@ public class InputManager : MonoBehaviour, IPlayerActions
     }
     public void EnterMinigame(IMinigameControllable minigame)
     {
+        // Detiene al jugador para que no patine mientras juega el minijuego.
+        (_playerControllable as PlayerController)?.LockMovement();
+
         _minigameControllable.SetActive(minigame);
         _current = _minigameControllable;
     }
@@ -56,6 +59,8 @@ public class InputManager : MonoBehaviour, IPlayerActions
     {
         _minigameControllable.ClearActive();
         _current = _playerControllable;
+
+        (_playerControllable as PlayerController)?.UnlockMovement();
     }
 
     public void EnablePlayerInputs(bool value)
