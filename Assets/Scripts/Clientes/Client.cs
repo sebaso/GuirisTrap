@@ -48,8 +48,12 @@ public class Client : MonoBehaviour
         _patience = maxPatience;
     }
 
+    private float _timeStateEntered;
+    private const float STATE_TIMEOUT = 30f; // Max seconds in any walking state before forcing arrival
+
     void Start()
     {
+        _timeStateEntered = Time.time;
         if (_entrancePoint != null)
         {
             Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
@@ -77,7 +81,7 @@ public class Client : MonoBehaviour
         switch (CurrentState)
         {
             case State.WalkingToEntrance:
-                if (HasReachedDestination())
+                if (HasReachedDestination() || HasTimedOut())
                     ArriveAtEntrance();
                 break;
 
@@ -87,7 +91,7 @@ public class Client : MonoBehaviour
                 break;
 
             case State.WalkingToTable:
-                if (HasReachedDestination())
+                if (HasReachedDestination() || HasTimedOut())
                     SitDown();
                 break;
 
@@ -103,7 +107,12 @@ public class Client : MonoBehaviour
         }
     }
 
-    private void ArriveAtEntrance()
+    /// <summary>
+    /// Called when the client has reached the entrance. Makes this client enter the waiting state
+    /// and notifies RestaurantManager to handle seating/queue logic.
+    /// Public so RestaurantManager can force-arrive other group members during group processing.
+    /// </summary>
+    public void ArriveAtEntrance()
     {
         Freeze();
         RestaurantManager.Instance?.ClientArrived(this);
@@ -123,12 +132,14 @@ public class Client : MonoBehaviour
     {
         _queueSlotPosition = slotPosition;
         SetState(State.Waiting);
+        _timeStateEntered = Time.time;
         WalkTo(slotPosition);
     }
 
     public void MoveToQueueSlot(Vector3 newSlotPosition)
     {
         _queueSlotPosition = newSlotPosition;
+        _timeStateEntered = Time.time;
         WalkTo(newSlotPosition);
     }
 
@@ -137,6 +148,7 @@ public class Client : MonoBehaviour
         _assignedTable = table;
         _seatPoint = seatPoint;
         SetState(State.WalkingToTable);
+        _timeStateEntered = Time.time;
         WalkTo(seatPoint.position);
     }
 
@@ -189,13 +201,16 @@ public class Client : MonoBehaviour
         // Pay the restaurant
         if (money > 0)
         {
-            CashManager.Instance?.Earn(money);
+            MoneyManager.Instance?.AddMoney(money);
             Debug.Log($"[Client] Finished eating. Leaving happy. Paid {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
         }
         else
         {
             Debug.Log($"[Client] Finished eating. Leaving happy. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
         }
+
+        // Registrar en el resumen del día (plato servido + cliente satisfecho)
+        DayReport.Instance?.RegisterSatisfiedClient();
 
         StartLeaving();
     }
@@ -204,6 +219,9 @@ public class Client : MonoBehaviour
     {
         happiness -= 10;
         Debug.Log($"[Client] Patience ran out! Leaving WITHOUT paying {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+
+        // Registrar en el resumen del día (cliente enfadado, no paga)
+        DayReport.Instance?.RegisterAngryClient();
 
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)
@@ -258,14 +276,37 @@ public class Client : MonoBehaviour
     {
         if (!_hasStartedWalking) return false;
         if (_agent.pathPending) return false;
+
+        // If the agent can't find a path at all, force arrival
+        if (_agent.hasPath && _agent.pathStatus == NavMeshPathStatus.PathInvalid)
+        {
+            Debug.LogWarning($"[Client] Path invalid, forcing arrival.");
+            return true;
+        }
+
+        // If the agent has no path and isn't pathPending, it means it can't reach the destination
+        if (!_agent.hasPath && !_agent.pathPending && _agent.remainingDistance <= 0.1f)
+        {
+            Debug.LogWarning($"[Client] No valid path to destination, forcing arrival.");
+            return true;
+        }
+
         if (_agent.remainingDistance <= _agent.stoppingDistance + 0.1f) return true;
         if (_agent.remainingDistance <= 2.0f && _agent.velocity.sqrMagnitude < 0.05f) return true;
+        if (_agent.remainingDistance <= 0.5f) return true;
+
         return false;
+    }
+
+    private bool HasTimedOut()
+    {
+        return Time.time - _timeStateEntered >= STATE_TIMEOUT;
     }
 
     private void SetState(State newState)
     {
         CurrentState = newState;
+        _timeStateEntered = Time.time;
     }
 
     void OnDestroy()

@@ -33,17 +33,17 @@ public class CashUI : MonoBehaviour
 
     void OnEnable()
     {
-        if (CashManager.Instance != null)
+        if (MoneyManager.Instance != null)
         {
-            RefreshDisplay(CashManager.Instance.Money);
-            CashManager.Instance.OnMoneyChanged += HandleMoneyChanged;
+            RefreshDisplay(MoneyManager.Instance.Money);
+            MoneyManager.Instance.OnMoneyChangedDelta += HandleMoneyChanged;
         }
     }
 
     void OnDisable()
     {
-        if (CashManager.Instance != null)
-            CashManager.Instance.OnMoneyChanged -= HandleMoneyChanged;
+        if (MoneyManager.Instance != null)
+            MoneyManager.Instance.OnMoneyChangedDelta -= HandleMoneyChanged;
     }
 
     private void HandleMoneyChanged(int newBalance, int delta)

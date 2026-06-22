@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
             return;
 
         // Check and deduct cost before buying
-        if (CashManager.Instance != null && !CashManager.Instance.TrySpend(itemData.cost))
+        if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(itemData.cost))
         {
             Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {itemData.prefab.name} (coste: {itemData.cost}€)");
             return;
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // Refund if inventory is full
-            CashManager.Instance?.Earn(itemData.cost);
+            MoneyManager.Instance?.AddMoney(itemData.cost);
             Debug.Log("[GameManager] No has podido comprar el item, inventario lleno. Dinero devuelto.");
         }
     }

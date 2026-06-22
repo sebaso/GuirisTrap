@@ -33,6 +33,9 @@ public class DayManager : MonoBehaviour
     /// <summary>Fired when the day ends (timer reaches zero).</summary>
     public event Action OnDayEnded;
 
+    /// <summary>Fired when a new day starts (timer (re)started).</summary>
+    public event Action OnDayStarted;
+
     void Awake()
     {
         if (Instance == null)
@@ -75,23 +78,17 @@ public class DayManager : MonoBehaviour
     {
         _timeRemaining = _dayDurationSeconds;
         _isDayActive = true;
+        OnDayStarted?.Invoke();
         OnDayProgress?.Invoke(0f);
         Debug.Log($"[DayManager] Day started! Duration: {_dayDurationSeconds}s");
     }
 
     private void HandleDayEnd()
     {
-        Debug.Log("[DayManager] Day ended! Returning to PreparationScene...");
-        
-        // Return to the preparation/planning scene
-        if (SceneController.Instance != null)
-        {
-            SceneController.Instance.ChangeScene("PreparationScene");
-        }
-        else
-        {
-            Debug.LogError("[DayManager] SceneController instance not found!");
-        }
+        // El día ha terminado. Ya NO guardamos ni cambiamos de escena aquí:
+        // eso lo hace el botón "Siguiente día" de la pantalla de Stats, después
+        // de que el jugador haya visto el resumen (StatsPanel escucha OnDayEnded).
+        Debug.Log("[DayManager] Día terminado. Mostrando pantalla de Stats...");
     }
 
     /// <summary>Override the day duration (can be called before StartDay).</summary>
