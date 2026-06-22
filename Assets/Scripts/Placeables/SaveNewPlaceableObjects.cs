@@ -21,7 +21,8 @@ public class SaveNewPlaceableObjects : MonoBehaviour
             manager.SaveGrid(
                 placeable.CurrentCellX, placeable.CurrentCellY,
                 placeable.StartCellX, placeable.StartCellY,
-                placeable.GetItemData()
+                placeable.GetItemData(),
+                placeable.transform.rotation
             );
 
             placeable.IsPlacedAtCell();

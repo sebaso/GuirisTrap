@@ -46,4 +46,10 @@ public class MoneyManager : MonoBehaviour
         OnMoneyChanged?.Invoke(_currentMoney);
         Debug.Log($"Gained {amount} coins. Total: {_currentMoney}");
     }
+
+    public void SetMoney(int amount)
+    {
+        _currentMoney = amount;
+        OnMoneyChanged?.Invoke(_currentMoney);
+    }
 }

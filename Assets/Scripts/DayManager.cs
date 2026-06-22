@@ -82,8 +82,10 @@ public class DayManager : MonoBehaviour
     private void HandleDayEnd()
     {
         Debug.Log("[DayManager] Day ended! Returning to PreparationScene...");
-        
-        // Return to the preparation/planning scene
+
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.IncrementDayAndSave();
+
         if (SceneController.Instance != null)
         {
             SceneController.Instance.ChangeScene("PreparationScene");

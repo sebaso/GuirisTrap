@@ -217,7 +217,7 @@ void Start()
             _activeGridManager.RotateTowardsTable(_placeableObject, x, y);
 
         _activeGridManager.SaveGrid(x, y,
-            _placeableObject.StartCellX, _placeableObject.StartCellY, item);
+            _placeableObject.StartCellX, _placeableObject.StartCellY, item, _placeableObject.transform.rotation);
 
         _placeableObject.IsPlacedAtCell();
         _placeableObject = null;

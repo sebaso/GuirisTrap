@@ -105,13 +105,29 @@ public class RestaurantManager : MonoBehaviour
             group.AddMember(client);
         }
 
-        if (_waitingGroups.Contains(group)) return;
+        // If this group is already in the waiting queue, just update positions
+        if (_waitingGroups.Contains(group))
+        {
+            Debug.Log($"[RestaurantManager] {client.name} arrived but group {group.GroupID} is already waiting. Member {group.Members.IndexOf(client) + 1}/{group.Members.Count}.");
+            return;
+        }
+
+        // Check if ALL group members have arrived (WalkingToEntrance or Waiting)
+        bool allArrived = true;
         foreach (var member in group.Members)
         {
-            if (member != null && member.CurrentState != Client.State.WalkingToEntrance && member.CurrentState != Client.State.Waiting)
+            if (member == null) continue;
+            if (member.CurrentState != Client.State.Waiting && member.CurrentState != Client.State.WalkingToEntrance)
             {
-                return;
+                allArrived = false;
+                break;
             }
+        }
+
+        if (!allArrived)
+        {
+            Debug.Log($"[RestaurantManager] Group {group.GroupID} not fully arrived yet. Waiting for all members.");
+            return;
         }
 
         TableBlock freeBlock = GetFreeBlockForGroup(group.Size);
@@ -202,21 +218,38 @@ public class RestaurantManager : MonoBehaviour
             for (int j = 0; j < points.Count; j++) seatTables.Add(t);
         }
 
+        int usableSeats = Mathf.Min(seatPoints.Count, group.Size);
+
         if (seatPoints.Count < group.Size)
         {
-            Debug.LogWarning($"[RestaurantManager] Block has only {seatPoints.Count} seats but group needs {group.Size}!");
+            Debug.LogWarning($"[RestaurantManager] Block has only {seatPoints.Count} seats but group needs {group.Size}! Using {usableSeats} seats.");
         }
 
-        for (int i = 0; i < group.Members.Count && i < seatPoints.Count; i++)
+        // Remove the group from waiting queue if it was there
+        _waitingGroups.Remove(group);
+
+        for (int i = 0; i < usableSeats; i++)
         {
             Client member = group.Members[i];
-            if (member != null)
+            if (member != null && seatPoints[i] != null)
             {
                 member.AssignTable(seatTables[i], seatPoints[i]);
             }
         }
 
-        Debug.Log($"[RestaurantManager] {group} seated at TableBlock (capacity {block.Capacity}) spanning {block.Tables.Count} tables");
+        // For excess members beyond available seats, keep them in the queue
+        if (usableSeats < group.Members.Count)
+        {
+            ClientGroup overflowGroup = new ClientGroup(group.Members.Count - usableSeats);
+            for (int i = usableSeats; i < group.Members.Count; i++)
+            {
+                overflowGroup.AddMember(group.Members[i]);
+            }
+            EnqueueGroup(overflowGroup);
+            Debug.LogWarning($"[RestaurantManager] Created overflow group of {overflowGroup.Size} for excess members");
+        }
+
+        Debug.Log($"[RestaurantManager] {group} seated at TableBlock (capacity {block.Capacity}) spanning {block.Tables.Count} tables. Seated {usableSeats}/{group.Size} members.");
     }
 
     private List<TableBlock> GetTableBlocks()
