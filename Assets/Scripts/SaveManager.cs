@@ -98,6 +98,13 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    public void ForceSave()
+    {
+        _data.money = MoneyManager.Instance != null ? MoneyManager.Instance.CurrentMoney : _data.money;
+        SaveGridsFromManagers();
+        WriteFile();
+    }
+
     private void WriteFile()
     {
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
