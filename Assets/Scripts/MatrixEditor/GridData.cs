@@ -44,4 +44,7 @@ public class GridData : ScriptableObject
     {
         return _cells[y * width + x];
     }
+
+    public Quaternion GetRotation(int x, int y) => _cells[y * width + x].rotation;
+    public void SetRotation(int x, int y, Quaternion rot) => _cells[y * width + x].rotation = rot;
 }

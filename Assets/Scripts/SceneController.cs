@@ -38,14 +38,16 @@ public class SceneController : MonoBehaviour
 
         if (scene.name == "MainMenu") return;
 
-        // Inicializar TODOS los managers
         GameGridManager[] allManagers = FindObjectsByType<GameGridManager>(FindObjectsSortMode.None);
 
         foreach (GameGridManager manager in allManagers)
-        {
             manager.Init();
+
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.LoadGrids(allManagers);
+
+        foreach (GameGridManager manager in allManagers)
             manager.PlaceableGenerator();
-        }
     }
 
     public bool IsSceneLoaded(string sceneName)

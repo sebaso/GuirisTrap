@@ -84,13 +84,14 @@ public class GameGridManager : MonoBehaviour
 
         _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
     }
-    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY, PlaceableItemData itemData)
+    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY, PlaceableItemData itemData, Quaternion rotation = default)
     {
         if (_gridData == null) return;
         if (newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
 
         _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
         _gridData.SetItem(newPlaceableObjectX, newPlaceableObjectY, itemData);
+        _gridData.SetRotation(newPlaceableObjectX, newPlaceableObjectY, rotation == default ? Quaternion.identity : rotation);
 
         bool hasValidStart = startPlaceableObjectX != -1 && startPlaceableObjectY != -1;
         bool movedToNewCell = startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY;
@@ -99,6 +100,7 @@ public class GameGridManager : MonoBehaviour
         {
             _gridData.SetType(startPlaceableObjectX, startPlaceableObjectY, CellType.Empty);
             _gridData.SetItem(startPlaceableObjectX, startPlaceableObjectY, null);
+            _gridData.SetRotation(startPlaceableObjectX, startPlaceableObjectY, Quaternion.identity);
             _placeables[newPlaceableObjectX, newPlaceableObjectY] = _placeables[startPlaceableObjectX, startPlaceableObjectY];
             _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
         }
@@ -119,7 +121,8 @@ public void PlaceableGenerator()
             Vector3 localPos = new Vector3(x, 0f, y) + cell.item.placementOffset;
             Vector3 worldPos = transform.TransformPoint(localPos);
 
-            GameObject instance = Instantiate( cell.item.prefab, worldPos, transform.rotation, placeableFolder );
+            Quaternion spawnRot = cell.rotation != Quaternion.identity ? cell.rotation : transform.rotation;
+            GameObject instance = Instantiate(cell.item.prefab, worldPos, spawnRot, placeableFolder);
 
             PlaceableObject placeable = instance.GetComponent<PlaceableObject>();
 
