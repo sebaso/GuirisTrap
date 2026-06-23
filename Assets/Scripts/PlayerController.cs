@@ -8,9 +8,6 @@ public class PlayerController : ControllableMonoBehaviour
     private Rigidbody rb;
     private Vector3 movementDirection;
 
-    // Cuando es true, el jugador está dentro de un minijuego y no debe moverse.
-    private bool _movementLocked = false;
-
     [Header("Pickup System")]
     public Transform holdPoint;
     public float interactionRange = 2f;
@@ -47,19 +44,11 @@ public class PlayerController : ControllableMonoBehaviour
 
     void FixedUpdate()
     {
-        if (_movementLocked)
-        {
-            // Frena en seco mientras estamos en un minijuego (conserva gravedad en Y).
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-        }
-        else
-        {
-            rb.linearVelocity = new Vector3(
-                -movementDirection.x * speed,
-                rb.linearVelocity.y,
-                -movementDirection.z * speed
-            );
-        }
+        rb.linearVelocity = new Vector3(
+            -movementDirection.x * speed,
+            rb.linearVelocity.y,
+            -movementDirection.z * speed
+        );
        
         if (interactPrompt != null)
     {
@@ -76,50 +65,49 @@ public class PlayerController : ControllableMonoBehaviour
 
     public override void OnMove(Vector2 direction)
     {
-        if (_movementLocked)
-        {
-            movementDirection = Vector3.zero;
-            return;
-        }
         movementDirection = new Vector3(direction.x, 0f, direction.y).normalized;
-    }
-
-    /// <summary>Llamar al entrar a un minijuego: detiene y bloquea el movimiento.</summary>
-    public void LockMovement()
-    {
-        _movementLocked   = true;
-        movementDirection = Vector3.zero;
-        if (rb != null)
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-    }
-
-    /// <summary>Llamar al salir de un minijuego: reactiva el movimiento.</summary>
-    public void UnlockMovement()
-    {
-        _movementLocked   = false;
-        movementDirection = Vector3.zero;
     }
 
     public override void OnInteractDown()
     {
-        // 1. Intentar abrir FoodStorage cercano
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
+
+        FoodStorage    bestStorage = null;
+        EspetoMinigame bestEspeto  = null;
+        CookingStation bestStation = null;
+        float bestStorageDist = float.MaxValue;
+        float bestEspetoDist  = float.MaxValue;
+        float bestStationDist = float.MaxValue;
+
         foreach (Collider col in nearby)
         {
+            float dist = (col.transform.position - transform.position).sqrMagnitude;
+
             FoodStorage fs = col.GetComponent<FoodStorage>();
-            if (fs != null) { fs.TryOpen(); return; }
+            if (fs != null && dist < bestStorageDist) { bestStorage = fs; bestStorageDist = dist; }
 
             EspetoMinigame esp = col.GetComponent<EspetoMinigame>();
-            if (esp != null) { esp.TryOpen(this); return; }
+            if (esp != null && dist < bestEspetoDist) { bestEspeto = esp; bestEspetoDist = dist; }
 
             CookingStation cs = col.GetComponent<CookingStation>();
-            if (cs != null) { cs.TryInteract(); return; }
+            if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
         }
 
-        // 2. Si lleva comida, intentar colocarla
+        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist)
+        {
+            bestStorage.TryOpen(); return;
+        }
+        if (bestEspeto != null && bestEspetoDist <= bestStationDist)
+        {
+            bestEspeto.TryOpen(this); return;
+        }
+        if (bestStation != null)
+        {
+            bestStation.TryInteract(); return;
+        }
+
         if (heldFood != null) { TryPlaceOrDropFood(); return; }
 
-        // 3. Intentar recoger comida del suelo
         TryPickUpFood();
     }
 
