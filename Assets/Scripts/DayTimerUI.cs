@@ -2,12 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// UI component that displays a circular countdown timer for the current day.
-/// Attach to a Canvas GameObject with:
-///   - An Image (filled, radial 360) for the circle timer
-///   - A TMP_Text child called "TimerText" to show remaining seconds
-/// </summary>
+
 public class DayTimerUI : MonoBehaviour
 {
     [Header("UI References")]
@@ -18,7 +13,7 @@ public class DayTimerUI : MonoBehaviour
     [SerializeField] private Color _fullColor = Color.green;
     [SerializeField] private Color _midColor = Color.yellow;
     [SerializeField] private Color _lowColor = Color.red;
-    [SerializeField] private float _lowThreshold = 0.3f; // 30% time remaining triggers red
+    [SerializeField] private float _lowThreshold = 0.3f; 
 
     [Header("Pulse Effect")]
     [SerializeField] private bool _enablePulse = true;
@@ -42,29 +37,47 @@ public class DayTimerUI : MonoBehaviour
         }
     }
 
+    private bool _subscribed = false;
+
     void OnEnable()
     {
-        if (DayManager.Instance != null)
-        {
-            DayManager.Instance.OnDayProgress += UpdateTimerDisplay;
-            DayManager.Instance.OnDayEnded += OnDayEnded;
-            
-            // Initialize display
-            UpdateTimerDisplay(DayManager.Instance.DayProgress);
-        }
+        TrySubscribe();
     }
 
     void OnDisable()
     {
-        if (DayManager.Instance != null)
+        if (_subscribed && DayManager.Instance != null)
         {
             DayManager.Instance.OnDayProgress -= UpdateTimerDisplay;
             DayManager.Instance.OnDayEnded -= OnDayEnded;
         }
+        _subscribed = false;
+    }
+
+    private void TrySubscribe()
+    {
+        if (_subscribed || DayManager.Instance == null) return;
+
+        DayManager.Instance.OnDayProgress += UpdateTimerDisplay;
+        DayManager.Instance.OnDayEnded += OnDayEnded;
+        _subscribed = true;
+
+        // Inicializar display con el estado actual
+        UpdateTimerDisplay(DayManager.Instance.DayProgress);
     }
 
     void Update()
     {
+        if (!_subscribed)
+        {
+            TrySubscribe();
+        }
+
+        if (DayManager.Instance != null && DayManager.Instance.IsDayActive)
+        {
+            UpdateTimerDisplay(DayManager.Instance.DayProgress);
+        }
+
         // Pulse effect when time is low
         if (_enablePulse && _circleRect != null && DayManager.Instance != null && DayManager.Instance.IsDayActive)
         {
@@ -85,19 +98,15 @@ public class DayTimerUI : MonoBehaviour
     {
         if (_circleFill != null)
         {
-            // Fill amount: 1 = full (day start), 0 = empty (day end)
             _circleFill.fillAmount = Mathf.Clamp01(1f - progress);
 
-            // Color interpolation based on time remaining
             if (progress >= 1f - _lowThreshold)
             {
-                // In the low time zone - interpolate between mid and red
                 float t = (progress - (1f - _lowThreshold)) / _lowThreshold;
                 _circleFill.color = Color.Lerp(_midColor, _lowColor, t);
             }
             else
             {
-                // Plenty of time left - interpolate between green and yellow
                 float t = progress / (1f - _lowThreshold);
                 _circleFill.color = Color.Lerp(_fullColor, _midColor, t);
             }

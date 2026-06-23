@@ -2,21 +2,21 @@ Shader "Guiri/StationIndicator"
 {
     Properties
     {
-        _Color      ("Color",         Color)            = (1, 0.1, 0.5, 1)
-        _LineCount  ("Line Count",    Float)            = 10
-        _Speed      ("Speed",         Float)            = 1.5
-        _LineWidth  ("Line Width",    Range(0.01, 0.5)) = 0.15
-        _Intensity  ("Intensity",     Float)            = 2.5
-        _FadeRadius ("Fade Radius",   Range(0.3, 1.0))  = 0.8
+        [HDR] _Color  ("Color",         Color)            = (1, 0.1, 0.5, 1)
+        _LineCount    ("Line Count",    Float)            = 10
+        _Speed        ("Speed",         Float)            = 1.5
+        _LineWidth    ("Line Width",    Range(0.01, 0.5)) = 0.15
+        _Intensity    ("Intensity",     Float)            = 2.5
+        _FadeRadius   ("Fade Radius",   Range(0.3, 1.0))  = 0.8
     }
 
     SubShader
     {
         Tags
         {
-            "RenderType"     = "Transparent"
-            "Queue"          = "Transparent"
-            "RenderPipeline" = "UniversalPipeline"
+            "RenderType"      = "Transparent"
+            "Queue"           = "Transparent"
+            "RenderPipeline"  = "UniversalPipeline"
             "IgnoreProjector" = "True"
         }
 
