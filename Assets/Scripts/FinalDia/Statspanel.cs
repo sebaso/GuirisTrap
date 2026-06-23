@@ -22,7 +22,6 @@ using TMPro;
 public class StatsPanel : MonoBehaviour
 {
     [Header("Panel raíz que se muestra/oculta")]
-    [Tooltip("El panel visible. Empieza desactivado; el script lo activa al acabar el día.")]
     [SerializeField] private GameObject _panelRoot;
 
     [Header("Textos (todos opcionales)")]
@@ -51,10 +50,11 @@ public class StatsPanel : MonoBehaviour
         if (_panelRoot != null) _panelRoot.SetActive(false);
     }
 
+    private bool _subscribed = false;
+
     private void OnEnable()
     {
-        if (DayManager.Instance != null)
-            DayManager.Instance.OnDayEnded += ShowPanel;
+        TrySubscribe();
 
         if (_nextDayButton != null)
             _nextDayButton.onClick.AddListener(OnNextDayButton);
@@ -62,11 +62,27 @@ public class StatsPanel : MonoBehaviour
 
     private void OnDisable()
     {
-        if (DayManager.Instance != null)
+        if (_subscribed && DayManager.Instance != null)
             DayManager.Instance.OnDayEnded -= ShowPanel;
+        _subscribed = false;
 
         if (_nextDayButton != null)
             _nextDayButton.onClick.RemoveListener(OnNextDayButton);
+    }
+
+    private void Update()
+    {
+        // Si el DayManager no existía al activarse este panel, reintentar
+        // la suscripción hasta que aparezca (evita perder el evento OnDayEnded).
+        if (!_subscribed)
+            TrySubscribe();
+    }
+
+    private void TrySubscribe()
+    {
+        if (_subscribed || DayManager.Instance == null) return;
+        DayManager.Instance.OnDayEnded += ShowPanel;
+        _subscribed = true;
     }
 
     /// <summary>Muestra el overlay y rellena los datos. Lo dispara OnDayEnded.</summary>
