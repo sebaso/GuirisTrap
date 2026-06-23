@@ -8,6 +8,9 @@ public class PlayerController : ControllableMonoBehaviour
     private Rigidbody rb;
     private Vector3 movementDirection;
 
+    // Cuando es true, el jugador está en un minijuego y no debe moverse.
+    private bool _movementLocked = false;
+
     [Header("Pickup System")]
     public Transform holdPoint;
     public float interactionRange = 2f;
@@ -44,11 +47,19 @@ public class PlayerController : ControllableMonoBehaviour
 
     void FixedUpdate()
     {
-        rb.linearVelocity = new Vector3(
-            -movementDirection.x * speed,
-            rb.linearVelocity.y,
-            -movementDirection.z * speed
-        );
+        if (_movementLocked)
+        {
+            // Frena en seco durante el minijuego (conserva gravedad en Y).
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        }
+        else
+        {
+            rb.linearVelocity = new Vector3(
+                -movementDirection.x * speed,
+                rb.linearVelocity.y,
+                -movementDirection.z * speed
+            );
+        }
        
         if (interactPrompt != null)
     {
@@ -65,11 +76,34 @@ public class PlayerController : ControllableMonoBehaviour
 
     public override void OnMove(Vector2 direction)
     {
+        if (_movementLocked)
+        {
+            movementDirection = Vector3.zero;
+            return;
+        }
         movementDirection = new Vector3(direction.x, 0f, direction.y).normalized;
+    }
+
+    /// <summary>Llamado por InputManager al entrar a un minijuego: detiene y bloquea el movimiento.</summary>
+    public void LockMovement()
+    {
+        _movementLocked   = true;
+        movementDirection = Vector3.zero;
+        if (rb != null)
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+    }
+
+    /// <summary>Llamado por InputManager al salir de un minijuego: reactiva el movimiento.</summary>
+    public void UnlockMovement()
+    {
+        _movementLocked   = false;
+        movementDirection = Vector3.zero;
     }
 
     public override void OnInteractDown()
     {
+        // 1. Buscar el interactable MÁS CERCANO (no el primero que devuelva la
+        //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
 
         FoodStorage    bestStorage = null;
@@ -93,6 +127,7 @@ public class PlayerController : ControllableMonoBehaviour
             if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
         }
 
+
         if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist)
         {
             bestStorage.TryOpen(); return;
@@ -106,8 +141,10 @@ public class PlayerController : ControllableMonoBehaviour
             bestStation.TryInteract(); return;
         }
 
+        // 2. Si lleva comida, intentar colocarla
         if (heldFood != null) { TryPlaceOrDropFood(); return; }
 
+        // 3. Intentar recoger comida del suelo
         TryPickUpFood();
     }
 

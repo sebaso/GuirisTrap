@@ -1074,73 +1074,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228148121}
   m_CullTransparentMesh: 1
---- !u!1 &1256388096
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1256388098}
-  - component: {fileID: 1256388097}
-  m_Layer: 0
-  m_Name: AudioManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1256388097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256388096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ae0340f8fbc8c54d9038b11dcaee3d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  _musicSource: {fileID: 0}
-  _sfxSource: {fileID: 0}
-  _sfxLibrary:
-  - name: aaah
-    clip: {fileID: 8300000, guid: b5efec73107220242b446aa5a42810ed, type: 3}
-    volumeScale: 0.08
-  - name: fah
-    clip: {fileID: 8300000, guid: be55cf046fe19734595f2c74cfae2038, type: 3}
-    volumeScale: 0.08
-  - name: switch1
-    clip: {fileID: 8300000, guid: 3c88b700aa139394caa408e7f61a54b7, type: 3}
-    volumeScale: 0.08
-  - name: switch3
-    clip: {fileID: 8300000, guid: c3874bc5148eda3438d2615000eb22b4, type: 3}
-    volumeScale: 0.08
-  - name: click4
-    clip: {fileID: 8300000, guid: a4ba3e6f5d7909a499b2a19612e5fde0, type: 3}
-    volumeScale: 0.08
-  _prepMusic: {fileID: 8300000, guid: e9f12b82e1e680340a08bc4aaa7535af, type: 3}
-  _gameMusic: {fileID: 8300000, guid: 88ea2990e7e735541aa7c0f69d63f170, type: 3}
-  _menuMusic: {fileID: 8300000, guid: eb6166d72bce2524f832c9a7e7fc38c0, type: 3}
-  _musicVolume: 0.3
-  _sfxVolume: 0.25
---- !u!4 &1256388098
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256388096}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.32041, y: 2.69863, z: -0.6972}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1319917319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,51 +1348,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424471642}
   m_CullTransparentMesh: 1
---- !u!1 &1431268143
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1431268145}
-  - component: {fileID: 1431268144}
-  m_Layer: 0
-  m_Name: SceneMusic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1431268144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1431268143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1a2bff0676f5c45898afec74a4f761, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneMusic
-  _music: 0
---- !u!4 &1431268145
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1431268143}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.32041, y: 2.69863, z: -0.6972}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1618682008
 GameObject:
   m_ObjectHideFlags: 0
@@ -2198,9 +2086,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1925832048}
   - {fileID: 945883626}
-  - {fileID: 1256388098}
   - {fileID: 1765204984}
-  - {fileID: 1431268145}
   - {fileID: 1319917322}
   - {fileID: 1958622866}
   - {fileID: 1618682012}
