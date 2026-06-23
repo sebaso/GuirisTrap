@@ -135,4 +135,5 @@ public void Init(PlaceableItemData itemData)
             r.material.color = valid ? Color.green : Color.red;
         }
     }
+
 }

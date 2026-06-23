@@ -9,6 +9,13 @@ public class Chair : MonoBehaviour
     public bool IsPlaced { get; private set; }
     public Transform SeatTransform => seatPoint != null ? seatPoint : transform;
 
+    // claimant from walk-up through eating; null = free
+    public Client Occupant { get; set; }
+
+    // blocks pickup only once actually sitting, not while walking over
+    public bool IsBeingSatOn => Occupant != null &&
+        (Occupant.CurrentState == Client.State.WaitingForFood || Occupant.CurrentState == Client.State.Eating);
+
     private PlaceableObject _placeable;
     private bool _wasStoraged;
 
@@ -50,6 +57,13 @@ public class Chair : MonoBehaviour
             IsPlaced = true;
             _wasStoraged = false;
         }
+    }
+
+    // while carried, don't count as a seat
+    public void SetCarried(bool carried)
+    {
+        IsPlaced = !carried;
+        if (carried) Occupant = null; // pickup releases the claim; claimant re-seats
     }
 
     void OnDrawGizmosSelected()

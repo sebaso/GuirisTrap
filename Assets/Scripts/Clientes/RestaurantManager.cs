@@ -164,6 +164,21 @@ public class RestaurantManager : MonoBehaviour
         Debug.Log($"[RestaurantManager] No table for {group}. Queued at position {groupIndex}. Total waiting groups: {_waitingGroups.Count}");
     }
 
+    // table moved: re-evaluate blocks so waiting groups can use new combos
+    public void NotifyTablesRearranged() => TryFlushWaitingGroups();
+
+    // queue patience ran out; Remove() false = already gone, so idempotent
+    public void AbandonGroup(ClientGroup group)
+    {
+        if (group == null || !_waitingGroups.Remove(group)) return;
+
+        foreach (var member in group.Members)
+            member?.LeaveQueue();
+
+        Debug.Log($"[RestaurantManager] {group} left without being seated (queue patience ran out).");
+        RepositionWaitingGroups();
+    }
+
     public void FreeGroupTables(ClientGroup group)
     {
         if (group == null) return;
