@@ -162,6 +162,7 @@ public class RestaurantManager : MonoBehaviour
         }
 
         Debug.Log($"[RestaurantManager] No table for {group}. Queued at position {groupIndex}. Total waiting groups: {_waitingGroups.Count}");
+        HUDMessage.Instance?.ShowWarning($"¡No hay mesa para el grupo de {group.Size}! En cola...");
     }
 
     // table moved: re-evaluate blocks so waiting groups can use new combos
@@ -176,6 +177,7 @@ public class RestaurantManager : MonoBehaviour
             member?.LeaveQueue();
 
         Debug.Log($"[RestaurantManager] {group} left without being seated (queue patience ran out).");
+        HUDMessage.Instance?.ShowBad("¡Clientes se fueron por esperar demasiado!");
         RepositionWaitingGroups();
     }
 
@@ -238,6 +240,7 @@ public class RestaurantManager : MonoBehaviour
         if (seatPoints.Count < group.Size)
         {
             Debug.LogWarning($"[RestaurantManager] Block has only {seatPoints.Count} seats but group needs {group.Size}! Using {usableSeats} seats.");
+            HUDMessage.Instance?.ShowWarning($"¡Faltan sillas! El grupo necesita {group.Size} asientos.");
         }
 
         // Remove the group from waiting queue if it was there
@@ -308,6 +311,7 @@ public class RestaurantManager : MonoBehaviour
         if (_placedTables.Count == 0)
         {
             Debug.LogWarning("[RestaurantManager] No tables have been placed in the restaurant yet!");
+            HUDMessage.Instance?.ShowWarning("¡No hay mesas en el restaurante! Añade algunas en preparación.");
             return null;
         }
         List<TableBlock> blocks = GetTableBlocks();

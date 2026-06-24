@@ -201,6 +201,7 @@ public class Client : MonoBehaviour
         else
         {
             Debug.Log("[Client] Seat taken mid-trip and none left — leaving.");
+            HUDMessage.Instance?.ShowWarning("¡Recogieron la silla! El cliente se va.");
             LeaveAngrySelf();
         }
     }
@@ -235,6 +236,8 @@ public class Client : MonoBehaviour
     {
         happiness -= 10;
         ReleaseSeat();
+        DayReport.Instance?.RegisterAngryClient();
+        HUDMessage.Instance?.ShowBad("¡Cliente se fue enfadado sin pagar!");
         SetState(State.Angry);
         WalkToExit();
     }
@@ -249,6 +252,8 @@ public class Client : MonoBehaviour
     public void LeaveQueue()
     {
         happiness -= 10;
+        DayReport.Instance?.RegisterAngryClient();
+        HUDMessage.Instance?.ShowBad("¡Cliente se fue de la cola!");
         SetState(State.Angry);
         WalkToExit();
     }
@@ -272,9 +277,15 @@ public class Client : MonoBehaviour
     {
         happiness += 10;
 
-        const int HAPPY_PAYMENT = 20;
-        CashManager.Instance?.Earn(HAPPY_PAYMENT);
-        Debug.Log($"[Client] Finished eating. Leaving happy. Paid {HAPPY_PAYMENT}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+        // Usar el dinero asignado al cliente (aleatorio en spawn) en vez de hardcode
+        int payment = money > 0 ? money : 20;
+        MoneyManager.Instance?.Earn(payment);
+        Debug.Log($"[Client] Finished eating. Leaving happy. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+
+        DayReport.Instance?.RegisterSatisfiedClient();
+
+        if (IsGroupLeader || !IsInGroup)
+            HUDMessage.Instance?.ShowGood($"¡Cliente satisfecho! +{payment}€");
 
         StartLeaving();
     }
@@ -282,9 +293,6 @@ public class Client : MonoBehaviour
     private void StartLeaving()
     {
         ReleaseSeat();
-
-        // Registrar en el resumen del día (cliente enfadado, no paga)
-        DayReport.Instance?.RegisterAngryClient();
 
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)

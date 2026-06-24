@@ -86,12 +86,16 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         if (success)
         {
             Debug.Log("¡Éxito!");
+            HUDMessage.Instance?.ShowGood("¡Receta completada!");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
                 Debug.LogWarning($"[DespensaMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
-        else Debug.Log("¡SE TE ACABÓ EL TIEMPO! PRINGAO");
+        else {
+                Debug.Log("¡SE TE ACABÓ EL TIEMPO! PRINGAO");
+                HUDMessage.Instance?.ShowBad("¡Se te acabó el tiempo!");
+            }
     }
 
     //  IMinigameControllable

@@ -258,11 +258,13 @@ public class PlayerController : ControllableMonoBehaviour
             if (table != null && table.IsOccupied)
             {
                 Debug.LogWarning("[Carry] That table is in use — wait until the group leaves.");
+                HUDMessage.Instance?.ShowWarning("Mesa ocupada — espera a que el grupo termine.");
                 return;
             }
             if (grid != null && grid.HasAdjacentChairs(best.CurrentCellX, best.CurrentCellY))
             {
                 Debug.LogWarning("[Carry] Take the chairs out before moving this table.");
+                HUDMessage.Instance?.ShowWarning("Quita las sillas antes de mover la mesa.");
                 return;
             }
             table?.SetCarried(true);
@@ -272,7 +274,8 @@ public class PlayerController : ControllableMonoBehaviour
             Chair chair = best.GetComponent<Chair>();
             if (chair != null && chair.IsBeingSatOn)
             {
-                Debug.LogWarning("[Carry] Someone is sitting on this chair — can't take it.");
+                Debug.LogWarning("[Carry] Someone is sitting or walking to this chair — can't take it.");
+                HUDMessage.Instance?.ShowWarning("Alguien está usando esta silla.");
                 return;
             }
             chair?.SetCarried(true);
@@ -312,6 +315,7 @@ public class PlayerController : ControllableMonoBehaviour
         if (!_dropValid)
         {
             Debug.LogWarning("[Carry] Can't put it there.");
+            HUDMessage.Instance?.ShowWarning("No puedes ponerlo ahí.");
             return;
         }
 
