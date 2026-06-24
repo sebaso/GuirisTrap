@@ -103,7 +103,7 @@ public void Init(PlaceableItemData itemData)
             _lastCellX = _actualCellX;
             _lastCellY = _actualCellY;
         }
-
+        
         _isMoved = true;
     }
 

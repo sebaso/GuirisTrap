@@ -60,6 +60,7 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
         selectionPopup.SetActive(true);
         selectedIndex = 0;
         UpdatePopupUI();
+        AudioManager.Instance?.PlaySFX("popup_open");
     }
 
     void CloseSelection()
@@ -67,6 +68,7 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
         isSelecting = false;
         InputManager.Instance.ExitMinigame();
         selectionPopup.SetActive(false);
+        AudioManager.Instance?.PlaySFX("popup_close");
     }
 
     void ChangeSelection(int direction)

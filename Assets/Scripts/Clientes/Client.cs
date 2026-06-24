@@ -184,6 +184,7 @@ public class Client : MonoBehaviour
         if (CurrentState != State.WaitingForFood) return;
 
         SetState(State.Eating);
+        AudioManager.Instance?.PlaySFX("client_eating");
         Debug.Log($"[Client] Food received! Eating... (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
         StartCoroutine(EatCoroutine());
     }
@@ -211,7 +212,7 @@ public class Client : MonoBehaviour
 
         // Registrar en el resumen del día (plato servido + cliente satisfecho)
         DayReport.Instance?.RegisterSatisfiedClient();
-
+        AudioManager.Instance?.PlaySFX("client_happy");
         StartLeaving();
     }
 
@@ -230,6 +231,7 @@ public class Client : MonoBehaviour
         }
 
         SetState(State.Angry);
+        AudioManager.Instance?.PlaySFX("client_angry");
         WalkToExit();
     }
 

@@ -44,11 +44,13 @@ public class MoneyManager : MonoBehaviour
         {
             _currentMoney -= amount;
             NotifyChange(-amount);
+            AudioManager.Instance?.PlaySFX("money_spent");
             Debug.Log($"[MoneyManager] Gastado {amount}€. Quedan: {_currentMoney}€");
             return true;
         }
 
         Debug.LogWarning($"[MoneyManager] Dinero insuficiente. Necesitas {amount}€ y tienes {_currentMoney}€");
+        AudioManager.Instance?.PlaySFX("money_insufficient");
         return false;
     }
 
@@ -58,6 +60,7 @@ public class MoneyManager : MonoBehaviour
         if (amount <= 0) return;
         _currentMoney += amount;
         NotifyChange(amount);
+        AudioManager.Instance?.PlaySFX("money_earned");
         Debug.Log($"[MoneyManager] Ingresado {amount}€. Total: {_currentMoney}€");
     }
 

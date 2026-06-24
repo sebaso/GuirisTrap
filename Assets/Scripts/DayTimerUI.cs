@@ -84,6 +84,7 @@ public class DayTimerUI : MonoBehaviour
             float progress = DayManager.Instance.DayProgress;
             if (progress >= 1f - _lowThreshold) // last 30% of day
             {
+                AudioManager.Instance?.PlaySFX("timer_low");
                 float pulse = Mathf.Lerp(_pulseMinScale, _pulseMaxScale, (Mathf.Sin(Time.time * _pulseSpeed) + 1f) * 0.5f);
                 _circleRect.localScale = _originalScale * pulse;
             }

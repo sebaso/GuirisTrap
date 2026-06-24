@@ -68,12 +68,17 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
         if (finalPos >= winMin && finalPos <= winMax)
         {
             Debug.Log($"¡CONGELADO PERFECTO!");
+            AudioManager.Instance?.PlaySFX("congelador_success");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
                 Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
-        else Debug.Log("FALLASTE.");
+        else
+        {
+            Debug.Log("FALLASTE.");
+            AudioManager.Instance?.PlaySFX("congelador_failure");
+        }
 
         minigamePanel.SetActive(false);
         InputManager.Instance.ExitMinigame();
