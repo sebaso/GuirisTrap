@@ -14,10 +14,14 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
     [Header("Settings")]
     public float baseClicks = 10f;
+    [Tooltip("Segundos de cuenta atrás antes de que empiece a contar el tiempo (3,2,1,¡YA!).")]
+    public float countdownSeconds = 3f;
 
     private PlayerController player;
     private RecipeData currentRecipe;
     private bool isPlaying = false;
+    private bool isCountingDown = false;
+    private float countdownRemaining;
     private float timer;
     private float maxTimer;
     private float currentClicks;
@@ -37,15 +41,46 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
         currentClicks = 0;
         progressBarFill.fillAmount = 0f;
-        isPlaying = true;
 
         if (mashAnimator) mashAnimator.ResetTime();
         if (mashText) mashText.transform.localScale = Vector3.one;
         if (timerText) timerText.color = Color.white;
+
+        // Empezar con la cuenta atrás, NO jugando todavía. Da margen al jugador
+        // para entender el minijuego antes de que corra el tiempo (feedback del profe).
+        isPlaying          = false;
+        isCountingDown     = true;
+        countdownRemaining = countdownSeconds;
     }
 
     void Update()
     {
+        // Fase de cuenta atrás: 3, 2, 1, ¡YA!
+        if (isCountingDown)
+        {
+            countdownRemaining -= Time.deltaTime;
+
+            if (timerText)
+            {
+                if (countdownRemaining > 0f)
+                {
+                    timerText.text  = Mathf.CeilToInt(countdownRemaining).ToString();
+                    timerText.color = Color.white;
+                }
+                else
+                {
+                    timerText.text = "¡YA!";
+                }
+            }
+
+            if (countdownRemaining <= 0f)
+            {
+                isCountingDown = false;
+                isPlaying      = true; // ahora sí empieza a contar el tiempo
+            }
+            return;
+        }
+
         if (!isPlaying) return;
 
         timer -= Time.deltaTime;
@@ -70,6 +105,8 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
     void AddProgress()
     {
+        if (!isPlaying) return; // ignorar pulsaciones durante la cuenta atrás
+
         currentClicks++;
         progressBarFill.fillAmount = currentClicks / requiredClicks;
         if (mashText) mashText.transform.localScale = Vector3.one * 1.2f;
@@ -79,6 +116,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
     void EndGame(bool success)
     {
         isPlaying = false;
+        isCountingDown = false;
         minigamePanel.SetActive(false);
         if (timerText) timerText.color = Color.white;
         InputManager.Instance.ExitMinigame();

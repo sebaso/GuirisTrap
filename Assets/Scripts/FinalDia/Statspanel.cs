@@ -28,13 +28,23 @@ public class StatsPanel : MonoBehaviour
     [SerializeField] private Color _gradeDColor = new Color(0.90f, 0.50f, 0.20f);
     [SerializeField] private Color _gradeFColor = new Color(0.80f, 0.20f, 0.20f);
 
+    private bool _subscribed = false;
+
     private void Awake()
     {
-        // Empezar oculto.
-        if (_panelRoot != null) _panelRoot.SetActive(false);
-    }
+        if (_panelRoot == null) return;
 
-    private bool _subscribed = false;
+        if (_panelRoot == gameObject)
+        {
+            Debug.LogError("[StatsPanel] _panelRoot es el MISMO objeto que tiene el script. " +
+                           "Debe ser un objeto hijo distinto. Ocultando solo los hijos para no autodesactivarme.");
+            SetChildrenActive(false);
+        }
+        else
+        {
+            _panelRoot.SetActive(false);
+        }
+    }
 
     private void OnEnable()
     {
@@ -56,8 +66,7 @@ public class StatsPanel : MonoBehaviour
 
     private void Update()
     {
-        // Si el DayManager no existía al activarse este panel, reintentar
-        // la suscripción hasta que aparezca (evita perder el evento OnDayEnded).
+        // Reintenta suscribirse si el DayManager no existía al activarse el panel.
         if (!_subscribed)
             TrySubscribe();
     }
@@ -72,8 +81,9 @@ public class StatsPanel : MonoBehaviour
     /// <summary>Muestra el overlay y rellena los datos. Lo dispara OnDayEnded.</summary>
     public void ShowPanel()
     {
-        if (_panelRoot != null) _panelRoot.SetActive(true);
+        ShowRoot(true);
         Populate();
+        AudioManager.Instance?.PlayStatsMusic();
         AudioManager.Instance?.PlaySFX("day_end");
     }
 
@@ -113,11 +123,28 @@ public class StatsPanel : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[StatsPanel] No hay DayReport. ¿Falta el objeto contador en el prefab/escena?");
+            Debug.LogWarning("[StatsPanel] No hay DayReport.");
         }
 
         if (_balanceText != null && MoneyManager.Instance != null)
             _balanceText.text = $"{MoneyManager.Instance.CurrentMoney}€";
+    }
+
+    // Muestra/oculta el panel sin desactivar nunca el objeto que tiene el script.
+    private void ShowRoot(bool visible)
+    {
+        if (_panelRoot == null) return;
+
+        if (_panelRoot == gameObject)
+            SetChildrenActive(visible);  
+        else
+            _panelRoot.SetActive(visible);
+    }
+
+    private void SetChildrenActive(bool visible)
+    {
+        foreach (Transform child in transform)
+            child.gameObject.SetActive(visible);
     }
 
     private Color GetGradeColor(char grade)
@@ -133,14 +160,15 @@ public class StatsPanel : MonoBehaviour
     }
 
     /// <summary>
-    /// Botón "Siguiente día": guarda + avanza día (lo de tu compañero) y va a
-    /// preparación. Reemplaza lo que antes hacía DayManager.HandleDayEnd.
+    /// Botón "Siguiente día"
     /// </summary>
     public void OnNextDayButton()
     {
+        AudioManager.Instance?.PlaySFX("next_day");
+        AudioManager.Instance?.StopMusic(); 
+
         if (SaveManager.Instance != null)
             SaveManager.Instance.IncrementDayAndSave();
-            AudioManager.Instance?.PlaySFX("next_day");
 
         if (SceneController.Instance != null)
             SceneController.Instance.ChangeScene("PreparationScene");

@@ -25,6 +25,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip _prepMusic;
     [SerializeField] private AudioClip _gameMusic;
     [SerializeField] private AudioClip _menuMusic;
+    [Tooltip("Música/fanfarria de la pantalla de estadísticas de fin de día.")]
+    [SerializeField] private AudioClip _statsMusic;
 
     [Header("Volúmenes")]
     [Range(0f, 1f)] [SerializeField] private float _musicVolume = 0.6f;
@@ -105,12 +107,13 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public void PlayMusic(AudioClip clip)
+    public void PlayMusic(AudioClip clip, bool loop = true)
     {
         if (clip == null) return;
         if (_musicSource.clip == clip && _musicSource.isPlaying) return;
 
         _musicSource.clip = clip;
+        _musicSource.loop = loop;
         _musicSource.volume = _musicVolume;
         _musicSource.Play();
     }
@@ -119,6 +122,7 @@ public class AudioManager : MonoBehaviour
     public void PlayMenuMusic() => PlayMusic(_menuMusic);
     public void PlayPrepMusic() => PlayMusic(_prepMusic);
     public void PlayGameMusic() => PlayMusic(_gameMusic);
+    public void PlayStatsMusic() => PlayMusic(_statsMusic, false); // fanfarria, sin loop
 
     public void StopMusic() => _musicSource.Stop();
 
