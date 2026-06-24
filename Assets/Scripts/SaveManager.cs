@@ -12,6 +12,9 @@ public class SaveManager : MonoBehaviour
 
     public int CurrentDay => _data.day;
 
+    /// <summary>Saldo guardado en disco (lo escribe SaveMoney/IncrementDayAndSave).</summary>
+    public int SavedMoney => _data.money;
+
     void Awake()
     {
         if (Instance == null)

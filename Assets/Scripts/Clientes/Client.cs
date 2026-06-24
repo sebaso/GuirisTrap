@@ -285,15 +285,16 @@ public class Client : MonoBehaviour
 
         DayReport.Instance?.RegisterSatisfiedClient();
         AudioManager.Instance?.PlaySFX("client_happy");
-        if (IsGroupLeader || !IsInGroup)
-            HUDMessage.Instance?.ShowGood($"¡Cliente satisfecho! +{payment}€");
-
         StartLeaving();
     }
 
-    private void StartLeaving()
+    private void LeaveAngry()
     {
-        ReleaseSeat();
+        happiness -= 10;
+        Debug.Log($"[Client] Patience ran out! Leaving WITHOUT paying {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+
+        // Registrar en el resumen del día (cliente enfadado, no paga)
+        DayReport.Instance?.RegisterAngryClient();
 
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)
@@ -302,6 +303,7 @@ public class Client : MonoBehaviour
         }
 
         SetState(State.Angry);
+        AudioManager.Instance?.PlaySFX("client_angry");
         WalkToExit();
     }
 

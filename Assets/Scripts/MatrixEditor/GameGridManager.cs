@@ -107,7 +107,7 @@ public class GameGridManager : MonoBehaviour
     }
 public void PlaceableGenerator()
 {
-    Transform placeableFolder = GameObject.Find("")?.transform;
+    Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
     if (placeableFolder == null)
         placeableFolder = new GameObject("PlaceableItems").transform;
 

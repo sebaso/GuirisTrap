@@ -48,6 +48,14 @@ public class SceneController : MonoBehaviour
 
         foreach (GameGridManager manager in allManagers)
             manager.PlaceableGenerator();
+
+        // Traspaso de dinero gameplay → escena de planificación: al llegar a la
+        // PreparationScene garantizamos que el MoneyManager existe y carga el
+        // saldo guardado en disco (lo que se ganó durante el día). Así el
+        // "save" de fin de día se refleja en la escena de planificación aunque
+        // no se haya pasado por MainMenu o el singleton se haya reiniciado.
+        if (scene.name == "PreparationScene")
+            MoneyManager.EnsureAndRestore();
     }
 
     public bool IsSceneLoaded(string sceneName)

@@ -21,6 +21,7 @@ public class Inventory : MonoBehaviour
             _instance = this;
             transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
+            Init();
             Debug.Log($"Inventory creado en escena: {gameObject.scene.name}");
         }
         else
@@ -47,6 +48,8 @@ public class Inventory : MonoBehaviour
     }
     public bool AddItem(PlaceableItemData item)
     {
+        if (_inventory == null) Init();
+        if (_inventory == null) return false;
         //Primero intento stackear el objeto
         for (int y = 0; y < _height; y++)
         {
@@ -85,13 +88,15 @@ public class Inventory : MonoBehaviour
     }
     public InventorySlot GetSlot(int x, int y)
     {
-        if(x >= 0 && x < _width && y >= 0 && y < _height)
-            return _inventory[x,y];
-        return null;
+        if (_inventory == null) Init();
+        if (_inventory == null || x < 0 || x >= _width || y < 0 || y >= _height)
+            return null;
+        return _inventory[x,y];
     }
     public bool RemoveItem(int x, int y)
     {
-        if (x < 0 || x >= _width || y < 0 || y >= _height)
+        if (_inventory == null) Init();
+        if (_inventory == null || x < 0 || x >= _width || y < 0 || y >= _height)
             return false;
 
         var slot = _inventory[x, y];

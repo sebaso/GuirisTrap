@@ -32,6 +32,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (Inventory.Instance == null)
+        {
+            Debug.LogWarning("[GameManager] No Inventory encontrado. Devolviendo dinero.");
+            MoneyManager.Instance?.AddMoney(itemData.cost);
+            HUDMessage.Instance?.ShowWarning("Inventario no disponible. Dinero devuelto.");
+            return;
+        }
+
         bool added = Inventory.Instance.AddItem(itemData);
         if (added)
         {
@@ -48,11 +56,19 @@ public class GameManager : MonoBehaviour
     }
     public void Place(int posX, int posY)
     {
+        if (Inventory.Instance == null)
+        {
+            Debug.LogWarning("[GameManager] No Inventory encontrado al colocar.");
+            return;
+        }
+
         InventorySlot slot = Inventory.Instance.GetSlot(posX, posY);
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
-        Transform folder = GameObject.Find("")?.transform;
+        Transform folder = GameObject.Find("PlaceableItems")?.transform;
+        if (folder == null)
+            folder = new GameObject("PlaceableItems").transform;
 
         if (itemData == null || itemData.prefab == null || _gridController == null)
         {

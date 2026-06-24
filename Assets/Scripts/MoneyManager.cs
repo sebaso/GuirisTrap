@@ -96,13 +96,46 @@ public class MoneyManager : MonoBehaviour
     /// </summary>
     private void LoadSavedMoney()
     {
-        if (SaveManager.Instance != null && SaveManager.Instance._data.day > 0)
-        {
-            _currentMoney = SaveManager.Instance._data.money;
-            // Avisar solo del balance (sin delta) para refrescar la UI sin
-            // disparar popups de "+0€".
+        RestoreFromSave();
+    }
+
+    /// <summary>
+    /// Transfiere el dinero guardado en disco (lo que se ganó en la partida de
+    /// juego) al saldo vivo del MoneyManager. Es el paso de "lectura" del
+    /// traspaso gameplay → escena de planificación.
+    ///
+    /// Solo sobrescribe si hay una partida guardada válida (día &gt; 0); en caso
+    /// contrario se mantiene el saldo inicial.
+    /// </summary>
+    public void RestoreFromSave()
+    {
+        if (SaveManager.Instance == null) return;
+        if (SaveManager.Instance.CurrentDay <= 0) return;
+
+        // SetMoney avisa a la UI con el delta real. Usamos OnMoneyChanged sin
+        // delta para no disparar popups de "+0€" cuando el saldo no cambia.
+        if (_currentMoney != SaveManager.Instance.SavedMoney)
+            SetMoney(SaveManager.Instance.SavedMoney);
+        else
             OnMoneyChanged?.Invoke(_currentMoney);
+    }
+
+    /// <summary>
+    /// Garantiza que existe una instancia de MoneyManager (creándola si hace
+    /// falta, p.ej. al entrar directamente en una escena sin pasar por MainMenu)
+    /// y transfiere el dinero guardado en disco al saldo vivo.
+    /// Llamar al cargar la escena de planificación.
+    /// </summary>
+    public static void EnsureAndRestore()
+    {
+        if (Instance == null)
+        {
+            var go = new GameObject(nameof(MoneyManager));
+            go.AddComponent<MoneyManager>();
         }
-        // Si no hay guardado válido, se mantiene el valor inicial.
+
+        // Awake/Start ya pueden haber restaurado, pero lo forzamos para
+        // garantizar el traspaso gameplay → planificación.
+        Instance.RestoreFromSave();
     }
 }
