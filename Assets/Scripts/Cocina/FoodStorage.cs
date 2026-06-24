@@ -82,13 +82,13 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
     void UpdatePopupUI()
     {
         RecipeData current = recipes[selectedIndex];
-        recipeNameText.text = $"{current.dishName}\n(Ir a: {current.type})";
+        recipeNameText.text = $"{current.dishName}\n(Ir a: {GetDestinationName(current.type)})";
     }
 
-    void ConfirmSelection()
+    /// <summary>Traduce el tipo de minijuego al nombre de la estación a la que hay que ir.</summary>
+    string GetDestinationName(MinigameType type)
     {
-        RecipeData chosenRecipe = recipes[selectedIndex];
-        string destino = chosenRecipe.type switch
+        return type switch
         {
             MinigameType.Nevera     => "la SARTÉN",
             MinigameType.Congelador => "el HORNO",
@@ -96,6 +96,12 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
             MinigameType.Especias   => "el MORTERO",
             _                       => "???"
         };
+    }
+
+    void ConfirmSelection()
+    {
+        RecipeData chosenRecipe = recipes[selectedIndex];
+        string destino = GetDestinationName(chosenRecipe.type);
         Debug.Log($"<color=cyan>RECETA ELEGIDA: {chosenRecipe.dishName}. VE A: {destino}</color>");
         playerRef.SetCurrentIngredients(chosenRecipe);
         CloseSelection();

@@ -73,7 +73,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-            Debug.Log("OnMove: " + context.ReadValue<Vector2>() + " current: " + _current?.name);
+            // Debug.Log("OnMove: " + context.ReadValue<Vector2>() + " current: " + _current?.name);
 _current?.OnMove(context.ReadValue<Vector2>());
     }
 

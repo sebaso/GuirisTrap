@@ -1,16 +1,17 @@
 using UnityEngine;
 using System;
 
-/// <summary>
-/// Manages the day timer for the GameScene.
-/// When the day ends, it triggers a transition back to the PreparationScene.
-/// </summary>
+
 public class DayManager : MonoBehaviour
 {
     public static DayManager Instance { get; private set; }
 
     [Header("Day Duration")]
-    [SerializeField] private float _dayDurationSeconds = 120f; // 2 minutes default
+    [SerializeField] private float _dayDurationSeconds = 120f; 
+    
+    [Header("Arranque")]
+    [SerializeField] private bool _autoStart = true;
+    [SerializeField] private float _startDelay = 0.5f;
 
     private float _timeRemaining;
     private bool _isDayActive;
@@ -33,6 +34,9 @@ public class DayManager : MonoBehaviour
     /// <summary>Fired when the day ends (timer reaches zero).</summary>
     public event Action OnDayEnded;
 
+    /// <summary>Fired when a new day starts (timer (re)started).</summary>
+    public event Action OnDayStarted;
+
     void Awake()
     {
         if (Instance == null)
@@ -46,9 +50,12 @@ public class DayManager : MonoBehaviour
         }
     }
 
+
+
     void Start()
     {
-        StartDay();
+        if (_autoStart)
+            Invoke(nameof(StartDay), _startDelay);
     }
 
     void Update()
@@ -75,25 +82,17 @@ public class DayManager : MonoBehaviour
     {
         _timeRemaining = _dayDurationSeconds;
         _isDayActive = true;
+        OnDayStarted?.Invoke();
         OnDayProgress?.Invoke(0f);
         Debug.Log($"[DayManager] Day started! Duration: {_dayDurationSeconds}s");
     }
 
     private void HandleDayEnd()
     {
-        Debug.Log("[DayManager] Day ended! Returning to PreparationScene...");
-
-        if (SaveManager.Instance != null)
-            SaveManager.Instance.IncrementDayAndSave();
-
-        if (SceneController.Instance != null)
-        {
-            SceneController.Instance.ChangeScene("PreparationScene");
-        }
-        else
-        {
-            Debug.LogError("[DayManager] SceneController instance not found!");
-        }
+        // El día ha terminado. Ya NO guardamos ni cambiamos de escena aquí:
+        // eso lo hace el botón "Siguiente día" de la pantalla de Stats, después
+        // de que el jugador haya visto el resumen (StatsPanel escucha OnDayEnded).
+        Debug.Log("[DayManager] Día terminado. Mostrando pantalla de Stats...");
     }
 
     /// <summary>Override the day duration (can be called before StartDay).</summary>

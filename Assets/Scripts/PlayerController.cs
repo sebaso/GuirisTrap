@@ -8,7 +8,7 @@ public class PlayerController : ControllableMonoBehaviour
     private Rigidbody rb;
     private Vector3 movementDirection;
 
-    // Cuando es true, el jugador está dentro de un minijuego y no debe moverse.
+    // Cuando es true, el jugador está en un minijuego y no debe moverse.
     private bool _movementLocked = false;
 
     [Header("Pickup System")]
@@ -49,7 +49,7 @@ public class PlayerController : ControllableMonoBehaviour
     {
         if (_movementLocked)
         {
-            // Frena en seco mientras estamos en un minijuego (conserva gravedad en Y).
+            // Frena en seco durante el minijuego (conserva gravedad en Y).
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         }
         else
@@ -90,7 +90,7 @@ public class PlayerController : ControllableMonoBehaviour
         movementDirection = new Vector3(direction.x, 0f, direction.y).normalized;
     }
 
-    /// <summary>Llamar al entrar a un minijuego: detiene y bloquea el movimiento.</summary>
+    /// <summary>Llamado por InputManager al entrar a un minijuego: detiene y bloquea el movimiento.</summary>
     public void LockMovement()
     {
         _movementLocked   = true;
@@ -99,7 +99,7 @@ public class PlayerController : ControllableMonoBehaviour
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
     }
 
-    /// <summary>Llamar al salir de un minijuego: reactiva el movimiento.</summary>
+    /// <summary>Llamado por InputManager al salir de un minijuego: reactiva el movimiento.</summary>
     public void UnlockMovement()
     {
         _movementLocked   = false;
@@ -111,18 +111,43 @@ public class PlayerController : ControllableMonoBehaviour
         // 0. Si lleva una mesa/silla, intentar soltarla.
         if (_heldPlaceable != null) { TryDropFurniture(); return; }
 
-        // 1. Intentar abrir FoodStorage cercano
+        // 1. Buscar el interactable MÁS CERCANO (no el primero que devuelva la
+        //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
+
+        FoodStorage    bestStorage = null;
+        EspetoMinigame bestEspeto  = null;
+        CookingStation bestStation = null;
+        float bestStorageDist = float.MaxValue;
+        float bestEspetoDist  = float.MaxValue;
+        float bestStationDist = float.MaxValue;
+
         foreach (Collider col in nearby)
         {
+            float dist = (col.transform.position - transform.position).sqrMagnitude;
+
             FoodStorage fs = col.GetComponent<FoodStorage>();
-            if (fs != null) { fs.TryOpen(); return; }
+            if (fs != null && dist < bestStorageDist) { bestStorage = fs; bestStorageDist = dist; }
 
             EspetoMinigame esp = col.GetComponent<EspetoMinigame>();
-            if (esp != null) { esp.TryOpen(this); return; }
+            if (esp != null && dist < bestEspetoDist) { bestEspeto = esp; bestEspetoDist = dist; }
 
             CookingStation cs = col.GetComponent<CookingStation>();
-            if (cs != null) { cs.TryInteract(); return; }
+            if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
+        }
+
+
+        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist)
+        {
+            bestStorage.TryOpen(); return;
+        }
+        if (bestEspeto != null && bestEspetoDist <= bestStationDist)
+        {
+            bestEspeto.TryOpen(this); return;
+        }
+        if (bestStation != null)
+        {
+            bestStation.TryInteract(); return;
         }
 
         // 2. Si lleva comida, intentar colocarla

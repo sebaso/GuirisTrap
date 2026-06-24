@@ -47,6 +47,19 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     {
         if (minigamePanel) minigamePanel.SetActive(false);
         if (cucharaRect)   cucharaRect.gameObject.SetActive(false);
+        DeactivateAllLayouts();
+    }
+
+
+    private void DeactivateAllLayouts()
+    {
+        GameObject[][] grupos = { layoutsFacil, layoutsNormal, layoutsDificil, layoutsImposible };
+        foreach (GameObject[] grupo in grupos)
+        {
+            if (grupo == null) continue;
+            foreach (GameObject layout in grupo)
+                if (layout != null) layout.SetActive(false);
+        }
     }
 
     void Update()
@@ -60,9 +73,16 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
         _currentRecipe = recipe as EspeciasRecipeData;
-        if (_currentRecipe == null) { Debug.LogError("[EspeciasMinigame] La receta no es EspeciasRecipeData."); return; }
+        if (_currentRecipe == null)
+        {
+            Debug.LogError("[EspeciasMinigame] La receta no es EspeciasRecipeData.");
+            return;
+        }
 
         _player = currentPlayer;
+
+        // Apaga cualquier layout que hubiera quedado activo de un intento anterior.
+        DeactivateAllLayouts();
 
         GameObject[][] grupos = { layoutsFacil, layoutsNormal, layoutsDificil, layoutsImposible };
         int grupoIdx = Mathf.Clamp(_currentRecipe.difficulty - 1, 0, grupos.Length - 1);
@@ -78,7 +98,12 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         grupo[idx].SetActive(true);
         _layoutActivo = grupo[idx].GetComponent<EspecieroLayout>();
 
-        if (_layoutActivo == null) { Debug.LogError("[EspeciasMinigame] Sin EspecieroLayout."); return; }
+        if (_layoutActivo == null)
+        {
+            Debug.LogError("[EspeciasMinigame] Sin EspecieroLayout.");
+            grupo[idx].SetActive(false); // no dejar el layout colgando
+            return;
+        }
 
         float vel = baseEspeciaSpeed + speedPerDifficulty * (_currentRecipe.difficulty - 1);
         foreach (EspeciaUI e in _layoutActivo.GetEspecias()) { e.speed = vel; e.Resetear(); }

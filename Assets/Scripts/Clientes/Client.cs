@@ -272,7 +272,6 @@ public class Client : MonoBehaviour
     {
         happiness += 10;
 
-        // ponytail: flat payout for now; tip/bill by happiness later
         const int HAPPY_PAYMENT = 20;
         CashManager.Instance?.Earn(HAPPY_PAYMENT);
         Debug.Log($"[Client] Finished eating. Leaving happy. Paid {HAPPY_PAYMENT}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
@@ -283,6 +282,9 @@ public class Client : MonoBehaviour
     private void StartLeaving()
     {
         ReleaseSeat();
+
+        // Registrar en el resumen del día (cliente enfadado, no paga)
+        DayReport.Instance?.RegisterAngryClient();
 
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)
