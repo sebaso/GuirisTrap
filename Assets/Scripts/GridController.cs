@@ -55,7 +55,7 @@ void Start()
             case CameraView.WallSouth: return _wallSouthGridManager;
             case CameraView.WallEast:  return _wallEastGridManager;
             case CameraView.WallWest:  return _wallWestGridManager;
-            default:                   return _floorGridManager; // Perspective y TopDown usan el suelo
+            default:                   return _floorGridManager;
         }
     }
     private void SetActiveGrid(GameGridManager newManager)
