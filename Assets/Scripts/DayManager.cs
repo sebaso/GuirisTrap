@@ -91,14 +91,10 @@ public class DayManager : MonoBehaviour
     {
         // El día ha terminado. Persistimos el dinero ganado durante la jornada
         // para que llegue a la PreparationScene (y a un posible reinicio).
+        // El cambio de escena lo sigue haciendo el botón "Siguiente día" de la
+        // pantalla de Stats (StatsPanel escucha OnDayEnded).
         if (SaveManager.Instance != null)
             SaveManager.Instance.SaveMoney();
-
-        // Mostrar el panel de estadísticas al terminar el día.
-        // Lo hacemos aquí de forma proactiva además de emitir OnDayEnded,
-        // para garantizar que aparece aunque la suscripción del panel tenga
-        // algún problema de timing.
-        UnityEngine.Object.FindFirstObjectByType<StatsPanel>()?.ShowPanel();
 
         Debug.Log("[DayManager] Día terminado. Mostrando pantalla de Stats...");
     }
