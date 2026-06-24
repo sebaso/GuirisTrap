@@ -6,7 +6,7 @@ public class SaveManager : MonoBehaviour
     public static SaveManager Instance { get; private set; }
 
     [SerializeField] private PlaceableItemData[] _allItems;
-
+    public PlaceableItemData[] AllItems => _allItems;
     private SaveData _data = new SaveData();
     private string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
 
@@ -110,6 +110,7 @@ public class SaveManager : MonoBehaviour
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
         Debug.Log($"[SaveManager] Saved day {_data.day}, money {_data.money} → {SavePath}");
     }
+
 
     [System.Serializable]
     class SaveData
