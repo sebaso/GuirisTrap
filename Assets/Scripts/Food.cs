@@ -9,8 +9,10 @@ public class Food : MonoBehaviour
     private Rigidbody rb;
     private Collider foodCollider;
     private bool isBeingHeld = false;
+    private bool isServed = false;
 
     public bool IsBeingHeld => isBeingHeld;
+    public bool IsServed => isServed;
 
     void Start(){
         rb = GetComponent<Rigidbody>();
@@ -54,13 +56,14 @@ public class Food : MonoBehaviour
     public void PlaceOnTable(Transform tablePoint)
     {
         isBeingHeld = false;
+        isServed = true;
 
         transform.SetParent(tablePoint);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
 
         rb.isKinematic = true;
-        foodCollider.enabled = true;
+        foodCollider.enabled = false;
     }
 
     public void Serve()

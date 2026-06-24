@@ -27,18 +27,28 @@ public class InventorySlotUI : MonoBehaviour
         if (slot == null)
         {
             gameObject.SetActive(false);
+            _currentItem = null;
             return;
         }
 
         gameObject.SetActive(true);
         _currentItem = slot.item;
-        _icon.sprite = slot.item.icon;
-        _quantityText.text = slot.quantity > 1 ? slot.quantity.ToString() : "";
+
+        if (_icon != null)
+        {
+            _icon.sprite = slot.item != null ? slot.item.icon : null;
+            Color c = _icon.color;
+            c.a = ENABLED_ALPHA;
+            _icon.color = c;
+        }
+
+        if (_quantityText != null)
+            _quantityText.text = slot.quantity > 1 ? slot.quantity.ToString() : "";
     }
 
     public void RefreshCompatibility(PlaceableSurface activeSurface)
     {
-        if (_currentItem == null) return;
+        if (_currentItem == null || _icon == null) return;
 
         bool compatible = _currentItem.IsCompatibleWith(activeSurface);
 

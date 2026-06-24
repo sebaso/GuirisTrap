@@ -70,7 +70,7 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
             Debug.Log($"¡CONGELADO PERFECTO!");
             AudioManager.Instance?.PlaySFX("congelador_success");
             if (currentRecipe.foodPrefab != null)
-                Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
                 Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

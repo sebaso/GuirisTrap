@@ -82,6 +82,10 @@ void Start()
     private void SelectPlaceableObject()
     {
         if (_cameraController.IsTransitioning) return;
+        // Don't let a click that lands on UI (e.g. buying/placing from an inventory
+        // slot) fall through to the world and grab a placeable behind the panel.
+        // Without this, placing an item immediately re-grabs an object underneath.
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(0) && !_hasObjectSelected)
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -213,21 +217,20 @@ void Start()
 
         Vector3 localPos = new Vector3(x, 0f, y) + item.placementOffset;
         Vector3 worldPos = _activeGridManager.transform.TransformPoint(localPos);
+        Quaternion targetRot = item.category == PlaceableCategory.Chair
+            ? _activeGridManager.GetChairRotation(x, y)
+            : _activeGridManager.transform.rotation;
 
-        _placeableObject.transform.position = worldPos;
-        _placeableObject.transform.rotation = _activeGridManager.transform.rotation;
         _placeableObject.GetComponent<Collider>().enabled = true;
 
         _hasObjectSelected = false;
         _placeableObject.Select(false);
 
-        if (item.category == PlaceableCategory.Chair)
-            _activeGridManager.RotateTowardsTable(_placeableObject, x, y);
-
         _activeGridManager.SaveGrid(x, y,
-            _placeableObject.StartCellX, _placeableObject.StartCellY, item, _placeableObject.transform.rotation);
+            _placeableObject.StartCellX, _placeableObject.StartCellY, item, targetRot);
 
         _placeableObject.IsPlacedAtCell();
+        _placeableObject.LerpTo(worldPos, targetRot);
         _placeableObject = null;
     }
 

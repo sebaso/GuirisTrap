@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlaceableObject : MonoBehaviour
 {
@@ -134,6 +135,30 @@ public void Init(PlaceableItemData itemData)
         {
             r.material.color = valid ? Color.green : Color.red;
         }
+    }
+
+    public void LerpTo(Vector3 targetWorldPos, Quaternion targetRot, float duration = 0.25f)
+    {
+        StartCoroutine(LerpRoutine(targetWorldPos, targetRot, duration));
+    }
+
+    private IEnumerator LerpRoutine(Vector3 targetPos, Quaternion targetRot, float duration)
+    {
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            transform.position = Vector3.Lerp(startPos, targetPos, t);
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        transform.rotation = targetRot;
     }
 
 }
