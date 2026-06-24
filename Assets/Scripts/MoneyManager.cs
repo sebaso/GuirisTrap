@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 
-
 public class MoneyManager : MonoBehaviour
 {
     public static MoneyManager Instance { get; private set; }
@@ -44,11 +43,13 @@ public class MoneyManager : MonoBehaviour
         {
             _currentMoney -= amount;
             NotifyChange(-amount);
+            AudioManager.Instance?.PlaySFX("money_spent");
             Debug.Log($"[MoneyManager] Gastado {amount}€. Quedan: {_currentMoney}€");
             return true;
         }
 
         Debug.LogWarning($"[MoneyManager] Dinero insuficiente. Necesitas {amount}€ y tienes {_currentMoney}€");
+        AudioManager.Instance?.PlaySFX("money_insufficient");
         return false;
     }
 
@@ -58,6 +59,7 @@ public class MoneyManager : MonoBehaviour
         if (amount <= 0) return;
         _currentMoney += amount;
         NotifyChange(amount);
+        AudioManager.Instance?.PlaySFX("money_earned");
         Debug.Log($"[MoneyManager] Ingresado {amount}€. Total: {_currentMoney}€");
     }
 
@@ -76,5 +78,64 @@ public class MoneyManager : MonoBehaviour
     {
         OnMoneyChanged?.Invoke(_currentMoney);
         OnMoneyChangedDelta?.Invoke(_currentMoney, delta);
+    }
+
+    private void Start()
+    {
+        // Restaurar el saldo guardado UNA sola vez al arrancar. A partir de aquí
+        // el saldo vive en este singleton DontDestroyOnLoad y viaja con el jugador
+        // entre escenas (PreparationScene <-> GameScene). NO se recarga desde el
+        // guardado al cargar cada escena: eso sobrescribiría el dinero ganado
+        // durante el día al llegar a la PreparationScene.
+        LoadSavedMoney();
+    }
+
+    /// <summary>
+    /// Restaura el saldo desde el SaveManager. Se llama una sola vez al arrancar
+    /// (Start). El saldo vivo es la fuente de la verdad a partir de ese momento.
+    /// </summary>
+    private void LoadSavedMoney()
+    {
+        RestoreFromSave();
+    }
+
+    /// <summary>
+    /// Transfiere el dinero guardado en disco (lo que se ganó en la partida de
+    /// juego) al saldo vivo del MoneyManager. Es el paso de "lectura" del
+    /// traspaso gameplay → escena de planificación.
+    ///
+    /// Solo sobrescribe si hay una partida guardada válida (día &gt; 0); en caso
+    /// contrario se mantiene el saldo inicial.
+    /// </summary>
+    public void RestoreFromSave()
+    {
+        if (SaveManager.Instance == null) return;
+        if (SaveManager.Instance.CurrentDay <= 0) return;
+
+        // SetMoney avisa a la UI con el delta real. Usamos OnMoneyChanged sin
+        // delta para no disparar popups de "+0€" cuando el saldo no cambia.
+        if (_currentMoney != SaveManager.Instance.SavedMoney)
+            SetMoney(SaveManager.Instance.SavedMoney);
+        else
+            OnMoneyChanged?.Invoke(_currentMoney);
+    }
+
+    /// <summary>
+    /// Garantiza que existe una instancia de MoneyManager (creándola si hace
+    /// falta, p.ej. al entrar directamente en una escena sin pasar por MainMenu)
+    /// y transfiere el dinero guardado en disco al saldo vivo.
+    /// Llamar al cargar la escena de planificación.
+    /// </summary>
+    public static void EnsureAndRestore()
+    {
+        if (Instance == null)
+        {
+            var go = new GameObject(nameof(MoneyManager));
+            go.AddComponent<MoneyManager>();
+        }
+
+        // Awake/Start ya pueden haber restaurado, pero lo forzamos para
+        // garantizar el traspaso gameplay → planificación.
+        Instance.RestoreFromSave();
     }
 }

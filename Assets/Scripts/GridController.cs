@@ -92,6 +92,14 @@ void Start()
             {
                 if (hit.GetItemData().IsCompatibleWith(_activeGridManager.Surface))
                 {
+                    // Can't grab a table while it still has chairs against it — take the chairs out first.
+                    if (hit.GetItemData().category == PlaceableCategory.Table &&
+                        _activeGridManager.HasAdjacentChairs(hit.CurrentCellX, hit.CurrentCellY))
+                    {
+                        Debug.LogWarning("[GridController] Remove the chairs before moving this table.");
+                        return;
+                    }
+
                     _placeableObject = hit;
                     _hasObjectSelected = true;
                     _placeableObject.Select(true);

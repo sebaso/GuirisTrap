@@ -19,12 +19,14 @@ public class CookingStation : MonoBehaviour
         if (playerRef == null || playerRef.currentRecipe == null)
         {
             Debug.Log("No llevas nada en las manos.");
+            HUDMessage.Instance?.ShowWarning("No llevas nada en las manos. Saca una receta de la nevera/despensa primero.");
             return;
         }
 
         if (playerRef.currentRecipe.type == stationType)
         {
             Debug.Log($"<color=green>¡Éxito! Iniciando {playerRef.currentRecipe.dishName}</color>");
+            HUDMessage.Instance?.ShowGood($"¡Cocinando {playerRef.currentRecipe.dishName}!");
             if (playerRef.redCubeIngredient != null)
                 playerRef.redCubeIngredient.SetActive(false);
 
@@ -34,6 +36,7 @@ public class CookingStation : MonoBehaviour
         else
         {
             Debug.Log($"<color=red>Esta estación no es para {playerRef.currentRecipe.dishName}.</color>");
+            HUDMessage.Instance?.ShowBad($"Esta estación no es para {playerRef.currentRecipe.dishName}.");
         }
     }
 

@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] 
     private int _height = 4;
     private InventorySlot[,] _inventory;
+    private bool _isInitialized = false;
     public int Width => _width;
     public int Height => _height;
     private static Inventory _instance;
@@ -18,20 +19,37 @@ public class Inventory : MonoBehaviour
         if(_instance == null)
         {
             _instance = this;
-                    Debug.Log($"Inventory creado en escena: {gameObject.scene.name}");
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+            Init();
+            Debug.Log($"Inventory creado en escena: {gameObject.scene.name}");
         }
         else
         {
-                    Debug.Log($"Inventory duplicado destruido en escena: {gameObject.scene.name}");
-            Destroy(this);
+            Debug.Log($"Inventory duplicado destruido en escena: {gameObject.scene.name}");
+            // Destruir el GameObject del que ya existe el singleton
+            if (gameObject != _instance.gameObject)
+                Destroy(gameObject);
+            else
+                Destroy(this);
         }
     }
     public void Init()
     {
+        if (_isInitialized) return; // No reinicializar si ya tiene datos
         _inventory = new InventorySlot[_width,_height];
+        _isInitialized = true;
+    }
+    
+    /// <summary>Limpia todo el inventario (para empezar fresco).</summary>
+    public void Clear()
+    {
+        _inventory = new InventorySlot[_width, _height];
     }
     public bool AddItem(PlaceableItemData item)
     {
+        if (_inventory == null) Init();
+        if (_inventory == null) return false;
         //Primero intento stackear el objeto
         for (int y = 0; y < _height; y++)
         {
@@ -70,13 +88,15 @@ public class Inventory : MonoBehaviour
     }
     public InventorySlot GetSlot(int x, int y)
     {
-        if(x >= 0 && x < _width && y >= 0 && y < _height)
-            return _inventory[x,y];
-        return null;
+        if (_inventory == null) Init();
+        if (_inventory == null || x < 0 || x >= _width || y < 0 || y >= _height)
+            return null;
+        return _inventory[x,y];
     }
     public bool RemoveItem(int x, int y)
     {
-        if (x < 0 || x >= _width || y < 0 || y >= _height)
+        if (_inventory == null) Init();
+        if (_inventory == null || x < 0 || x >= _width || y < 0 || y >= _height)
             return false;
 
         var slot = _inventory[x, y];

@@ -6,24 +6,24 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
     public GameObject minigamePanel;
-    public TMP_Text   sequenceDisplay;
-    public TMP_Text   timerText;
+    public TMP_Text sequenceDisplay;
+    public TMP_Text timerText;
 
     private enum ArrowDir { Up, Down, Left, Right }
 
     private List<ArrowDir> currentSequence = new List<ArrowDir>();
-    private int              currentIndex   = 0;
-    private bool             isPlaying      = false;
-    private float            timer;
+    private int currentIndex = 0;
+    private bool isPlaying = false;
+    private float timer;
     private PlayerController player;
-    private RecipeData       currentRecipe;
+    private RecipeData currentRecipe;
 
     // Cooldown para evitar que el stick registre múltiples inputs
     private float _inputCooldown = 0f;
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
-        player        = currentPlayer;
+        player = currentPlayer;
         currentRecipe = recipe;
 
         InputManager.Instance.EnterMinigame(this);
@@ -31,9 +31,9 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         minigamePanel.SetActive(true);
         GenerateSequence(recipe.difficulty == 1 ? 4 : recipe.difficulty * 2 + 2);
 
-        timer        = recipe.timeLimit;
+        timer = recipe.timeLimit;
         currentIndex = 0;
-        isPlaying    = true;
+        isPlaying = true;
         _inputCooldown = 0f;
 
         UpdateUI();
@@ -65,12 +65,17 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         if (success)
         {
             Debug.Log("¡Éxito!");
+            AudioManager.Instance?.PlaySFX("nevera_success");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
                 Debug.LogWarning($"[NeveraMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
-        else Debug.Log("¡Fallo!");
+        else
+        {
+            Debug.Log("¡Fallo!");
+            AudioManager.Instance?.PlaySFX("nevera_failure");
+        }
     }
 
     void UpdateUI()
@@ -79,25 +84,25 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         for (int i = 0; i < currentSequence.Count; i++)
         {
             string symbol = GetArrowSymbol(currentSequence[i]);
-            if      (i < currentIndex)  display += $"<color=green>{symbol} </color>";
+            if (i < currentIndex) display += $"<color=green>{symbol} </color>";
             else if (i == currentIndex) display += $"<color=yellow><b>[{symbol}]</b></color> ";
-            else                        display += $"{symbol} ";
+            else display += $"{symbol} ";
         }
         sequenceDisplay.text = display;
     }
 
     string GetArrowSymbol(ArrowDir dir) => dir switch
     {
-        ArrowDir.Up    => "↑",
-        ArrowDir.Down  => "↓",
-        ArrowDir.Left  => "←",
+        ArrowDir.Up => "↑",
+        ArrowDir.Down => "↓",
+        ArrowDir.Left => "←",
         ArrowDir.Right => "→",
-        _              => "?"
+        _ => "?"
     };
 
-    public void OnInteract() { } 
-    public void OnSubmit()   { }
-    public void OnCancel()   { } 
+    public void OnInteract() { }
+    public void OnSubmit() { }
+    public void OnCancel() { }
 
     public void OnNavigate(Vector2 direction)
     {

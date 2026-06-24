@@ -107,7 +107,7 @@ public class GameGridManager : MonoBehaviour
     }
 public void PlaceableGenerator()
 {
-    Transform placeableFolder = GameObject.Find("")?.transform;
+    Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
     if (placeableFolder == null)
         placeableFolder = new GameObject("PlaceableItems").transform;
 
@@ -245,22 +245,23 @@ public void PlaceableGenerator()
 
     public void RotateTowardsTable(PlaceableObject obj, int x, int y)
     {
-        Vector2Int dir = GetAdjacentTableDirection(x, y);
+        if (GetAdjacentTableDirection(x, y) == Vector2Int.zero) return;
+        obj.transform.rotation = GetChairRotation(x, y);
+    }
 
-        if (dir == Vector2Int.zero) return;
+    // rotation a chair takes facing its adjacent table; grid rotation if none
+    public Quaternion GetChairRotation(int x, int y)
+    {
+        Vector2Int dir = GetAdjacentTableDirection(x, y);
+        if (dir == Vector2Int.zero) return transform.rotation;
 
         float angle = 0f;
+        if (dir == Vector2Int.up) angle = -90f;
+        else if (dir == Vector2Int.down) angle = 90f;
+        else if (dir == Vector2Int.right) angle = 0f;
+        else if (dir == Vector2Int.left) angle = 180f;
 
-        if (dir == Vector2Int.up) 
-            angle = -90f;
-        else if (dir == Vector2Int.down) 
-            angle = 90f;
-        else if (dir == Vector2Int.right) 
-            angle = 0f;
-        else if (dir == Vector2Int.left) 
-            angle = 180f;
-
-        obj.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        return Quaternion.Euler(0f, angle, 0f);
     }
 
     public bool CanStartDay()
@@ -283,7 +284,7 @@ public void PlaceableGenerator()
         return true;
     }
 
-    public bool CanPlaceItem(int x, int y, int startX, int startY, PlaceableItemData item)
+    public bool CanPlaceItem(int x, int y, int startX, int startY, PlaceableItemData item, bool ignoreChairRules = false)
     {
         if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
             return false;
@@ -291,7 +292,7 @@ public void PlaceableGenerator()
         if (_gridData.GetType(x, y) != CellType.Empty && !(x == startX && y == startY))
             return false;
 
-        if (item.category == PlaceableCategory.Chair)
+        if (item.category == PlaceableCategory.Chair && !ignoreChairRules)
         {
             if (CountAdjacentTables(x, y, startX, startY) != 1)
                 return false;
@@ -337,6 +338,20 @@ public void PlaceableGenerator()
 
         return Vector2Int.zero;
     }
+    // table can't be lifted while chairs are tucked against it
+    public bool HasAdjacentChairs(int x, int y)
+    {
+        return IsChair(x, y + 1) || IsChair(x, y - 1) || IsChair(x + 1, y) || IsChair(x - 1, y);
+    }
+    private bool IsChair(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+            return false;
+
+        GridCell cell = _gridData.GetCell(x, y);
+        return cell.item != null && cell.item.category == PlaceableCategory.Chair;
+    }
+
     private bool IsTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
     {
         if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)

@@ -151,10 +151,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1618682012}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -123}
-  m_SizeDelta: {x: 684.76733, y: 157.3026}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960, y: -175.16348}
+  m_SizeDelta: {x: 684.7674, y: 157.3026}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &185932738
 MonoBehaviour:
@@ -616,7 +616,6 @@ GameObject:
   - component: {fileID: 945883626}
   - component: {fileID: 945883625}
   - component: {fileID: 945883624}
-  - component: {fileID: 945883627}
   m_Layer: 0
   m_Name: PersistentManagers
   m_TagString: Untagged
@@ -640,10 +639,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
   - {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
   - {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
-  _data:
-    day: 0
-    money: 0
-    grids: []
 --- !u!114 &945883625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -672,20 +667,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &945883627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 945883623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 445aa37b49272e04396af9d70f382ab8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TranslateManager
-  _defaultLanguage: 1
-  testKey: 
 --- !u!1 &1067082506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,136 +1074,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228148121}
   m_CullTransparentMesh: 1
---- !u!1 &1256388096
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1256388098}
-  - component: {fileID: 1256388097}
-  m_Layer: 0
-  m_Name: AudioManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1256388097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256388096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ae0340f8fbc8c54d9038b11dcaee3d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  _musicSource: {fileID: 0}
-  _sfxSource: {fileID: 0}
-  _sfxLibrary:
-  - name: despensa_success
-    clip: {fileID: 8300000, guid: b5efec73107220242b446aa5a42810ed, type: 3}
-    volumeScale: 0.08
-  - name: despensa_failure
-    clip: {fileID: 8300000, guid: be55cf046fe19734595f2c74cfae2038, type: 3}
-    volumeScale: 0.08
-  - name: aaah
-    clip: {fileID: 8300000, guid: b5efec73107220242b446aa5a42810ed, type: 3}
-    volumeScale: 0.08
-  - name: fah
-    clip: {fileID: 8300000, guid: be55cf046fe19734595f2c74cfae2038, type: 3}
-    volumeScale: 0.08
-  - name: switch1
-    clip: {fileID: 8300000, guid: 3c88b700aa139394caa408e7f61a54b7, type: 3}
-    volumeScale: 0.08
-  - name: switch3
-    clip: {fileID: 8300000, guid: c3874bc5148eda3438d2615000eb22b4, type: 3}
-    volumeScale: 0.08
-  - name: click4
-    clip: {fileID: 8300000, guid: a4ba3e6f5d7909a499b2a19612e5fde0, type: 3}
-    volumeScale: 0.08
-  - name: espeto_done
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: espeto_burned
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: nevera_success
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: nevera_failure
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: especias_success
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: especias_failure
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: congelador_success
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: congelador_failure
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: money_spent
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: money_insufficient
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: money_earned
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: timer_low
-    clip: {fileID: 8300000, guid: 44e607153c8612441a271578ab3083e2, type: 3}
-    volumeScale: 0.08
-  - name: day_end
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: next_day
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: client_eating
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: client_happy
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: client_angry
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: popup_open
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  - name: popup_close
-    clip: {fileID: 8300000, guid: f6bb08a0a897b284c90c41147508f733, type: 3}
-    volumeScale: 0.08
-  _prepMusic: {fileID: 8300000, guid: e9f12b82e1e680340a08bc4aaa7535af, type: 3}
-  _gameMusic: {fileID: 8300000, guid: 88ea2990e7e735541aa7c0f69d63f170, type: 3}
-  _menuMusic: {fileID: 8300000, guid: eb6166d72bce2524f832c9a7e7fc38c0, type: 3}
-  _musicVolume: 0.3
-  _sfxVolume: 0.25
---- !u!4 &1256388098
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256388096}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.32041, y: 2.69863, z: -0.6972}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1319917319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1497,51 +1348,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424471642}
   m_CullTransparentMesh: 1
---- !u!1 &1431268143
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1431268145}
-  - component: {fileID: 1431268144}
-  m_Layer: 0
-  m_Name: SceneMusic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1431268144
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1431268143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd1a2bff0676f5c45898afec74a4f761, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneMusic
-  _music: 0
---- !u!4 &1431268145
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1431268143}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.32041, y: 2.69863, z: -0.6972}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1618682008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1726,7 +1532,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -60}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 758.1155, y: 583.84875}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1643369281
@@ -2280,9 +2086,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1925832048}
   - {fileID: 945883626}
-  - {fileID: 1256388098}
   - {fileID: 1765204984}
-  - {fileID: 1431268145}
   - {fileID: 1319917322}
   - {fileID: 1958622866}
   - {fileID: 1618682012}

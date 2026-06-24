@@ -111,6 +111,8 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         _isPanelOpen     = true;
         _isRepositioning = false;
         _selectedIndex   = 0;
+        _currentNav      = Vector2.zero;
+        _navCooldown     = 0f;
         InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
         RefreshUI();
@@ -120,6 +122,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         _isPanelOpen     = false;
         _isRepositioning = false;
+        _currentNav      = Vector2.zero;
         minigamePanel.SetActive(false);
         InputManager.Instance.ExitMinigame();
     }
@@ -136,12 +139,24 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             {
                 e.cookProgress += Time.deltaTime;
                 e.burnTimer     = Mathf.Min(e.burnTimer + Time.deltaTime * 0.5f, DuracionQuema);
-                if (e.cookProgress >= DuracionCocina) { e.state = EspetoState.Done; continue; }
+                if (e.cookProgress >= DuracionCocina)
+                {
+                    e.state = EspetoState.Done;
+                    AudioManager.Instance?.PlaySFX("espeto_done");
+                    if (i == _selectedIndex) _isRepositioning = false;
+                    continue;
+                }
             }
             else
             {
                 e.burnTimer -= Time.deltaTime;
-                if (e.burnTimer <= 0f) { e.state = EspetoState.Burned; continue; }
+                if (e.burnTimer <= 0f)
+                {
+                    e.state = EspetoState.Burned;
+                    AudioManager.Instance?.PlaySFX("espeto_burned");
+                    if (i == _selectedIndex) _isRepositioning = false;
+                    continue;
+                }
             }
 
             e.zoneShiftTimer -= Time.deltaTime;
@@ -275,11 +290,17 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             case EspetoState.Done:    PickupEspeto(_selectedIndex);          break;
             case EspetoState.Burned:  DiscardEspeto(_selectedIndex);         break;
         }
+
+        if (_espetos[_selectedIndex].state != EspetoState.Cooking)
+            _isRepositioning = false;
     }
 
     public void OnNavigate(Vector2 direction)
     {
         _currentNav = direction;
+
+        if (_isRepositioning && _espetos[_selectedIndex].state != EspetoState.Cooking)
+            _isRepositioning = false;
 
         if (_isRepositioning) return;
 

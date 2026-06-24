@@ -20,6 +20,7 @@ public class Client : MonoBehaviour
 
     public State CurrentState { get; private set; } = State.WalkingToEntrance;
     public float maxPatience = 60f;
+    public float maxQueuePatience = 45f; // patience while waiting in the entrance queue for a free table
     public float eatDuration = 8f;
     public int money;
     public int happiness;
@@ -31,21 +32,21 @@ public class Client : MonoBehaviour
     public bool IsInGroup => _group != null;
     public bool IsGroupLeader => IsInGroup && _group.Members.Count > 0 && _group.Members[0] == this;
 
-    private float _patience;
     private Table _assignedTable;
     private Transform _seatPoint;
+    private Chair _seatChair;
     private Transform _entrancePoint;
     private NavMeshAgent _agent;
     private Vector3 _queueSlotPosition;
     private bool Initialized = false;
     private bool _hasStartedWalking = false;
 
-    public float PatienceRatio => _patience / maxPatience;
+    // reads the group's shared timer
+    public float PatienceRatio => _group != null ? _group.PatienceRatio : 0f;
 
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _patience = maxPatience;
     }
 
     private float _timeStateEntered;
@@ -88,15 +89,26 @@ public class Client : MonoBehaviour
             case State.Waiting:
                 if (HasReachedDestination())
                     Freeze();
+                // leader runs the group's queue timer
+                if (!IsInGroup || IsGroupLeader)
+                    TickQueuePatience();
                 break;
 
             case State.WalkingToTable:
+                // seat may have been carried off mid-walk
+                if (_seatChair != null && !_seatChair.IsPlaced)
+                {
+                    OnSeatLost();
+                    break;
+                }
                 if (HasReachedDestination() || HasTimedOut())
                     SitDown();
                 break;
 
             case State.WaitingForFood:
-                TickPatience();
+                // leader runs the group's meal timer
+                if (!IsInGroup || IsGroupLeader)
+                    TickSeatedPatience();
                 break;
 
             case State.Leaving:
@@ -131,6 +143,7 @@ public class Client : MonoBehaviour
     public void EnterWaitQueue(Vector3 slotPosition)
     {
         _queueSlotPosition = slotPosition;
+        if (!IsInGroup || IsGroupLeader) _group?.StartPatience(maxQueuePatience);
         SetState(State.Waiting);
         _timeStateEntered = Time.time;
         WalkTo(slotPosition);
@@ -145,8 +158,14 @@ public class Client : MonoBehaviour
 
     public void AssignTable(Table table, Transform seatPoint)
     {
+        // drop old claim, claim the new chair so others/the player see it's taken
+        if (_seatChair != null && _seatChair.Occupant == this) _seatChair.Occupant = null;
+
         _assignedTable = table;
         _seatPoint = seatPoint;
+        _seatChair = seatPoint != null ? seatPoint.GetComponentInParent<Chair>() : null;
+        if (_seatChair != null) _seatChair.Occupant = this;
+
         SetState(State.WalkingToTable);
         _timeStateEntered = Time.time;
         WalkTo(seatPoint.position);
@@ -164,19 +183,79 @@ public class Client : MonoBehaviour
             transform.LookAt(lookPos);
         }
 
-        _patience = maxPatience;
+        // leader (re)starts the shared meal timer
+        if (!IsInGroup || IsGroupLeader) _group?.StartPatience(maxPatience);
         SetState(State.WaitingForFood);
         Debug.Log($"[Client] Seated at {_seatPoint.name}. Patience: {maxPatience}s. Group: {(IsInGroup ? Group.ToString() : "Solo")}");
     }
 
-    private void TickPatience()
+    // seat gone mid-walk: take another at the same table, else leave
+    private void OnSeatLost()
     {
-        _patience -= Time.deltaTime;
-        if (_patience <= 0f)
+        Transform newSeat = _assignedTable != null ? _assignedTable.GetFreeSeatPoint() : null;
+        if (newSeat != null)
         {
-            _patience = 0f;
-            LeaveAngry();
+            Debug.Log("[Client] Seat taken mid-trip — moving to another free seat.");
+            AssignTable(_assignedTable, newSeat);
         }
+        else
+        {
+            Debug.Log("[Client] Seat taken mid-trip and none left — leaving.");
+            HUDMessage.Instance?.ShowWarning("¡Recogieron la silla! El cliente se va.");
+            LeaveAngrySelf();
+        }
+    }
+
+    // ponytail: only the leader ticks — fine, a leader leaves only when the whole group does
+    private void TickSeatedPatience()
+    {
+        if (_group == null) return;
+        if (_group.TickPatience(Time.deltaTime))
+            GroupLeaveAngry();
+    }
+
+    private void TickQueuePatience()
+    {
+        if (_group == null) return;
+        if (_group.TickPatience(Time.deltaTime))
+            RestaurantManager.Instance?.AbandonGroup(Group);
+    }
+
+    // patience out: free the table once, everyone leaves angry
+    private void GroupLeaveAngry()
+    {
+        _assignedTable?.FreeTable(Group);
+        if (_group != null)
+            foreach (var m in _group.Members)
+                m?.LeaveAngrySelf();
+        else
+            LeaveAngrySelf();
+    }
+
+    public void LeaveAngrySelf()
+    {
+        happiness -= 10;
+        ReleaseSeat();
+        DayReport.Instance?.RegisterAngryClient();
+        HUDMessage.Instance?.ShowBad("¡Cliente se fue enfadado sin pagar!");
+        SetState(State.Angry);
+        WalkToExit();
+    }
+
+    // release seat claim on exit so the chair frees up
+    private void ReleaseSeat()
+    {
+        if (_seatChair != null && _seatChair.Occupant == this) _seatChair.Occupant = null;
+    }
+
+    // gave up queueing; no table to free
+    public void LeaveQueue()
+    {
+        happiness -= 10;
+        DayReport.Instance?.RegisterAngryClient();
+        HUDMessage.Instance?.ShowBad("¡Cliente se fue de la cola!");
+        SetState(State.Angry);
+        WalkToExit();
     }
 
     public void ReceiveFood()
@@ -184,6 +263,7 @@ public class Client : MonoBehaviour
         if (CurrentState != State.WaitingForFood) return;
 
         SetState(State.Eating);
+        AudioManager.Instance?.PlaySFX("client_eating");
         Debug.Log($"[Client] Food received! Eating... (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
         StartCoroutine(EatCoroutine());
     }
@@ -198,20 +278,13 @@ public class Client : MonoBehaviour
     {
         happiness += 10;
 
-        // Pay the restaurant
-        if (money > 0)
-        {
-            MoneyManager.Instance?.AddMoney(money);
-            Debug.Log($"[Client] Finished eating. Leaving happy. Paid {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
-        }
-        else
-        {
-            Debug.Log($"[Client] Finished eating. Leaving happy. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
-        }
+        // Usar el dinero asignado al cliente (aleatorio en spawn) en vez de hardcode
+        int payment = money > 0 ? money : 20;
+        MoneyManager.Instance?.Earn(payment);
+        Debug.Log($"[Client] Finished eating. Leaving happy. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
-        // Registrar en el resumen del día (plato servido + cliente satisfecho)
         DayReport.Instance?.RegisterSatisfiedClient();
-
+        AudioManager.Instance?.PlaySFX("client_happy");
         StartLeaving();
     }
 
@@ -230,6 +303,7 @@ public class Client : MonoBehaviour
         }
 
         SetState(State.Angry);
+        AudioManager.Instance?.PlaySFX("client_angry");
         WalkToExit();
     }
 
@@ -311,6 +385,7 @@ public class Client : MonoBehaviour
 
     void OnDestroy()
     {
+        ReleaseSeat();
         if (_assignedTable != null && (!IsInGroup || IsGroupLeader))
         {
             _assignedTable.FreeTable(Group);

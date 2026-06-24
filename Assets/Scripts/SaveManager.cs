@@ -7,10 +7,13 @@ public class SaveManager : MonoBehaviour
 
     [SerializeField] private PlaceableItemData[] _allItems;
     public PlaceableItemData[] AllItems => _allItems;
-    private SaveData _data = new SaveData();
+    [SerializeField] private SaveData _data = new SaveData();
     private string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
 
     public int CurrentDay => _data.day;
+
+    /// <summary>Saldo guardado en disco (lo escribe SaveMoney/IncrementDayAndSave).</summary>
+    public int SavedMoney => _data.money;
 
     void Awake()
     {
@@ -55,9 +58,9 @@ public class SaveManager : MonoBehaviour
                 gridData.SetRotation(cell.x, cell.y, cell.rotation);
             }
         }
-
-        if (MoneyManager.Instance != null)
-            MoneyManager.Instance.SetMoney(_data.money);
+        // El dinero lo gestiona MoneyManager (DontDestroyOnLoad). No lo
+        // sobrescribimos aquí al cargar las grids: el saldo vivo ya incluye
+        // las ganancias del día y viaja entre escenas por sí solo.
     }
 
     private void Load()
@@ -105,6 +108,18 @@ public class SaveManager : MonoBehaviour
         WriteFile();
     }
 
+    /// <summary>
+    /// Persiste únicamente el dinero actual del MoneyManager en el archivo de
+    /// guardado, sin avanzar el día ni volver a serializar las grids. Se usa al
+    /// terminar el día para que el dinero ganado quede guardado en disco y llegue
+    /// a la PreparationScene.
+    /// </summary>
+    public void SaveMoney()
+    {
+        _data.money = MoneyManager.Instance != null ? MoneyManager.Instance.CurrentMoney : _data.money;
+        WriteFile();
+    }
+
     private void WriteFile()
     {
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
@@ -113,7 +128,7 @@ public class SaveManager : MonoBehaviour
 
 
     [System.Serializable]
-    class SaveData
+    public class SaveData
     {
         public int day;
         public int money;
@@ -121,14 +136,14 @@ public class SaveManager : MonoBehaviour
     }
 
     [System.Serializable]
-    class GridSaveData
+    public class GridSaveData
     {
         public string gridName;
         public CellSaveData[] cells;
     }
 
     [System.Serializable]
-    class CellSaveData
+    public class CellSaveData
     {
         public int x, y;
         public string itemName;

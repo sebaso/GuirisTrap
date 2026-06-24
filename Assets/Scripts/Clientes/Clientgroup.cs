@@ -34,6 +34,37 @@ public class ClientGroup
 
     public bool IsFull => Members.Count >= Size;
 
+    // one shared timer for the whole group (queue, then seated); the leader ticks it
+    public float Patience { get; private set; }
+    public float MaxPatience { get; private set; }
+    public float PatienceRatio => MaxPatience > 0f ? Patience / MaxPatience : 0f;
+
+    public void StartPatience(float seconds)
+    {
+        MaxPatience = seconds;
+        Patience = seconds;
+    }
+
+    // true only the frame it reaches zero
+    public bool TickPatience(float deltaTime)
+    {
+        if (Patience <= 0f) return false;
+        Patience -= deltaTime;
+        if (Patience <= 0f) { Patience = 0f; return true; }
+        return false;
+    }
+
+    // drives the table bar: anyone seated, pre-food
+    public bool IsWaitingForFood
+    {
+        get
+        {
+            foreach (var m in Members)
+                if (m != null && m.CurrentState == Client.State.WaitingForFood) return true;
+            return false;
+        }
+    }
+
     public bool IsValid => Members.TrueForAll(c => c != null);
     public void CleanupNullMembers()
     {

@@ -9,6 +9,13 @@ public class Chair : MonoBehaviour
     public bool IsPlaced { get; private set; }
     public Transform SeatTransform => seatPoint != null ? seatPoint : transform;
 
+    // claimant from walk-up through eating; null = free
+    public Client Occupant { get; set; }
+
+    // Una silla con un Occupant asignado no se puede recoger,
+    // aunque el cliente esté aún caminando hacia ella (WalkingToTable).
+    public bool IsBeingSatOn => Occupant != null;
+
     private PlaceableObject _placeable;
     private bool _wasStoraged;
 
@@ -49,6 +56,17 @@ public class Chair : MonoBehaviour
         {
             IsPlaced = true;
             _wasStoraged = false;
+        }
+    }
+
+    // while carried, don't count as a seat
+    public void SetCarried(bool carried)
+    {
+        IsPlaced = !carried;
+        if (carried && Occupant != null)
+        {
+            // Forzar liberación solo si se logró agarrar (no debería ocurrir con IsBeingSatOn).
+            Occupant = null;
         }
     }
 

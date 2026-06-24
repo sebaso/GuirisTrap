@@ -103,7 +103,7 @@ public void Init(PlaceableItemData itemData)
             _lastCellX = _actualCellX;
             _lastCellY = _actualCellY;
         }
-
+        
         _isMoved = true;
     }
 
@@ -135,4 +135,5 @@ public void Init(PlaceableItemData itemData)
             r.material.color = valid ? Color.green : Color.red;
         }
     }
+
 }

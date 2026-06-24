@@ -18,10 +18,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource _musicSource;
     [SerializeField] private AudioSource _sfxSource;
 
-    [Header("Biblioteca de efectos (por nombre)")]
+    [Header("Biblioteca de efectos")]
     [SerializeField] private NamedClip[] _sfxLibrary;
 
-    [Header("Música por escena (opcional)")]
+    [Header("Música por escena")]
     [SerializeField] private AudioClip _prepMusic;
     [SerializeField] private AudioClip _gameMusic;
     [SerializeField] private AudioClip _menuMusic;
@@ -92,7 +92,7 @@ public class AudioManager : MonoBehaviour
     {
         if (_sfxLookup == null || !_sfxLookup.TryGetValue(name, out NamedClip nc))
         {
-            Debug.LogWarning($"[AudioManager] No existe el efecto '{name}'. ¿Lo añadiste en la lista del Inspector?");
+            Debug.LogWarning($"[AudioManager] No existe el efecto '{name}'.");
             return;
         }
         _sfxSource.PlayOneShot(nc.clip, _sfxVolume * nc.volumeScale);

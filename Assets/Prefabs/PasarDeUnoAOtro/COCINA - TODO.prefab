@@ -412,7 +412,7 @@ GameObject:
   - component: {fileID: 4913407380496555062}
   - component: {fileID: 701551296012934365}
   m_Layer: 0
-  m_Name: Indicator (1)
+  m_Name: MorteroIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -502,7 +502,7 @@ GameObject:
   - component: {fileID: 9026597267505999374}
   - component: {fileID: 8230289976481718318}
   m_Layer: 0
-  m_Name: Indicator (3)
+  m_Name: sartenindicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1300,7 +1300,7 @@ GameObject:
   - component: {fileID: 3298309180620741551}
   - component: {fileID: 6469148322971895035}
   m_Layer: 0
-  m_Name: Indicator
+  m_Name: tablaindicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1842,7 +1842,7 @@ GameObject:
   - component: {fileID: 2555417167816395024}
   - component: {fileID: 6018598068533365421}
   m_Layer: 0
-  m_Name: Indicator (2)
+  m_Name: hornoindicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3139,6 +3139,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Horno
       objectReference: {fileID: 0}
+    - target: {fileID: 7119782073005882844, guid: b7ef96e07daeb0646b877d56c2283bfa, type: 3}
+      propertyPath: m_Size.x
+      value: 1.5977134
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119782073005882844, guid: b7ef96e07daeb0646b877d56c2283bfa, type: 3}
+      propertyPath: m_Size.y
+      value: 2.6202986
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119782073005882844, guid: b7ef96e07daeb0646b877d56c2283bfa, type: 3}
+      propertyPath: m_Center.x
+      value: 0.07677693
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119782073005882844, guid: b7ef96e07daeb0646b877d56c2283bfa, type: 3}
+      propertyPath: m_Center.y
+      value: 0.8101515
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -3377,6 +3393,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7555042143639488363}
     m_Modifications:
+    - target: {fileID: 1385898035005240651, guid: f4e082d2d7f643e438badcbcd42704b5, type: 3}
+      propertyPath: m_Size.x
+      value: 2.121513
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385898035005240651, guid: f4e082d2d7f643e438badcbcd42704b5, type: 3}
+      propertyPath: m_Center.x
+      value: -0.10547233
+      objectReference: {fileID: 0}
     - target: {fileID: 2736069028882861520, guid: f4e082d2d7f643e438badcbcd42704b5, type: 3}
       propertyPath: m_IsActive
       value: 0

@@ -5,34 +5,34 @@ using TMPro;
 public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
-    public GameObject    minigamePanel;
+    public GameObject minigamePanel;
     public RectTransform cursorRect;
     public RectTransform targetZone;
 
     [Header("Ajustes de Dificultad Base")]
-    public float baseSpeed              = 1.5f;
+    public float baseSpeed = 1.5f;
     public float speedMultiplierPerLevel = 1.2f;
-    public float baseZoneSize           = 0.3f;
-    public float cursorWidth            = 10f;
+    public float baseZoneSize = 0.3f;
+    public float cursorWidth = 10f;
 
-    private float            currentSpeed;
-    private float            winMin, winMax;
-    private bool             isPlaying  = false;
-    private float            timeElapsed;
-    private float            inputCooldown;
+    private float currentSpeed;
+    private float winMin, winMax;
+    private bool isPlaying = false;
+    private float timeElapsed;
+    private float inputCooldown;
     private PlayerController player;
-    private RecipeData       currentRecipe;
+    private RecipeData currentRecipe;
 
     public void StartMinigame(RecipeData recipe, PlayerController currentPlayer)
     {
-        player        = currentPlayer;
+        player = currentPlayer;
         currentRecipe = recipe;
 
         InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
 
         currentSpeed = baseSpeed * Mathf.Pow(speedMultiplierPerLevel, recipe.difficulty - 1);
-        float zoneSize  = Mathf.Max(baseZoneSize * Mathf.Pow(0.85f, recipe.difficulty - 1), 0.05f);
+        float zoneSize = Mathf.Max(baseZoneSize * Mathf.Pow(0.85f, recipe.difficulty - 1), 0.05f);
         float randomPos = Random.Range(0.1f + zoneSize / 2, 0.9f - zoneSize / 2);
         winMin = randomPos - zoneSize / 2;
         winMax = randomPos + zoneSize / 2;
@@ -43,8 +43,8 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
         targetZone.offsetMax = Vector2.zero;
 
         inputCooldown = 0.5f;
-        isPlaying     = true;
-        timeElapsed   = 0f;
+        isPlaying = true;
+        timeElapsed = 0f;
     }
 
     void Update()
@@ -56,10 +56,10 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
         timeElapsed += Time.deltaTime * currentSpeed;
         float currentPos = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(timeElapsed, 1f));
 
-        cursorRect.anchorMin      = new Vector2(currentPos, 0);
-        cursorRect.anchorMax      = new Vector2(currentPos, 1);
+        cursorRect.anchorMin = new Vector2(currentPos, 0);
+        cursorRect.anchorMax = new Vector2(currentPos, 1);
         cursorRect.anchoredPosition = Vector2.zero;
-        cursorRect.sizeDelta      = new Vector2(cursorWidth, 0);
+        cursorRect.sizeDelta = new Vector2(cursorWidth, 0);
     }
 
     void CheckWin(float finalPos)
@@ -68,12 +68,19 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
         if (finalPos >= winMin && finalPos <= winMax)
         {
             Debug.Log($"¡CONGELADO PERFECTO!");
+            AudioManager.Instance?.PlaySFX("congelador_success");
             if (currentRecipe.foodPrefab != null)
                 Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
             else
                 Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }
-        else Debug.Log("FALLASTE.");
+        else
+        {
+            {
+                HUDMessage.Instance?.ShowBad("Fallaste el congelado.");
+            }
+            AudioManager.Instance?.PlaySFX("congelador_failure");
+        }
 
         minigamePanel.SetActive(false);
         InputManager.Instance.ExitMinigame();
@@ -82,8 +89,8 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
     //  IMinigameControllable 
 
     public void OnNavigate(Vector2 direction) { }
-    public void OnCancel()  { }
-    public void OnSubmit()  => OnInteract();
+    public void OnCancel() { }
+    public void OnSubmit() => OnInteract();
 
     public void OnInteract()
     {

@@ -2,29 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Overlay de fin de día. Vive en un prefab (un Canvas o panel) que se arrastra
-/// a la GameScene. Empieza oculto; al recibir DayManager.OnDayEnded se muestra y
-/// rellena los datos desde DayReport, SaveManager (día) y MoneyManager (balance).
-///
-/// El botón "Siguiente día" reproduce lo que antes hacía DayManager.HandleDayEnd:
-/// guarda + avanza día con SaveManager.IncrementDayAndSave(), que internamente
-/// lleva a la PreparationScene.
-///
-/// MONTAJE (todo dentro del prefab, así tu compañera solo lo arrastra):
-///   - Root del prefab: un GameObject con este script y, debajo, un panel con
-///     todos los textos y el botón.
-///   - El panel visible debería empezar DESACTIVADO (el script lo activa solo).
-///   - Arrastra cada TMP_Text a su campo y el botón a _nextDayButton.
-///   - Todos los campos de texto son opcionales: si dejas uno vacío, no se rellena.
-///   - Pon también un objeto con DayReport en el prefab (o en la escena).
-/// </summary>
+
 public class StatsPanel : MonoBehaviour
 {
-    [Header("Panel raíz que se muestra/oculta")]
+    [Header("Panel raíz")]
     [SerializeField] private GameObject _panelRoot;
 
-    [Header("Textos (todos opcionales)")]
+    [Header("Textos")]
     [SerializeField] private TMP_Text _dayNumberText;
     [SerializeField] private TMP_Text _dishesServedText;
     [SerializeField] private TMP_Text _moneyEarnedText;
@@ -90,6 +74,7 @@ public class StatsPanel : MonoBehaviour
     {
         if (_panelRoot != null) _panelRoot.SetActive(true);
         Populate();
+        AudioManager.Instance?.PlaySFX("day_end");
     }
 
     private void Populate()
@@ -155,6 +140,7 @@ public class StatsPanel : MonoBehaviour
     {
         if (SaveManager.Instance != null)
             SaveManager.Instance.IncrementDayAndSave();
+            AudioManager.Instance?.PlaySFX("next_day");
 
         if (SceneController.Instance != null)
             SceneController.Instance.ChangeScene("PreparationScene");
