@@ -1,16 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Contador de las estadísticas del día en curso. Vive dentro del prefab de la
-/// pantalla de Stats. Registra durante la jornada:
-///   - platos servidos / clientes satisfechos / clientes enfadados
-///   - dinero ganado (cobros) y gastado (compras)
-/// y calcula la nota del día (F–A).
-///
-/// No toca SaveManager ni MoneyManager: solo escucha. Se pone a cero al empezar
-/// cada día (suscrito a DayManager). Es Singleton para que Client pueda
-/// registrar resultados con una sola línea, sin referencias en el inspector.
-/// </summary>
+
 public class DayReport : MonoBehaviour
 {
     public static DayReport Instance { get; private set; }

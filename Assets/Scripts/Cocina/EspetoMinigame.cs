@@ -142,6 +142,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
                 if (e.cookProgress >= DuracionCocina)
                 {
                     e.state = EspetoState.Done;
+                    AudioManager.Instance?.PlaySFX("espeto_done");
                     if (i == _selectedIndex) _isRepositioning = false;
                     continue;
                 }
@@ -152,6 +153,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
                 if (e.burnTimer <= 0f)
                 {
                     e.state = EspetoState.Burned;
+                    AudioManager.Instance?.PlaySFX("espeto_burned");
                     if (i == _selectedIndex) _isRepositioning = false;
                     continue;
                 }

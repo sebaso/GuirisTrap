@@ -229,10 +229,15 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         if (success)
         {
             Debug.Log($"¡Éxito! {_currentRecipe.dishName}");
+            AudioManager.Instance?.PlaySFX("especias_success");
             if (_currentRecipe.foodPrefab != null)
                 Instantiate(_currentRecipe.foodPrefab, _player.transform.position, Quaternion.identity);
         }
-        else Debug.Log("[EspeciasMinigame] Sin balas. ¡Fallaste!");
+        else
+        {
+            Debug.Log("[EspeciasMinigame] Sin balas. ¡Fallaste!");
+            AudioManager.Instance?.PlaySFX("especias_failure");
+        }
     }
 
     Rect GetCanvasRect(RectTransform rt)

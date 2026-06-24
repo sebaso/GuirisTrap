@@ -263,6 +263,7 @@ public class Client : MonoBehaviour
         if (CurrentState != State.WaitingForFood) return;
 
         SetState(State.Eating);
+        AudioManager.Instance?.PlaySFX("client_eating");
         Debug.Log($"[Client] Food received! Eating... (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
         StartCoroutine(EatCoroutine());
     }
@@ -283,7 +284,7 @@ public class Client : MonoBehaviour
         Debug.Log($"[Client] Finished eating. Leaving happy. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
         DayReport.Instance?.RegisterSatisfiedClient();
-
+        AudioManager.Instance?.PlaySFX("client_happy");
         if (IsGroupLeader || !IsInGroup)
             HUDMessage.Instance?.ShowGood($"¡Cliente satisfecho! +{payment}€");
 
@@ -294,6 +295,18 @@ public class Client : MonoBehaviour
     {
         ReleaseSeat();
 
+        // Solo el líder o un cliente individual libera la mesa
+        if (!IsInGroup || IsGroupLeader)
+        {
+            _assignedTable?.FreeTable(Group);
+        }
+
+        SetState(State.Angry);
+        WalkToExit();
+    }
+
+    private void StartLeaving()
+    {
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)
         {
