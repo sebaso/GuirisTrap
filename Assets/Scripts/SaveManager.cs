@@ -7,7 +7,7 @@ public class SaveManager : MonoBehaviour
 
     [SerializeField] private PlaceableItemData[] _allItems;
 
-    [SerializeField] private SaveData _data = new SaveData();
+    [SerializeField] public SaveData _data = new SaveData();
     private string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
 
     public int CurrentDay => _data.day;

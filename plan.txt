@@ -1,0 +1,169 @@
+﻿DE MEMORIA QUE FALTA PARA EL LOOP
+
+
+
+
+- PREPARACION
+que ponga EL NUMERO DEL DIA (Dias pueden tener signados ID's para eventos que ocurran X dia, ID tambien podria tener el número de clientes que va a haber) 
+Contador de meses (estaciones?), contador de mesas y sillas
+Implementación dinero
+> contador de ingredientes/platos (para en la escena de preparación comprar los "ingredientes" para el dia)
+> usando la ID del día te podría avisar que ingredientes deberías comprar (ej. los martes son de sardinas etc etc)
+> usar el dinero para comprar mejoras
+
+
+
+
+- GAMEPLAY
+temporizador DE DIA (5< minutos) -> cuando le queda poco tiempo se pone en rojo
+Feedback de por qué no puede ingresar un cliente (NO HAY MESAS, NO HAY SILLAS PARA ÉL, NO HAY SILLAS PARA EL GRUPO ENTERO, ETC.)
+Implementación dinero
+Si muchos clientes se van la música puede ir más lento y el visual se puede poner peor (gris o tipo drogado tipo earthbound)
+> QUE TE PAGUEN AL IRSE
+> QUE NO TE PAGUEN SI EL CLIENTE SE ENFADA Y SE VA
+> Usar el dinero para reabastecer platos
+> Usar el dinero 
+> cuando estés hover en una estación de cocina te diga que 1. Dificultad del plato a preparar 2. Si tienes ingredientes / cuántos te quedan 
+
+
+
+
+- ACABAR EL DIA
+PANTALLA STATS
+> PLATOS SERVIDOS
+> DINERO PERDIDO (gastos en preparación, clientes perdidos, mobiliario roto, etc)
+> DINERO GANADO (clientes servidos, eventos buenos, etc.)
+> TOTAL NETO (DINERO GANADO - PERDIDO)
+> N· CLIENTES SATISFECHOS
+> NOTA DE CLIENTES (F, D, C, B, A) -> (ej. 20 clientes en un dia [pillado de la ID del dia], atender al 90% bien es un A)
+> AL acabar la semana, la media de todas las notas te dirá si sube tu rating (por ejemplo, media de A te sube una estrella, media de B te sube media, C mantiene, D te baja media)
+
+
+
+
+
+
+
+
+
+
+
+
+----------
+- OBJETIVO 4 DÍAS
+> Todo lo de arriba
+> PONER 1 O 2 EVENTOS DISTINTOS (INCENDIO Y GAVIOTAS)
+> PONER SONIDOS
+> Menos las estrellas, para el siguiente hito
+> darle todos los elementos de los minijuegos de Cocina a los artistas
+
+
+PEPE
+	SEBAS
+	AMANDA
+	Poner Sonidos
+	
+
+	Incluir arte y props al escenario
+	Poner los 2 Eventos
+(Apagar incendio, sin extintor es mucho más difícil -> A-D varias veces, con el extintor el minijuego es fácil)
+(Gaviotas, en la zona del exterior puede caer y si lo pisas vas moviendote erráticamente (lento y rápido que cambia)
+
+	
+
+	Hacer las 2 escenas nuevas mezclando lo de Pepe y Amanda
+	Arreglar Feedback y errores
+	
+
+	Tienda de alimentos y mejora en el feedback
+	Pantalla Stats + Stats (con eso te refieres a la pantalla final?)
+	
+
+	Sistema de diálogos para poder realizar el tutorial
+	
+
+--------
+
+
+-TEMA DEUDA
+la trama del juego va en torno a la deuda que tienes también
+para que te obligues a ir subiendo en dinero y tal, puede ser que por cada estación te quiten dinero para pagar la deuda (además de gastos de alquiler y cosas)
+
+
+- IDEAS
+PARA EVITAR QUE GANES EN 5 SEMANAS
+> Días hechos jodidos aposta para joderte la media (EVENTOS PELIGROSOS TIPO POSEIDON)
+> Días hechos para mejoras (si para la segunda semana no tienes la espetera, te jodes porque Miercoles todos quieren Espeto)
+> Dificultad dinámica semanalmente (ej. debería ser un poco más fácil si aunque avances semanas tienes peor media (Se desactivan eventos peligrosos)
+
+
+- DÍAS (ID) ((Idea)
+> Cada dia tiene una ID con 5 dificultades según las estrellas que tengas
+> las variaciones por dificultad puede ser un tick que salgan eventos, un tick que los clientes sean más pacientes, etc)
+> el precio de los items de preparación va por la dificultad (pagado a medias por tu Tío Rogelio)
+
+
+
+
+- Tutorial
+Habría que crear un pequeño tutorial donde se va guiando al jugador en su primer día
+Que al encender el juego igual te aparezca aunque sea un texto explicándote un poco la historia y pases a mostrar la fase de preparación y el tío te comente cómo comprar las cosas, ponerlas y quitarlas y que tienes que tener un mínimo. De hecho podemos hacer que sea él el que diga oye pues hoy parece que van a venir parejas y así el jugador sepa que te pueden venir de 2 en 2 los clientes y tener mesas para ello.
+Y el tutorial luego se extiende a la fase de gameplay donde le explica que vendrán clientes con demandas y que tienen que ir a la nevera etc a pillar un plato y luego cocinarlo en su lugar respectivo.
+Para al entregar que el cliente se vaya y te de su dinero y que si tardas se va cabreado y no te da nada.
+Y cuando pase un evento que se vuelva a parar la acción y te diga cuidado se ha activado un evento aleatorio! o algo así, se te está quemando la cocina! ves al fuego y sopla muy fuerte para apagarlo. (podemos meter el extintor como una mejora de mobiliario o incluso aspersores en el futuro para automatizar el evento)
+
+
+- Tienda de alimentos 
+Hay que hacer que en la tienda se puedan comprar platos y estos te aparezcan en el electrodoméstico correspondiente. Para ello hay que mejorar el feedback de la tienda.
+
+================================================================
+PRIORIDAD 4 DIAS - CERRAR EL LOOP (Añadido 22/6/2026)
+================================================================
+
+
+RUTA CRITICA (Imprescindible para cerrar el loop)
+-----------------------------------------------
+1. TEMPORIZADOR DEL DIA - El dia debe terminar. Timer con cuenta atras, estado rojo al final, dispara fin de jornada.
+2. PAGO AL IRSE - Clientes satisfechos pagan. Sin esto el dinero nunca entra en la economia.
+3. SISTEMA DE DINERO COMPLETO - CashManager ya existe pero hay que cablearlo: cobrar de clientes, gastar en preparacion.
+4. PANTALLA DE STATS - Platos servidos, dinero ganado/perdido, total neto, clientes satisfechos, nota (F-A).
+5. VOLVER A PREPARATIONSCENE - Tras los stats, boton para volver a preparacion y empezar el siguiente dia.
+
+
+ALTA PRIORIDAD (Recomendado en 4 dias)
+--------------------------------------
+6. COMPRA DE INGREDIENTES EN PREP - Sin comprar ingredientes las cocinas no tienen nada que cocinar.
+7. FEEDBACK DE CLIENTE - Por que no puede entrar? (sin mesas, sin sillas, grupo completo, etc.)
+8. CLIENTE ENFADADO = SIN PAGO - Anade consecuencia y profundidad estrategica.
+
+PUEDE ESPERAR (Dejar para siguiente sprint)
+--------------------------------------------
+- Eventos (incendio, gaviotas) -> Sabor, no esencial
+- Sonidos -> Pulido, no estructural
+- Musica lenta / distorsion visual -> Ambiente
+- Tutorial / dialogos -> Incorporacion, no loop base
+- Sistema deuda -> Progresion avanzada
+- IDs diarios / dificultad -> Meta-progresion
+- Estrellas/rating -> Ya apuntado como "para el siguiente hito"
+
+================================================================
+SPRINT 4 DIAS - PLAN DE ACCION
+================================================================
+
+Dia 1: TEMPORIZADOR + DINERO
+  - Cablear DayManager: UI cuenta atras, estado rojo, disparador fin de dia
+  - Completar CashManager: eventos earn/spend. Cliente paga al irse satisfecho.
+
+Dia 2: PANTALLA DE STATS
+  - Construir UI/scena de stats: platos servidos, dinero +/-, total neto, clientes, nota
+  - Boton para volver a PreparationScene
+
+Dia 3: ECONOMIA EN PREPARACION
+  - Compra de ingredientes en la escena de preparacion
+  - Cablear comida comprada a las estaciones de cocina
+  - Mecanica de reabastecimiento
+
+Dia 4: PULIDO Y CIERRE DEL LOOP
+  - Feedback de cliente: por que no puede entrar
+  - Cliente enfadado = no paga
+  - Testear loop completo de principio a fin
