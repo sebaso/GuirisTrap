@@ -202,12 +202,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         _espetos[index].state = EspetoState.Empty;
         if (espetoFoodPrefab != null && _player != null)
-        {
-            GameObject foodObj = Instantiate(espetoFoodPrefab,
-                _player.transform.position + Vector3.up, Quaternion.identity);
-            Food food = foodObj.GetComponent<Food>();
-            if (food != null) food.PickUp(_player.holdPoint);
-        }
+            _player.CreateAndHoldFood(espetoFoodPrefab);
         ClosePanel();
     }
 

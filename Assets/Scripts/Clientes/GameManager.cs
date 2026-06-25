@@ -2,11 +2,26 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] 
-    private  GridController _gridController;
+    [SerializeField] private Inventory _inventory;
+    [SerializeField] private GridController _gridController;
     private static GameManager _instance;
-    public static GameManager Instance => _instance; 
-    
+    public static GameManager Instance => _instance;
+
+    // Always resolve to the live singleton so every system (Buy, Place, UI)
+    // shares one inventory. The serialized field is only a last-resort fallback;
+    // a panel-baked Inventory that starts inactive must never become the source
+    // of truth, because its Awake (and thus singleton registration) won't run
+    // until the panel is first opened.
+    private Inventory Inv
+    {
+        get
+        {
+            if (Inventory.Instance != null) return Inventory.Instance;
+            if (_inventory != null) return _inventory;
+            return Inventory.EnsureExists();
+        }
+    }
+
     void Awake()
     {
         if(_instance == null)
@@ -17,7 +32,10 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
-        if (Inventory.Instance != null) Inventory.Instance.Init();
+        // Establish the inventory singleton at scene start, before the player can
+        // buy anything, so purchases never spawn a second detached instance just
+        // because the inventory panel hasn't been opened yet.
+        Inventory.EnsureExists().Init();
     }
     public void Buy(PlaceableItemData itemData)
     {
@@ -32,15 +50,15 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (Inventory.Instance == null)
+        Inventory inv = Inv;
+        if (inv == null)
         {
-            Debug.LogWarning("[GameManager] No Inventory encontrado. Devolviendo dinero.");
+            Debug.LogError("[GameManager] No Inventory encontrado.");
             MoneyManager.Instance?.AddMoney(itemData.cost);
-            HUDMessage.Instance?.ShowWarning("Inventario no disponible. Dinero devuelto.");
             return;
         }
 
-        bool added = Inventory.Instance.AddItem(itemData);
+        bool added = inv.AddItem(itemData);
         if (added)
         {
             Debug.Log($"[GameManager] Has comprado: {itemData.prefab.name} por {itemData.cost}€");
@@ -57,13 +75,14 @@ public class GameManager : MonoBehaviour
     }
     public void Place(int posX, int posY)
     {
-        if (Inventory.Instance == null)
+        Inventory inv = Inv;
+        if (inv == null)
         {
             Debug.LogWarning("[GameManager] No Inventory encontrado al colocar.");
             return;
         }
 
-        InventorySlot slot = Inventory.Instance.GetSlot(posX, posY);
+        InventorySlot slot = inv.GetSlot(posX, posY);
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
@@ -109,7 +128,7 @@ public class GameManager : MonoBehaviour
                 placeable.Init(itemData);
 
                 activeManager.SetPlaceableAt(x, y, placeable);
-                Inventory.Instance.RemoveItem(posX, posY);
+                inv.RemoveItem(posX, posY);
 
                 if (itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
                     activeManager.ValidateAllChairs();

@@ -126,7 +126,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
             Debug.Log("¡Éxito!");
             AudioManager.Instance?.PlaySFX("despensa_success");
             if (currentRecipe.foodPrefab != null)
-                Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
                 Debug.LogWarning($"[DespensaMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

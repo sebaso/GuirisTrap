@@ -6,15 +6,30 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private InventorySlotUI[] _slotsUI;
     [SerializeField] private GridController _gridController;
 
-    void Start()
+    // Prefer the live singleton over the serialized reference: a panel-baked
+    // Inventory destroys itself as a duplicate once the real singleton exists,
+    // and Unity defers that Destroy to end-of-frame, so on first open the
+    // serialized field can still point at the soon-to-be-destroyed (empty)
+    // instance. Reading Instance keeps the UI on the inventory that actually
+    // holds the purchased items.
+    private Inventory Inv => Inventory.Instance != null ? Inventory.Instance : _inventory;
+
+    void OnEnable()
     {
-        Refresh();
-        _inventory.OnInventoryChanged += Refresh;
+        Inventory inv = Inv;
+        if (inv != null)
+        {
+            inv.OnInventoryChanged += Refresh;
+            Inventory.OnAnyInventoryChanged += Refresh;
+            Refresh();
+        }
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
-        _inventory.OnInventoryChanged -= Refresh;
+        Inventory inv = Inv;
+        if (inv != null) inv.OnInventoryChanged -= Refresh;
+        Inventory.OnAnyInventoryChanged -= Refresh;
     }
 
     void Update()
@@ -24,19 +39,17 @@ public class InventoryUI : MonoBehaviour
 
     public void Refresh()
     {
-        for (int y = 0; y < _inventory.Height; y++)
+        Inventory inv = Inv;
+        if (inv == null || _slotsUI == null) return;
+
+        for (int y = 0; y < inv.Height; y++)
         {
-            for (int x = 0; x < _inventory.Width; x++)
+            for (int x = 0; x < inv.Width; x++)
             {
-                int index = y * _inventory.Width + x;
+                int index = y * inv.Width + x;
+                if (index >= _slotsUI.Length || _slotsUI[index] == null) continue;
 
-                if (_slotsUI[index] == null)
-                {
-                    Debug.LogError($"SlotUI [{x},{y}] es null en el array");
-                    continue;
-                }
-
-                InventorySlot slot = _inventory.GetSlot(x, y);
+                InventorySlot slot = inv.GetSlot(x, y);
                 _slotsUI[index].Init(x, y);
                 _slotsUI[index].SetSlot(slot);
             }
@@ -45,7 +58,7 @@ public class InventoryUI : MonoBehaviour
 
     private void RefreshCompatibility()
     {
-        if (_gridController == null) return;
+        if (_gridController == null || _slotsUI == null) return;
 
         PlaceableSurface activeSurface = _gridController.GetActiveSurface();
 

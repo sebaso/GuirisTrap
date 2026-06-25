@@ -108,6 +108,9 @@ public class PlayerController : ControllableMonoBehaviour
 
     public override void OnInteractDown()
     {
+        // 0. Si lleva una mesa/silla, intentar soltarla.
+        if (_heldPlaceable != null) { TryDropFurniture(); return; }
+
         // 1. Buscar el interactable MÁS CERCANO (no el primero que devuelva la
         //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
@@ -164,26 +167,56 @@ public class PlayerController : ControllableMonoBehaviour
     private bool TryPickUpFood()
     {
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, interactionRange);
+
+        // ponytail: nearest-first scan; Food collider may live on a child of
+        // the prefab root, so GetComponentInParent is required.
+        Food bestFood = null;
+        float bestFoodDist = float.MaxValue;
+        Kitchen bestKitchen = null;
+        float bestKitchenDist = float.MaxValue;
+
         foreach (Collider col in nearbyObjects)
         {
-            Kitchen kitchen = col.GetComponent<Kitchen>();
-            if (kitchen != null)
-            {
-                Food newFood = kitchen.GetFood();
-                if (newFood != null) { PickUpFood(newFood); return true; }
-            }
+            float dist = (col.transform.position - transform.position).sqrMagnitude;
 
-            Food food = col.GetComponent<Food>();
-            if (food != null && !food.IsBeingHeld) { PickUpFood(food); return true; }
+            Kitchen k = col.GetComponent<Kitchen>();
+            if (k != null && dist < bestKitchenDist) { bestKitchen = k; bestKitchenDist = dist; }
+
+            Food f = col.GetComponent<Food>() ?? col.GetComponentInParent<Food>();
+            if (f != null && !f.IsBeingHeld && !f.IsServed && dist < bestFoodDist) { bestFood = f; bestFoodDist = dist; }
+        }
+
+        if (bestFood != null) { PickUpFood(bestFood); return true; }
+        if (bestKitchen != null)
+        {
+            Food newFood = bestKitchen.GetFood();
+            if (newFood != null) { PickUpFood(newFood); return true; }
         }
         return false;
     }
 
     public void PickUpFood(Food food)
     {
+        if (food == null) return;
+        if (heldFood != null && heldFood != food) DropFood();
         heldFood = food;
         food.PickUp(holdPoint);
         Debug.Log($"Picked up: {food.foodName}");
+    }
+
+    /// <summary>Spawns a food prefab from a minigame/reward and auto-holds it.
+    /// Drops whatever was previously held. Used by cooking minigames so the
+    /// cooked dish lands directly in the player's hands.</summary>
+    public Food CreateAndHoldFood(GameObject foodPrefab)
+    {
+        if (foodPrefab == null || holdPoint == null) return null;
+        if (heldFood != null) DropFood();
+
+        GameObject obj = Instantiate(foodPrefab, holdPoint.position, Quaternion.identity);
+        Food food = obj.GetComponent<Food>();
+        if (food == null) food = obj.AddComponent<Food>();
+        PickUpFood(food);
+        return food;
     }
 
     private void TryPlaceOrDropFood()
@@ -324,18 +357,17 @@ public class PlayerController : ControllableMonoBehaviour
 
         _heldPlaceable.transform.SetParent(null);
         Vector3 localPos = new Vector3(x, 0f, y) + item.placementOffset;
-        _heldPlaceable.transform.position = grid.transform.TransformPoint(localPos);
-        _heldPlaceable.transform.rotation = grid.transform.rotation;
+        Vector3 targetWorld = grid.transform.TransformPoint(localPos);
+        Quaternion targetRot = item.category == PlaceableCategory.Chair
+            ? grid.GetChairRotation(x, y)
+            : grid.transform.rotation;
 
         Collider c = _heldPlaceable.GetComponent<Collider>();
         if (c != null) c.enabled = true;
 
         if (_ghost != null) { Destroy(_ghost); _ghost = null; }
 
-        if (item.category == PlaceableCategory.Chair)
-            grid.RotateTowardsTable(_heldPlaceable, x, y);
-
-        grid.SaveGrid(x, y, _heldPlaceable.StartCellX, _heldPlaceable.StartCellY, item, _heldPlaceable.transform.rotation);
+        grid.SaveGrid(x, y, _heldPlaceable.StartCellX, _heldPlaceable.StartCellY, item, targetRot);
         _heldPlaceable.InstancePlaceableObjectCreated(x, y);
 
         if (item.category == PlaceableCategory.Chair)
@@ -343,8 +375,10 @@ public class PlayerController : ControllableMonoBehaviour
         else
             _heldPlaceable.GetComponent<Table>()?.SetCarried(false);
 
-        RestaurantManager.Instance?.NotifyTablesRearranged();
+        _heldPlaceable.LerpTo(targetWorld, targetRot);
         _heldPlaceable = null;
+
+        RestaurantManager.Instance?.NotifyTablesRearranged();
     }
 
     private void UpdateCarryPreview()
