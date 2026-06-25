@@ -2892,6 +2892,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+--- !u!1 &904909546 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8588536875801850240, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+  m_PrefabInstance: {fileID: 904909545}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &935569554
 GameObject:
   m_ObjectHideFlags: 0
@@ -5119,7 +5124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639e5b48b4c8e784fb8d75b088cbd6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  _dayDurationSeconds: 15
+  _dayDurationSeconds: 120
   _autoStart: 1
   _startDelay: 0.5
 --- !u!1 &1501763449
@@ -5424,7 +5429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8932c3de022d9b744af343ca1c64f83d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EditorMenu
-  _pausePanel: {fileID: 0}
+  _pausePanel: {fileID: 904909546}
 --- !u!1 &1652043005
 GameObject:
   m_ObjectHideFlags: 0
