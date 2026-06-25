@@ -14,6 +14,7 @@ public class SaveManager : MonoBehaviour
 
     /// <summary>Saldo guardado en disco (lo escribe SaveMoney/IncrementDayAndSave).</summary>
     public int SavedMoney => _data.money;
+    public ItemCountData[] GetOwnedItems() => _data.ownedItems;
 
     void Awake()
     {
@@ -69,6 +70,9 @@ public class SaveManager : MonoBehaviour
         try
         {
             _data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
+                    Debug.Log("[SaveManager] OwnedItemsManager.Instance = " + OwnedItemsManager.Instance);
+
+            OwnedItemsManager.Instance?.LoadFromSave(_data.ownedItems);
         }
         catch
         {
@@ -122,10 +126,10 @@ public class SaveManager : MonoBehaviour
 
     private void WriteFile()
     {
+        _data.ownedItems = OwnedItemsManager.Instance?.ToSaveData(); 
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
         Debug.Log($"[SaveManager] Saved day {_data.day}, money {_data.money} → {SavePath}");
     }
-
 
     [System.Serializable]
     public class SaveData
@@ -133,8 +137,8 @@ public class SaveManager : MonoBehaviour
         public int day;
         public int money;
         public GridSaveData[] grids;
+        public ItemCountData[] ownedItems;
     }
-
     [System.Serializable]
     public class GridSaveData
     {
@@ -148,5 +152,12 @@ public class SaveManager : MonoBehaviour
         public int x, y;
         public string itemName;
         public Quaternion rotation;
+    }
+
+    [System.Serializable]
+    public class ItemCountData
+    {
+        public string itemName;
+        public int count;
     }
 }

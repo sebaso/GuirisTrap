@@ -4,18 +4,31 @@ using UnityEngine;
 
 public class ShopItemUIText : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField] 
     private TextMeshProUGUI countItemsText;
-    [SerializeField]
+    [SerializeField] 
     private ShopUIManager shopUIManager;
-    [SerializeField]
+    [SerializeField] 
     private PlaceableItemData item;
 
-    private void OnEnable()
+    void OnEnable()
     {
+        TutorialEvents.OnItemBought += OnItemBought;
         PrintTextCountItems();
     }
-   public void PrintTextCountItems()
+
+    void OnDisable()
+    {
+        TutorialEvents.OnItemBought -= OnItemBought;
+    }
+
+    private void OnItemBought(PlaceableItemData boughtItem)
+    {
+        if (boughtItem.name == item.name)
+            PrintTextCountItems();
+    }
+
+    public void PrintTextCountItems()
     {
         countItemsText.text = shopUIManager.GetCountItem(item.name).ToString();
     }

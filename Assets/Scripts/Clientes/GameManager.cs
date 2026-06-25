@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
         if (added)
         {
             Debug.Log($"[GameManager] Has comprado: {itemData.prefab.name} por {itemData.cost}€");
+            OwnedItemsManager.Instance?.AddItem(itemData.name);
             TutorialEvents.OnItemBought?.Invoke(itemData);
             HUDMessage.Instance?.ShowGood($"¡Comprado! {itemData.prefab.name} por {itemData.cost}€");
         }
