@@ -23,7 +23,7 @@ public class CameraOcclusion : MonoBehaviour
         Vector3 direction = _target.position - transform.position;
         float distance = direction.magnitude;
 
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, direction.normalized, distance, _wallLayer);        Debug.DrawRay(transform.position, direction, Color.red, distance);
+        RaycastHit[] hits = Physics.RaycastAll(transform.position, direction.normalized, distance, _wallLayer);        
         foreach (RaycastHit hit in hits)
         {
             GameObject wall = hit.collider.gameObject;

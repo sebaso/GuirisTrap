@@ -14,7 +14,7 @@ public class ShopBackButton : MonoBehaviour
     private GameObject _HUD;
     public void OnBackToGameButton()
     {
-        ShopEvents.OnExitedShop?.Invoke();
+        TutorialEvents.OnExitedShop?.Invoke();
         _shopPanel.SetActive(false);
         _mobiliaryPanel.SetActive(false);
         _decorationPanel.SetActive(false);

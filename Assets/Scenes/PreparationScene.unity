@@ -454,6 +454,7 @@ GameObject:
   - component: {fileID: 58490229}
   - component: {fileID: 58490228}
   - component: {fileID: 58490227}
+  - component: {fileID: 58490230}
   m_Layer: 5
   m_Name: BackToGameButton
   m_TagString: Untagged
@@ -561,6 +562,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 58490230}
+        m_TargetAssemblyTypeName: BackInventoryClickButton, Assembly-CSharp
+        m_MethodName: OnBackInventoryClickButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &58490228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -599,6 +612,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58490225}
   m_CullTransparentMesh: 1
+--- !u!114 &58490230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58490225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d283cb1e7cbffd4494db0fde1f6fb1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackInventoryClickButton
 --- !u!1 &73956899
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,6 +672,56 @@ MonoBehaviour:
   _executeDirectly: 0
   _duration: 3
   _textKey: tutorial_02
+  _color: {r: 0, g: 0, b: 0, a: 1}
+  _portrait: {fileID: 21300000, guid: 4e44babe51f77344ca963bb57600deb1, type: 3}
+--- !u!1 &74949939
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 74949940}
+  - component: {fileID: 74949941}
+  m_Layer: 0
+  m_Name: Line11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &74949940
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74949939}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1873437031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &74949941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74949939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168e3fcd5d47af94a84a6602df3387d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
+  _description: Linea 11 del dialogo del tutorial
+  _executeDirectly: 0
+  _duration: 3
+  _textKey: tutorial_11
   _color: {r: 0, g: 0, b: 0, a: 1}
   _portrait: {fileID: 21300000, guid: 4e44babe51f77344ca963bb57600deb1, type: 3}
 --- !u!1 &77702218
@@ -923,8 +998,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStarter
   _part1: {fileID: 1072129731}
   _part2: {fileID: 1533778395}
-  _part3: {fileID: 241491022}
-  _shopButtonBlinker: {fileID: 1112930047}
+  _part3: {fileID: 417775736}
+  _part4: {fileID: 241491022}
+  _part5: {fileID: 1456283551}
 --- !u!4 &78982767
 Transform:
   m_ObjectHideFlags: 0
@@ -940,7 +1016,9 @@ Transform:
   m_Children:
   - {fileID: 1072129732}
   - {fileID: 1533778396}
+  - {fileID: 417775737}
   - {fileID: 241491023}
+  - {fileID: 1456283550}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &78982768
@@ -1435,9 +1513,11 @@ GameObject:
   - component: {fileID: 152490664}
   - component: {fileID: 152490663}
   - component: {fileID: 152490662}
+  - component: {fileID: 152490667}
+  - component: {fileID: 152490666}
   - component: {fileID: 152490665}
   m_Layer: 5
-  m_Name: mobilaryShopButton
+  m_Name: FornitureShopButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1543,6 +1623,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 152490666}
+        m_TargetAssemblyTypeName: ButtonClickStopBlink, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 152490667}
+        m_TargetAssemblyTypeName: FornitureClickButton, Assembly-CSharp
+        m_MethodName: OnFornitureClickButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &152490663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1593,7 +1697,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f143f88957a5ebf4da9b29d0a539ba17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopButtonBlinker
-  _shopButton: {fileID: 152490662}
+--- !u!114 &152490666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152490660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb9bb3a15ac9d44eb4065ebb8012871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickStopBlink
+--- !u!114 &152490667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152490660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67a6ef1698efceb4e8f5b5b7903b0b92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FornitureClickButton
 --- !u!1 &162282186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,6 +1768,8 @@ MonoBehaviour:
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
   _duration: 0
+  _blinker: {fileID: 152490665}
+  _blink: 1
 --- !u!1 &165706496
 GameObject:
   m_ObjectHideFlags: 0
@@ -2305,7 +2434,7 @@ GameObject:
   - component: {fileID: 241491023}
   - component: {fileID: 241491022}
   m_Layer: 0
-  m_Name: Part3
+  m_Name: Part4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2365,7 +2494,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254965372}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2384,9 +2513,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2460e1ca286d649429d4bdf72d7e3d92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
-  _description: "Bloquea el bot\xF3n de la tienda"
+  _description: Bloquea botones
   _executeDirectly: 1
   _duration: 0
+  _buttonsLocker:
+  - {fileID: 1332041541}
+  - {fileID: 699538035}
+  - {fileID: 653309405}
+  - {fileID: 1763950097}
+  - {fileID: 973491454}
+  - {fileID: 1112930056}
   _lock: 1
 --- !u!1 &262465528
 GameObject:
@@ -3109,6 +3245,56 @@ MonoBehaviour:
   _icon: {fileID: 1433861516}
   _quantityText: {fileID: 1725980030}
   _button: {fileID: 0}
+--- !u!1 &338804387
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 338804388}
+  - component: {fileID: 338804389}
+  m_Layer: 0
+  m_Name: Line10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &338804388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338804387}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1873437031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &338804389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338804387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168e3fcd5d47af94a84a6602df3387d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
+  _description: Linea 10 del dialogo del tutorial
+  _executeDirectly: 0
+  _duration: 3
+  _textKey: tutorial_10
+  _color: {r: 0, g: 0, b: 0, a: 1}
+  _portrait: {fileID: 21300000, guid: 4e44babe51f77344ca963bb57600deb1, type: 3}
 --- !u!1 &347436184
 GameObject:
   m_ObjectHideFlags: 0
@@ -3184,6 +3370,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 347436184}
   m_CullTransparentMesh: 1
+--- !u!1 &360134279
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 360134280}
+  - component: {fileID: 360134281}
+  m_Layer: 0
+  m_Name: Line09
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &360134280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360134279}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1873437031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &360134281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360134279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168e3fcd5d47af94a84a6602df3387d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
+  _description: Linea 9 del dialogo del tutorial
+  _executeDirectly: 0
+  _duration: 3
+  _textKey: tutorial_09
+  _color: {r: 0, g: 0, b: 0, a: 1}
+  _portrait: {fileID: 21300000, guid: 4e44babe51f77344ca963bb57600deb1, type: 3}
 --- !u!1 &395714543
 GameObject:
   m_ObjectHideFlags: 0
@@ -3306,6 +3542,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+--- !u!1 &417775735
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 417775737}
+  - component: {fileID: 417775736}
+  m_Layer: 0
+  m_Name: Part3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &417775736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417775735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7135cdc5460ca794eb9cbd4053f8b38e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  _reactions: {fileID: 1367586849}
+--- !u!4 &417775737
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417775735}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1367586849}
+  m_Father: {fileID: 78982767}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &435229533
 GameObject:
   m_ObjectHideFlags: 0
@@ -4896,6 +5178,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600829427}
   m_CullTransparentMesh: 1
+--- !u!1 &631084601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 631084602}
+  - component: {fileID: 631084603}
+  m_Layer: 0
+  m_Name: LockButtonReaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &631084602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 631084601}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1367586849}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &631084603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 631084601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2460e1ca286d649429d4bdf72d7e3d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
+  _description: "Bloquea el bot\xF3n de la tienda"
+  _executeDirectly: 1
+  _duration: 0
+  _buttonsLocker:
+  - {fileID: 922113942}
+  _lock: 0
 --- !u!1 &635092982
 GameObject:
   m_ObjectHideFlags: 0
@@ -5099,6 +5431,8 @@ GameObject:
   - component: {fileID: 653309403}
   - component: {fileID: 653309402}
   - component: {fileID: 653309401}
+  - component: {fileID: 653309405}
+  - component: {fileID: 653309404}
   m_Layer: 5
   m_Name: PerspectiveButton
   m_TagString: Untagged
@@ -5244,6 +5578,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 653309399}
   m_CullTransparentMesh: 1
+--- !u!225 &653309404
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653309399}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &653309405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653309399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 653309404}
 --- !u!1 &684703586
 GameObject:
   m_ObjectHideFlags: 0
@@ -5310,6 +5669,8 @@ GameObject:
   - component: {fileID: 699538033}
   - component: {fileID: 699538032}
   - component: {fileID: 699538031}
+  - component: {fileID: 699538035}
+  - component: {fileID: 699538034}
   m_Layer: 5
   m_Name: OpenInventoryButton
   m_TagString: Untagged
@@ -5455,6 +5816,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 699538029}
   m_CullTransparentMesh: 1
+--- !u!225 &699538034
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699538029}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &699538035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699538029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 699538034}
 --- !u!1 &712778926
 GameObject:
   m_ObjectHideFlags: 0
@@ -6025,6 +6411,7 @@ Transform:
   - {fileID: 1724184450}
   - {fileID: 1711539818}
   - {fileID: 1102866452}
+  - {fileID: 1920746820}
   m_Father: {fileID: 241491023}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &758461036
@@ -6510,13 +6897,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 254965373}
   - {fileID: 982167534}
   - {fileID: 73956900}
   - {fileID: 221393971}
   - {fileID: 1056648687}
   - {fileID: 1377382526}
+  - {fileID: 1617700224}
   - {fileID: 1828267092}
-  - {fileID: 254965373}
   m_Father: {fileID: 1072129732}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &786745000
@@ -7822,6 +8210,8 @@ GameObject:
   - component: {fileID: 922113940}
   - component: {fileID: 922113939}
   - component: {fileID: 922113938}
+  - component: {fileID: 922113942}
+  - component: {fileID: 922113941}
   m_Layer: 5
   m_Name: BackToGameButton
   m_TagString: Untagged
@@ -7943,6 +8333,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922113936}
   m_CullTransparentMesh: 1
+--- !u!225 &922113941
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922113936}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &922113942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922113936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 922113941}
 --- !u!1 &925087968
 GameObject:
   m_ObjectHideFlags: 0
@@ -8404,6 +8819,8 @@ GameObject:
   - component: {fileID: 973491452}
   - component: {fileID: 973491451}
   - component: {fileID: 973491450}
+  - component: {fileID: 973491454}
+  - component: {fileID: 973491453}
   m_Layer: 5
   m_Name: WallButton
   m_TagString: Untagged
@@ -8549,6 +8966,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 973491448}
   m_CullTransparentMesh: 1
+--- !u!225 &973491453
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 973491448}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &973491454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 973491448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 973491453}
 --- !u!1 &976194300
 GameObject:
   m_ObjectHideFlags: 0
@@ -8908,13 +9350,41 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1861931219}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 994677771}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: ButtonClickStopBlink, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4389481890377217619, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_fontAsset
       value: 
@@ -8941,6 +9411,12 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 994677772}
+    - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 994677771}
     - targetCorrespondingSourceObject: {fileID: 908542345182750664, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 994677769}
@@ -8981,6 +9457,35 @@ MonoBehaviour:
   countItemsText: {fileID: 994677767}
   shopUIManager: {fileID: 925087972}
   item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
+--- !u!1 &994677770 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 994677765}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &994677771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994677770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb9bb3a15ac9d44eb4065ebb8012871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickStopBlink
+--- !u!114 &994677772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994677770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f143f88957a5ebf4da9b29d0a539ba17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonBlinker
 --- !u!1 &1009329057
 GameObject:
   m_ObjectHideFlags: 0
@@ -10223,7 +10728,10 @@ GameObject:
   - component: {fileID: 1112930050}
   - component: {fileID: 1112930049}
   - component: {fileID: 1112930053}
+  - component: {fileID: 1112930054}
   - component: {fileID: 1112930052}
+  - component: {fileID: 1112930056}
+  - component: {fileID: 1112930055}
   m_Layer: 5
   m_Name: OpenShopButton
   m_TagString: Untagged
@@ -10343,6 +10851,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1112930054}
+        m_TargetAssemblyTypeName: ButtonClickStopBlink, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1112930050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10393,7 +10913,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f143f88957a5ebf4da9b29d0a539ba17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopButtonBlinker
-  _shopButton: {fileID: 1112930049}
 --- !u!114 &1112930053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10406,6 +10925,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18fae89e68a5beb4ebf0ba2a06962651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopOpenButton
+--- !u!114 &1112930054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112930047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb9bb3a15ac9d44eb4065ebb8012871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickStopBlink
+--- !u!225 &1112930055
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112930047}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1112930056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112930047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 1112930055}
 --- !u!1 &1117901849
 GameObject:
   m_ObjectHideFlags: 0
@@ -10680,6 +11236,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1119293270}
   m_CullTransparentMesh: 1
+--- !u!1 &1152661516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1152661517}
+  - component: {fileID: 1152661518}
+  m_Layer: 0
+  m_Name: BlinkButtonReaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1152661517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152661516}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1367586849}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1152661518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152661516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57682a4d0fc0c184eac50abfa1d2cc27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
+  _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
+  _executeDirectly: 1
+  _duration: 0
+  _blinker: {fileID: 861723515539420233}
+  _blink: 1
 --- !u!1 &1174440871
 GameObject:
   m_ObjectHideFlags: 0
@@ -11290,6 +11895,10 @@ MonoBehaviour:
   _description: "Bloquea el bot\xF3n de la tienda"
   _executeDirectly: 1
   _duration: 0
+  _buttonsLocker:
+  - {fileID: 1362640803}
+  - {fileID: 1511520831}
+  - {fileID: 922113942}
   _lock: 1
 --- !u!1 &1224248943
 GameObject:
@@ -12491,6 +13100,8 @@ GameObject:
   - component: {fileID: 1332041539}
   - component: {fileID: 1332041538}
   - component: {fileID: 1332041537}
+  - component: {fileID: 1332041541}
+  - component: {fileID: 1332041540}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -12624,6 +13235,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1332041535}
   m_CullTransparentMesh: 1
+--- !u!225 &1332041540
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332041535}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1332041541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332041535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 1332041540}
 --- !u!1 &1334428757
 GameObject:
   m_ObjectHideFlags: 0
@@ -13252,8 +13888,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopButtonLocker
-  _shopButton: {fileID: 1362640799}
   _canvasGroup: {fileID: 1362640802}
+--- !u!1 &1367586848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1367586849}
+  m_Layer: 0
+  m_Name: Reactions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1367586849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367586848}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1152661517}
+  - {fileID: 1853934400}
+  - {fileID: 631084602}
+  m_Father: {fileID: 417775737}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1377382525
 GameObject:
   m_ObjectHideFlags: 0
@@ -14072,6 +14741,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1451894743}
   m_CullTransparentMesh: 1
+--- !u!1 &1456283549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1456283550}
+  - component: {fileID: 1456283551}
+  m_Layer: 0
+  m_Name: Part5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1456283550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456283549}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1873437031}
+  m_Father: {fileID: 78982767}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1456283551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456283549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7135cdc5460ca794eb9cbd4053f8b38e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
+  _reactions: {fileID: 1873437031}
 --- !u!1 &1463032666
 GameObject:
   m_ObjectHideFlags: 0
@@ -14800,7 +15515,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopButtonLocker
-  _shopButton: {fileID: 1511520827}
   _canvasGroup: {fileID: 1511520830}
 --- !u!1 &1515817423
 GameObject:
@@ -15670,6 +16384,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1617700223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1617700224}
+  - component: {fileID: 1617700225}
+  m_Layer: 0
+  m_Name: LockButtonReaction2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1617700224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617700223}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 782277221}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1617700225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617700223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2460e1ca286d649429d4bdf72d7e3d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
+  _description: Bloquea botones
+  _executeDirectly: 1
+  _duration: 0
+  _buttonsLocker:
+  - {fileID: 1112930056}
+  _lock: 0
 --- !u!1 &1675939068
 GameObject:
   m_ObjectHideFlags: 0
@@ -16729,6 +17493,8 @@ GameObject:
   - component: {fileID: 1763950095}
   - component: {fileID: 1763950094}
   - component: {fileID: 1763950093}
+  - component: {fileID: 1763950097}
+  - component: {fileID: 1763950096}
   m_Layer: 5
   m_Name: FloorButton
   m_TagString: Untagged
@@ -16874,6 +17640,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1763950091}
   m_CullTransparentMesh: 1
+--- !u!225 &1763950096
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763950091}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1763950097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763950091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f24eb8f34c763b84a85e4dc37a4facc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
+  _canvasGroup: {fileID: 1763950096}
 --- !u!1 &1766525956
 GameObject:
   m_ObjectHideFlags: 0
@@ -17751,6 +18542,8 @@ MonoBehaviour:
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
   _duration: 0
+  _blinker: {fileID: 1112930052}
+  _blink: 1
 --- !u!1 &1845150332
 GameObject:
   m_ObjectHideFlags: 0
@@ -17805,6 +18598,105 @@ MonoBehaviour:
   _icon: {fileID: 1515817425}
   _quantityText: {fileID: 1542808121}
   _button: {fileID: 0}
+--- !u!1 &1853934399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1853934400}
+  - component: {fileID: 1853934401}
+  m_Layer: 0
+  m_Name: BlinkButtonReaction2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1853934400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853934399}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1367586849}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1853934401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853934399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57682a4d0fc0c184eac50abfa1d2cc27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
+  _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
+  _executeDirectly: 1
+  _duration: 0
+  _blinker: {fileID: 994677772}
+  _blink: 1
+--- !u!1 &1861388973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1861388974}
+  - component: {fileID: 1861388975}
+  m_Layer: 0
+  m_Name: LockButtonReaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1861388974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861388973}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1873437031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1861388975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861388973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2460e1ca286d649429d4bdf72d7e3d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
+  _description: Bloquea botones
+  _executeDirectly: 1
+  _duration: 0
+  _buttonsLocker:
+  - {fileID: 1332041541}
+  _lock: 0
 --- !u!1 &1861931218
 GameObject:
   m_ObjectHideFlags: 0
@@ -18037,6 +18929,41 @@ MonoBehaviour:
   countItemsText: {fileID: 1867008357}
   shopUIManager: {fileID: 925087972}
   item: {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
+--- !u!1 &1873437030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1873437031}
+  m_Layer: 0
+  m_Name: Reactions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1873437031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873437030}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 360134280}
+  - {fileID: 338804388}
+  - {fileID: 74949940}
+  - {fileID: 1861388974}
+  m_Father: {fileID: 1456283550}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1875225871
 GameObject:
   m_ObjectHideFlags: 0
@@ -18511,6 +19438,59 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1920746819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1920746820}
+  - component: {fileID: 1920746821}
+  m_Layer: 0
+  m_Name: LockButtonReaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1920746820
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920746819}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 742049066}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1920746821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920746819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2460e1ca286d649429d4bdf72d7e3d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
+  _description: Bloquea botones
+  _executeDirectly: 1
+  _duration: 0
+  _buttonsLocker:
+  - {fileID: 699538035}
+  - {fileID: 653309405}
+  - {fileID: 1763950097}
+  - {fileID: 973491454}
+  _lock: 0
 --- !u!1 &1923373481
 GameObject:
   m_ObjectHideFlags: 0
@@ -20904,9 +21884,37 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1861931219}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 861723515539420232}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: ButtonClickStopBlink, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4389481890377217619, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_fontAsset
       value: 
@@ -20927,6 +21935,12 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 861723515539420233}
+    - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 861723515539420232}
     - targetCorrespondingSourceObject: {fileID: 908542345182750664, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 861723515539420230}
@@ -20967,6 +21981,35 @@ MonoBehaviour:
   countItemsText: {fileID: 861723515539420228}
   shopUIManager: {fileID: 925087972}
   item: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
+--- !u!1 &861723515539420231 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 861723515539420226}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &861723515539420232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861723515539420231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb9bb3a15ac9d44eb4065ebb8012871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickStopBlink
+--- !u!114 &861723515539420233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861723515539420231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f143f88957a5ebf4da9b29d0a539ba17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonBlinker
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
