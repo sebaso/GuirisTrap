@@ -61,7 +61,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     private PlayerController _player;
     private float            _navCooldown     = 0f;
     private Vector2          _currentNav      = Vector2.zero;
-    private bool             _subscribed      = false;
 
     private static readonly Color ColEmpty   = new Color(0.6f, 0.6f, 0.6f);
     private static readonly Color ColCooking = new Color(1f, 0.55f, 0.1f);
@@ -74,29 +73,12 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         if (minigamePanel) minigamePanel.SetActive(false);
     }
 
-    void OnEnable()  => TrySubscribe();
-
-    void OnDisable()
-    {
-        if (_subscribed && DayManager.Instance != null)
-            DayManager.Instance.OnDayEnded -= OnDayEnded;
-        _subscribed = false;
-    }
-
-    void TrySubscribe()
-    {
-        if (_subscribed) return;
-        if (DayManager.Instance == null) return;
-        DayManager.Instance.OnDayEnded += OnDayEnded;
-        _subscribed = true;
-    }
-
-    void OnDayEnded()
-    {
-        // Si el panel seguía abierto al acabar el día, ciérralo limpiamente.
-        if (_isPanelOpen) ClosePanel();
-        ResetEspetos();
-    }
+    // NOTA: No se suscribe a eventos de DayManager.
+    // Al terminar el día, SceneController carga PreparationScene y luego recarga
+    // GameScene por completo (SceneManager.LoadScene, no aditiva), por lo que este
+    // objeto se destruye y se recrea cada día → Awake() ya resetea el estado.
+    // Suscribirse a OnDayEnded para cerrar el panel manualmente rompía el control
+    // del jugador al dejar acabar el día con el minijuego abierto.
 
     /// <summary>Deja todos los espetos vacíos y centrados. Estado inicial limpio.</summary>
     public void ResetEspetos()
@@ -118,8 +100,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
     void Update()
     {
-        if (!_subscribed) TrySubscribe();
-
         TickTimers();
         if (_navCooldown > 0f) _navCooldown -= Time.deltaTime;
 
