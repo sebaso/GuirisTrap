@@ -56,7 +56,17 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
     private Espeto[]         _espetos;
     private int              _selectedIndex   = 0;
-    private bool             _isRepositioning = false;
+    private bool _isRepositioningBacking = false;
+    private bool _isRepositioning
+    {
+    get => _isRepositioningBacking;
+    set
+    {
+        if (_isRepositioningBacking != value)
+            Debug.Log($"[Espeto] _isRepositioning {_isRepositioningBacking} → {value}  | frame {Time.frameCount}\n{System.Environment.StackTrace}");
+        _isRepositioningBacking = value;
+    }
+    }
     private bool             _isPanelOpen     = false;
     private PlayerController _player;
     private float            _navCooldown     = 0f;
@@ -305,6 +315,8 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
         if (_espetos[_selectedIndex].state != EspetoState.Cooking)
             _isRepositioning = false;
+
+        Debug.Log($"[Espeto] sel={_selectedIndex} estado={_espetos[_selectedIndex].state} repos DESPUÉS={_isRepositioning}");
     }
 
     public void OnNavigate(Vector2 direction)

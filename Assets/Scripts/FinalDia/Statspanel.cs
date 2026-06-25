@@ -36,8 +36,8 @@ public class StatsPanel : MonoBehaviour
 
         if (_panelRoot == gameObject)
         {
-            Debug.LogError("[StatsPanel] _panelRoot es el MISMO objeto que tiene el script. " +
-                           "Debe ser un objeto hijo distinto. Ocultando solo los hijos para no autodesactivarme.");
+            //Debug.LogError("[StatsPanel] _panelRoot es el MISMO objeto que tiene el script. " +
+          //                 "Debe ser un objeto hijo distinto. Ocultando solo los hijos para no autodesactivarme.");
             SetChildrenActive(false);
         }
         else
