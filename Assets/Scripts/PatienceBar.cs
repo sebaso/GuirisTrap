@@ -5,6 +5,10 @@ public class PatienceBar : MonoBehaviour
 {
     public Image fillImage;
 
+    [Tooltip("Object shown/hidden and billboarded for the bar. Leave empty to use the fill image's object. " +
+             "Must NOT be the Client/Table root — toggling that would disable the whole entity.")]
+    public Transform barRoot;
+
     public Color fullColor  = Color.green;
     public Color halfColor  = Color.yellow;
     public Color emptyColor = Color.red;
@@ -18,12 +22,17 @@ public class PatienceBar : MonoBehaviour
         _client = GetComponentInParent<Client>();
         _table = GetComponentInParent<Table>();
         _cam = Camera.main;
+
+        // Default the bar root to the fill image's object. Crucially this is NOT
+        // this component's GameObject: PatienceBar lives on the Client/Table root,
+        // so toggling `gameObject` would disable the whole entity (and once
+        // disabled, Update stops and it never comes back).
+        if (barRoot == null && fillImage != null) barRoot = fillImage.transform;
     }
 
     void Update()
     {
-        if (_cam != null)
-            transform.rotation = _cam.transform.rotation;
+        if (barRoot == null) return;
 
         bool shouldShow;
         float ratio;
@@ -43,9 +52,13 @@ public class PatienceBar : MonoBehaviour
             ratio = _client != null ? _client.PatienceRatio : 0f;
         }
 
-        gameObject.SetActive(shouldShow);
+        barRoot.gameObject.SetActive(shouldShow);
 
         if (!shouldShow || fillImage == null) return;
+
+        // Billboard only the bar toward the camera, never the entity it rides on.
+        if (_cam != null)
+            barRoot.rotation = _cam.transform.rotation;
 
         fillImage.fillAmount = ratio;
         fillImage.color = Color.Lerp(emptyColor, ratio > 0.5f ? fullColor : halfColor,

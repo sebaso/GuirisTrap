@@ -15,6 +15,9 @@ public class DayReport : MonoBehaviour
     public int TotalClients => ClientsSatisfied + ClientsAngry;
     public int NetMoney     => MoneyEarned - MoneySpent;
 
+    // Suscripción al DayManager para resetear contadores al empezar el día.
+    private bool _subscribedDay = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -30,28 +33,34 @@ public class DayReport : MonoBehaviour
 
     private void OnEnable()
     {
-        // Suscribirse al dinero para registrar ganado/gastado automáticamente.
-        if (MoneyManager.Instance != null)
-            MoneyManager.Instance.OnMoneyChangedDelta += HandleMoneyDelta;
-
-        // Resetear contadores cuando empieza un día nuevo.
-        if (DayManager.Instance != null)
-            DayManager.Instance.OnDayStarted += ResetCounters;
+        TrySubscribe();
     }
 
     private void OnDisable()
     {
-        if (MoneyManager.Instance != null)
-            MoneyManager.Instance.OnMoneyChangedDelta -= HandleMoneyDelta;
-
-        if (DayManager.Instance != null)
+        if (_subscribedDay && DayManager.Instance != null)
             DayManager.Instance.OnDayStarted -= ResetCounters;
+        _subscribedDay = false;
     }
 
     private void Start()
     {
-        // Por si el día ya había arrancado antes de que este objeto existiera.
         ResetCounters();
+    }
+
+    private void Update()
+    {
+        if (!_subscribedDay)
+            TrySubscribe();
+    }
+
+    private void TrySubscribe()
+    {
+        if (!_subscribedDay && DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayStarted += ResetCounters;
+            _subscribedDay = true;
+        }
     }
 
     /// <summary>Pone todos los contadores a cero. Se llama al empezar cada día.</summary>
@@ -79,17 +88,23 @@ public class DayReport : MonoBehaviour
         ClientsAngry++;
     }
 
-    // --- Registro de dinero (automático vía evento) ---
+    // --- Registro de dinero (directo, llamado explícitamente) ---
 
-    private void HandleMoneyDelta(int newBalance, int delta)
+    /// <summary>Registra dinero ganado en el día (pago de un cliente).</summary>
+    public void RegisterEarnings(int amount)
     {
-        if (delta > 0)      MoneyEarned += delta;
-        else if (delta < 0) MoneySpent  += -delta;
+        if (amount > 0) MoneyEarned += amount;
+    }
+
+    /// <summary>Registra dinero gastado en el día (compras, etc.).</summary>
+    public void RegisterSpending(int amount)
+    {
+        if (amount > 0) MoneySpent += amount;
     }
 
     // --- Nota del día ---
 
-    /// <summary>% de clientes satisfechos sobre el total (0–100).</summary>
+    /// <summary>% de clientes satisfechos sobre el total (0-100).</summary>
     public float SatisfactionPercent
     {
         get
@@ -100,7 +115,7 @@ public class DayReport : MonoBehaviour
     }
 
     /// <summary>
-    /// Nota del día (F–A). Escala del GDD: A≥90, B≥80, C≥70, D≥60, E≥50, F&lt;50.
+    /// Nota del día (F-A). Escala del GDD: A>=90, B>=80, C>=70, D>=60, E>=50, F<50.
     /// Si no vino ningún cliente, devuelve 'F'.
     /// </summary>
     public char GetGrade()

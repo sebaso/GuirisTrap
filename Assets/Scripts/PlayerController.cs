@@ -121,6 +121,9 @@ public class PlayerController : ControllableMonoBehaviour
         float bestStorageDist = float.MaxValue;
         float bestEspetoDist  = float.MaxValue;
         float bestStationDist = float.MaxValue;
+        // Track the nearest pickable food too, so a station standing within range
+        // can't silently swallow the interact when food is actually closer.
+        float bestFoodDist = float.MaxValue;
 
         foreach (Collider col in nearby)
         {
@@ -134,20 +137,29 @@ public class PlayerController : ControllableMonoBehaviour
 
             CookingStation cs = col.GetComponent<CookingStation>();
             if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
+
+            // Only loose, grabbable food counts (mirrors TryPickUpFood's filter).
+            if (heldFood == null)
+            {
+                Food f = col.GetComponent<Food>() ?? col.GetComponentInParent<Food>();
+                if (f != null && !f.IsBeingHeld && !f.IsServed && dist < bestFoodDist) bestFoodDist = dist;
+            }
         }
 
         // Atender al más cercano de entre los tipos encontrados.
         // (Storage y Espeto tienen prioridad porque abren su propio menú; la
         //  estación de cocina es la acción de "cocinar" lo que llevas.)
-        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist)
+        // Cada estación solo gana si además está más cerca que la comida suelta;
+        // si la comida es lo más cercano, caemos a TryPickUpFood más abajo.
+        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist && bestStorageDist <= bestFoodDist)
         {
             bestStorage.TryOpen(); return;
         }
-        if (bestEspeto != null && bestEspetoDist <= bestStationDist)
+        if (bestEspeto != null && bestEspetoDist <= bestStationDist && bestEspetoDist <= bestFoodDist)
         {
             bestEspeto.TryOpen(this); return;
         }
-        if (bestStation != null)
+        if (bestStation != null && bestStationDist <= bestFoodDist)
         {
             bestStation.TryInteract(); return;
         }

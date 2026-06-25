@@ -23,6 +23,7 @@ public class DayTimerUI : MonoBehaviour
 
     private RectTransform _circleRect;
     private Vector3 _originalScale;
+    private bool _lowSfxPlayed; // edge-trigger so the alarm fires once, not every frame
 
     void Awake()
     {
@@ -78,19 +79,27 @@ public class DayTimerUI : MonoBehaviour
             UpdateTimerDisplay(DayManager.Instance.DayProgress);
         }
 
-        // Pulse effect when time is low
-        if (_enablePulse && _circleRect != null && DayManager.Instance != null && DayManager.Instance.IsDayActive)
+        if (DayManager.Instance != null && DayManager.Instance.IsDayActive)
         {
-            float progress = DayManager.Instance.DayProgress;
-            if (progress >= 1f - _lowThreshold) // last 30% of day
+            bool isLow = DayManager.Instance.DayProgress >= 1f - _lowThreshold; // last 30% of day
+
+            // Alarm: play once when we enter the low-time zone, re-arm when we leave it.
+            if (isLow && !_lowSfxPlayed)
             {
                 AudioManager.Instance?.PlaySFX("timer_low");
-                float pulse = Mathf.Lerp(_pulseMinScale, _pulseMaxScale, (Mathf.Sin(Time.time * _pulseSpeed) + 1f) * 0.5f);
-                _circleRect.localScale = _originalScale * pulse;
+                _lowSfxPlayed = true;
             }
-            else
+            else if (!isLow)
             {
-                _circleRect.localScale = _originalScale;
+                _lowSfxPlayed = false;
+            }
+
+            // Pulse effect when time is low
+            if (_enablePulse && _circleRect != null)
+            {
+                _circleRect.localScale = isLow
+                    ? _originalScale * Mathf.Lerp(_pulseMinScale, _pulseMaxScale, (Mathf.Sin(Time.time * _pulseSpeed) + 1f) * 0.5f)
+                    : _originalScale;
             }
         }
     }
@@ -124,6 +133,8 @@ public class DayTimerUI : MonoBehaviour
 
     private void OnDayEnded()
     {
+        _lowSfxPlayed = false;
+
         if (_circleFill != null)
         {
             _circleFill.fillAmount = 0f;
