@@ -124,6 +124,30 @@ public class SaveManager : MonoBehaviour
         WriteFile();
     }
 
+    /// <summary>
+    /// Escribe en disco el contenido actual de <c>_data</c> tal cual, sin
+    /// sincronizar con MoneyManager ni con las grids de la escena. Pensado para
+    /// persistir ediciones manuales hechas desde el inspector.
+    /// </summary>
+    public void WriteCurrentData() => WriteFile();
+
+    /// <summary>
+    /// Reinicia la partida: vacía los datos en memoria y borra el archivo de
+    /// guardado del disco si existe.
+    /// </summary>
+    public void ResetSave()
+    {
+        _data = new SaveData();
+        if (File.Exists(SavePath)) File.Delete(SavePath);
+        Debug.Log($"[SaveManager] Save reset → {SavePath}");
+    }
+
+    /// <summary>Ruta absoluta del archivo de guardado en disco.</summary>
+    public string SaveFilePath => SavePath;
+
+    /// <summary>True si existe un archivo de guardado en disco.</summary>
+    public bool HasSaveFile => File.Exists(SavePath);
+
     private void WriteFile()
     {
         _data.ownedItems = OwnedItemsManager.Instance?.ToSaveData(); 
