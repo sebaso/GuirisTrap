@@ -2052,6 +2052,26 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7491262878120335699, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+      propertyPath: _timerText
+      value: 
+      objectReference: {fileID: 1138470456}
+    - target: {fileID: 7491262878120335699, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+      propertyPath: _circleFill
+      value: 
+      objectReference: {fileID: 1949388482}
+    - target: {fileID: 7491262878120335699, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+      propertyPath: _midColor.b
+      value: 0.09451762
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491262878120335699, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+      propertyPath: _midColor.g
+      value: 0.09451762
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491262878120335699, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
+      propertyPath: _midColor.r
+      value: 0.33962262
+      objectReference: {fileID: 0}
     - target: {fileID: 7503103014016488382, guid: 7fb35ca72a6e7264bbb9c655c6567fcc, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -4564,7 +4584,7 @@ GameObject:
   - component: {fileID: 1949388483}
   - component: {fileID: 1949388482}
   m_Layer: 5
-  m_Name: Image
+  m_Name: ClockImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5205,6 +5225,10 @@ PrefabInstance:
     - target: {fileID: 6499920561348662992, guid: 5cf078bd363866d4e96922711882452d, type: 3}
       propertyPath: m_Name
       value: StatsPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6499920561348662992, guid: 5cf078bd363866d4e96922711882452d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
