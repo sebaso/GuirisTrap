@@ -80,7 +80,13 @@ public class SaveManager : MonoBehaviour
             _data = new SaveData();
         }
     }
-
+    [ContextMenu("Delete Save")]
+    public void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+            File.Delete(SavePath);
+        Debug.Log("[SaveManager] Save eliminado: " + SavePath);
+    }
     private void SaveGridsFromManagers()
     {
         GameGridManager[] managers = FindObjectsByType<GameGridManager>(FindObjectsSortMode.None);
