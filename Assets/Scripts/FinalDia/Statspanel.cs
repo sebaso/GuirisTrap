@@ -92,7 +92,10 @@ public class StatsPanel : MonoBehaviour
         DayReport report = DayReport.Instance;
 
         if (_dayNumberText != null && SaveManager.Instance != null)
-            _dayNumberText.text = $"DÍA {SaveManager.Instance.CurrentDay}";
+            // CurrentDay cuenta días COMPLETADOS (se incrementa al pulsar "Siguiente
+            // día"). El día que acaba de jugarse aún no se ha incrementado, así que
+            // es CurrentDay + 1 (el primer día es el 1, no el 0).
+            _dayNumberText.text = $"DÍA {SaveManager.Instance.CurrentDay + 1}";
 
         if (report != null)
         {

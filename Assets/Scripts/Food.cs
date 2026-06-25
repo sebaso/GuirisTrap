@@ -7,39 +7,43 @@ public class Food : MonoBehaviour
     public float price = 10f;
 
     private Rigidbody rb;
-    private Collider foodCollider;
+    // The pickup logic finds Food via GetComponentInParent, so the collider(s)
+    // may live on children of the prefab root. Toggle all of them together,
+    // otherwise a child collider stays active while held and keeps registering
+    // physics overlaps. Cached including inactive ones.
+    private Collider[] colliders;
     private bool isBeingHeld = false;
     private bool isServed = false;
 
     public bool IsBeingHeld => isBeingHeld;
     public bool IsServed => isServed;
 
-    void Start(){
-        rb = GetComponent<Rigidbody>();
-        foodCollider = GetComponent<Collider>();
-    }
-
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        foodCollider = GetComponent<Collider>();
-
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
         }
 
-        if (foodCollider == null)
+        colliders = GetComponentsInChildren<Collider>(includeInactive: true);
+        if (colliders.Length == 0)
         {
-            foodCollider = gameObject.AddComponent<BoxCollider>();
+            colliders = new Collider[] { gameObject.AddComponent<BoxCollider>() };
         }
+    }
+
+    private void SetCollidersEnabled(bool enabled)
+    {
+        foreach (Collider c in colliders)
+            if (c != null) c.enabled = enabled;
     }
 
     public void PickUp(Transform holdPoint)
     {
         isBeingHeld = true;
         rb.isKinematic = true;
-        foodCollider.enabled = false;
+        SetCollidersEnabled(false);
         transform.SetParent(holdPoint);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
@@ -50,7 +54,7 @@ public class Food : MonoBehaviour
         isBeingHeld = false;
         transform.SetParent(null);
         rb.isKinematic = false;
-        foodCollider.enabled = true;
+        SetCollidersEnabled(true);
     }
 
     public void PlaceOnTable(Transform tablePoint)
@@ -63,7 +67,7 @@ public class Food : MonoBehaviour
         transform.localRotation = Quaternion.identity;
 
         rb.isKinematic = true;
-        foodCollider.enabled = false;
+        SetCollidersEnabled(false);
     }
 
     public void Serve()
