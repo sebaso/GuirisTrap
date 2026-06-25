@@ -46,6 +46,18 @@ public class InputManager : MonoBehaviour, IPlayerActions
             _current = null;
         }
     }
+    private void OnDestroy()
+{
+    // 1. Nos desuscribimos del evento de carga de escena 
+    SceneManager.sceneLoaded -= OnSceneLoaded;
+
+    // 2. Apagamos y vaciamos la memoria de los inputs viejos
+    if (_inputs != null)
+    {
+        _inputs.Disable();
+        _inputs.Dispose();
+    }
+}
     public void EnterMinigame(IMinigameControllable minigame)
     {
         // Detiene al jugador para que no patine mientras juega el minijuego.
