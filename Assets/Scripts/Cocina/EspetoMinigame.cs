@@ -61,6 +61,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     private PlayerController _player;
     private float            _navCooldown     = 0f;
     private Vector2          _currentNav      = Vector2.zero;
+    private bool             _subscribed      = false;
 
     private static readonly Color ColEmpty   = new Color(0.6f, 0.6f, 0.6f);
     private static readonly Color ColCooking = new Color(1f, 0.55f, 0.1f);
@@ -73,17 +74,28 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         if (minigamePanel) minigamePanel.SetActive(false);
     }
 
-    void OnEnable()
-    {
-        // Resetear los espetos al empezar cada día
-        if (DayManager.Instance != null)
-            DayManager.Instance.OnDayStarted += ResetEspetos;
-    }
+    void OnEnable()  => TrySubscribe();
 
     void OnDisable()
     {
-        if (DayManager.Instance != null)
-            DayManager.Instance.OnDayStarted -= ResetEspetos;
+        if (_subscribed && DayManager.Instance != null)
+            DayManager.Instance.OnDayEnded -= OnDayEnded;
+        _subscribed = false;
+    }
+
+    void TrySubscribe()
+    {
+        if (_subscribed) return;
+        if (DayManager.Instance == null) return;
+        DayManager.Instance.OnDayEnded += OnDayEnded;
+        _subscribed = true;
+    }
+
+    void OnDayEnded()
+    {
+        // Si el panel seguía abierto al acabar el día, ciérralo limpiamente.
+        if (_isPanelOpen) ClosePanel();
+        ResetEspetos();
     }
 
     /// <summary>Deja todos los espetos vacíos y centrados. Estado inicial limpio.</summary>
@@ -106,6 +118,8 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
     void Update()
     {
+        if (!_subscribed) TrySubscribe();
+
         TickTimers();
         if (_navCooldown > 0f) _navCooldown -= Time.deltaTime;
 

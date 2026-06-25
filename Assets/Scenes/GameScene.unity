@@ -3191,110 +3191,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1383562894
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1383562897}
-  - component: {fileID: 1383562896}
-  - component: {fileID: 1383562895}
-  - component: {fileID: 1383562898}
-  - component: {fileID: 1383562899}
-  m_Layer: 0
-  m_Name: Sistemas
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1383562895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383562894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 194e0591fd3a1624ab5688dff8a52b51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QTEMinigame
-  minigamePanel: {fileID: 1073487613}
-  sequenceDisplay: {fileID: 1905271156}
-  timerText: {fileID: 669561760}
---- !u!114 &1383562896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383562894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bff7228b4e7cb84a837d5ba925166cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MinigameManager
-  fridgeGame: {fileID: 1383562895}
-  freezerGame: {fileID: 1383562898}
-  pantryGame: {fileID: 1383562899}
-  especiasGame: {fileID: 0}
---- !u!4 &1383562897
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383562894}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1383562898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383562894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bbc468ed057c414180f4c11f8808384, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FreezerMinigame
-  minigamePanel: {fileID: 44412249}
-  cursorRect: {fileID: 1710839535}
-  targetZone: {fileID: 1191543111}
-  baseSpeed: 2
-  speedMultiplierPerLevel: 1.2
-  baseZoneSize: 0.3
-  cursorWidth: 5
---- !u!114 &1383562899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383562894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ecfa1e4cfeb2d047bc92353ffb2f1b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DespensaMinigame
-  minigamePanel: {fileID: 327754798}
-  progressBarFill: {fileID: 457308352}
-  timerText: {fileID: 342911636}
-  mashText: {fileID: 2045422692}
-  mashAnimator: {fileID: 0}
-  baseClicks: 10
-  countdownSeconds: 3
 --- !u!1 &1391682082
 GameObject:
   m_ObjectHideFlags: 0
@@ -4808,6 +4704,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+--- !u!114 &2018270708 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5476883480648321003, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64cc8a40f9848a54c94bf232155b0b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TMPEffects::TMPEffects.Components.TMPAnimator
+--- !u!1 &2018270709 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 935715060762633424, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2018270710 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3765173546621688775, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2018270711 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6704879529577464646, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2018270712 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 519797186059580895, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2018270713 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1217879841837130416, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2018270714 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2027572558294305569, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2018270715 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4497226943582567216, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &2018270716 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1275053773436485033, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &2018270717 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7114210582470206013, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+  m_PrefabInstance: {fileID: 2018270707}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2036087220
 GameObject:
   m_ObjectHideFlags: 0
@@ -5277,6 +5241,143 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 139ba8cc484255e42985599397d97e30, type: 3}
   m_PrefabInstance: {fileID: 1480556475}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1677978429991388201
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 241086602237357633, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: timerText
+      value: 
+      objectReference: {fileID: 669561760}
+    - target: {fileID: 241086602237357633, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: minigamePanel
+      value: 
+      objectReference: {fileID: 1073487613}
+    - target: {fileID: 241086602237357633, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: sequenceDisplay
+      value: 
+      objectReference: {fileID: 1905271156}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813009815718551425, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: balasText
+      value: 
+      objectReference: {fileID: 2018270715}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: cucharaRect
+      value: 
+      objectReference: {fileID: 2018270714}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: minigamePanel
+      value: 
+      objectReference: {fileID: 2018270717}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: balaPrefabRect
+      value: 
+      objectReference: {fileID: 2018270713}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: instruccionText
+      value: 
+      objectReference: {fileID: 2018270716}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: 'layoutsFacil.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2018270712}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: 'layoutsNormal.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2018270711}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: 'layoutsDificil.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2018270710}
+    - target: {fileID: 4113748789084734136, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: 'layoutsImposible.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2018270709}
+    - target: {fileID: 6623005081218255875, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: m_Name
+      value: SistemasMinijuegos
+      objectReference: {fileID: 0}
+    - target: {fileID: 7338573352176482248, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: mashText
+      value: 
+      objectReference: {fileID: 2045422692}
+    - target: {fileID: 7338573352176482248, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: timerText
+      value: 
+      objectReference: {fileID: 342911636}
+    - target: {fileID: 7338573352176482248, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: mashAnimator
+      value: 
+      objectReference: {fileID: 2018270708}
+    - target: {fileID: 7338573352176482248, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: minigamePanel
+      value: 
+      objectReference: {fileID: 327754798}
+    - target: {fileID: 7338573352176482248, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: progressBarFill
+      value: 
+      objectReference: {fileID: 457308352}
+    - target: {fileID: 8014160150285774928, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: cursorRect
+      value: 
+      objectReference: {fileID: 1710839535}
+    - target: {fileID: 8014160150285774928, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: targetZone
+      value: 
+      objectReference: {fileID: 1191543111}
+    - target: {fileID: 8014160150285774928, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
+      propertyPath: minigamePanel
+      value: 
+      objectReference: {fileID: 44412249}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: df5d65d27ab883e4d875031b660d3cdd, type: 3}
 --- !u!1 &1707942937042923993 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7515429101286732190, guid: 139ba8cc484255e42985599397d97e30, type: 3}
@@ -5403,7 +5504,7 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1383562897}
+  - {fileID: 1677978429991388201}
   - {fileID: 1481696743}
   - {fileID: 360223694}
   - {fileID: 935569556}
