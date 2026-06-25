@@ -69,16 +69,39 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
     void Awake()
     {
+        ResetEspetos();
+        if (minigamePanel) minigamePanel.SetActive(false);
+    }
+
+    void OnEnable()
+    {
+        // Resetear los espetos al empezar cada día
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayStarted += ResetEspetos;
+    }
+
+    void OnDisable()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayStarted -= ResetEspetos;
+    }
+
+    /// <summary>Deja todos los espetos vacíos y centrados. Estado inicial limpio.</summary>
+    public void ResetEspetos()
+    {
         _espetos = new Espeto[espetoCount];
         for (int i = 0; i < espetoCount; i++)
             _espetos[i] = new Espeto
             {
+                state          = EspetoState.Empty,
                 zonePosition   = Random.Range(0.2f, 0.8f),
                 espetoPosition = 0.5f,
                 zoneShiftTimer = intervaloCambioZona
             };
 
-        if (minigamePanel) minigamePanel.SetActive(false);
+        _selectedIndex   = 0;
+        _isRepositioning = false;
+        _currentNav      = Vector2.zero;
     }
 
     void Update()
@@ -179,12 +202,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         _espetos[index].state = EspetoState.Empty;
         if (espetoFoodPrefab != null && _player != null)
-        {
-            GameObject foodObj = Instantiate(espetoFoodPrefab,
-                _player.transform.position + Vector3.up, Quaternion.identity);
-            Food food = foodObj.GetComponent<Food>();
-            if (food != null) food.PickUp(_player.holdPoint);
-        }
+            _player.CreateAndHoldFood(espetoFoodPrefab);
         ClosePanel();
     }
 

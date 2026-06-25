@@ -10,8 +10,10 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
     public RectTransform targetZone;
 
     [Header("Ajustes de Dificultad Base")]
-    public float baseSpeed = 1.5f;
-    public float speedMultiplierPerLevel = 1.2f;
+    [Tooltip("Velocidad base de la barra. Más bajo = más lento y fácil de leer. Feedback del profe: iba muy rápida.")]
+    public float baseSpeed = 0.8f;
+    [Tooltip("Cuánto se acelera por nivel de dificultad. 1 = sin cambio; 1.1 = +10% por nivel.")]
+    public float speedMultiplierPerLevel = 1.1f;
     public float baseZoneSize = 0.3f;
     public float cursorWidth = 10f;
 
@@ -70,7 +72,7 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
             Debug.Log($"¡CONGELADO PERFECTO!");
             AudioManager.Instance?.PlaySFX("congelador_success");
             if (currentRecipe.foodPrefab != null)
-                Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
                 Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

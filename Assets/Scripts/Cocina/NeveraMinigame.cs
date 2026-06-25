@@ -67,7 +67,7 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
             Debug.Log("¡Éxito!");
             AudioManager.Instance?.PlaySFX("nevera_success");
             if (currentRecipe.foodPrefab != null)
-                Instantiate(currentRecipe.foodPrefab, player.transform.position, Quaternion.identity);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
                 Debug.LogWarning($"[NeveraMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

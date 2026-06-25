@@ -231,7 +231,7 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
             Debug.Log($"¡Éxito! {_currentRecipe.dishName}");
             AudioManager.Instance?.PlaySFX("especias_success");
             if (_currentRecipe.foodPrefab != null)
-                Instantiate(_currentRecipe.foodPrefab, _player.transform.position, Quaternion.identity);
+                _player.CreateAndHoldFood(_currentRecipe.foodPrefab);
         }
         else
         {

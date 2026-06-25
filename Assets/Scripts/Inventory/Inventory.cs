@@ -3,6 +3,10 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public System.Action OnInventoryChanged;
+    // ponytail: static event so UI (and any listener) catches changes regardless
+    // of which Inventory instance is currently the singleton. Simpler than
+    // having the UI re-bind when the singleton swaps.
+    public static event System.Action OnAnyInventoryChanged;
     [SerializeField] 
     private int _width = 7;
     [SerializeField] 
@@ -12,7 +16,18 @@ public class Inventory : MonoBehaviour
     public int Width => _width;
     public int Height => _height;
     private static Inventory _instance;
-    public static Inventory Instance => _instance; 
+    public static Inventory Instance => _instance;
+
+    // ponytail: lazy-create so callers (GameManager.Buy) work even if the
+    // Inventory GameObject is buried in a closed UI panel that hasn't awoken yet.
+    // If a panel-baked Inventory wakes up later, it destroys itself as a dup.
+    public static Inventory EnsureExists()
+    {
+        if (_instance != null) return _instance;
+        var go = new GameObject("Inventory");
+        go.AddComponent<Inventory>();
+        return _instance;
+    }
     
     void Awake()
     {
@@ -27,11 +42,9 @@ public class Inventory : MonoBehaviour
         else
         {
             Debug.Log($"Inventory duplicado destruido en escena: {gameObject.scene.name}");
-            // Destruir el GameObject del que ya existe el singleton
-            if (gameObject != _instance.gameObject)
-                Destroy(gameObject);
-            else
-                Destroy(this);
+            // Only destroy the duplicate component, never its GameObject:
+            // the GameObject may host the InventoryUI / slots we still need.
+            Destroy(this);
         }
     }
     public void Init()
@@ -45,7 +58,15 @@ public class Inventory : MonoBehaviour
     public void Clear()
     {
         _inventory = new InventorySlot[_width, _height];
+        NotifyChanged();
     }
+
+    private void NotifyChanged()
+    {
+        OnInventoryChanged?.Invoke();
+        OnAnyInventoryChanged?.Invoke();
+    }
+
     public bool AddItem(PlaceableItemData item)
     {
         if (_inventory == null) Init();
@@ -60,7 +81,7 @@ public class Inventory : MonoBehaviour
                 if (slot != null && slot.CanStack(item))
                 {
                     slot.AddItem();
-                    OnInventoryChanged?.Invoke();
+                    NotifyChanged();
                     return true;
                 }
             }
@@ -78,7 +99,7 @@ public class Inventory : MonoBehaviour
                         quantity = 1,
                         maxStack = item.maxStack
                     };
-                    OnInventoryChanged?.Invoke();
+                    NotifyChanged();
                     return true;
                 }
             }
@@ -109,7 +130,7 @@ public class Inventory : MonoBehaviour
         {
             _inventory[x, y] = null;
         }
-        OnInventoryChanged?.Invoke();
+        NotifyChanged();
         return true;
     }
 }
