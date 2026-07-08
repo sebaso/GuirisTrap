@@ -284,6 +284,7 @@ public class Client : MonoBehaviour
         Debug.Log($"[Client] Finished eating. Leaving happy. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
         DayReport.Instance?.RegisterSatisfiedClient();
+        DayReport.Instance?.RegisterEarnings(payment);
         AudioManager.Instance?.PlaySFX("client_happy");
         StartLeaving();
     }

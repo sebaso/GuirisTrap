@@ -85,6 +85,9 @@ public class SaveManager : MonoBehaviour
     {
         if (File.Exists(SavePath))
             File.Delete(SavePath);
+        _data = new SaveData();
+        PlayerPrefs.DeleteAll();
+        OwnedItemsManager.Instance?.LoadFromSave(null);
         Debug.Log("[SaveManager] Save eliminado: " + SavePath);
     }
     private void SaveGridsFromManagers()

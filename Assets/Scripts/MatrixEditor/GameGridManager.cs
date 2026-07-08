@@ -256,10 +256,10 @@ public void PlaceableGenerator()
         if (dir == Vector2Int.zero) return transform.rotation;
 
         float angle = 0f;
-        if (dir == Vector2Int.up) angle = -90f;
-        else if (dir == Vector2Int.down) angle = 90f;
-        else if (dir == Vector2Int.right) angle = 0f;
-        else if (dir == Vector2Int.left) angle = 180f;
+        if (dir == Vector2Int.up) angle = 0f;
+        else if (dir == Vector2Int.down) angle = 180f;
+        else if (dir == Vector2Int.right) angle = 90f;
+        else if (dir == Vector2Int.left) angle = -90f;
 
         return Quaternion.Euler(0f, angle, 0f);
     }
