@@ -7002,6 +7002,7 @@ GameObject:
   - component: {fileID: 816298399}
   - component: {fileID: 816298398}
   - component: {fileID: 816298397}
+  - component: {fileID: 816298401}
   m_Layer: 3
   m_Name: Plane (3)
   m_TagString: Untagged
@@ -7103,6 +7104,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
+--- !u!114 &816298401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816298396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4de89fe7b1b0b72428f7cde7eb7d5a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorWallAdjacency
 --- !u!1 &833304416
 GameObject:
   m_ObjectHideFlags: 0

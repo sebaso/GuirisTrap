@@ -12,6 +12,7 @@ public class GameGridManager : MonoBehaviour
     private GridVisualCell[,] _cells;
     private PlaceableObject[,] _placeables;
     public GridData GetGridData => _gridData;
+    
     [SerializeField] 
     private PlaceableSurface _surface = PlaceableSurface.Floor;
     public PlaceableSurface Surface => _surface;
