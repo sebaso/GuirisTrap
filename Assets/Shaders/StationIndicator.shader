@@ -2,95 +2,84 @@ Shader "Guiri/StationIndicator"
 {
     Properties
     {
-        [HDR] _Color  ("Color",         Color)            = (1, 0.1, 0.5, 1)
-        _LineCount    ("Line Count",    Float)            = 10
-        _Speed        ("Speed",         Float)            = 1.5
-        _LineWidth    ("Line Width",    Range(0.01, 0.5)) = 0.15
-        _Intensity    ("Intensity",     Float)            = 2.5
-        _FadeRadius   ("Fade Radius",   Range(0.3, 1.0))  = 0.8
+        _Color      ("Color",           Color)        = (1, 0.1, 0.5, 1)
+        _RingCount  ("Anillos",         Range(1, 6))  = 3
+        _Speed      ("Velocidad",       Range(0, 5))  = 1.2
+        _Intensity  ("Intensidad",      Range(0, 4))  = 1.6
+        _CenterGlow ("Brillo central",  Range(0, 2))  = 0.8
     }
 
     SubShader
     {
         Tags
         {
+            "Queue"           = "Transparent+10"
             "RenderType"      = "Transparent"
-            "Queue"           = "Transparent"
-            "RenderPipeline"  = "UniversalPipeline"
             "IgnoreProjector" = "True"
         }
 
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend SrcAlpha One   // aditivo: suma luz, queda brillante
         ZWrite Off
-        Cull Off
+        ZTest Always         // visible a través de la geometría
+        Cull Off             // visible por ambas caras del quad
 
         Pass
         {
-            Name "StationIndicatorPass"
-
-            HLSLPROGRAM
-            #pragma vertex   vert
+            CGPROGRAM
+            #pragma vertex vert
             #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "UnityCG.cginc"
 
-            struct Attributes
+            fixed4 _Color;
+            float  _RingCount;
+            float  _Speed;
+            float  _Intensity;
+            float  _CenterGlow;
+
+            struct appdata
             {
-                float4 positionOS : POSITION;
-                float2 uv         : TEXCOORD0;
+                float4 vertex : POSITION;
+                float2 uv     : TEXCOORD0;
             };
 
-            struct Varyings
+            struct v2f
             {
-                float4 positionHCS : SV_POSITION;
-                float2 uv          : TEXCOORD0;
+                float4 pos : SV_POSITION;
+                float2 uv  : TEXCOORD0;
             };
 
-            CBUFFER_START(UnityPerMaterial)
-                float4 _Color;
-                float  _LineCount;
-                float  _Speed;
-                float  _LineWidth;
-                float  _Intensity;
-                float  _FadeRadius;
-            CBUFFER_END
-
-            Varyings vert(Attributes input)
+            v2f vert (appdata v)
             {
-                Varyings o;
-                o.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
-                o.uv          = input.uv;
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv  = v.uv;
                 return o;
             }
 
-            half4 frag(Varyings input) : SV_Target
+            fixed4 frag (v2f i) : SV_Target
             {
-                // UV centradas en (0,0)
-                float2 uv = input.uv - 0.5;
+                // Distancia radial: 0 en el centro del quad, 1 en el borde.
+                float2 c    = i.uv - 0.5;
+                float  dist = length(c) * 2.0;
 
-                // Distancia de Chebyshev → forma cuadrada perfecta
-                float dist = max(abs(uv.x), abs(uv.y)) * 2.0;
+                // Anillos expandiéndose hacia fuera (efecto sonar).
+                float wave = frac(dist * _RingCount - _Time.y * _Speed);
+                float ring = smoothstep(0.0, 0.15, wave) * smoothstep(0.45, 0.2, wave);
 
-                // Cuadrados concéntricos que se mueven hacia dentro
-                float rings = frac(dist * _LineCount - _Time.y * _Speed);
+                // Los anillos se desvanecen hacia el borde y mueren fuera del círculo.
+                float edgeFade = saturate(1.0 - dist);
+                edgeFade *= edgeFade;
 
-                // Máscara de línea
-                float LineWidth = step(1.0 - _LineWidth, rings);
+                // Brillo central con latido.
+                float pulse = 0.75 + 0.25 * sin(_Time.y * 3.0);
+                float glow  = _CenterGlow * pulse * saturate(1.0 - dist * 2.2);
 
-                // Fade suave hacia los bordes
-                float edgeFade = 1.0 - smoothstep(_FadeRadius * 0.6, _FadeRadius, dist);
-
-                // Brillo suave en el centro
-                float centerGlow = (1.0 - smoothstep(0.0, 0.25, dist)) * 0.4;
-
-                // Pulso de intensidad global
-                float pulse = 0.85 + 0.15 * sin(_Time.y * 3.0);
-
-                float alpha = (LineWidth * edgeFade + centerGlow) * _Color.a * pulse;
-                float3 col  = _Color.rgb * _Intensity;
-
-                return half4(col, saturate(alpha));
+                float a = (ring * edgeFade + glow) * _Intensity;
+                return fixed4(_Color.rgb, saturate(a) * _Color.a);
             }
-            ENDHLSL
+            ENDCG
         }
     }
+
+    Fallback Off
 }

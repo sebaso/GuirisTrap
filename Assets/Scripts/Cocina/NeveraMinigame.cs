@@ -64,8 +64,8 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
 
         if (success)
         {
-            Debug.Log("¡Éxito!");
-            AudioManager.Instance?.PlaySFX("nevera_success");
+            MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "nevera_success");
+
             if (currentRecipe.foodPrefab != null)
                 player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
@@ -73,8 +73,8 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         }
         else
         {
-            Debug.Log("¡Fallo!");
-            AudioManager.Instance?.PlaySFX("nevera_failure");
+            string reason = timer <= 0f ? "¡Se acabó el tiempo!" : "¡Secuencia incorrecta!";
+            MinigameFeedback.Show(false, reason, "nevera_failure");
         }
     }
 

@@ -5,17 +5,23 @@ public class PatienceBar : MonoBehaviour
 {
     public Image fillImage;
 
-    [Tooltip("Object shown/hidden and billboarded for the bar. Leave empty to use the fill image's object. " +
-             "Must NOT be the Client/Table root — toggling that would disable the whole entity.")]
     public Transform barRoot;
 
     public Color fullColor  = Color.green;
     public Color halfColor  = Color.yellow;
     public Color emptyColor = Color.red;
 
+    [Header("Pulso de urgencia")]
+    [Range(0f, 1f)] public float pulseThreshold = 0.25f;
+    public float pulseSpeed = 9f;
+    public float pulseAmount = 0.15f;
+
     private Client _client; // set when mounted on a client (queue bar)
     private Table _table;   // set when mounted on a table (seated bar)
     private Camera _cam;
+
+    private Vector3 _baseScale;
+    private bool _baseScaleCaptured = false;
 
     void Awake()
     {
@@ -33,6 +39,13 @@ public class PatienceBar : MonoBehaviour
     void Update()
     {
         if (barRoot == null) return;
+
+        // Capturar la escala original una sola vez (base del pulso).
+        if (!_baseScaleCaptured)
+        {
+            _baseScale = barRoot.localScale;
+            _baseScaleCaptured = true;
+        }
 
         bool shouldShow;
         float ratio;
@@ -54,7 +67,12 @@ public class PatienceBar : MonoBehaviour
 
         barRoot.gameObject.SetActive(shouldShow);
 
-        if (!shouldShow || fillImage == null) return;
+        if (!shouldShow || fillImage == null)
+        {
+            // Nunca dejar la barra "congelada" a mitad de latido.
+            if (_baseScaleCaptured) barRoot.localScale = _baseScale;
+            return;
+        }
 
         // Billboard only the bar toward the camera, never the entity it rides on.
         if (_cam != null)
@@ -63,5 +81,19 @@ public class PatienceBar : MonoBehaviour
         fillImage.fillAmount = ratio;
         fillImage.color = Color.Lerp(emptyColor, ratio > 0.5f ? fullColor : halfColor,
                                      ratio > 0.5f ? (ratio - 0.5f) * 2f : ratio * 2f);
+
+        // PULSO DE URGENCIA: por debajo del umbral, la barra late. La
+        // intensidad crece cuanto más cerca de agotarse está la paciencia
+        // (en el umbral apenas se nota; a punto de irse el cliente, late fuerte).
+        if (ratio <= pulseThreshold && pulseThreshold > 0f)
+        {
+            float urgency = 1f - (ratio / pulseThreshold);              // 0 en el umbral → 1 a cero paciencia
+            float beat    = Mathf.Sin(Time.time * pulseSpeed) * pulseAmount * urgency;
+            barRoot.localScale = _baseScale * (1f + beat);
+        }
+        else
+        {
+            barRoot.localScale = _baseScale;
+        }
     }
 }
