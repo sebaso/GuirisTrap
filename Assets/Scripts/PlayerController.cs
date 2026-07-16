@@ -119,10 +119,12 @@ public class PlayerController : ControllableMonoBehaviour
         EspetoMinigame bestEspeto   = null;
         CookingStation bestStation  = null;
         ExtintorPickup bestExtintor = null;
+        ExtintorSoporte bestSoporte = null;
         float bestStorageDist  = float.MaxValue;
         float bestEspetoDist   = float.MaxValue;
         float bestStationDist  = float.MaxValue;
         float bestExtintorDist = float.MaxValue;
+        float bestSoporteDist  = float.MaxValue;
         // Track the nearest pickable food too, so a station standing within range
         // can't silently swallow the interact when food is actually closer.
         float bestFoodDist = float.MaxValue;
@@ -140,11 +142,17 @@ public class PlayerController : ControllableMonoBehaviour
             CookingStation cs = col.GetComponent<CookingStation>();
             if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
 
-            // Extintor físico (evento de incendio): solo si nadie lo lleva ya.
+            // Extintor físico: si NO llevas uno, se puede coger. Si SÍ lo
+            // llevas, interactuar con un soporte lo devuelve a su sitio.
             if (!ExtintorPickup.IsPlayerCarrying)
             {
                 ExtintorPickup ext = col.GetComponent<ExtintorPickup>() ?? col.GetComponentInParent<ExtintorPickup>();
                 if (ext != null && !ext.IsCarried && dist < bestExtintorDist) { bestExtintor = ext; bestExtintorDist = dist; }
+            }
+            else
+            {
+                ExtintorSoporte sop = col.GetComponent<ExtintorSoporte>() ?? col.GetComponentInParent<ExtintorSoporte>();
+                if (sop != null && dist < bestSoporteDist) { bestSoporte = sop; bestSoporteDist = dist; }
             }
 
             // Only loose, grabbable food counts (mirrors TryPickUpFood's filter).
@@ -163,6 +171,14 @@ public class PlayerController : ControllableMonoBehaviour
         if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= bestStationDist && bestExtintorDist <= bestFoodDist)
         {
             bestExtintor.TryPickUp(this); return;
+        }
+        // Devolver el extintor a su soporte pulsando E (si lo llevas encima).
+        if (bestSoporte != null && bestSoporteDist <= bestStorageDist && bestSoporteDist <= bestEspetoDist && bestSoporteDist <= bestStationDist && bestSoporteDist <= bestFoodDist)
+        {
+            ExtintorPickup.Carried?.ReturnToHolder();
+            AudioManager.Instance?.PlaySFX("extintor_pickup");
+            HUDMessage.Instance?.ShowGood("Extintor devuelto a su soporte.");
+            return;
         }
         if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist && bestStorageDist <= bestFoodDist)
         {

@@ -1,3 +1,21 @@
+// ============================================================================
+//  Guiri/Fire — llama procedural para el evento de incendio (v2)
+//
+//  Fuego animado 100% procedural (ruido en el fragment shader, sin texturas).
+//
+//  v2: BILLBOARD CILÍNDRICO. La v1 usaba billboard esférico (la llama se
+//  encaraba del todo a la cámara, inclinación incluida), lo que con la cámara
+//  isométrica del juego hacía que la llama se "tumbara" y se viera con una
+//  perspectiva rara. Ahora la llama gira SOLO alrededor del eje vertical del
+//  mundo: siempre de pie, mirando a la cámara solo en horizontal.
+//
+//  Además, la BASE de la llama queda anclada al origen del quad (antes estaba
+//  centrada y el fuego flotaba). El _fireVfxOffset del FireEventManager ahora
+//  marca dónde está la base del fuego: si lo veis alto, bajad su Y (p. ej.
+//  de 1.2 a 0.8-0.9 para que nazca de la encimera).
+//
+//  Guardar en Assets/Shaders/Fire.shader (sustituye al anterior).
+// ============================================================================
 Shader "Guiri/Fire"
 {
     Properties
@@ -16,10 +34,10 @@ Shader "Guiri/Fire"
             "Queue"           = "Transparent+10"
             "RenderType"      = "Transparent"
             "IgnoreProjector" = "True"
-            "DisableBatching" = "True"   
+            "DisableBatching" = "True"   // el billboard usa el origen del objeto
         }
 
-        Blend SrcAlpha One   
+        Blend SrcAlpha One   // aditivo: el fuego suma luz
         ZWrite Off
         Cull Off
 
@@ -48,6 +66,7 @@ Shader "Guiri/Fire"
                 float2 uv  : TEXCOORD0;
             };
 
+            // ---------- ruido procedural (value noise + fbm) ----------
             float hash21 (float2 p)
             {
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
@@ -71,18 +90,39 @@ Shader "Guiri/Fire"
                      + 0.30 * vnoise(p * 2.1)
                      + 0.20 * vnoise(p * 4.3);
             }
+            // -----------------------------------------------------------
 
             v2f vert (appdata v)
             {
                 v2f o;
 
+                // Escala del transform (para respetar el tamaño del quad).
                 float sx = length(unity_ObjectToWorld._m00_m10_m20);
                 float sy = length(unity_ObjectToWorld._m01_m11_m21);
 
-                float3 centerVS = UnityObjectToViewPos(float3(0, 0, 0));
-                float3 posVS    = centerVS + float3(v.vertex.x * sx, v.vertex.y * sy, 0);
+                // Origen del objeto en mundo.
+                float3 originWS = float3(unity_ObjectToWorld._m03,
+                                         unity_ObjectToWorld._m13,
+                                         unity_ObjectToWorld._m23);
 
-                o.pos = mul(UNITY_MATRIX_P, float4(posVS, 1.0));
+                // BILLBOARD CILÍNDRICO: dirección a la cámara APLASTADA al
+                // plano horizontal → la llama gira solo alrededor del eje Y
+                // del mundo y se mantiene siempre vertical.
+                float3 toCam = _WorldSpaceCameraPos - originWS;
+                toCam.y = 0.0;
+                float len = max(length(toCam), 0.001); // cámara justo encima: evitar división por 0
+                toCam /= len;
+
+                float3 up    = float3(0, 1, 0);
+                float3 right = normalize(cross(up, toCam));
+
+                // Base de la llama anclada al origen (+0.5*sy sube el quad
+                // centrado para que su borde inferior quede en el origen).
+                float3 worldPos = originWS
+                                + right * (v.vertex.x * sx)
+                                + up    * (v.vertex.y * sy + 0.5 * sy);
+
+                o.pos = UnityWorldToClipPos(float4(worldPos, 1.0));
                 o.uv  = v.uv;
                 return o;
             }

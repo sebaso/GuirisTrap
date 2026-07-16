@@ -35,6 +35,7 @@ public class ExtintorPickup : MonoBehaviour
 
     private ExtintorSoporte _holder;
     private Transform _restAnchor;
+    private Vector3 _restLocalScale = Vector3.one;
     private Collider[] _colliders;
 
     void Awake()
@@ -52,6 +53,10 @@ public class ExtintorPickup : MonoBehaviour
     {
         _holder     = holder;
         _restAnchor = restAnchor;
+        // Escala local "en reposo" respecto al anclaje: es la referencia a la
+        // que SIEMPRE se vuelve. Sin esto, cada ciclo coger→devolver horneaba
+        // la escala compensada y el extintor crecía sin límite (bug Pokéball).
+        _restLocalScale = transform.localScale;
     }
 
     // ------------------------------------------------------------------
@@ -69,7 +74,7 @@ public class ExtintorPickup : MonoBehaviour
 
         SetCollidersEnabled(false); // que no estorbe ni reaparezca en el OverlapSphere
 
-        transform.SetParent(player.transform, worldPositionStays: false);
+        transform.SetParent(player.transform, worldPositionStays: true);
         transform.localPosition = _carryLocalOffset;
         transform.localRotation = Quaternion.Euler(_carryLocalEuler);
 
@@ -110,8 +115,9 @@ public class ExtintorPickup : MonoBehaviour
 
     private System.Collections.IEnumerator ReturnRoutine(Vector3 targetPos, Quaternion targetRot)
     {
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
+        Vector3 startPos      = transform.position;
+        Quaternion startRot   = transform.rotation;
+        Vector3 startLocScale = transform.localScale;
         float t = 0f;
 
         // Colliders desactivados durante el vuelo para que no se pueda recoger a medio camino.
@@ -121,14 +127,16 @@ public class ExtintorPickup : MonoBehaviour
         {
             t += Time.deltaTime;
             float k = Mathf.SmoothStep(0f, 1f, t / _returnLerpTime);
-            transform.position = Vector3.Lerp(startPos, targetPos, k);
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, k);
+            transform.position   = Vector3.Lerp(startPos, targetPos, k);
+            transform.rotation   = Quaternion.Slerp(startRot, targetRot, k);
+            transform.localScale = Vector3.Lerp(startLocScale, _restLocalScale, k);
             yield return null;
         }
 
         transform.position      = targetPos;
         transform.rotation      = targetRot;
         transform.localPosition = Vector3.zero;
+        transform.localScale    = _restLocalScale;
 
         SetCollidersEnabled(true); // ya se puede volver a coger
     }
