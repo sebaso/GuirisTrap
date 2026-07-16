@@ -14,7 +14,6 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
     [Header("Settings")]
     public float baseClicks = 10f;
-    [Tooltip("Segundos de cuenta atrás antes de que empiece a contar el tiempo (3,2,1,¡YA!).")]
     public float countdownSeconds = 3f;
 
     private PlayerController player;
@@ -123,8 +122,8 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
         if (success)
         {
-            Debug.Log("¡Éxito!");
-            AudioManager.Instance?.PlaySFX("despensa_success");
+            MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "despensa_success");
+
             if (currentRecipe.foodPrefab != null)
                 player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
@@ -132,10 +131,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         }
         else
         {
-            {
-                Debug.Log("¡SE TE ACABÓ EL TIEMPO! PRINGAO");
-            }
-            AudioManager.Instance?.PlaySFX("despensa_failure");
+            MinigameFeedback.Show(false, "¡Se acabó el tiempo!", "despensa_failure");
         }
     }
 

@@ -16,6 +16,13 @@ public class CookingStation : MonoBehaviour
 
     public void TryInteract()
     {
+        // EVENTO DE INCENDIO: si la estación está ardiendo no se puede cocinar.
+        if (FireEventManager.Instance != null && FireEventManager.Instance.IsBurning(this))
+        {
+            FireEventManager.Instance.StartExtinguishMinigame(this, playerRef);
+            return;
+        }
+
         if (playerRef == null || playerRef.currentRecipe == null)
         {
             Debug.Log("No llevas nada en las manos.");
