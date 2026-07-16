@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Reaction : MonoBehaviour
 {
@@ -13,6 +15,9 @@ public class Reaction : MonoBehaviour
     [SerializeField]
     [Tooltip("Indica si debe esperar a que finalice la reacción anterior.")]
     private bool _executeDirectly = false;
+    [SerializeField]
+    bool _interactable = false;
+    public bool Interactable => _interactable;
     public bool ExecuteDirectly => _executeDirectly;
     // Tiempo que tardará en ejecutarse la reacción
     [SerializeField]
@@ -48,7 +53,15 @@ public class Reaction : MonoBehaviour
     {
         React();
 
-        yield return new WaitForSeconds(_duration);
+        if (_interactable)
+        {
+            yield return StartCoroutine(WaitForInputCoroutine());
+        }
+        else
+        {
+            yield return new WaitForSeconds(_duration);
+        }
+
 
         PostReact();
         _delegate?.OnReactionFinished(this);
@@ -61,5 +74,17 @@ public class Reaction : MonoBehaviour
     {
         StartCoroutine(ReactionCoroutine());
     }
+    /// <summary>
+    /// Espera un frame (para no capturar la misma pulsación que disparó la reacción)
+    /// y luego bloquea hasta que el jugador pulse la tecla de confirmación.
+    /// </summary>
+    protected virtual IEnumerator WaitForInputCoroutine()
+    {
+        yield return null;
 
+        while (Keyboard.current != null && !Keyboard.current[DialogueManager.Instance.ConfirmKey].wasPressedThisFrame)
+        {
+            yield return null;
+        }
+    }
 }
