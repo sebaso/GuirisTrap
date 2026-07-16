@@ -58,6 +58,41 @@ public class ClientGroup
     public int FinishedEatingCount { get; private set; }
     public bool AllFinishedEating => FinishedEatingCount >= Members.Count;
 
+    // ── What the group ordered: one RecipeData per plate (PlatesNeeded entries).
+    // Each plate may be a different dish. Generated on seating and consumed one
+    // slot at a time as the correct dish is served. ──
+    public List<RecipeData> Order { get; private set; }
+
+    /// <summary>Fills <see cref="Order"/> with one random recipe per plate needed.
+    /// Call once when the group is seated (see RestaurantManager.SeatGroup).</summary>
+    public void GenerateOrder()
+    {
+        Order = new List<RecipeData>(PlatesNeeded);
+        for (int i = 0; i < PlatesNeeded; i++)
+            Order.Add(RecipeCatalogue.Instance != null
+                ? RecipeCatalogue.Instance.RandomRecipe()
+                : null);
+    }
+
+    /// <summary>True if 'recipe' is still on the remaining order.</summary>
+    public bool WantsRecipe(RecipeData recipe)
+    {
+        if (recipe == null || Order == null) return false;
+        return Order.Contains(recipe);
+    }
+
+    /// <summary>Removes one matching slot from the order. Returns false (and
+    /// changes nothing) if the recipe isn't on the order. Called by
+    /// Table.PlaceFood once a correct plate has been accepted.</summary>
+    public bool TryConsumeOrder(RecipeData recipe)
+    {
+        if (recipe == null || Order == null) return false;
+        int idx = Order.IndexOf(recipe);
+        if (idx < 0) return false;
+        Order.RemoveAt(idx);
+        return true;
+    }
+
     public void StartPatience(float seconds)
     {
         MaxPatience = seconds;

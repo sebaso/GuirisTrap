@@ -19,6 +19,7 @@ public class Reaction : MonoBehaviour
     private float _duration;
     //private Interactable _interactable;
     private IReactionDelegate _delegate;
+    protected IReactionDelegate Delegate => _delegate;
     // public void Initialize(Interactable interactable)
     // {
     //     _interactable = interactable;

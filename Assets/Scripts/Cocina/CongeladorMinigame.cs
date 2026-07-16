@@ -73,7 +73,7 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
             MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "congelador_success");
 
             if (currentRecipe.foodPrefab != null)
-                player.CreateAndHoldFood(currentRecipe.foodPrefab);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab, currentRecipe);
             else
                 Debug.LogWarning($"[CongeladorMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

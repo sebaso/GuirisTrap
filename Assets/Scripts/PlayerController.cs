@@ -248,7 +248,11 @@ public class PlayerController : ControllableMonoBehaviour
     /// <summary>Spawns a food prefab from a minigame/reward and auto-holds it.
     /// Drops whatever was previously held. Used by cooking minigames so the
     /// cooked dish lands directly in the player's hands.</summary>
-    public Food CreateAndHoldFood(GameObject foodPrefab)
+    /// <param name="source">The recipe that produced this plate, so orders can
+    /// be matched by reference. If null, resolved from the catalogue by
+    /// <paramref name="foodPrefab"/> (covers the Espeto minigame, which cooks a
+    /// fixed prefab with no recipe in scope).</param>
+    public Food CreateAndHoldFood(GameObject foodPrefab, RecipeData source = null)
     {
         if (foodPrefab == null || holdPoint == null) return null;
         if (heldFood != null) DropFood();
@@ -256,6 +260,9 @@ public class PlayerController : ControllableMonoBehaviour
         GameObject obj = Instantiate(foodPrefab, holdPoint.position, Quaternion.identity);
         Food food = obj.GetComponent<Food>();
         if (food == null) food = obj.AddComponent<Food>();
+        // Stamp the plate with its source recipe so Table.PlaceFood can match it
+        // against a group's order by reference (never by foodName string).
+        food.recipe = source != null ? source : RecipeCatalogue.Instance?.FindByPrefab(foodPrefab);
         PickUpFood(food);
         return food;
     }
@@ -273,9 +280,14 @@ public class PlayerController : ControllableMonoBehaviour
             foundAnyTable = true;
             if (table.CanPlaceFood())
             {
-                table.PlaceFood(heldFood);
-                heldFood = null;
-                Debug.Log("Placed food on table");
+                // PlaceFood now returns false when the plate is a dish the
+                // group didn't order — in that case keep holding it so the
+                // player can carry it to the right table.
+                if (table.PlaceFood(heldFood))
+                {
+                    heldFood = null;
+                    Debug.Log("Placed food on table");
+                }
                 return;
             }
         }

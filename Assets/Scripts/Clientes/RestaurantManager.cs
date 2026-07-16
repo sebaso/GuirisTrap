@@ -201,6 +201,26 @@ public class RestaurantManager : MonoBehaviour
         }
     }
 
+    /// <summary>Every group currently seated and still waiting for at least one
+    /// plate. De-duplicated (a group can span multiple tables). Used by the
+    /// ticket rail UI to list active orders.</summary>
+    public List<ClientGroup> GetWaitingForFoodGroups()
+    {
+        var result = new List<ClientGroup>();
+        var seen = new HashSet<ClientGroup>();
+        foreach (var t in _placedTables)
+        {
+            if (t == null) continue;
+            ClientGroup g = t.OccupyingGroup;
+            if (g != null && !seen.Contains(g) && g.IsWaitingForFood && !g.AllFed)
+            {
+                seen.Add(g);
+                result.Add(g);
+            }
+        }
+        return result;
+    }
+
     private void RepositionWaitingGroups()
     {
         for (int groupIdx = 0; groupIdx < _waitingGroups.Count; groupIdx++)
@@ -224,6 +244,12 @@ public class RestaurantManager : MonoBehaviour
         {
             t.Reserve(group);
         }
+
+        // Generate the group's order now that they're committed to a table —
+        // before any member enters WaitingForFood, so the order exists by the
+        // time patience/UI read it.
+        group.GenerateOrder();
+        Debug.Log($"[RestaurantManager] {group} ordered: {(group.Order != null ? string.Join(", ", group.Order.ConvertAll(r => r != null ? r.dishName : "?")) : "none")}");
 
         List<Transform> seatPoints = new List<Transform>();
         List<Table> seatTables = new List<Table>();

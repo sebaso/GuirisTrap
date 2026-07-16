@@ -11,14 +11,6 @@ public class PatienceBar : MonoBehaviour
     public Color halfColor  = Color.yellow;
     public Color emptyColor = Color.red;
 
-    [Tooltip("Optional mood emoji shown above the client. Leave null to disable the emoji.")]
-    public Image emojiImage;
-
-    // Mood sprites loaded from Resources/ClientEmoji (transparent PNGs).
-    private Sprite _happySprite;
-    private Sprite _neutralSprite;
-    private Sprite _angrySprite;
-
     [Header("Pulso de urgencia")]
     [Range(0f, 1f)] public float pulseThreshold = 0.25f;
     public float pulseSpeed = 9f;
@@ -42,16 +34,6 @@ public class PatienceBar : MonoBehaviour
         // so toggling `gameObject` would disable the whole entity (and once
         // disabled, Update stops and it never comes back).
         if (barRoot == null && fillImage != null) barRoot = fillImage.transform;
-
-        // Emoji sprites are optional; load lazily so a missing folder or null
-        // emojiImage never breaks the bar or the pulse.
-        if (emojiImage != null)
-        {
-            _happySprite   = Resources.Load<Sprite>("ClientEmoji/Happy");
-            _neutralSprite = Resources.Load<Sprite>("ClientEmoji/Neutral");
-            _angrySprite   = Resources.Load<Sprite>("ClientEmoji/Angry");
-            emojiImage.gameObject.SetActive(false);
-        }
     }
 
     void Update()
@@ -113,60 +95,5 @@ public class PatienceBar : MonoBehaviour
         {
             barRoot.localScale = _baseScale;
         }
-
-        UpdateEmoji();
-    }
-
-    // Mood emoji above the client. Shown on ALL members (not just the leader)
-    // while waiting, eating, done eating, or angry — so every comensale reads.
-    private void UpdateEmoji()
-    {
-        if (emojiImage == null || _client == null) return;
-
-        Client.State s = _client.CurrentState;
-        bool show;
-        Sprite mood = null;
-
-        switch (s)
-        {
-            case Client.State.Eating:
-            case Client.State.DoneEating:
-                show = true;
-                mood = _happySprite;
-                break;
-
-            case Client.State.Angry:
-                show = true;
-                mood = _angrySprite;
-                break;
-
-            case Client.State.Waiting:
-            case Client.State.WaitingForFood:
-                show = true;
-                mood = MoodByRatio(_client.PatienceRatio);
-                break;
-
-            default:
-                show = false;
-                break;
-        }
-
-        emojiImage.gameObject.SetActive(show);
-        if (!show) return;
-
-        if (mood != null && emojiImage.sprite != mood)
-            emojiImage.sprite = mood;
-
-        // Billboard the emoji toward the camera too.
-        if (_cam != null)
-            emojiImage.transform.rotation = _cam.transform.rotation;
-    }
-
-    // High patience -> happy, mid -> neutral, low -> angry.
-    private Sprite MoodByRatio(float ratio)
-    {
-        if (ratio > 0.6f) return _happySprite;
-        if (ratio > 0.3f) return _neutralSprite;
-        return _angrySprite;
     }
 }

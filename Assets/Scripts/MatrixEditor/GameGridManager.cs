@@ -105,6 +105,44 @@ public class GameGridManager : MonoBehaviour
             _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
         }
     }
+/// <summary>
+/// Clears every placed item from the grid: occupied cells holding an item are
+/// reset to Empty (Blocked/entrance/warehouse flags are preserved) and any
+/// spawned instance is destroyed. Placed furniture lives in the GridData
+/// ScriptableObject, not in save.json, so SaveManager.ResetSave calls this to
+/// make "reset save" also wipe the layout. In the editor the asset is marked
+/// dirty so the cleared state persists to disk (and into the next build).
+/// </summary>
+public void ClearPlacedItems()
+{
+    if (_gridData == null) return;
+
+    for (int y = 0; y < _gridData.height; y++)
+    {
+        for (int x = 0; x < _gridData.width; x++)
+        {
+            if (_gridData.GetType(x, y) != CellType.Occupied || _gridData.GetCell(x, y).item == null)
+                continue;
+
+            _gridData.SetType(x, y, CellType.Empty);
+            _gridData.SetItem(x, y, null);
+            _gridData.SetRotation(x, y, Quaternion.identity);
+
+            // _placeables is only populated at runtime (Init/PlaceableGenerator);
+            // in edit mode it's null and there are no instances to destroy.
+            if (_placeables != null && _placeables[x, y] != null)
+            {
+                Destroy(_placeables[x, y].gameObject);
+                _placeables[x, y] = null;
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    UnityEditor.EditorUtility.SetDirty(_gridData);
+#endif
+}
+
 public void PlaceableGenerator()
 {
     Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
