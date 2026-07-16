@@ -246,6 +246,10 @@ public class Table : MonoBehaviour
     {
         if (!IsOccupied || OccupyingGroup == null) return false;
 
+        // One plate feeds one diner: we can keep placing while the group is not
+        // yet fully fed (and at least one member is still waiting for food).
+        if (OccupyingGroup.AllFed) return false;
+
         foreach (var member in OccupyingGroup.Members)
         {
             if (member != null && member.CurrentState == Client.State.WaitingForFood)
@@ -258,17 +262,37 @@ public class Table : MonoBehaviour
     public void PlaceFood(Food food)
     {
         if (food == null || OccupyingGroup == null) return;
-        Transform targetPoint = foodPoint != null ? foodPoint : this.transform;
-        food.PlaceOnTable(targetPoint);
+
+        // One plate feeds one or two diners: a group may share dishes, in which
+        // case the last plate of the order feeds two diners. Feed that many
+        // still-waiting diners from the group.
+        int dinersToFeed = OccupyingGroup.DinersForNextPlate();
+        if (dinersToFeed <= 0) return;
+
+        int fed = 0;
         foreach (var member in OccupyingGroup.Members)
         {
-            if (member != null)
+            if (member != null && member.CurrentState == Client.State.WaitingForFood)
             {
                 member.ReceiveFood();
+                fed++;
+                if (fed >= dinersToFeed) break;
             }
         }
+        if (fed == 0) return; // nobody waiting — shouldn't happen (CanPlaceFood guards)
 
-        Debug.Log($"[Table {tableNumber}] Food {food.foodName} served to group {OccupyingGroup.GroupID}");
+        // Count the plate and refill the shared patience bar to full.
+        OccupyingGroup.OnPlateServed();
+
+        // Stack plates in a small 2x2 grid on the food point so multiple plates
+        // don't overlap when serving a group of several diners.
+        Transform targetPoint = foodPoint != null ? foodPoint : this.transform;
+        food.PlaceOnTable(targetPoint);
+        int idx = OccupyingGroup.PlatesServed - 1; // already incremented above
+        Vector3 off = new Vector3((idx % 2) * 0.35f - 0.175f, 0f, (idx / 2) * 0.35f - 0.175f);
+        food.transform.localPosition = off;
+
+        Debug.Log($"[Table {tableNumber}] Food {food.foodName} served ({OccupyingGroup.PlatesServed}/{OccupyingGroup.PlatesNeeded}, fed {fed} diners{(OccupyingGroup.IsSharing ? ", sharing" : "")}) to group {OccupyingGroup.GroupID}");
     }
 
     private void GenerateSeatPoints()
