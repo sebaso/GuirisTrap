@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 {
@@ -12,10 +13,15 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     public float cucharaSpeed = 400f;
     public float cucharaMinX  = -350f;
     public float cucharaMaxX  =  350f;
+    public float cucharaSmoothing = 14f;
 
     [Header("Bala (UI)")]
     public RectTransform balaPrefabRect;
-    public float balaSpeed = 600f;
+    public float balaSpeed = 700f;
+    public int maxBalasEnVuelo = 1;
+    public float fireCooldown = 0.12f;
+    public float muzzleOffset = 40f;
+    public float maxSweepStep = 20f;
 
     [Header("Layouts - dificultad")]
     public GameObject[] layoutsFacil;
@@ -39,9 +45,15 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     private int   _totalEspecias;
     private int   _especiasCongeladas;
     private EspecieroLayout _layoutActivo;
-    private RectTransform   _balaActiva;
-    private bool            _balaEnVuelo = false;
-    private Vector2         _navInput    = Vector2.zero;
+
+    private readonly List<RectTransform> _balas = new List<RectTransform>();
+    private float   _fireCooldownLeft;
+    private float   _cucharaVel;
+    private bool[]  _especiaEnContacto; // detección de flanco para los rebotes
+    private Vector2 _navInput = Vector2.zero;
+
+    // Buffer reutilizable para GetWorldCorners (evita generar basura por frame).
+    private static readonly Vector3[] _cornerBuf = new Vector3[4];
 
     void Awake()
     {
@@ -49,7 +61,6 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         if (cucharaRect)   cucharaRect.gameObject.SetActive(false);
         DeactivateAllLayouts();
     }
-
 
     private void DeactivateAllLayouts()
     {
@@ -65,8 +76,10 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     void Update()
     {
         if (!_isPlaying) return;
+        if (_fireCooldownLeft > 0f) _fireCooldownLeft -= Time.deltaTime;
+
         MoveCuchara();
-        HandleBala();
+        HandleBalas();
         HandleColisionesEspecias();
     }
 
@@ -81,8 +94,10 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 
         _player = currentPlayer;
 
-        // Apaga cualquier layout que hubiera quedado activo de un intento anterior.
+        // Limpieza por si quedó algo colgando de un intento anterior.
         DeactivateAllLayouts();
+        DestroyAllBalas();
+        CancelInvoke(nameof(CheckFallo));
 
         GameObject[][] grupos = { layoutsFacil, layoutsNormal, layoutsDificil, layoutsImposible };
         int grupoIdx = Mathf.Clamp(_currentRecipe.difficulty - 1, 0, grupos.Length - 1);
@@ -111,8 +126,10 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         _totalEspecias      = _layoutActivo.GetEspecias().Length;
         _especiasCongeladas = 0;
         _balasRestantes     = _currentRecipe.balas;
-        _balaEnVuelo        = false;
+        _especiaEnContacto  = new bool[_totalEspecias];
         _navInput           = Vector2.zero;
+        _cucharaVel         = 0f;
+        _fireCooldownLeft   = 0f;
 
         InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
@@ -123,128 +140,218 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         RefreshUI();
     }
 
+    // ------------------------------------------------------------------
+    //  Cuchara
+    // ------------------------------------------------------------------
+
     void MoveCuchara()
     {
+        // Pequeña inercia, independiente del framerate. Con smoothing = 0,
+        // control directo como antes.
+        float targetVel = _navInput.x * cucharaSpeed;
+        _cucharaVel = cucharaSmoothing > 0f
+            ? Mathf.Lerp(_cucharaVel, targetVel, 1f - Mathf.Exp(-cucharaSmoothing * Time.deltaTime))
+            : targetVel;
+
         Vector2 pos = cucharaRect.anchoredPosition;
-        pos.x = Mathf.Clamp(pos.x + _navInput.x * cucharaSpeed * Time.deltaTime, cucharaMinX, cucharaMaxX);
+        pos.x = Mathf.Clamp(pos.x + _cucharaVel * Time.deltaTime, cucharaMinX, cucharaMaxX);
         cucharaRect.anchoredPosition = pos;
     }
 
+    // ------------------------------------------------------------------
+    //  Balas
+    // ------------------------------------------------------------------
+
     void Shoot()
     {
-        if (_balaEnVuelo || _balasRestantes <= 0) return;
+        if (!_isPlaying) return;
+        if (_fireCooldownLeft > 0f) return;
+        if (_balasRestantes <= 0) return;
+        if (_balas.Count >= Mathf.Max(1, maxBalasEnVuelo)) return;
 
         _balasRestantes--;
-        _balaEnVuelo = true;
+        _fireCooldownLeft = fireCooldown;
 
         GameObject balaObj = Instantiate(balaPrefabRect.gameObject, minigamePanel.transform);
         balaObj.SetActive(true);
-        _balaActiva = balaObj.GetComponent<RectTransform>();
-        _balaActiva.localScale    = Vector3.one;
-        _balaActiva.localPosition = cucharaRect.localPosition + Vector3.up * 40f;
 
+        RectTransform bala = balaObj.GetComponent<RectTransform>();
+        bala.localScale = Vector3.one;
+
+        // Colocar la bala en la posición de MUNDO de la cuchara (funciona con
+        // cualquier jerarquía) y aplicar el offset del cañón en espacio del panel.
+        bala.position = cucharaRect.position;
+        Vector3 lp = bala.localPosition;
+        lp.z = 0f;
+        bala.localPosition = lp + Vector3.up * muzzleOffset;
+
+        _balas.Add(bala);
+
+        AudioManager.Instance?.PlaySFX("especias_shoot");
         RefreshUI();
     }
 
-    void HandleBala()
+    void HandleBalas()
     {
-        if (!_balaEnVuelo || _balaActiva == null) return;
+        if (_balas.Count == 0 || _layoutActivo == null) return;
 
-        _balaActiva.localPosition += Vector3.up * balaSpeed * Time.deltaTime;
-        Rect balaRect = GetCanvasRect(_balaActiva);
+        float move = balaSpeed * Time.deltaTime;
+        RectTransform panelRect = minigamePanel.GetComponent<RectTransform>();
 
-        foreach (EspeciaUI especia in _layoutActivo.GetEspecias())
+        for (int i = _balas.Count - 1; i >= 0; i--)
+        {
+            RectTransform bala = _balas[i];
+            if (bala == null) { _balas.RemoveAt(i); continue; }
+
+            // BARRIDO: avanzar en pasos pequeños comprobando colisión en cada
+            // uno, para que la bala no atraviese especias entre frame y frame.
+            bool dead  = false;
+            int  steps = Mathf.Max(1, Mathf.CeilToInt(move / Mathf.Max(1f, maxSweepStep)));
+            float stepDist = move / steps;
+
+            for (int s = 0; s < steps && !dead; s++)
+            {
+                bala.localPosition += Vector3.up * stepDist;
+                dead = BalaCollisionStep(bala);
+            }
+
+            // Techo del panel.
+            if (!dead && bala.localPosition.y > panelRect.rect.height * 0.5f)
+                dead = true;
+
+            if (dead) KillBala(i);
+        }
+
+        if (_especiasCongeladas >= _totalEspecias)
+            EndGame(true);
+    }
+
+    /// <summary>Comprueba colisiones de la bala en su posición actual. True si la bala muere.</summary>
+    bool BalaCollisionStep(RectTransform bala)
+    {
+        Rect balaRect = GetWorldRect(bala);
+        EspeciaUI[] especias = _layoutActivo.GetEspecias();
+
+        // 1) Especias vivas: congelar.
+        foreach (EspeciaUI especia in especias)
         {
             if (especia.IsCongelada) continue;
-            if (balaRect.Overlaps(GetCanvasRect(especia.Rect)))
+            if (balaRect.Overlaps(GetWorldRect(especia.Rect)))
             {
                 especia.Congelar();
                 _especiasCongeladas++;
-                DestroyBala();
-                CheckRebotar();
-                CheckVictoria();
-                return;
+                AudioManager.Instance?.PlaySFX("especias_freeze");
+                return true;
             }
         }
 
-        foreach (EspeciaUI especia in _layoutActivo.GetEspecias())
+        // 2) Especias congeladas: bloquean el tiro.
+        foreach (EspeciaUI especia in especias)
         {
             if (!especia.IsCongelada) continue;
-            if (balaRect.Overlaps(GetCanvasRect(especia.Rect))) { DestroyBala(); return; }
+            if (balaRect.Overlaps(GetWorldRect(especia.Rect))) return true;
         }
 
+        // 3) Cubos negros: bloquean el tiro.
         foreach (RectTransform cubo in _layoutActivo.GetCuboNegros())
-            if (balaRect.Overlaps(GetCanvasRect(cubo))) { DestroyBala(); return; }
+            if (balaRect.Overlaps(GetWorldRect(cubo))) return true;
 
-        RectTransform panelRect = minigamePanel.GetComponent<RectTransform>();
-        if (_balaActiva.localPosition.y > panelRect.rect.height * 0.5f)
-            DestroyBala();
+        return false;
     }
+
+    void KillBala(int index)
+    {
+        if (_balas[index] != null) Destroy(_balas[index].gameObject);
+        _balas.RemoveAt(index);
+
+        // Sin balas en la recámara ni en vuelo y quedan especias → fallo
+        // (con un respiro de 0.3s por si el último tiro fue el bueno).
+        if (_balasRestantes <= 0 && _balas.Count == 0)
+        {
+            CancelInvoke(nameof(CheckFallo));
+            Invoke(nameof(CheckFallo), 0.3f);
+        }
+    }
+
+    void DestroyAllBalas()
+    {
+        foreach (RectTransform b in _balas)
+            if (b != null) Destroy(b.gameObject);
+        _balas.Clear();
+    }
+
+
 
     void HandleColisionesEspecias()
     {
         if (_layoutActivo == null) return;
-        foreach (EspeciaUI especia in _layoutActivo.GetEspecias())
+        EspeciaUI[] especias = _layoutActivo.GetEspecias();
+
+        for (int i = 0; i < especias.Length; i++)
         {
-            if (especia.IsCongelada) continue;
-            Rect re = GetCanvasRect(especia.Rect);
+            EspeciaUI e = especias[i];
+            if (e.IsCongelada) { _especiaEnContacto[i] = false; continue; }
+
+            Rect re = GetWorldRect(e.Rect);
+            bool contacto = false;
+
             foreach (RectTransform cubo in _layoutActivo.GetCuboNegros())
-                if (re.Overlaps(GetCanvasRect(cubo))) especia.Rebotar();
+                if (re.Overlaps(GetWorldRect(cubo))) { contacto = true; break; }
+
+            if (!contacto)
+            {
+                foreach (EspeciaUI otra in especias)
+                    if (otra != e && otra.IsCongelada &&
+                        re.Overlaps(GetWorldRect(otra.Rect))) { contacto = true; break; }
+            }
+
+
+            if (contacto && !_especiaEnContacto[i]) e.Rebotar();
+            _especiaEnContacto[i] = contacto;
         }
     }
 
-    void DestroyBala()
-    {
-        if (_balaActiva != null) Destroy(_balaActiva.gameObject);
-        _balaActiva  = null;
-        _balaEnVuelo = false;
-        if (_balasRestantes <= 0) Invoke(nameof(CheckFallo), 0.3f);
-    }
 
-    void CheckRebotar()
-    {
-        foreach (EspeciaUI a in _layoutActivo.GetEspecias())
-        {
-            if (a.IsCongelada) continue;
-            foreach (EspeciaUI b in _layoutActivo.GetEspecias())
-                if (b.IsCongelada && GetCanvasRect(a.Rect).Overlaps(GetCanvasRect(b.Rect))) a.Rebotar();
-            foreach (RectTransform cubo in _layoutActivo.GetCuboNegros())
-                if (GetCanvasRect(a.Rect).Overlaps(GetCanvasRect(cubo))) a.Rebotar();
-        }
-    }
 
-    void CheckVictoria() { if (_especiasCongeladas >= _totalEspecias) EndGame(true); }
-    void CheckFallo()    { if (_isPlaying && _especiasCongeladas < _totalEspecias) EndGame(false); }
+    void CheckFallo()
+    {
+        if (_isPlaying && _especiasCongeladas < _totalEspecias) EndGame(false);
+    }
 
     void EndGame(bool success)
     {
         if (!_isPlaying) return;
         _isPlaying = false;
+
+        CancelInvoke(nameof(CheckFallo));
+        DestroyAllBalas();
         if (_layoutActivo != null) _layoutActivo.gameObject.SetActive(false);
-        if (_balaActiva   != null) Destroy(_balaActiva.gameObject);
         cucharaRect.gameObject.SetActive(false);
         minigamePanel.SetActive(false);
         InputManager.Instance.ExitMinigame();
 
         if (success)
         {
-            Debug.Log($"¡Éxito! {_currentRecipe.dishName}");
-            AudioManager.Instance?.PlaySFX("especias_success");
+            MinigameFeedback.Show(true, $"¡{_currentRecipe.dishName} listo!", "especias_success");
+
             if (_currentRecipe.foodPrefab != null)
                 _player.CreateAndHoldFood(_currentRecipe.foodPrefab);
+            else
+                Debug.LogWarning($"[EspeciasMinigame] {_currentRecipe.dishName} no tiene foodPrefab.");
         }
         else
         {
-            Debug.Log("[EspeciasMinigame] Sin balas. ¡Fallaste!");
-            AudioManager.Instance?.PlaySFX("especias_failure");
+            MinigameFeedback.Show(false, "¡Te quedaste sin balas!", "especias_failure");
         }
     }
 
-    Rect GetCanvasRect(RectTransform rt)
+
+    Rect GetWorldRect(RectTransform rt)
     {
-        Vector2 size   = rt.rect.size;
-        Vector2 center = rt.localPosition;
-        return new Rect(center - size * 0.5f, size);
+        rt.GetWorldCorners(_cornerBuf);
+        Vector3 bl = _cornerBuf[0]; // esquina inferior-izquierda
+        Vector3 tr = _cornerBuf[2]; // esquina superior-derecha
+        return new Rect(bl.x, bl.y, tr.x - bl.x, tr.y - bl.y);
     }
 
     void RefreshUI()
