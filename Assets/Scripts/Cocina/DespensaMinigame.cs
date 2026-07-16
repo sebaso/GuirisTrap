@@ -1,21 +1,46 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using TMPEffects.Components;
+using UnityEngine.UI;
 
 public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
-    public GameObject minigamePanel;
-    public Image progressBarFill;
-    public TMP_Text timerText;
-    public TMP_Text mashText;
-    public TMPAnimator mashAnimator;
+    [SerializeField]
+    private GameObject minigamePanel;
+    [SerializeField]
+    private TMP_Text timerText;
+    [SerializeField]
+    private TMP_Text mashText;
+    [SerializeField]
+    private TMPAnimator mashAnimator;
+    private float _progress = 0f;
 
     [Header("Settings")]
-    public float baseClicks = 10f;
-    public float countdownSeconds = 3f;
+    [SerializeField]
+    private float baseClicks = 10f;
+    [SerializeField]
+    private float countdownSeconds = 3f;
 
+    [Header("Tomatoes")]
+    [SerializeField]
+    private Image _tomatoeImage;
+    [SerializeField]
+    private Sprite _tomatoeSprite;
+    [SerializeField]
+    private Sprite _tomatoeSprite2;
+    [SerializeField]
+    private Sprite _tomatoeSprite3;
+    [SerializeField]
+    private Sprite _tomatoeSprite4;
+    [SerializeField]
+    private Sprite _tomatoeSprite5;
+    [SerializeField]
+    private Sprite _tomatoeSprite6;
+    [SerializeField]
+    private Sprite _tomatoeSprite7;
+    [SerializeField]
+    private Sprite _tomatoeSprite8;
     private PlayerController player;
     private RecipeData currentRecipe;
     private bool isPlaying = false;
@@ -39,7 +64,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         maxTimer = timer;
 
         currentClicks = 0;
-        progressBarFill.fillAmount = 0f;
+        _progress = 0f;
 
         if (mashAnimator) mashAnimator.ResetTime();
         if (mashText) mashText.transform.localScale = Vector3.one;
@@ -54,6 +79,31 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
     void Update()
     {
+        if(_progress <= 0.125f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite;
+        }else if(_progress > 0.125f && _progress <= 0.25f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite2;
+        }else if (_progress > 0.25f && _progress <= 0.375f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite3;
+        }else if (_progress > 0.375f && _progress <= 0.5f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite4;
+        }else if (_progress > 0.5f && _progress <= 0.625f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite5;
+        }else if (_progress > 0.625f && _progress <= 0.75f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite6;
+        }else if (_progress > 0.75f && _progress <= 0.875f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite7;
+        }else if (_progress > 875f && _progress <= 1f)
+        {
+            _tomatoeImage.sprite = _tomatoeSprite8;
+        }
         // Fase de cuenta atrás: 3, 2, 1, ¡YA!
         if (isCountingDown)
         {
@@ -107,7 +157,8 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         if (!isPlaying) return; // ignorar pulsaciones durante la cuenta atrás
 
         currentClicks++;
-        progressBarFill.fillAmount = currentClicks / requiredClicks;
+        _progress = currentClicks / requiredClicks;
+
         if (mashText) mashText.transform.localScale = Vector3.one * 1.2f;
         if (currentClicks >= requiredClicks) EndGame(true);
     }

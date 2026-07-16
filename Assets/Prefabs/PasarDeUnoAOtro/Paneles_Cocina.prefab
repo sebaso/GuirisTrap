@@ -754,6 +754,9 @@ MonoBehaviour:
   camino:
   - {fileID: 8197682584910387823}
   - {fileID: 1799000995720940172}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &794746502184411137
 GameObject:
@@ -941,6 +944,9 @@ MonoBehaviour:
   camino:
   - {fileID: 5568858180903614658}
   - {fileID: 8048009837346254034}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &938317625202834052
 GameObject:
@@ -1148,6 +1154,9 @@ MonoBehaviour:
   - {fileID: 4216104766358777111}
   - {fileID: 482769681448805842}
   - {fileID: 6730758676192518160}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &1089628761653415126
 GameObject:
@@ -1240,6 +1249,9 @@ MonoBehaviour:
   camino:
   - {fileID: 5444463772628749288}
   - {fileID: 7202646388999384423}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &1129119430665861926
 GameObject:
@@ -1919,6 +1931,9 @@ MonoBehaviour:
   - {fileID: 1965052528853246702}
   - {fileID: 5568858180903614658}
   - {fileID: 8048009837346254034}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &2589572040579158484
 GameObject:
@@ -2091,6 +2106,9 @@ MonoBehaviour:
   - {fileID: 4216104766358777111}
   - {fileID: 482769681448805842}
   - {fileID: 6730758676192518160}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &2876520309618829447
 GameObject:
@@ -2612,6 +2630,9 @@ MonoBehaviour:
   - {fileID: 4216104766358777111}
   - {fileID: 482769681448805842}
   - {fileID: 6730758676192518160}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &4016455488918833840
 GameObject:
@@ -2704,6 +2725,9 @@ MonoBehaviour:
   camino:
   - {fileID: 5308360710166033602}
   - {fileID: 4978153754166352302}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &4067212355429125657
 GameObject:
@@ -4517,15 +4541,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.83137256}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: fd708c2a6aea75e438d895618395af75, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4735,6 +4759,9 @@ MonoBehaviour:
   camino:
   - {fileID: 85324645284869769}
   - {fileID: 3603955756674737240}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &6706422574622062075
 GameObject:
@@ -5241,6 +5268,9 @@ MonoBehaviour:
   camino:
   - {fileID: 5568858180903614658}
   - {fileID: 8048009837346254034}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &7901963882596839193
 GameObject:
@@ -5303,6 +5333,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -5632,6 +5663,9 @@ MonoBehaviour:
   camino:
   - {fileID: 6771914123090860067}
   - {fileID: 3628674665567632137}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &8245657831711851723
 GameObject:
@@ -5724,6 +5758,9 @@ MonoBehaviour:
   camino:
   - {fileID: 1965052528853246702}
   - {fileID: 2229300562715559932}
+  frozenTint: {r: 0.55, g: 0.85, b: 1, a: 1}
+  freezePopScale: 1.3
+  freezePopTime: 0.18
   speed: 100
 --- !u!1 &8328339443457447665
 GameObject:

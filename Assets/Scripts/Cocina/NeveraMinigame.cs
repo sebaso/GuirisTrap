@@ -1,17 +1,40 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
 public class NeveraMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
-    public GameObject minigamePanel;
-    public TMP_Text sequenceDisplay;
-    public TMP_Text timerText;
+    [SerializeField]
+    private GameObject minigamePanel;
+    [SerializeField]
+    private TMP_Text timerText;
+
+    [Header("Arrow Prefabs")]
+    [SerializeField] private GameObject _arrowDefaultPrefab;
+    [SerializeField] private GameObject _arrowSelectedPrefab;
+    [SerializeField] private GameObject _arrowCorrectPrefab;
+    [SerializeField] private Transform _arrowContainer;
+
+    [Header("EGG Images")]
+    [SerializeField] private Image _eggImage;
+    [SerializeField] private Sprite _rawEgg;
+    [SerializeField] private Sprite _coockedEgg;
+    [SerializeField] private Sprite _burnedEgg;
+
+
+    [Header("EGG Timers")]
+    [SerializeField, Range(0f, 1f)] 
+    private float _cookedThreshold = 0.66f;
+    [SerializeField, Range(0f, 1f)] 
+    private float _burntThreshold = 0.33f;
 
     private enum ArrowDir { Up, Down, Left, Right }
 
     private List<ArrowDir> currentSequence = new List<ArrowDir>();
+    private List<GameObject> _arrowInstances = new List<GameObject>();
+
     private int currentIndex = 0;
     private bool isPlaying = false;
     private float timer;
@@ -35,8 +58,9 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
         currentIndex = 0;
         isPlaying = true;
         _inputCooldown = 0f;
-
-        UpdateUI();
+        
+        BuildArrowInstances();
+        UpdateEggVisual();
     }
 
     void GenerateSequence(int length)
@@ -53,7 +77,10 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
 
         timer -= Time.deltaTime;
         timerText.text = timer.ToString("F1");
-        if (timer <= 0) EndGame(false);
+
+        UpdateEggVisual();
+
+        if(timer <= 0) EndGame(false);
     }
 
     void EndGame(bool success)
@@ -77,29 +104,74 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
             MinigameFeedback.Show(false, reason, "nevera_failure");
         }
     }
-
-    void UpdateUI()
+    // ------------------------------------------------------------------
+    //  UI - Arrows
+    // ------------------------------------------------------------------
+ 
+    void BuildArrowInstances()
     {
-        string display = "";
+        for (int i = _arrowInstances.Count - 1; i >= 0; i--)
+            if (_arrowInstances[i] != null) Destroy(_arrowInstances[i]);
+        _arrowInstances.Clear();
+ 
         for (int i = 0; i < currentSequence.Count; i++)
         {
-            string symbol = GetArrowSymbol(currentSequence[i]);
-            if (i < currentIndex) display += $"<color=green>{symbol} </color>";
-            else if (i == currentIndex) display += $"<color=yellow><b>[{symbol}]</b></color> ";
-            else display += $"{symbol} ";
+            GameObject prefab = GetPrefabForState(i);
+            GameObject instance = Instantiate(prefab, _arrowContainer);
+            instance.transform.localRotation = Quaternion.Euler(0f, 0f, GetArrowRotationZ(currentSequence[i]));
+            _arrowInstances.Add(instance);
         }
-        sequenceDisplay.text = display;
     }
 
-    string GetArrowSymbol(ArrowDir dir) => dir switch
+    GameObject GetPrefabForState(int index)
     {
-        ArrowDir.Up => "↑",
-        ArrowDir.Down => "↓",
-        ArrowDir.Left => "←",
-        ArrowDir.Right => "→",
-        _ => "?"
+        if (index < currentIndex)  return _arrowCorrectPrefab;
+        if (index == currentIndex) return _arrowSelectedPrefab;
+        return _arrowDefaultPrefab;
+    }
+
+     void ReplaceArrowAt(int index)
+    {
+        if (index < 0 || index >= _arrowInstances.Count) return;
+ 
+        GameObject old = _arrowInstances[index];
+        int siblingIndex = old != null ? old.transform.GetSiblingIndex() : index;
+        if (old != null) Destroy(old);
+ 
+        GameObject prefab = GetPrefabForState(index);
+        GameObject instance = Instantiate(prefab, _arrowContainer);
+        instance.transform.SetSiblingIndex(siblingIndex); // mantiene el orden dentro del contenedor
+        instance.transform.localRotation = Quaternion.Euler(0f, 0f, GetArrowRotationZ(currentSequence[index]));
+ 
+        _arrowInstances[index] = instance;
+    }
+
+    float GetArrowRotationZ(ArrowDir dir) => dir switch
+    {
+        ArrowDir.Down  => 0f,
+        ArrowDir.Right => 90f,
+        ArrowDir.Up    => 180f,
+        ArrowDir.Left  => 270f,
+        _ => 0f
     };
 
+    // ------------------------------------------------------------------
+    //  UI - EGG
+    // ------------------------------------------------------------------
+ 
+    void UpdateEggVisual()
+    {
+        if (_eggImage == null || currentRecipe == null || currentRecipe.timeLimit <= 0f) return;
+ 
+        float remainingRatio = Mathf.Clamp01(timer / currentRecipe.timeLimit);
+ 
+        if (remainingRatio > _cookedThreshold)
+            _eggImage.sprite = _rawEgg;
+        else if (remainingRatio > _burntThreshold)
+            _eggImage.sprite = _coockedEgg;
+        else
+            _eggImage.sprite = _burnedEgg;
+    }
     public void OnInteract() { }
     public void OnSubmit() { }
     public void OnCancel() { }
@@ -119,9 +191,14 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
 
         if (pressed == currentSequence[currentIndex])
         {
+            int resolvedIndex = currentIndex;
             currentIndex++;
+ 
+            ReplaceArrowAt(resolvedIndex);
+            if (currentIndex < currentSequence.Count)
+                ReplaceArrowAt(currentIndex);
+ 
             if (currentIndex >= currentSequence.Count) EndGame(true);
-            else UpdateUI();
         }
         else EndGame(false);
     }
