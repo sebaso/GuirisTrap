@@ -10,7 +10,9 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
     public RectTransform targetZone;
 
     [Header("Ajustes de Dificultad Base")]
+    [Tooltip("Velocidad base de la barra. Más bajo = más lento y fácil de leer. Feedback del profe: iba muy rápida.")]
     public float baseSpeed = 0.8f;
+    [Tooltip("Cuánto se acelera por nivel de dificultad. 1 = sin cambio; 1.1 = +10% por nivel.")]
     public float speedMultiplierPerLevel = 1.1f;
     public float baseZoneSize = 0.3f;
     public float cursorWidth = 10f;
@@ -65,13 +67,10 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
     void CheckWin(float finalPos)
     {
         isPlaying = false;
-        minigamePanel.SetActive(false);
-        InputManager.Instance.ExitMinigame();
-
         if (finalPos >= winMin && finalPos <= winMax)
         {
-            MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "congelador_success");
-
+            Debug.Log($"¡CONGELADO PERFECTO!");
+            AudioManager.Instance?.PlaySFX("congelador_success");
             if (currentRecipe.foodPrefab != null)
                 player.CreateAndHoldFood(currentRecipe.foodPrefab);
             else
@@ -79,8 +78,14 @@ public class CongeladorMinigame : MonoBehaviour, IMinigameControllable
         }
         else
         {
-            MinigameFeedback.Show(false, "¡Fallaste el punto exacto!", "congelador_failure");
+            {
+                HUDMessage.Instance?.ShowBad("Fallaste el congelado.");
+            }
+            AudioManager.Instance?.PlaySFX("congelador_failure");
         }
+
+        minigamePanel.SetActive(false);
+        InputManager.Instance.ExitMinigame();
     }
 
     //  IMinigameControllable 

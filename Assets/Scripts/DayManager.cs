@@ -69,8 +69,6 @@ public class DayManager : MonoBehaviour
             _timeRemaining = 0f;
             _isDayActive = false;
             OnDayProgress?.Invoke(1f);
-            WeekManager.Instance?.OnDayCompleted();
-
             OnDayEnded?.Invoke();
             HandleDayEnd();
             return;
@@ -91,6 +89,10 @@ public class DayManager : MonoBehaviour
 
     private void HandleDayEnd()
     {
+        // El día ha terminado. Persistimos el dinero ganado durante la jornada
+        // para que llegue a la PreparationScene (y a un posible reinicio).
+        // El cambio de escena lo sigue haciendo el botón "Siguiente día" de la
+        // pantalla de Stats (StatsPanel escucha OnDayEnded).
         if (SaveManager.Instance != null)
             SaveManager.Instance.SaveMoney();
 

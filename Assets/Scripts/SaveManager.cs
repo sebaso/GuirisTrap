@@ -12,41 +12,9 @@ public class SaveManager : MonoBehaviour
 
     public int CurrentDay => _data.day;
 
-    /// <summary>Saldo guardado en disco</summary>
+    /// <summary>Saldo guardado en disco (lo escribe SaveMoney/IncrementDayAndSave).</summary>
     public int SavedMoney => _data.money;
     public ItemCountData[] GetOwnedItems() => _data.ownedItems;
-
-    //  Sistema de semanas / reputación (los REGISTRA WeekManager,
-    //  aquí solo viven los datos para persistirse con el resto del save)
-
-    /// <summary>Rating de estrellas (0-5, en cuartos). Persiste en el guardado.</summary>
-    public float Stars
-    {
-        get => _data.stars;
-        set => _data.stars = Mathf.Clamp(value, 0f, 5f);
-    }
-
-    /// <summary>Notas (0-5) de los días de la semana en curso. Se vacía al cerrar semana.</summary>
-    public System.Collections.Generic.List<int> WeekGrades
-    {
-        get
-        {
-            // Saves antiguos (o recién deserializados) pueden traerla a null.
-            if (_data.weekGrades == null)
-                _data.weekGrades = new System.Collections.Generic.List<int>();
-            return _data.weekGrades;
-        }
-    }
-
-    /// <summary>
-    /// Último día jugado (1-based) cuya nota ya se registró. Evita duplicar la
-    /// nota si el jugador reinicia el día sin pasar al siguiente.
-    /// </summary>
-    public int LastGradedDay
-    {
-        get => _data.lastGradedDay;
-        set => _data.lastGradedDay = value;
-    }
 
     void Awake()
     {
@@ -158,8 +126,6 @@ public class SaveManager : MonoBehaviour
     /// guardado, sin avanzar el día ni volver a serializar las grids. Se usa al
     /// terminar el día para que el dinero ganado quede guardado en disco y llegue
     /// a la PreparationScene.
-    /// (También persiste, como todo WriteFile, las notas de la semana y las
-    /// estrellas que WeekManager haya registrado justo antes.)
     /// </summary>
     public void SaveMoney()
     {
@@ -195,8 +161,7 @@ public class SaveManager : MonoBehaviour
     {
         _data.ownedItems = OwnedItemsManager.Instance?.ToSaveData(); 
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
-        Debug.Log($"[SaveManager] Saved day {_data.day}, money {_data.money}, " +
-                  $"stars {_data.stars:0.##}, weekGrades {(_data.weekGrades != null ? _data.weekGrades.Count : 0)} → {SavePath}");
+        Debug.Log($"[SaveManager] Saved day {_data.day}, money {_data.money} → {SavePath}");
     }
 
     [System.Serializable]
@@ -204,13 +169,6 @@ public class SaveManager : MonoBehaviour
     {
         public int day;
         public int money;
-
-        // --- Sistema de semanas / reputación ---
-        public float stars;                                          // Rating 0-5 (en cuartos).
-        public int lastGradedDay = -1;                               // Último día jugado ya puntuado.
-        public System.Collections.Generic.List<int> weekGrades       // Notas (0-5) de la semana en curso.
-            = new System.Collections.Generic.List<int>();
-
         public GridSaveData[] grids;
         public ItemCountData[] ownedItems;
     }

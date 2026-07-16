@@ -18,12 +18,6 @@ public class StatsPanel : MonoBehaviour
     [SerializeField] private TMP_Text _gradeText;
     [SerializeField] private TMP_Text _balanceText;
 
-    [Header("Resumen semanal")]
-    [SerializeField] private GameObject _weekResultRoot;
-    [SerializeField] private TMP_Text _weekAverageText;
-    [SerializeField] private TMP_Text _weekStarsText;
-    [SerializeField] private TMP_Text _weekBonusText;
-
     [Header("Botón siguiente día")]
     [SerializeField] private Button _nextDayButton;
 
@@ -98,13 +92,10 @@ public class StatsPanel : MonoBehaviour
         DayReport report = DayReport.Instance;
 
         if (_dayNumberText != null && SaveManager.Instance != null)
-        {
             // CurrentDay cuenta días COMPLETADOS (se incrementa al pulsar "Siguiente
             // día"). El día que acaba de jugarse aún no se ha incrementado, así que
             // es CurrentDay + 1 (el primer día es el 1, no el 0).
-            int playingDay = SaveManager.Instance.CurrentDay + 1;
-            _dayNumberText.text = $"DÍA {playingDay} · {WeekManager.GetDayName(playingDay)}";
-        }
+            _dayNumberText.text = $"DÍA {SaveManager.Instance.CurrentDay + 1}";
 
         if (report != null)
         {
@@ -140,43 +131,6 @@ public class StatsPanel : MonoBehaviour
 
         if (_balanceText != null && MoneyManager.Instance != null)
             _balanceText.text = $"{MoneyManager.Instance.CurrentMoney}€";
-
-        PopulateWeekSection();
-    }
-
-    /// <summary>
-    /// Rellena la sección de fin de semana. Solo se muestra si el día que
-    /// acaba de terminar cerró una semana (WeekManager.WeekJustEnded).
-    /// Todos los campos son opcionales: si no están asignados, no pasa nada.
-    /// </summary>
-    private void PopulateWeekSection()
-    {
-        if (_weekResultRoot == null) return;
-
-        WeekManager week = WeekManager.Instance;
-        bool show = week != null && week.WeekJustEnded;
-        _weekResultRoot.SetActive(show);
-        if (!show) return;
-
-        WeekResult r = week.LastResult;
-
-        if (_weekAverageText != null)
-        {
-            _weekAverageText.text  = $"FIN DE SEMANA {r.weekNumber} · MEDIA: {r.averageGrade}";
-            _weekAverageText.color = GetGradeColor(r.averageGrade);
-        }
-
-        if (_weekStarsText != null)
-        {
-            float delta = r.StarsDelta;
-            string deltaTxt = delta > 0f ? $" (+{delta:0.##})"
-                            : delta < 0f ? $" ({delta:0.##})"
-                            : " (=)";
-            _weekStarsText.text = $"★ {r.starsBefore:0.##} → {r.starsAfter:0.##}{deltaTxt}";
-        }
-
-        if (_weekBonusText != null)
-            _weekBonusText.text = r.moneyBonus > 0 ? $"BONUS: +{r.moneyBonus}€" : string.Empty;
     }
 
     // Muestra/oculta el panel sin desactivar nunca el objeto que tiene el script.

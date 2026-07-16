@@ -115,16 +115,12 @@ public class PlayerController : ControllableMonoBehaviour
         //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
 
-        FoodStorage    bestStorage  = null;
-        EspetoMinigame bestEspeto   = null;
-        CookingStation bestStation  = null;
-        ExtintorPickup bestExtintor = null;
-        ExtintorSoporte bestSoporte = null;
-        float bestStorageDist  = float.MaxValue;
-        float bestEspetoDist   = float.MaxValue;
-        float bestStationDist  = float.MaxValue;
-        float bestExtintorDist = float.MaxValue;
-        float bestSoporteDist  = float.MaxValue;
+        FoodStorage    bestStorage = null;
+        EspetoMinigame bestEspeto  = null;
+        CookingStation bestStation = null;
+        float bestStorageDist = float.MaxValue;
+        float bestEspetoDist  = float.MaxValue;
+        float bestStationDist = float.MaxValue;
         // Track the nearest pickable food too, so a station standing within range
         // can't silently swallow the interact when food is actually closer.
         float bestFoodDist = float.MaxValue;
@@ -142,19 +138,6 @@ public class PlayerController : ControllableMonoBehaviour
             CookingStation cs = col.GetComponent<CookingStation>();
             if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
 
-            // Extintor físico: si NO llevas uno, se puede coger. Si SÍ lo
-            // llevas, interactuar con un soporte lo devuelve a su sitio.
-            if (!ExtintorPickup.IsPlayerCarrying)
-            {
-                ExtintorPickup ext = col.GetComponent<ExtintorPickup>() ?? col.GetComponentInParent<ExtintorPickup>();
-                if (ext != null && !ext.IsCarried && dist < bestExtintorDist) { bestExtintor = ext; bestExtintorDist = dist; }
-            }
-            else
-            {
-                ExtintorSoporte sop = col.GetComponent<ExtintorSoporte>() ?? col.GetComponentInParent<ExtintorSoporte>();
-                if (sop != null && dist < bestSoporteDist) { bestSoporte = sop; bestSoporteDist = dist; }
-            }
-
             // Only loose, grabbable food counts (mirrors TryPickUpFood's filter).
             if (heldFood == null)
             {
@@ -168,18 +151,6 @@ public class PlayerController : ControllableMonoBehaviour
         //  estación de cocina es la acción de "cocinar" lo que llevas.)
         // Cada estación solo gana si además está más cerca que la comida suelta;
         // si la comida es lo más cercano, caemos a TryPickUpFood más abajo.
-        if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= bestStationDist && bestExtintorDist <= bestFoodDist)
-        {
-            bestExtintor.TryPickUp(this); return;
-        }
-        // Devolver el extintor a su soporte pulsando E (si lo llevas encima).
-        if (bestSoporte != null && bestSoporteDist <= bestStorageDist && bestSoporteDist <= bestEspetoDist && bestSoporteDist <= bestStationDist && bestSoporteDist <= bestFoodDist)
-        {
-            ExtintorPickup.Carried?.ReturnToHolder();
-            AudioManager.Instance?.PlaySFX("extintor_pickup");
-            HUDMessage.Instance?.ShowGood("Extintor devuelto a su soporte.");
-            return;
-        }
         if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist && bestStorageDist <= bestFoodDist)
         {
             bestStorage.TryOpen(); return;
@@ -373,21 +344,6 @@ public class PlayerController : ControllableMonoBehaviour
         GameObject g = Instantiate(item.prefab);
         foreach (var mb in g.GetComponentsInChildren<MonoBehaviour>()) mb.enabled = false;
         foreach (var col in g.GetComponentsInChildren<Collider>()) col.enabled = false;
-
-        // Holograma para el preview: transparencia REAL (tintar con alpha los
-        // materiales opacos del prefab no hace nada) + scanlines + fresnel.
-        // Si el shader no está en el proyecto, se mantiene el tinte clásico.
-        Shader holo = Shader.Find("Guiri/Hologram");
-        if (holo != null)
-        {
-            foreach (var r in g.GetComponentsInChildren<Renderer>())
-            {
-                Material[] mats = r.materials;
-                for (int i = 0; i < mats.Length; i++) mats[i] = new Material(holo);
-                r.materials = mats;
-            }
-        }
-
         return g;
     }
 
@@ -395,8 +351,7 @@ public class PlayerController : ControllableMonoBehaviour
     {
         if (_ghost == null) return;
         foreach (var r in _ghost.GetComponentsInChildren<Renderer>())
-            foreach (var m in r.materials)
-                if (m.HasProperty("_Color")) m.color = color;
+            r.material.color = color;
     }
 
     private void TryDropFurniture()
