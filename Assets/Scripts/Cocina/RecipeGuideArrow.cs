@@ -6,9 +6,11 @@ public class RecipeGuideArrow : MonoBehaviour
 {
     [Header("Colocación")]
     [SerializeField] private float _height = 2.6f;
-    [SerializeField] private float _tiltDegrees = 25f;
-    [Tooltip("Tamaño de la flecha.")]
     [SerializeField] private float _size = 0.9f;
+
+    [Header("Orientación")]
+    [SerializeField] private bool _billboardToCamera = true;
+    [SerializeField] private float _tiltDegrees = 25f;
 
     [Header("Animación")]
     [SerializeField] private float _bobAmplitude = 0.12f;
@@ -24,6 +26,7 @@ public class RecipeGuideArrow : MonoBehaviour
     [SerializeField] private string _shaderName = "Guiri/GuideArrow";
 
     private PlayerController _player;
+    private Camera    _cam;
     private Transform _arrow;
     private Material  _mat;
 
@@ -34,12 +37,15 @@ public class RecipeGuideArrow : MonoBehaviour
     void Awake()
     {
         _player = GetComponent<PlayerController>();
+        _cam    = Camera.main;
         BuildArrow();
         _arrow.gameObject.SetActive(false);
     }
 
-    void LateUpdate() // después de que el jugador se haya movido este frame
+    void LateUpdate() // después de que el jugador (y la cámara) se hayan movido
     {
+        if (_cam == null) _cam = Camera.main; // por si la cámara aparece tarde
+
         RecipeData recipe = _player != null ? _player.currentRecipe : null;
 
         // ¿Ha cambiado lo que llevamos? → recalcular estaciones objetivo.
@@ -68,8 +74,7 @@ public class RecipeGuideArrow : MonoBehaviour
                 float bob = Mathf.Sin(Time.time * _bobSpeed) * _bobAmplitude;
                 _arrow.position = transform.position + Vector3.up * (_height + bob);
 
-                _arrow.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up)
-                                * Quaternion.Euler(_tiltDegrees, 0f, 0f);
+                OrientArrow(target);
 
                 float pulse = 1f + Mathf.Sin(Time.time * _pulseSpeed) * _pulseAmount;
                 _arrow.localScale = Vector3.one * (_size * pulse);
@@ -78,6 +83,35 @@ public class RecipeGuideArrow : MonoBehaviour
 
         if (_arrow.gameObject.activeSelf != show)
             _arrow.gameObject.SetActive(show);
+    }
+
+    private void OrientArrow(Transform target)
+    {
+        if (_billboardToCamera && _cam != null)
+        {
+            // Dirección hacia el objetivo EN PANTALLA.
+            Vector3 selfScreen = _cam.WorldToScreenPoint(_arrow.position);
+            Vector3 tgtScreen  = _cam.WorldToScreenPoint(target.position);
+            Vector2 screenDir  = (Vector2)(tgtScreen - selfScreen);
+
+            if (screenDir.sqrMagnitude < 1f) return; // objetivo encima: mantener rotación
+
+            // Llevar esa dirección 2D al plano de la cámara en el mundo.
+            Vector3 worldScreenDir = (_cam.transform.right * screenDir.x +
+                                      _cam.transform.up    * screenDir.y).normalized;
+
+            // Malla: apunta a +Z y su normal es +Y → +Z hacia el objetivo en
+            // el plano de pantalla, +Y (la cara) hacia la cámara.
+            _arrow.rotation = Quaternion.LookRotation(worldScreenDir, -_cam.transform.forward);
+        }
+        else
+        {
+            // Modo v1: flecha plana en el mundo con inclinación.
+            Vector3 toTarget = target.position - transform.position;
+            toTarget.y = 0f;
+            _arrow.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up)
+                            * Quaternion.Euler(_tiltDegrees, 0f, 0f);
+        }
     }
 
     private void Retarget(RecipeData recipe)
@@ -121,6 +155,9 @@ public class RecipeGuideArrow : MonoBehaviour
         return best;
     }
 
+    // ------------------------------------------------------------------
+    //  Construcción de la flecha (malla procedural, sin arte)
+    // ------------------------------------------------------------------
 
     private void BuildArrow()
     {
@@ -128,7 +165,8 @@ public class RecipeGuideArrow : MonoBehaviour
         go.transform.SetParent(transform, false); // hija del player (se mueve con él)
         _arrow = go.transform;
 
-        // Flecha plana apuntando a +Z. uv.y: 0 = cola, 1 = punta (para el flujo del shader).
+        // Flecha plana apuntando a +Z, normal +Y. uv.y: 0 = cola, 1 = punta
+        // (para el flujo del shader).
         Mesh mesh = new Mesh { name = "GuideArrow (procedural)" };
 
         Vector3[] verts =
