@@ -2,5 +2,6 @@ public enum PlaceableCategory
 {
     Table,
     Chair,
-    Picture
+    Picture,
+    Extintor
 }
