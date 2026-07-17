@@ -58,10 +58,18 @@ public class RestaurantManager : MonoBehaviour
         }
     }
 
+    // Running counter so each table gets a unique, human-readable "Mesa N".
+    // The prefab default is tableNumber=1; without this every table shows "Mesa 1".
+    private int _nextTableNumber = 1;
+
     public void RegisterTable(Table table)
     {
         if (!_tables.Contains(table))
+        {
             _tables.Add(table);
+            // Assign a unique number once, the first time a table registers.
+            table.tableNumber = _nextTableNumber++;
+        }
     }
 
     public void UnregisterTable(Table table)

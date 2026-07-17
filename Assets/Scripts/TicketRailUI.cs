@@ -23,10 +23,16 @@ public class TicketRailUI : MonoBehaviour
              "If null, a minimal entry is created in code.")]
     public GameObject ticketEntryPrefab;
 
+    [Tooltip("Seconds to fade fully in/out when the rail gains/loses its last ticket.")]
+    public float fadeDuration = 0.35f;
+
     private readonly Dictionary<int, TicketEntry> _entries = new();
     private readonly Color _ok = new(0.35f, 0.75f, 0.35f, 0.55f);
     private readonly Color _mid = new(0.85f, 0.75f, 0.25f, 0.55f);
     private readonly Color _low = new(0.85f, 0.3f, 0.3f, 0.55f);
+
+    private CanvasGroup _canvasGroup;
+    private float _alpha;
 
     private struct TicketEntry
     {
@@ -34,6 +40,17 @@ public class TicketRailUI : MonoBehaviour
         public TMP_Text text;
         public Image background;
         public int tableNumber; // cached at creation; doesn't change
+    }
+
+    void Awake()
+    {
+        // Starts hidden; Update() fades it in as soon as an order lands.
+        _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        _alpha = 0f;
+        _canvasGroup.alpha = 0f;
+        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = false;
     }
 
     void Update()
@@ -68,6 +85,20 @@ public class TicketRailUI : MonoBehaviour
                 _entries[g.GroupID] = CreateEntry(g);
             RefreshEntry(g, _entries[g.GroupID]);
         }
+
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        float target = _entries.Count > 0 ? 1f : 0f;
+        float speed = fadeDuration > 0f ? 1f / fadeDuration : float.MaxValue;
+        _alpha = Mathf.MoveTowards(_alpha, target, speed * Time.deltaTime);
+
+        _canvasGroup.alpha = _alpha;
+        bool visible = _alpha > 0.01f;
+        _canvasGroup.interactable = visible;
+        _canvasGroup.blocksRaycasts = visible;
     }
 
     private TicketEntry CreateEntry(ClientGroup g)
@@ -85,18 +116,28 @@ public class TicketRailUI : MonoBehaviour
         else
         {
             // Minimal in-code fallback so the panel works without a prefab.
-            root = new GameObject($"Ticket_G{g.GroupID}", typeof(RectTransform), typeof(Image));
+            root = new GameObject($"Ticket_G{g.GroupID}", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
             root.transform.SetParent(ticketContainer, false);
             background = root.GetComponent<Image>();
             background.color = _ok;
+
+            // Give the entry a real minimum size; otherwise the layout group
+            // shrinks it to the (tiny) preferred size of an empty TMP_Text.
+            var le = root.GetComponent<LayoutElement>();
+            le.minHeight = 60f;
+            le.preferredHeight = 60f;
 
             var child = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
             child.transform.SetParent(root.transform, false);
             var rt = (RectTransform)child.transform;
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
-            rt.offsetMin = new Vector2(6, 4); rt.offsetMax = new Vector2(-6, -4);
+            rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);
             text = child.GetComponent<TextMeshProUGUI>();
-            text.fontSize = 20;
+            // Explicit font size + auto-sizing OFF so the text asset's default
+            // atlas size doesn't clamp it to something tiny.
+            text.enableAutoSizing = false;
+            text.fontSize = 28f;
+            text.richText = true;
             text.alignment = TextAlignmentOptions.Left;
             text.color = Color.white;
         }
@@ -132,7 +173,7 @@ public class TicketRailUI : MonoBehaviour
             parts.Add(kv.Value > 1 ? $"{kv.Key} x{kv.Value}" : kv.Key);
 
         string dishes = parts.Count > 0 ? string.Join(", ", parts) : "?";
-        return $"<b>Mesa {tableNumber}</b>  <size=80%>({g.PlatesServed}/{g.PlatesNeeded})\n{dishes}";
+        return $"<b>Mesa {tableNumber}</b>  ({g.PlatesServed}/{g.PlatesNeeded})\n{dishes}";
     }
 
     private int FirstTableNumberOf(ClientGroup g)

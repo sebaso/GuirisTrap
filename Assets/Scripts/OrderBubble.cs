@@ -41,24 +41,38 @@ public class OrderBubble : MonoBehaviour
     /// <summary>Builds a self-contained world-space bubble: a Canvas (World) →
     /// background Image → TMP_Text, parented to this Table. Rendered text needs
     /// a World-space Canvas ancestor, which the existing client/table UI lacks
-    /// (a latent bug); this guarantees one.</summary>
+    /// (a latent bug); this guarantees one.
+    ///
+    /// Sizing note: in a World-space canvas the rect is in PIXELS, and the on-
+    /// world size comes from a uniform localScale. We pick a generous pixel size
+    /// and a small scale so the text (also sized in px) renders at a readable
+    /// on-world height instead of overflowing.</summary>
     private void BuildDefaultBubble()
     {
         if (_table == null) return;
+
+        const float widthPx = 260f;
+        const float heightPx = 130f;
+        // On-world size (meters) ≈ pixelSize * localScale. 260px * 0.005 ≈ 1.3m wide.
+        const float worldScale = 0.005f;
 
         // Root: RectTransform + Canvas (World Space) + CanvasScaler.
         var rootGo = new GameObject("OrderBubbleRoot", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
         rootGo.transform.SetParent(_table.transform, false);
         rootGo.transform.localPosition = new Vector3(0f, 1.2f, 0f); // just above the table top
         var rootRt = (RectTransform)rootGo.transform;
-        rootRt.sizeDelta = new Vector2(1.6f, 1f);
-        rootRt.localScale = new Vector3(0.01f, 0.01f, 0.01f); // world-space canvas → shrink to scene scale
+        rootRt.sizeDelta = new Vector2(widthPx, heightPx);
+        rootRt.localScale = new Vector3(worldScale, worldScale, worldScale);
 
         var canvas = rootGo.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.worldCamera = _cam;
+        var scaler = rootGo.GetComponent<CanvasScaler>();
+        // For World-space, leave the scaler at Constant Pixel Size (default) — the
+        // rect is already in pixels and we control world size via localScale above.
+        scaler.dynamicPixelsPerUnit = 10f; // crisp text when the small canvas is viewed up close
 
-        // Background image.
+        // Background image (fills the canvas).
         var bgGo = new GameObject("BG", typeof(RectTransform), typeof(Image));
         bgGo.transform.SetParent(rootRt, false);
         var bgRt = (RectTransform)bgGo.transform;
@@ -67,16 +81,18 @@ public class OrderBubble : MonoBehaviour
         var bg = bgGo.GetComponent<Image>();
         bg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f);
 
-        // Text.
+        // Text (fills the canvas with a small margin).
         var textGo = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
         textGo.transform.SetParent(rootRt, false);
         var textRt = (RectTransform)textGo.transform;
         textRt.anchorMin = Vector2.zero; textRt.anchorMax = Vector2.one;
-        textRt.offsetMin = new Vector2(12f, 8f); textRt.offsetMax = new Vector2(-12f, -8f);
+        textRt.offsetMin = new Vector2(14f, 10f);   // left, bottom padding in px
+        textRt.offsetMax = new Vector2(-14f, -10f); // right, top padding in px
         orderText = textGo.GetComponent<TextMeshProUGUI>();
         orderText.enableWordWrapping = true;
         orderText.alignment = TextAlignmentOptions.Center;
-        orderText.fontSize = 26f;
+        orderText.fontSize = 28f;
+        orderText.richText = true;
         orderText.color = Color.white;
 
         bubbleRoot = rootRt;
