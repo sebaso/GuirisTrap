@@ -172,7 +172,7 @@ public class StatsPanel : MonoBehaviour
             string deltaTxt = delta > 0f ? $" (+{delta:0.##})"
                             : delta < 0f ? $" ({delta:0.##})"
                             : " (=)";
-            _weekStarsText.text = $"★ {r.starsBefore:0.##} → {r.starsAfter:0.##}{deltaTxt}";
+            _weekStarsText.text = $"Estrellas {r.starsBefore:0.##} → {r.starsAfter:0.##}{deltaTxt}";
         }
 
         if (_weekBonusText != null)
