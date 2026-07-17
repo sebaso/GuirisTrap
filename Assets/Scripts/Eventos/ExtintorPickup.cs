@@ -4,14 +4,15 @@ using UnityEngine;
 /// EXTINTOR COGIBLE (flujo "como un plato", un solo uso por viaje).
 ///
 /// Cuelga de un ExtintorSoporte. El jugador lo coge interactuando (E) y se le
-/// engancha (como la comida). Cuando interactúa con una estación EN LLAMAS
-/// llevándolo, el minijuego de incendio arranca en modo FÁCIL y, al terminar,
-/// el extintor VUELVE SOLO a su soporte (un uso por viaje: para el siguiente
-/// incendio hay que ir a por él otra vez).
+/// engancha. Al usarlo en una estación en llamas (o al devolverlo con E en un
+/// soporte), VUELVE SOLO a su soporte.
 ///
-/// A diferencia de la versión anterior (llevarlo todo el día), esto es más
-/// táctico y encaja con el "tener a mano" del GDD: el soporte es permanente
-/// (comprado y colocado), el extintor es el consumible reutilizable.
+/// v3 — FIX "flotando en el aire": ahora el extintor vuelve a la POSE LOCAL
+/// EXACTA que tenía en el prefab (posición + rotación + escala respecto a su
+/// anclaje), no al origen del Anchor. Es WYSIWYG: donde lo coloques
+/// visualmente en el editor es donde volverá siempre. Además, si pierde la
+/// referencia a su soporte, se autocura buscando el soporte más cercano en la
+/// escena, y avisa por consola en vez de fallar en silencio.
 /// </summary>
 public class ExtintorPickup : MonoBehaviour
 {
@@ -35,12 +36,29 @@ public class ExtintorPickup : MonoBehaviour
 
     private ExtintorSoporte _holder;
     private Transform _restAnchor;
-    private Vector3 _restLocalScale = Vector3.one;
+
+    // Pose EN REPOSO respecto al anclaje, capturada tal como se autoró en el
+    // prefab. El extintor siempre vuelve exactamente a esta pose.
+    private Vector3    _restLocalPos   = Vector3.zero;
+    private Quaternion _restLocalRot   = Quaternion.identity;
+    private Vector3    _restLocalScale = Vector3.one;
+
     private Collider[] _colliders;
 
     void Awake()
     {
         _colliders = GetComponentsInChildren<Collider>();
+
+        // Guardia anti-física: el extintor se mueve por script. Si alguien le
+        // puso un Rigidbody (o vino con el FBX), lo volvemos cinemático para
+        // que la gravedad no se lo lleve de las manos ni del soporte.
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null && !rb.isKinematic)
+        {
+            rb.isKinematic = true;
+            rb.useGravity  = false;
+            Debug.Log("[ExtintorPickup] Rigidbody detectado: puesto en kinematic (el extintor se mueve por script).");
+        }
     }
 
     void OnDestroy()
@@ -48,14 +66,22 @@ public class ExtintorPickup : MonoBehaviour
         if (Carried == this) Carried = null;
     }
 
-    /// <summary>Lo llama ExtintorSoporte al inicializarse: registra dónde descansa.</summary>
+    /// <summary>
+    /// Lo llama ExtintorSoporte al inicializarse: registra dónde descansa y
+    /// captura su pose local EXACTA en reposo (la autorada en el prefab).
+    /// </summary>
     public void AttachToHolder(ExtintorSoporte holder, Transform restAnchor)
     {
         _holder     = holder;
         _restAnchor = restAnchor;
-        // Escala local "en reposo" respecto al anclaje: es la referencia a la
-        // que SIEMPRE se vuelve. Sin esto, cada ciclo coger→devolver horneaba
-        // la escala compensada y el extintor crecía sin límite (bug Pokéball).
+
+        // Reparentar al anclaje si no lo estaba ya (sin mover nada en mundo),
+        // para que la pose local capturada sea respecto al anclaje real.
+        if (transform.parent != restAnchor)
+            transform.SetParent(restAnchor, worldPositionStays: true);
+
+        _restLocalPos   = transform.localPosition;
+        _restLocalRot   = transform.localRotation;
         _restLocalScale = transform.localScale;
     }
 
@@ -69,11 +95,24 @@ public class ExtintorPickup : MonoBehaviour
         if (IsCarried || player == null) return;
         if (Carried != null) return; // el jugador ya lleva uno
 
+        if (_restAnchor == null)
+        {
+            // Nadie llamó a AttachToHolder: capturar el "hogar" ahora mismo
+            // (donde está colgado en este momento) para poder volver luego.
+            Debug.Log("[ExtintorPickup] Cogido sin soporte registrado.");
+            _restAnchor     = transform.parent;
+            _restLocalPos   = transform.localPosition;
+            _restLocalRot   = transform.localRotation;
+            _restLocalScale = transform.localScale;
+        }
+
         IsCarried = true;
         Carried   = this;
 
         SetCollidersEnabled(false); // que no estorbe ni reaparezca en el OverlapSphere
 
+        // worldPositionStays: TRUE conserva el tamaño de mundo (fix Pokéball);
+        // luego pisamos solo posición/rotación con el offset de llevarlo.
         transform.SetParent(player.transform, worldPositionStays: true);
         transform.localPosition = _carryLocalOffset;
         transform.localRotation = Quaternion.Euler(_carryLocalEuler);
@@ -83,41 +122,56 @@ public class ExtintorPickup : MonoBehaviour
     }
 
     // ------------------------------------------------------------------
-    //  Volver al soporte (tras usarse en un incendio)
+    //  Volver al soporte
     // ------------------------------------------------------------------
 
     /// <summary>
-    /// Devuelve el extintor a su soporte. Lo llama IncendioMinigame al terminar
-    /// un incendio que se apagó con el extintor (modo fácil), gane o pierda:
-    /// el extintor es de un solo uso por viaje.
+    /// Devuelve el extintor a su soporte (lo llaman IncendioMinigame al
+    /// terminar y PlayerController al devolverlo con E). Vuelve a la pose
+    /// exacta en la que estaba autorado. True si tenía un hogar al que volver.
     /// </summary>
-    public void ReturnToHolder()
+    public bool ReturnToHolder()
     {
         IsCarried = false;
         if (Carried == this) Carried = null;
 
+        // Autocuración: si el anclaje se perdió (soporte destruido, referencia
+        // rota tras reestructurar el prefab...), adoptar el soporte más
+        // cercano de la escena.
         if (_restAnchor == null)
         {
-            // Sin anclaje conocido: al menos soltarlo del jugador.
-            transform.SetParent(null, true);
-            SetCollidersEnabled(true);
-            return;
+            ExtintorSoporte nearest = FindNearestSoporte();
+            if (nearest != null)
+            {
+                Debug.Log("[ExtintorPickup] Anclaje perdido: adoptando el soporte más cercano " +
+                                 $"('{nearest.name}'). Revisa que AttachToHolder se esté llamando.");
+                _restAnchor = nearest.RestAnchor;
+                // Pose de reposo desconocida respecto a este anclaje: usar su origen.
+                _restLocalPos   = Vector3.zero;
+                _restLocalRot   = Quaternion.identity;
+                // _restLocalScale se conserva (la escala de reposo sigue valiendo).
+            }
+            else
+            {
+                Debug.LogWarning("[ExtintorPickup] Sin soporte al que volver (ninguno en escena). " +
+                                 "Soltando el extintor donde está.");
+                transform.SetParent(null, true);
+                SetCollidersEnabled(true);
+                return false;
+            }
         }
 
         transform.SetParent(_restAnchor, worldPositionStays: true);
-        SetCollidersEnabled(true);
-
-        // Animar la vuelta a su hueco (posición/rotación local cero respecto al anclaje).
-        Vector3 targetWorld = _restAnchor.position;
-        Quaternion targetRot = _restAnchor.rotation;
-        StartCoroutine(ReturnRoutine(targetWorld, targetRot));
+        StopAllCoroutines(); // por si había una vuelta anterior a medias
+        StartCoroutine(ReturnRoutine());
+        return true;
     }
 
-    private System.Collections.IEnumerator ReturnRoutine(Vector3 targetPos, Quaternion targetRot)
+    private System.Collections.IEnumerator ReturnRoutine()
     {
-        Vector3 startPos      = transform.position;
+        Vector3    startPos   = transform.position;
         Quaternion startRot   = transform.rotation;
-        Vector3 startLocScale = transform.localScale;
+        Vector3    startScale = transform.localScale;
         float t = 0f;
 
         // Colliders desactivados durante el vuelo para que no se pueda recoger a medio camino.
@@ -127,18 +181,38 @@ public class ExtintorPickup : MonoBehaviour
         {
             t += Time.deltaTime;
             float k = Mathf.SmoothStep(0f, 1f, t / _returnLerpTime);
+
+            // Destino calculado EN VIVO desde la pose de reposo autorada
+            // (aguanta incluso si el soporte se moviera durante el vuelo).
+            Vector3    targetPos = _restAnchor.TransformPoint(_restLocalPos);
+            Quaternion targetRot = _restAnchor.rotation * _restLocalRot;
+
             transform.position   = Vector3.Lerp(startPos, targetPos, k);
             transform.rotation   = Quaternion.Slerp(startRot, targetRot, k);
-            transform.localScale = Vector3.Lerp(startLocScale, _restLocalScale, k);
+            transform.localScale = Vector3.Lerp(startScale, _restLocalScale, k);
             yield return null;
         }
 
-        transform.position      = targetPos;
-        transform.rotation      = targetRot;
-        transform.localPosition = Vector3.zero;
+        // Aterrizaje EXACTO en la pose de reposo autorada en el prefab.
+        transform.localPosition = _restLocalPos;
+        transform.localRotation = _restLocalRot;
         transform.localScale    = _restLocalScale;
 
         SetCollidersEnabled(true); // ya se puede volver a coger
+    }
+
+    private ExtintorSoporte FindNearestSoporte()
+    {
+        ExtintorSoporte[] all = FindObjectsByType<ExtintorSoporte>(FindObjectsSortMode.None);
+        ExtintorSoporte best = null;
+        float bestDist = float.MaxValue;
+
+        foreach (ExtintorSoporte s in all)
+        {
+            float d = (s.transform.position - transform.position).sqrMagnitude;
+            if (d < bestDist) { bestDist = d; best = s; }
+        }
+        return best;
     }
 
     private void SetCollidersEnabled(bool enabled)
