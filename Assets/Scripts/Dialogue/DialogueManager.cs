@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -13,6 +14,11 @@ public class DialogueManager : MonoBehaviour
     private TextMeshProUGUI _dialogueText;
     [SerializeField]
     private Image _portraitImage;
+
+    [SerializeField]
+    [Tooltip("Tecla que el jugador debe pulsar para avanzar la reacción.")]
+    private Key _confirmKey = Key.E;
+    public Key ConfirmKey => _confirmKey;
 
     public bool IsShowingDialogue { get; private set; }
     private bool _advanceRequested;
@@ -42,7 +48,7 @@ public class DialogueManager : MonoBehaviour
         _dialoguePanel.SetActive(true);
         _dialogueText.text = text;
         _dialogueText.color = color;
-        
+
         if (portrait != null)
         {
             _portraitImage.sprite = portrait;

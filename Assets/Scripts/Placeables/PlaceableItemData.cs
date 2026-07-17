@@ -23,6 +23,9 @@ public class PlaceableItemData : ScriptableObject
     [Header("Placement")]
     public Vector3 placementOffset;
 
+    [Header("Object height")]
+    public int wallHeightCells = 1;
+
     public bool IsCompatibleWith(PlaceableSurface activeSurface)
     {
         if (surface == PlaceableSurface.Both) return true;

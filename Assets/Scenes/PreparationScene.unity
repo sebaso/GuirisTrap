@@ -732,6 +732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 2 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_02
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -782,6 +783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 11 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_11
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -962,6 +964,7 @@ MonoBehaviour:
   _dialoguePanel: {fileID: 965725191}
   _dialogueText: {fileID: 993698543}
   _portraitImage: {fileID: 395714545}
+  _confirmKey: 19
 --- !u!1 &84899466
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,7 +1078,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: <--
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 132e6e11d6e23444dafa4ee1f5a87433, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1556,6 +1559,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _blinker: {fileID: 152490665}
   _blink: 1
@@ -2270,6 +2274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 3 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_03
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -2366,6 +2371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: Bloquea botones
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 1332041541}
@@ -3142,6 +3148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 10 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_10
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -3329,6 +3336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 9 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_09
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -3367,7 +3375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.7832}
+  m_AnchoredPosition: {x: 119, y: 0.0000030994}
   m_SizeDelta: {x: 192.6292, y: 192.6292}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &395714545
@@ -5137,6 +5145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: "Bloquea el bot\xF3n de la tienda"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 922113942}
@@ -7003,6 +7012,7 @@ GameObject:
   - component: {fileID: 816298399}
   - component: {fileID: 816298398}
   - component: {fileID: 816298397}
+  - component: {fileID: 816298401}
   m_Layer: 3
   m_Name: Plane (3)
   m_TagString: Untagged
@@ -7104,6 +7114,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
+--- !u!114 &816298401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816298396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4de89fe7b1b0b72428f7cde7eb7d5a6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorWallAdjacency
 --- !u!1 &833304416
 GameObject:
   m_ObjectHideFlags: 0
@@ -8642,12 +8664,13 @@ RectTransform:
   m_Children:
   - {fileID: 395714544}
   - {fileID: 993698542}
+  - {fileID: 2006217250}
   m_Father: {fileID: 1174440875}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -445.5}
-  m_SizeDelta: {x: -600, y: -891}
+  m_AnchoredPosition: {x: -0.50372314, y: -445.5}
+  m_SizeDelta: {x: -44.1826, y: -891}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &965725194
 MonoBehaviour:
@@ -8992,6 +9015,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 1 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_01
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -9119,7 +9143,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 17.538544, z: 117.896484, w: 25.041046}
+  m_margin: {x: -117.615295, y: 17.538544, z: 41.417847, w: 25.041046}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -10119,6 +10143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 4 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_04
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -10591,6 +10616,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 8 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_08
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -11162,6 +11188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _blinker: {fileID: 861723515539420233}
   _blink: 1
@@ -11359,7 +11386,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: -->
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 132e6e11d6e23444dafa4ee1f5a87433, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -11836,6 +11863,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: "Bloquea el bot\xF3n de la tienda"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 1362640803}
@@ -13972,6 +14000,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 5 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_05
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -16839,6 +16868,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: Bloquea botones
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 1112930056}
@@ -17390,6 +17420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 7 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_07
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -17515,6 +17546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
   _description: Linea 6 del dialogo del tutorial
   _executeDirectly: 0
+  _interactable: 1
   _duration: 3
   _textKey: tutorial_06
   _color: {r: 0, g: 0, b: 0, a: 1}
@@ -18886,6 +18918,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _blinker: {fileID: 1112930052}
   _blink: 1
@@ -18989,6 +19022,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
   _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _blinker: {fileID: 994677772}
   _blink: 1
@@ -19038,6 +19072,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: Bloquea botones
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 1332041541}
@@ -19724,6 +19759,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockShopButtonReaction
   _description: Bloquea botones
   _executeDirectly: 1
+  _interactable: 0
   _duration: 0
   _buttonsLocker:
   - {fileID: 699538035}
@@ -20409,6 +20445,104 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2003782437}
+  m_CullTransparentMesh: 1
+--- !u!1 &2006217249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2006217250}
+  - component: {fileID: 2006217253}
+  - component: {fileID: 2006217252}
+  - component: {fileID: 2006217251}
+  m_Layer: 5
+  m_Name: DialogueKey
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2006217250
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006217249}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 965725192}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 710.01, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!95 &2006217251
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006217249}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 56c33d8e63174a6419c008a41610e4e8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2006217252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006217249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 51f81a6152a1caa49ba18f9e6ae4628e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2006217253
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006217249}
   m_CullTransparentMesh: 1
 --- !u!1 &2008423293
 GameObject:
@@ -21480,7 +21614,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101014154}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21488,9 +21622,9 @@ RectTransform:
   - {fileID: 596202144}
   m_Father: {fileID: 1174440875}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -494}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -858, y: -405}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2105170901
