@@ -43,6 +43,10 @@ public class SceneController : MonoBehaviour
         foreach (GameGridManager manager in allManagers)
             manager.Init();
 
+        PerspectiveVoxelView perspectiveView = FindFirstObjectByType<PerspectiveVoxelView>();
+        if (perspectiveView != null)
+            perspectiveView.Init();
+
         if (SaveManager.Instance != null)
             SaveManager.Instance.LoadGrids(allManagers);
 

@@ -7,11 +7,6 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     public static GameManager Instance => _instance;
 
-    // Always resolve to the live singleton so every system (Buy, Place, UI)
-    // shares one inventory. The serialized field is only a last-resort fallback;
-    // a panel-baked Inventory that starts inactive must never become the source
-    // of truth, because its Awake (and thus singleton registration) won't run
-    // until the panel is first opened.
     private Inventory Inv
     {
         get
@@ -32,9 +27,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
-        // Establish the inventory singleton at scene start, before the player can
-        // buy anything, so purchases never spawn a second detached instance just
-        // because the inventory panel hasn't been opened yet.
         Inventory.EnsureExists().Init();
     }
     public void Buy(PlaceableItemData itemData)
@@ -42,7 +34,6 @@ public class GameManager : MonoBehaviour
         if (itemData == null)
             return;
 
-        // Check and deduct cost before buying
         if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(itemData.cost))
         {
             Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {itemData.prefab.name} (coste: {itemData.cost}€)");
@@ -68,7 +59,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Refund if inventory is full
             MoneyManager.Instance?.AddMoney(itemData.cost);
             Debug.Log("[GameManager] No has podido comprar el item, inventario lleno. Dinero devuelto.");
             HUDMessage.Instance?.ShowWarning("Inventario lleno. Dinero devuelto.");
@@ -107,28 +97,24 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        GridData gridData = activeManager.GetGridData;
-
-        for (int y = 0; y < gridData.height; y++)
+        for (int v = 0; v < activeManager.Height; v++)
         {
-            for (int x = 0; x < gridData.width; x++)
+            for (int u = 0; u < activeManager.Width; u++)
             {
-                if (gridData.GetType(x, y) != CellType.Empty) continue;
+                if (!activeManager.IsCellEmpty(u, v)) continue;
 
-                Vector3 localPos = new Vector3(x, 0f, y) + itemData.placementOffset;
-                Vector3 worldPos = activeManager.transform.TransformPoint(localPos);
+                Vector3 worldPos = activeManager.GetWorldPosition(u, v, itemData.placementOffset);
 
                 GameObject obj = Instantiate(itemData.prefab, worldPos, activeManager.transform.rotation, folder);
                 PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
 
-                gridData.SetType(x, y, CellType.Occupied);
-                gridData.SetItem(x, y, itemData);
+                activeManager.SaveGrid(u, v, -1, -1, itemData);
 
                 placeable.SetGridManager(activeManager);
-                placeable.InstancePlaceableObjectCreated(x, y);
+                placeable.InstancePlaceableObjectCreated(u, v);
                 placeable.Init(itemData);
 
-                activeManager.SetPlaceableAt(x, y, placeable);
+                activeManager.SetPlaceableAt(u, v, placeable);
                 inv.RemoveItem(posX, posY);
 
                 if (itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)

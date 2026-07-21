@@ -1706,7 +1706,7 @@ GameObject:
   - component: {fileID: 166612229}
   - component: {fileID: 166612228}
   m_Layer: 0
-  m_Name: SWallGridManager
+  m_Name: NWallGridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1724,9 +1724,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: ce37d692c4588f746b76c90481c7ab33, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 1
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &166612229
 Transform:
   m_ObjectHideFlags: 0
@@ -3445,9 +3445,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 3dcbc45132361ad4faa2db9f845cb1b9, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 3
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &408479833
 Transform:
   m_ObjectHideFlags: 0
@@ -5099,6 +5099,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600829427}
   m_CullTransparentMesh: 1
+--- !u!1 &604479430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 604479432}
+  m_Layer: 0
+  m_Name: PerspectiveGridManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &604479432
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604479430}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.12, y: 0.35, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631084601
 GameObject:
   m_ObjectHideFlags: 0
@@ -6403,9 +6434,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 06f0d4e6119282d46a4d6517ba3c3e46, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 2
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &758461038
 Transform:
   m_ObjectHideFlags: 0
@@ -6415,7 +6446,7 @@ Transform:
   m_GameObject: {fileID: 758461036}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 12.391, y: 3.45, z: -5.22}
+  m_LocalPosition: {x: 12.391, y: 3.45, z: 1.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7159,7 +7190,7 @@ MonoBehaviour:
   _transitionSpeed: 3
   _pivotPerspective: {fileID: 1761159521}
   _pivotTopDown: {fileID: 1744025837}
-  _pivotWallSouth: {fileID: 1522278534}
+  _pivotWallNorth: {fileID: 1522278534}
   _pivotWallEast: {fileID: 843317659}
   _pivotWallWest: {fileID: 499276027}
 --- !u!4 &833304418
@@ -10380,7 +10411,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _floorGridManager: {fileID: 1471377500}
-  _wallSouthGridManager: {fileID: 166612228}
+  _wallNorthGridManager: {fileID: 166612228}
   _wallEastGridManager: {fileID: 758461037}
   _wallWestGridManager: {fileID: 408479832}
   _cameraController: {fileID: 833304417}
@@ -15122,9 +15153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 0
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 0
 --- !u!4 &1471377501
 Transform:
   m_ObjectHideFlags: 0
@@ -15708,7 +15739,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1522278534}
   m_Layer: 0
-  m_Name: Pivot_WallSouth
+  m_Name: Pivot_WallNorth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19107,7 +19138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d1aa31d2753854890a978e1bc9f42e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _inventory: {fileID: 0}
+  _inventory: {fileID: 1334428759}
   _gridController: {fileID: 1086291170}
 --- !u!4 &1861931220
 Transform:
@@ -24201,6 +24232,7 @@ SceneRoots:
   - {fileID: 833304418}
   - {fileID: 1224248946}
   - {fileID: 1471377501}
+  - {fileID: 604479432}
   - {fileID: 166612229}
   - {fileID: 758461038}
   - {fileID: 408479833}

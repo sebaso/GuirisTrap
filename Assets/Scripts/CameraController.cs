@@ -3,24 +3,31 @@ public enum CameraView
 {
     Perspective,
     TopDown,
-    WallSouth,
+    WallNorth,
     WallEast,
     WallWest
 }
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Camera _mainCamera;
-    [SerializeField] private float _transitionSpeed = 3f;
+    [SerializeField] 
+    private Camera _mainCamera;
+    [SerializeField] 
+    private float _transitionSpeed = 3f;
     private Vector3 _velocityPos;
     public System.Action<CameraView> OnViewChanged;
 
     [Header("Pivots")]
-    [SerializeField] private Transform _pivotPerspective;
-    [SerializeField] private Transform _pivotTopDown;
-    [SerializeField] private Transform _pivotWallSouth;
-    [SerializeField] private Transform _pivotWallEast;
-    [SerializeField] private Transform _pivotWallWest;
+    [SerializeField] 
+    private Transform _pivotPerspective;
+    [SerializeField] 
+    private Transform _pivotTopDown;
+    [SerializeField] 
+    private Transform _pivotWallNorth;
+    [SerializeField] 
+    private Transform _pivotWallEast;
+    [SerializeField] 
+    private Transform _pivotWallWest;
 
     private Transform _currentTarget;
     private CameraView _currentView = CameraView.Perspective;
@@ -55,8 +62,8 @@ public class CameraController : MonoBehaviour
             case CameraView.TopDown:     
                 _currentTarget = _pivotTopDown;
                 break;
-            case CameraView.WallSouth:   
-                _currentTarget = _pivotWallSouth;
+            case CameraView.WallNorth:   
+                _currentTarget = _pivotWallNorth;
                 break;
             case CameraView.WallEast:    
                 _currentTarget = _pivotWallEast;
@@ -74,7 +81,7 @@ public class CameraController : MonoBehaviour
 
     public void CycleWalls(int direction)
     {
-        CameraView[] walls = { CameraView.WallEast, CameraView.WallSouth, CameraView.WallWest };
+        CameraView[] walls = { CameraView.WallEast, CameraView.WallNorth, CameraView.WallWest };
         int currentIndex = System.Array.IndexOf(walls, _currentView);
 
         if (currentIndex == -1) currentIndex = 0;
@@ -86,7 +93,7 @@ public class CameraController : MonoBehaviour
     public CameraView CurrentView => _currentView;
     public void SetPerspectiveView() => SetView(CameraView.Perspective);
     public void SetTopDownView()     => SetView(CameraView.TopDown);
-    public void SetWallView()        => SetView(CameraView.WallSouth);
+    public void SetWallView()        => SetView(CameraView.WallNorth);
     public void NextWall()     => CycleWalls(+1);
     public void PreviousWall() => CycleWalls(-1);
 }

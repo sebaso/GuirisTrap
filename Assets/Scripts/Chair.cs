@@ -17,7 +17,6 @@ public class Chair : MonoBehaviour
     public bool IsBeingSatOn => Occupant != null;
 
     private PlaceableObject _placeable;
-    private bool _wasStoraged;
 
     void Awake()
     {
@@ -29,34 +28,19 @@ public class Chair : MonoBehaviour
 
     void Start()
     {
-        if (_placeable == null || !_placeable.Storaged)
+        if (_placeable == null)
         {
             IsPlaced = true;
-            _wasStoraged = false;
         }
         else
         {
             IsPlaced = false;
-            _wasStoraged = true;
         }
     }
 
     void Update()
     {
         if (_placeable == null) return;
-
-        bool isCurrentlyStored = _placeable.Storaged;
-
-        if (isCurrentlyStored && !_wasStoraged)
-        {
-            IsPlaced = false;
-            _wasStoraged = true;
-        }
-        else if (!isCurrentlyStored && _wasStoraged)
-        {
-            IsPlaced = true;
-            _wasStoraged = false;
-        }
     }
 
     // while carried, don't count as a seat

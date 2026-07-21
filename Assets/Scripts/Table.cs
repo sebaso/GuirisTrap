@@ -49,7 +49,6 @@ public class Table : MonoBehaviour
     public bool IsPlaced { get; private set; }
 
     private PlaceableObject _placeable;
-    private bool _wasStoraged;
     private bool _isCarried;
 
     void Awake()
@@ -65,16 +64,14 @@ public class Table : MonoBehaviour
     {
         _placeable = GetComponent<PlaceableObject>();
         RestaurantManager.Instance?.RegisterTable(this);
-        if (_placeable == null || !_placeable.Storaged)
+        if (_placeable == null)
         {
             IsPlaced = true;
-            _wasStoraged = false;
             RestaurantManager.Instance?.TablePlaced(this);
         }
         else
         {
             IsPlaced = false;
-            _wasStoraged = true;
         }
     }
 
@@ -84,23 +81,6 @@ public class Table : MonoBehaviour
         {
             _nextScanTime = Time.time + SCAN_INTERVAL;
             ScanForChairs();
-        }
-        if (_placeable != null)
-        {
-            bool isCurrentlyStored = _placeable.Storaged;
-
-            if (isCurrentlyStored && !_wasStoraged)
-            {
-                IsPlaced = false;
-                _wasStoraged = true;
-                RestaurantManager.Instance?.TableStored(this);
-            }
-            else if (!isCurrentlyStored && _wasStoraged)
-            {
-                IsPlaced = true;
-                _wasStoraged = false;
-                RestaurantManager.Instance?.TablePlaced(this);
-            }
         }
     }
 

@@ -27,16 +27,13 @@ public class PlaceableObject : MonoBehaviour
     private GameGridManager _gridManager;
     public GameGridManager GridManager => _gridManager;
 
-    private bool _isStoraged = false;
-    public bool Storaged => _isStoraged;
-
     private PlaceableItemData _itemData;
     private bool _isValid = true;
     public bool IsValid => _isValid;
 
     void Awake()
     {
-        _gridManager = FindFirstObjectByType<GameGridManager>();
+        _gridManager = FindAnyObjectByType<GameGridManager>();
     }
 
     void Start()
@@ -59,7 +56,6 @@ public void Init(PlaceableItemData itemData)
     void Update()
     {
         MovePlaceableObject();
-        SetStorage();
     }
 
     public void SetGridManager(GameGridManager gridManager)
@@ -112,13 +108,6 @@ public void Init(PlaceableItemData itemData)
     {
         _actualCellX = _cellOccupiedAtStartX;
         _actualCellY = _cellOccupiedAtStartY;
-    }
-
-    public void SetStorage()
-    {
-        if (_gridManager == null) return;
-
-        _isStoraged = _gridManager.GetGridData.GetIsWarehouse(_cellOccupiedAtStartX, _cellOccupiedAtStartY);
     }
 
     public bool IsSelected() { return _isSelected; }

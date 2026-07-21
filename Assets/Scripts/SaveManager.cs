@@ -12,36 +12,25 @@ public class SaveManager : MonoBehaviour
 
     public int CurrentDay => _data.day;
 
-    /// <summary>Saldo guardado en disco</summary>
     public int SavedMoney => _data.money;
     public ItemCountData[] GetOwnedItems() => _data.ownedItems;
 
-    //  Sistema de semanas / reputación (los REGISTRA WeekManager,
-    //  aquí solo viven los datos para persistirse con el resto del save)
-
-    /// <summary>Rating de estrellas (0-5, en cuartos). Persiste en el guardado.</summary>
     public float Stars
     {
         get => _data.stars;
         set => _data.stars = Mathf.Clamp(value, 0f, 5f);
     }
 
-    /// <summary>Notas (0-5) de los días de la semana en curso. Se vacía al cerrar semana.</summary>
     public System.Collections.Generic.List<int> WeekGrades
     {
         get
         {
-            // Saves antiguos (o recién deserializados) pueden traerla a null.
             if (_data.weekGrades == null)
                 _data.weekGrades = new System.Collections.Generic.List<int>();
             return _data.weekGrades;
         }
     }
 
-    /// <summary>
-    /// Último día jugado (1-based) cuya nota ya se registró. Evita duplicar la
-    /// nota si el jugador reinicia el día sin pasar al siguiente.
-    /// </summary>
     public int LastGradedDay
     {
         get => _data.lastGradedDay;
@@ -70,30 +59,24 @@ public class SaveManager : MonoBehaviour
         WriteFile();
     }
 
+    // Todos los GameGridManager de la escena comparten el mismo VoxelGridData,
+    // así que basta con leerlo de cualquiera de ellos (el primero) para cargar
+    // el estado completo del restaurante.
     public void LoadGrids(GameGridManager[] managers)
     {
-        if (_data.grids == null) return;
+        if (_data.cells == null || managers.Length == 0) return;
 
-        foreach (var gridSave in _data.grids)
+        VoxelGridData voxelData = managers[0].GetGridData;
+
+        foreach (var cellSave in _data.cells)
         {
-            GameGridManager manager = System.Array.Find(managers, m => m.GetGridData.name == gridSave.gridName);
-            if (manager == null) continue;
+            PlaceableItemData item = System.Array.Find(_allItems, i => i.name == cellSave.itemName);
+            if (item == null) continue;
 
-            GridData gridData = manager.GetGridData;
-
-            foreach (var cell in gridSave.cells)
-            {
-                PlaceableItemData item = System.Array.Find(_allItems, i => i.name == cell.itemName);
-                if (item == null) continue;
-
-                gridData.SetType(cell.x, cell.y, CellType.Occupied);
-                gridData.SetItem(cell.x, cell.y, item);
-                gridData.SetRotation(cell.x, cell.y, cell.rotation);
-            }
+            voxelData.SetType(cellSave.x, cellSave.y, cellSave.z, CellType.Occupied);
+            voxelData.SetItem(cellSave.x, cellSave.y, cellSave.z, item);
+            voxelData.SetRotation(cellSave.x, cellSave.y, cellSave.z, cellSave.rotation);
         }
-        // El dinero lo gestiona MoneyManager (DontDestroyOnLoad). No lo
-        // sobrescribimos aquí al cargar las grids: el saldo vivo ya incluye
-        // las ganancias del día y viaja entre escenas por sí solo.
     }
 
     private void Load()
@@ -102,8 +85,6 @@ public class SaveManager : MonoBehaviour
         try
         {
             _data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
-                    Debug.Log("[SaveManager] OwnedItemsManager.Instance = " + OwnedItemsManager.Instance);
-
             OwnedItemsManager.Instance?.LoadFromSave(_data.ownedItems);
         }
         catch
@@ -122,28 +103,30 @@ public class SaveManager : MonoBehaviour
         OwnedItemsManager.Instance?.LoadFromSave(null);
         Debug.Log("[SaveManager] Save eliminado: " + SavePath);
     }
+
     private void SaveGridsFromManagers()
     {
         GameGridManager[] managers = FindObjectsByType<GameGridManager>(FindObjectsSortMode.None);
-        _data.grids = new GridSaveData[managers.Length];
+        if (managers.Length == 0) return;
 
-        for (int i = 0; i < managers.Length; i++)
+        // Todos apuntan al mismo asset, con leer uno basta.
+        VoxelGridData voxelData = managers[0].GetGridData;
+        var cells = new System.Collections.Generic.List<CellSaveData>();
+
+        for (int z = 0; z < voxelData.depth; z++)
         {
-            GridData gridData = managers[i].GetGridData;
-            var cells = new System.Collections.Generic.List<CellSaveData>();
-
-            for (int y = 0; y < gridData.height; y++)
+            for (int y = 0; y < voxelData.height; y++)
             {
-                for (int x = 0; x < gridData.width; x++)
+                for (int x = 0; x < voxelData.width; x++)
                 {
-                    GridCell cell = gridData.GetCell(x, y);
+                    GridCell cell = voxelData.GetCell(x, y, z);
                     if (cell.type != CellType.Occupied || cell.item == null) continue;
-                    cells.Add(new CellSaveData { x = x, y = y, itemName = cell.item.name, rotation = cell.rotation });
+                    cells.Add(new CellSaveData { x = x, y = y, z = z, itemName = cell.item.name, rotation = cell.rotation });
                 }
             }
-
-            _data.grids[i] = new GridSaveData { gridName = gridData.name, cells = cells.ToArray() };
         }
+
+        _data.cells = cells.ToArray();
     }
 
     public void ForceSave()
@@ -153,49 +136,31 @@ public class SaveManager : MonoBehaviour
         WriteFile();
     }
 
-    /// <summary>
-    /// Persiste únicamente el dinero actual del MoneyManager en el archivo de
-    /// guardado, sin avanzar el día ni volver a serializar las grids. Se usa al
-    /// terminar el día para que el dinero ganado quede guardado en disco y llegue
-    /// a la PreparationScene.
-    /// (También persiste, como todo WriteFile, las notas de la semana y las
-    /// estrellas que WeekManager haya registrado justo antes.)
-    /// </summary>
     public void SaveMoney()
     {
         _data.money = MoneyManager.Instance != null ? MoneyManager.Instance.CurrentMoney : _data.money;
         WriteFile();
     }
 
-    /// <summary>
-    /// Escribe en disco el contenido actual de <c>_data</c> tal cual, sin
-    /// sincronizar con MoneyManager ni con las grids de la escena. Pensado para
-    /// persistir ediciones manuales hechas desde el inspector.
-    /// </summary>
     public void WriteCurrentData() => WriteFile();
 
-    /// <summary>
-    /// Reinicia la partida: vacía los datos en memoria y borra el archivo de
-    /// guardado del disco si existe.
-    /// </summary>
     public void ResetSave()
     {
         _data = new SaveData();
         if (File.Exists(SavePath)) File.Delete(SavePath);
 
-        // Las mesas/sillas colocadas viven en el ScriptableObject GridData, no en
-        // save.json, así que limpiamos también las grids para que "resetear"
-        // borre de verdad el layout.
+        // Las mesas/sillas colocadas viven en el VoxelGridData (ScriptableObject),
+        // no en save.json. Como todos los managers comparten el mismo asset, con
+        // limpiar uno basta; se llama en todos por si ClearPlacedItems hace algo
+        // adicional específico de la vista.
         foreach (var manager in FindObjectsByType<GameGridManager>(FindObjectsSortMode.None))
             manager.ClearPlacedItems();
 
         Debug.Log($"[SaveManager] Save reset → {SavePath}");
     }
 
-    /// <summary>Ruta absoluta del archivo de guardado en disco.</summary>
     public string SaveFilePath => SavePath;
 
-    /// <summary>True si existe un archivo de guardado en disco.</summary>
     public bool HasSaveFile => File.Exists(SavePath);
 
     private void WriteFile()
@@ -212,26 +177,19 @@ public class SaveManager : MonoBehaviour
         public int day;
         public int money;
 
-        // --- Sistema de semanas / reputación ---
-        public float stars;                                          // Rating 0-5 (en cuartos).
-        public int lastGradedDay = -1;                               // Último día jugado ya puntuado.
-        public System.Collections.Generic.List<int> weekGrades       // Notas (0-5) de la semana en curso.
+        public float stars;
+        public int lastGradedDay = -1;
+        public System.Collections.Generic.List<int> weekGrades
             = new System.Collections.Generic.List<int>();
 
-        public GridSaveData[] grids;
-        public ItemCountData[] ownedItems;
-    }
-    [System.Serializable]
-    public class GridSaveData
-    {
-        public string gridName;
         public CellSaveData[] cells;
+        public ItemCountData[] ownedItems;
     }
 
     [System.Serializable]
     public class CellSaveData
     {
-        public int x, y;
+        public int x, y, z;
         public string itemName;
         public Quaternion rotation;
     }

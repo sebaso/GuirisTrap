@@ -9,12 +9,20 @@ public class GridController : MonoBehaviour
     [SerializeField] 
     private LayerMask _floorMask;
     [Header("Grid Managers")]
-    [SerializeField] private GameGridManager _floorGridManager;
-    [SerializeField] private GameGridManager _wallSouthGridManager;
-    [SerializeField] private GameGridManager _wallEastGridManager;
-    [SerializeField] private GameGridManager _wallWestGridManager;
+    [SerializeField] 
+    private GameGridManager _floorGridManager;
+    [SerializeField] 
+    private GameGridManager _wallNorthGridManager;
+    [SerializeField] 
+    private GameGridManager _wallEastGridManager;
+    [SerializeField] 
+    private GameGridManager _wallWestGridManager;
     [Header("Camera Controller")]
-    [SerializeField] private CameraController _cameraController;
+    [SerializeField] 
+    private CameraController _cameraController;
+    [Header("Overview 3D (solo visual)")]
+    [SerializeField] 
+    private PerspectiveVoxelView _perspectiveVoxelView;
     private GameGridManager _activeGridManager;
     private bool _hasObjectSelected = false;
     private PlaceableObject _placeableObject;
@@ -22,11 +30,12 @@ void Start()
 {
     _cameraController.OnViewChanged += OnCameraViewChanged;
     
-    if (_wallSouthGridManager != null) _wallSouthGridManager.SetGridVisible(false);
+    if (_wallNorthGridManager != null) _wallNorthGridManager.SetGridVisible(false);
     if (_wallEastGridManager != null)  _wallEastGridManager.SetGridVisible(false);
     if (_wallWestGridManager != null)  _wallWestGridManager.SetGridVisible(false);
+    if (_perspectiveVoxelView != null) _perspectiveVoxelView.SetVisible(false);
 
-    SetActiveGrid(_floorGridManager);
+    OnCameraViewChanged(_cameraController.CurrentView);
 }
     void Update()
     {
@@ -47,15 +56,20 @@ void Start()
     {
         GameGridManager targetManager = GetManagerForView(view);
         SetActiveGrid(targetManager);
+
+        if (_perspectiveVoxelView != null)
+            _perspectiveVoxelView.SetVisible(view == CameraView.Perspective);
     }
     private GameGridManager GetManagerForView(CameraView view)
     {
         switch (view)
         {
-            case CameraView.WallSouth: return _wallSouthGridManager;
+            case CameraView.TopDown:   return _floorGridManager;
+            case CameraView.WallNorth: return _wallNorthGridManager;
             case CameraView.WallEast:  return _wallEastGridManager;
             case CameraView.WallWest:  return _wallWestGridManager;
-            default:                   return _floorGridManager;
+            // Perspective es solo overview visual, no hay grid editable activo aquí.
+            default:                   return null;
         }
     }
     private void SetActiveGrid(GameGridManager newManager)
@@ -63,16 +77,18 @@ void Start()
         if (_activeGridManager != null)
             _activeGridManager.SetGridVisible(false);
 
+        // Revertir ANTES de reasignar: RevertObject usa _activeGridManager, y
+        // debe ser el manager donde estaba el objeto, no el nuevo (que además
+        // puede ser null si vamos a Perspective).
+        if (_placeableObject != null)
+        {
+            RevertObject();
+        }
+
         _activeGridManager = newManager;
 
         if (_activeGridManager != null)
             _activeGridManager.SetGridVisible(true);
-
-        if (_placeableObject != null)
-        {
-            Debug.Log("Lo REVERTEO");
-            RevertObject();
-        }
     }
     public PlaceableSurface GetActiveSurface()
     {
@@ -82,9 +98,7 @@ void Start()
     private void SelectPlaceableObject()
     {
         if (_cameraController.IsTransitioning) return;
-        // Don't let a click that lands on UI (e.g. buying/placing from an inventory
-        // slot) fall through to the world and grab a placeable behind the panel.
-        // Without this, placing an item immediately re-grabs an object underneath.
+        if (_activeGridManager == null) return; // Perspective: solo overview, no se puede seleccionar/colocar
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(0) && !_hasObjectSelected)
         {
@@ -96,7 +110,6 @@ void Start()
             {
                 if (hit.GetItemData().IsCompatibleWith(_activeGridManager.Surface))
                 {
-                    // Can't grab a table while it still has chairs against it — take the chairs out first.
                     if (hit.GetItemData().category == PlaceableCategory.Table &&
                         _activeGridManager.HasAdjacentChairs(hit.CurrentCellX, hit.CurrentCellY))
                     {
@@ -129,21 +142,19 @@ void Start()
     {
         if (placeable == null) return;
 
-        int x = placeable.CurrentCellX;
-        int y = placeable.CurrentCellY;
-        GridData gridData = _activeGridManager.GetGridData;
+        int u = placeable.CurrentCellX;
+        int v = placeable.CurrentCellY;
 
-        if (x < 0 || y < 0 || x >= gridData.width || y >= gridData.height)
+        if (!_activeGridManager.IsWithinBounds(u, v))
         {
             Destroy(placeable.gameObject);
             return;
         }
 
-        gridData.SetType(x, y, CellType.Empty);
-        gridData.SetItem(x, y, null);
+        _activeGridManager.ClearCell(u, v);
 
-        if (_activeGridManager.GetPlaceableAt(x, y) != null)
-            _activeGridManager.SetPlaceableAt(x, y, null);
+        if (_activeGridManager.GetPlaceableAt(u, v) != null)
+            _activeGridManager.SetPlaceableAt(u, v, null);
 
         Destroy(placeable.gameObject);
     }
@@ -153,7 +164,6 @@ void Start()
         if (_placeableObject == null || !_hasObjectSelected || !_placeableObject.IsSelected()) return;
 
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        Debug.Log(Physics.Raycast(ray, out RaycastHit hito, 1000f, _floorMask));
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, _floorMask))
         {
             _placeableObject.transform.position = hit.point;
@@ -171,13 +181,13 @@ void Start()
             return;
         }
 
-        int x = _placeableObject.CurrentCellX;
-        int y = _placeableObject.CurrentCellY;
+        int u = _placeableObject.CurrentCellX;
+        int v = _placeableObject.CurrentCellY;
 
         PlaceableCategory category = _placeableObject.GetItemData().category;
-        if (CanPlace(x, y))
+        if (CanPlace(u, v))
         {
-            PlaceObject(x, y);
+            PlaceObject(u, v);
             if (category == PlaceableCategory.Table || category == PlaceableCategory.Chair)
                 _activeGridManager.ValidateAllChairs();
         }
@@ -188,37 +198,25 @@ void Start()
 
         _activeGridManager.ResetVisualGrid();
     }
-    private bool CanPlace(int x, int y)
+    private bool CanPlace(int u, int v)
     {
-        GridData gridData = _activeGridManager.GetGridData;
-        Debug.Log("X: " + x + " Y: " + y + " GRIDDATA.WITH: " + gridData.width + " GRIDDATA.HEIGHT: " + gridData.height);
-        if (x < 0 || y < 0 || x >= gridData.width || y >= gridData.height)
-        {
+        if (!_activeGridManager.IsWithinBounds(u, v))
             return false;
-        }
-        Debug.Log("DE MOMENTO CANPLACE");
-        bool isStartCell = false;
 
-        if (x == _placeableObject.StartCellX && y == _placeableObject.StartCellY) {   isStartCell = true; }
+        bool isStartCell = (u == _placeableObject.StartCellX && v == _placeableObject.StartCellY);
 
-        CellType cellType = gridData.GetType(x, y);
+        if (!_activeGridManager.IsCellEmpty(u, v) && !isStartCell)
+            return false;
 
-        if (cellType != CellType.Empty && !isStartCell) {   return false; }
-
-        bool canPlace = _activeGridManager.CanPlaceItem(x, y, _placeableObject.StartCellX, _placeableObject.StartCellY, _placeableObject.GetItemData());
-        Debug.Log("¿CAN PLACE FINALMENTE?" + canPlace);
-        if (!canPlace) { return false; }
-
-        return true;
+        return _activeGridManager.CanPlaceItem(u, v, _placeableObject.StartCellX, _placeableObject.StartCellY, _placeableObject.GetItemData());
     }
-    private void PlaceObject(int x, int y)
+    private void PlaceObject(int u, int v)
     {
         PlaceableItemData item = _placeableObject.GetItemData();
 
-        Vector3 localPos = new Vector3(x, 0f, y) + item.placementOffset;
-        Vector3 worldPos = _activeGridManager.transform.TransformPoint(localPos);
+        Vector3 worldPos = _activeGridManager.GetWorldPosition(u, v, item.placementOffset);
         Quaternion targetRot = item.category == PlaceableCategory.Chair
-            ? _activeGridManager.GetChairRotation(x, y)
+            ? _activeGridManager.GetChairRotation(u, v)
             : _activeGridManager.transform.rotation;
 
         _placeableObject.GetComponent<Collider>().enabled = true;
@@ -226,7 +224,7 @@ void Start()
         _hasObjectSelected = false;
         _placeableObject.Select(false);
 
-        _activeGridManager.SaveGrid(x, y,
+        _activeGridManager.SaveGrid(u, v,
             _placeableObject.StartCellX, _placeableObject.StartCellY, item, targetRot);
 
         _placeableObject.IsPlacedAtCell();
@@ -240,9 +238,8 @@ void Start()
 
         PlaceableItemData item = _placeableObject.GetItemData();
 
-        Vector3 localPos = new Vector3(_placeableObject.StartCellX, 0f, _placeableObject.StartCellY) 
-                        + item.placementOffset;
-        Vector3 worldPos = _activeGridManager.transform.TransformPoint(localPos);
+        Vector3 worldPos = _activeGridManager.GetWorldPosition(
+            _placeableObject.StartCellX, _placeableObject.StartCellY, item.placementOffset);
 
         _placeableObject.transform.position = worldPos;
         _placeableObject.RestartCell();

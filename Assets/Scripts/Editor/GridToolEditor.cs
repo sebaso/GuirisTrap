@@ -1,251 +1,190 @@
-using System;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Overlays;
 using UnityEngine;
-
 
 public class GridToolEditor : EditorWindow
 {
     #region Variables
-    private int _fieldWidth = 5;
-    private int _fieldHeight = 5;
-    private int _gridWidth;
-    private int _gridHeight;
-    
-    private int _fieldWarehouseStartY = 9;
-    private int _fieldWarehouseEndY = 9;
+    private int _fieldWidth = 12;
+    private int _fieldHeightVoxel = 3;
+    private int _fieldDepth = 7;
 
+    private GridView _activeView = GridView.Floor;
     private GridCell[,] _editorGrid;
+    private Vector2Int _viewSize;
 
-    private GridData gridData;
+    private VoxelGridData _voxelData;
     private Vector2 _scrollbar;
-
     #endregion
+
     #region Editor
     [MenuItem("Tools/Grid Generator")]
     public static void Open()
     {
         GetWindow<GridToolEditor>("Grid Generator");
     }
-    //  Método que se encarga de crear el editor y del flujo del programa
+
     private void OnGUI()
     {
-        GUILayout.Label("Grid Settings", EditorStyles.boldLabel);
+        GUILayout.Label("Voxel Grid Settings", EditorStyles.boldLabel);
 
-        _fieldWidth = EditorGUILayout.IntField("Widht", _fieldWidth);
-        _fieldHeight = EditorGUILayout.IntField("Height", _fieldHeight);
-
-        _fieldWarehouseStartY = EditorGUILayout.IntField("Start Warehouse Y",_fieldWarehouseStartY);
-        _fieldWarehouseEndY = EditorGUILayout.IntField("End Warehouse Y",_fieldWarehouseEndY);
+        _fieldWidth = EditorGUILayout.IntField("Width (X)", _fieldWidth);
+        _fieldHeightVoxel = EditorGUILayout.IntField("Height (Y)", _fieldHeightVoxel);
+        _fieldDepth = EditorGUILayout.IntField("Depth (Z)", _fieldDepth);
 
         GUILayout.Space(10);
 
-        gridData= (GridData)EditorGUILayout.ObjectField(
-            "Grid Data",
-            gridData,
-            typeof(GridData),
-            false
-        );
+        _voxelData = (VoxelGridData)EditorGUILayout.ObjectField(
+            "Voxel Grid Data", _voxelData, typeof(VoxelGridData), false);
 
-        if(GUILayout.Button("Load Grid"))
+        if (GUILayout.Button("Create New Voxel Grid"))
         {
-            if(gridData == null)
+            if (_voxelData == null)
+                Debug.LogWarning("Asigna un VoxelGridData antes de crear la matriz");
+            else if (_fieldWidth > 0 && _fieldHeightVoxel > 0 && _fieldDepth > 0)
             {
-                Debug.LogWarning("No GridData assigned");
-                return;
-            }
-            LoadGridFromData(gridData);
-            Repaint();
-        }
-        
-        if(GUILayout.Button("Create New Grid"))
-        {
-            if(_fieldWidth > 0 && _fieldHeight > 0)
-            {
-                _gridWidth =_fieldWidth;
-                _gridHeight = _fieldHeight;
-                CreateGrid();
+                CreateVoxelData();
+                LoadViewFromData();
                 Repaint();
             }
         }
-        if (GUILayout.Button("Erase Grid"))
+
+        GUILayout.Space(10);
+
+        EditorGUI.BeginDisabledGroup(_voxelData == null);
+
+        GridView newView = (GridView)EditorGUILayout.EnumPopup("Vista", _activeView);
+        if (newView != _activeView)
         {
-            EraseGrid();
+            if (_editorGrid != null) SaveView();
+            _activeView = newView;
+            LoadViewFromData();
         }
+
+        if (GUILayout.Button("Reload Vista from Data"))
+        {
+            LoadViewFromData();
+            Repaint();
+        }
+
+        EditorGUI.EndDisabledGroup();
+
         GUILayout.Space(10);
 
         _scrollbar = EditorGUILayout.BeginScrollView(_scrollbar);
-
-        GUILayout.Label("Grid", EditorStyles.boldLabel);
-
+        GUILayout.Label($"Grid — {_activeView}", EditorStyles.boldLabel);
         GUILayout.Space(10);
 
         DrawGrid();
 
         GUILayout.Space(10);
-        if(GUILayout.Button("Empty Occuped Grid"))
-        {
-        if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
-            {
-                EmptyOccupiedGrid(gridData);
-                Repaint();
-            }        
-        }
-        if(GUILayout.Button("Save Grid"))
-        {
-            if(_editorGrid != null && _editorGrid.Length > 0 && _editorGrid.GetLength(0) > 0)
-            {
-                SaveGrid(gridData);
-            }
-        }
+
+        if (GUILayout.Button("Empty Occupied (vista actual)") && _editorGrid != null)
+            EmptyOccupiedGrid();
+
+        if (GUILayout.Button("Save Vista") && _editorGrid != null)
+            SaveView();
+
         EditorGUILayout.EndScrollView();
     }
     #endregion
-    #region Grid
-    //  Genera la matriz en el editor con los valores proporcionados por el usuario
-    private void CreateGrid()
-    {
-        _editorGrid = new GridCell[_gridWidth, _gridHeight];
 
-        for (int y = _gridHeight - 1; y >= 0; y--)
-        {
-            for (int x = 0; x < _gridWidth; x++)
-            {
-                _editorGrid[x, y] = new GridCell();
-            }
-        }
-    }
-    //  Guarda el grid en el scriptable object
-    private void SaveGrid(GridData data)
+    #region Grid
+    private void CreateVoxelData()
     {
-        data.width = _gridWidth;
-        data.height = _gridHeight;
-        data.gridWarehouseStartY = _fieldWarehouseStartY;
-        data.gridWarehouseEndY = _fieldWarehouseEndY;
-        data._cells = new GridCell [_gridWidth * _gridHeight];
-        for (int i = 0; i < data._cells.Length; i++)
-        {
-            data._cells[i] = new GridCell();
-        }
-        for(int y = 0; y < _gridHeight; y++)
-        {
-            for(int x = 0; x < _gridWidth; x++)
-            {
-                if(y >= _fieldWarehouseStartY && y <= _fieldWarehouseEndY)
-                {
-                    data.SetIsWarehouse(x,y,true);
-                }
-                data.SetType(x,y,_editorGrid[x,y].type);
-            }
-        }
-        EditorUtility.SetDirty(data);
+        _voxelData.width = _fieldWidth;
+        _voxelData.height = _fieldHeightVoxel;
+        _voxelData.depth = _fieldDepth;
+
+        int total = _fieldWidth * _fieldHeightVoxel * _fieldDepth;
+        _voxelData._cells = new GridCell[total];
+        for (int i = 0; i < total; i++)
+            _voxelData._cells[i] = new GridCell();
+
+        EditorUtility.SetDirty(_voxelData);
         AssetDatabase.SaveAssets();
     }
-    //  Carga en el visualizador el grid
-    private void LoadGridFromData(GridData data)
-    {
-        _gridWidth = data.width;
-        _gridHeight = data.height;
-        _fieldWidth = _gridWidth;
-        _fieldHeight = _gridHeight;
-        _fieldWarehouseStartY = data.gridWarehouseStartY;
-        _fieldWarehouseEndY = data.gridWarehouseEndY;
-        _editorGrid = new GridCell[_gridWidth, _gridHeight];
 
-        for(int y = 0; y < _gridHeight; y++)
+    private void LoadViewFromData()
+    {
+        if (_voxelData == null || _voxelData._cells == null) return;
+
+        _viewSize = GridViewProjection.ViewSize(_activeView, _voxelData);
+        _editorGrid = new GridCell[_viewSize.x, _viewSize.y];
+
+        for (int v = 0; v < _viewSize.y; v++)
         {
-            for(int x = 0; x < _gridWidth; x++)
+            for (int u = 0; u < _viewSize.x; u++)
             {
-                _editorGrid[x,y] = new GridCell
-                {
-                    type = data.GetType(x,y),
-                    isWarehouse = data.GetIsWarehouse(x,y)
-                };
+                Vector3Int voxel = GridViewProjection.ToVoxel(_activeView, u, v, _voxelData);
+                GridCell real = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
+                _editorGrid[u, v] = new GridCell { type = real.type, isEntrance = real.isEntrance };
             }
         }
     }
-    // Crea cada botón de la matriz
-    private void DrawCell(int x, int y)
-    {
-        GridCell cell = _editorGrid[x, y];
 
-        GUIStyle style = new GUIStyle(GUI.skin.button);
-        style.fixedHeight = 40;
-        style.fixedWidth = 40;
-        string label = "E";
-        if(cell.type == CellType.Blocked)
+    private void SaveView()
+    {
+        for (int v = 0; v < _viewSize.y; v++)
         {
-            label = "B";
-        }else if(cell.type == CellType.Empty)
-        {
-            label = "E";
+            for (int u = 0; u < _viewSize.x; u++)
+            {
+                Vector3Int voxel = GridViewProjection.ToVoxel(_activeView, u, v, _voxelData);
+                _voxelData.SetType(voxel.x, voxel.y, voxel.z, _editorGrid[u, v].type);
+                _voxelData.SetIsEntrance(voxel.x, voxel.y, voxel.z, _editorGrid[u, v].isEntrance);
+            }
         }
-        else if(cell.type == CellType.Occupied)
-        {
-            label = "O";
-        }
-        if(GUILayout.Button(label, style))
-        {
-            ShowOptionsMenu(cell);
-        }
+        EditorUtility.SetDirty(_voxelData);
+        AssetDatabase.SaveAssets();
     }
-    // Dibuja la matriz
+
+    private void DrawCell(int u, int v)
+    {
+        GridCell cell = _editorGrid[u, v];
+
+        GUIStyle style = new GUIStyle(GUI.skin.button) { fixedHeight = 40, fixedWidth = 40 };
+
+        string label = cell.type switch
+        {
+            CellType.Blocked  => "B",
+            CellType.Occupied => "O",
+            _ => "E"
+        };
+        if (cell.isEntrance) label += "*";
+
+        if (GUILayout.Button(label, style))
+            ShowOptionsMenu(cell);
+    }
+
     private void DrawGrid()
     {
-        if(_editorGrid == null) return;
+        if (_editorGrid == null) return;
 
-        for (int y = _gridHeight - 1; y >= 0; y--)
+        for (int v = _viewSize.y - 1; v >= 0; v--)
         {
             EditorGUILayout.BeginHorizontal();
-            for (int x = 0; x < _gridWidth; x++)
-            {
-                DrawCell(x, y);
-            }
+            for (int u = 0; u < _viewSize.x; u++)
+                DrawCell(u, v);
             EditorGUILayout.EndHorizontal();
         }
     }
-    // Opciones disponibles en los botones de la matriz
+
     private void ShowOptionsMenu(GridCell cell)
     {
         GenericMenu optionsMenu = new GenericMenu();
-
-        optionsMenu.AddItem(new GUIContent("Blocked"), cell.type == CellType.Blocked, () =>
-        {
-            cell.type = CellType.Blocked;
-        });
-
-        optionsMenu.AddItem(new GUIContent("Occupied"), cell.type == CellType.Occupied, () =>
-        {
-            cell.type = CellType.Occupied;
-        });
-
+        optionsMenu.AddItem(new GUIContent("Blocked"), cell.type == CellType.Blocked, () => cell.type = CellType.Blocked);
+        optionsMenu.AddItem(new GUIContent("Occupied"), cell.type == CellType.Occupied, () => cell.type = CellType.Occupied);
+        optionsMenu.AddItem(new GUIContent("Empty"), cell.type == CellType.Empty, () => cell.type = CellType.Empty);
         optionsMenu.AddSeparator("");
-
-        optionsMenu.AddItem(new GUIContent("Empty"), cell.type == CellType.Empty, () =>
-        {
-            cell.type = CellType.Empty;
-        });
-
+        optionsMenu.AddItem(new GUIContent("Entrance"), cell.isEntrance, () => cell.isEntrance = !cell.isEntrance);
         optionsMenu.ShowAsContext();
     }
-    //  Libera las celdas ocupadas
-    private void EmptyOccupiedGrid(GridData gridData)
-    {
-        for (int y = _gridHeight - 1; y >= 0; y--)
-        {
-            for (int x = 0; x < _gridWidth; x++)
-            {
-                if(_editorGrid[x,y].type == CellType.Occupied)
-                    _editorGrid[x,y].type = CellType.Empty;
-            }
-        }    
-    }
 
-    // Borra la matriz
-    private void EraseGrid()
+    private void EmptyOccupiedGrid()
     {
-        _editorGrid = null;
+        for (int v = 0; v < _viewSize.y; v++)
+            for (int u = 0; u < _viewSize.x; u++)
+                if (_editorGrid[u, v].type == CellType.Occupied)
+                    _editorGrid[u, v].type = CellType.Empty;
     }
     #endregion
 }

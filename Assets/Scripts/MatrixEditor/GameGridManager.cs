@@ -1,214 +1,247 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+
 public class GameGridManager : MonoBehaviour
 {
     [SerializeField]
-    private GridData _gridData;
+    private VoxelGridData _voxelData;
+    [SerializeField]
+    private GridView _view;
     [SerializeField]
     private GridVisualCell _gridViewCellPrefab;
 
     private GridVisualCell[,] _cells;
     private PlaceableObject[,] _placeables;
-    public GridData GetGridData => _gridData;
-    
-    [SerializeField] 
-    private PlaceableSurface _surface = PlaceableSurface.Floor;
-    public PlaceableSurface Surface => _surface;
+
+    public VoxelGridData GetGridData => _voxelData;
+    public GridView View => _view;
+
+    // El resto del proyecto (GameManager, GridController) sigue hablando en
+    // términos de Surface, así que se deriva de la vista en vez de duplicar estado.
+    public PlaceableSurface Surface => _view == GridView.Floor ? PlaceableSurface.Floor : PlaceableSurface.Wall;
+
     const int MIN_DISTANCE = 4;
+
+    private Vector2Int ViewSize => GridViewProjection.ViewSize(_view, _voxelData);
+    public int Width => ViewSize.x;
+    public int Height => ViewSize.y;
+
+    private Vector3Int ToVoxel(int u, int v) => GridViewProjection.ToVoxel(_view, u, v, _voxelData);
+
+    public bool IsWithinBounds(int u, int v)
+    {
+        Vector2Int size = ViewSize;
+        return u >= 0 && v >= 0 && u < size.x && v < size.y;
+    }
+
+    public bool IsCellEmpty(int u, int v)
+    {
+        if (!IsWithinBounds(u, v)) return false;
+        Vector3Int vox = ToVoxel(u, v);
+        return _voxelData.GetType(vox.x, vox.y, vox.z) == CellType.Empty;
+    }
+
+    public void ClearCell(int u, int v)
+    {
+        if (!IsWithinBounds(u, v)) return;
+        Vector3Int vox = ToVoxel(u, v);
+        _voxelData.SetType(vox.x, vox.y, vox.z, CellType.Empty);
+        _voxelData.SetItem(vox.x, vox.y, vox.z, null);
+    }
+
+    public Vector3 GetWorldPosition(int u, int v, Vector3 offset)
+    {
+        Vector3 localPos = new Vector3(u, 0f, v) + offset;
+        return transform.TransformPoint(localPos);
+    }
+
+    public void ClearPlacedItems()
+    {
+        if (_voxelData == null || _voxelData._cells == null) return;
+
+        for (int i = 0; i < _voxelData._cells.Length; i++)
+        {
+            _voxelData._cells[i].type = CellType.Empty;
+            _voxelData._cells[i].item = null;
+            _voxelData._cells[i].rotation = Quaternion.identity;
+        }
+    }
 
     public void Init()
     {
-        if (_gridData == null) return;
+        if (_voxelData == null) return;
 
-        _placeables = new PlaceableObject[_gridData.width, _gridData.height];
+        Vector2Int size = ViewSize;
+        _placeables = new PlaceableObject[size.x, size.y];
 
         if (SceneManager.GetActiveScene().name != "PreparationScene") return;
 
-        _cells = new GridVisualCell[_gridData.width, _gridData.height];
+        _cells = new GridVisualCell[size.x, size.y];
 
-        for (int y = 0; y < _gridData.height; y++)
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                Vector3 localPos = new Vector3(x + 0.5f, 0f, y + 0.5f);
-
+                Vector3 localPos = new Vector3(u + 0.5f, 0f, v + 0.5f);
                 Vector3 worldPos = transform.TransformPoint(localPos);
 
-                GridVisualCell cell = Instantiate( _gridViewCellPrefab, worldPos, transform.rotation, transform );
+                GridVisualCell cell = Instantiate(_gridViewCellPrefab, worldPos, transform.rotation, transform);
 
-                cell.Init(x, y);
-                _cells[x, y] = cell;
+                cell.Init(u, v);
+                _cells[u, v] = cell;
             }
         }
     }
+
     public void SetGridVisible(bool visible)
     {
         if (_cells == null) return;
-        
-        for (int y = 0; y < _gridData.height; y++)
-            for (int x = 0; x < _gridData.width; x++)
-                if (_cells[x, y] != null)
-                    _cells[x, y].gameObject.SetActive(visible);
+
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
+            for (int u = 0; u < size.x; u++)
+                if (_cells[u, v] != null)
+                    _cells[u, v].gameObject.SetActive(visible);
     }
 
-    public bool UpdateVisualCell(int newPlaceableObjectX, int newPlaceableObjectY, int newPlaceableObjectStartAtX, int newPlaceableObjectStartAtY, PlaceableItemData item)
+    public bool UpdateVisualCell(int newU, int newV, int startU, int startV, PlaceableItemData item)
     {
-        if(newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return false;
-        bool valid = CanPlaceItem( newPlaceableObjectX, newPlaceableObjectY, newPlaceableObjectStartAtX, newPlaceableObjectStartAtY, item );
-        
-        if(valid)
-            _cells[newPlaceableObjectX, newPlaceableObjectY].SetState(CellVisualState.Empty);
-        else    
-            _cells[newPlaceableObjectX, newPlaceableObjectY].SetState(CellVisualState.Blocked);
+        Vector2Int size = ViewSize;
+        if (newU < 0 || newV < 0 || newU >= size.x || newV >= size.y) return false;
+
+        bool valid = CanPlaceItem(newU, newV, startU, startV, item);
+
+        if (valid)
+            _cells[newU, newV].SetState(CellVisualState.Empty);
+        else
+            _cells[newU, newV].SetState(CellVisualState.Blocked);
 
         return valid;
     }
+
     public void ResetVisualGrid()
     {
-        for(int y = 0; y < _gridData.height; y++)
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for(int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                _cells[x,y].SetState(CellVisualState.Default);
-                if (_gridData.GetIsEntrance(x, y))
+                _cells[u, v].SetState(CellVisualState.Default);
+                Vector3Int vox = ToVoxel(u, v);
+                if (_voxelData.GetIsEntrance(vox.x, vox.y, vox.z))
                 {
-                    _cells[x,y].SetState(CellVisualState.Blocked);
+                    _cells[u, v].SetState(CellVisualState.Blocked);
                 }
             }
         }
     }
-    public void ClearLastCell(int lastCellX, int lastCellY)
-    {
-        if(lastCellX < 0 || lastCellY < 0 || lastCellX >= _gridData.width || lastCellY >= _gridData.height) return;
 
-        _cells[lastCellX, lastCellY].SetState(CellVisualState.Default);
+    public void ClearLastCell(int lastU, int lastV)
+    {
+        Vector2Int size = ViewSize;
+        if (lastU < 0 || lastV < 0 || lastU >= size.x || lastV >= size.y) return;
+
+        _cells[lastU, lastV].SetState(CellVisualState.Default);
     }
-    public void SaveGrid(int newPlaceableObjectX, int newPlaceableObjectY, int startPlaceableObjectX, int startPlaceableObjectY, PlaceableItemData itemData, Quaternion rotation = default)
+
+    public void SaveGrid(int newU, int newV, int startU, int startV, PlaceableItemData itemData, Quaternion rotation = default)
     {
-        if (_gridData == null) return;
-        if (newPlaceableObjectX < 0 || newPlaceableObjectY < 0 || newPlaceableObjectX >= _gridData.width || newPlaceableObjectY >= _gridData.height) return;
+        if (_voxelData == null) return;
 
-        _gridData.SetType(newPlaceableObjectX, newPlaceableObjectY, CellType.Occupied);
-        _gridData.SetItem(newPlaceableObjectX, newPlaceableObjectY, itemData);
-        _gridData.SetRotation(newPlaceableObjectX, newPlaceableObjectY, rotation == default ? Quaternion.identity : rotation);
+        Vector2Int size = ViewSize;
+        if (newU < 0 || newV < 0 || newU >= size.x || newV >= size.y) return;
 
-        bool hasValidStart = startPlaceableObjectX != -1 && startPlaceableObjectY != -1;
-        bool movedToNewCell = startPlaceableObjectX != newPlaceableObjectX || startPlaceableObjectY != newPlaceableObjectY;
+        Vector3Int newVox = ToVoxel(newU, newV);
+        _voxelData.SetType(newVox.x, newVox.y, newVox.z, CellType.Occupied);
+        _voxelData.SetItem(newVox.x, newVox.y, newVox.z, itemData);
+        _voxelData.SetRotation(newVox.x, newVox.y, newVox.z, rotation == default ? Quaternion.identity : rotation);
+
+        bool hasValidStart = startU != -1 && startV != -1;
+        bool movedToNewCell = startU != newU || startV != newV;
 
         if (hasValidStart && movedToNewCell)
         {
-            _gridData.SetType(startPlaceableObjectX, startPlaceableObjectY, CellType.Empty);
-            _gridData.SetItem(startPlaceableObjectX, startPlaceableObjectY, null);
-            _gridData.SetRotation(startPlaceableObjectX, startPlaceableObjectY, Quaternion.identity);
-            _placeables[newPlaceableObjectX, newPlaceableObjectY] = _placeables[startPlaceableObjectX, startPlaceableObjectY];
-            _placeables[startPlaceableObjectX, startPlaceableObjectY] = null;
-        }
-    }
-/// <summary>
-/// Clears every placed item from the grid: occupied cells holding an item are
-/// reset to Empty (Blocked/entrance/warehouse flags are preserved) and any
-/// spawned instance is destroyed. Placed furniture lives in the GridData
-/// ScriptableObject, not in save.json, so SaveManager.ResetSave calls this to
-/// make "reset save" also wipe the layout. In the editor the asset is marked
-/// dirty so the cleared state persists to disk (and into the next build).
-/// </summary>
-public void ClearPlacedItems()
-{
-    if (_gridData == null) return;
-
-    for (int y = 0; y < _gridData.height; y++)
-    {
-        for (int x = 0; x < _gridData.width; x++)
-        {
-            if (_gridData.GetType(x, y) != CellType.Occupied || _gridData.GetCell(x, y).item == null)
-                continue;
-
-            _gridData.SetType(x, y, CellType.Empty);
-            _gridData.SetItem(x, y, null);
-            _gridData.SetRotation(x, y, Quaternion.identity);
-
-            // _placeables is only populated at runtime (Init/PlaceableGenerator);
-            // in edit mode it's null and there are no instances to destroy.
-            if (_placeables != null && _placeables[x, y] != null)
-            {
-                Destroy(_placeables[x, y].gameObject);
-                _placeables[x, y] = null;
-            }
+            Vector3Int startVox = ToVoxel(startU, startV);
+            _voxelData.SetType(startVox.x, startVox.y, startVox.z, CellType.Empty);
+            _voxelData.SetItem(startVox.x, startVox.y, startVox.z, null);
+            _voxelData.SetRotation(startVox.x, startVox.y, startVox.z, Quaternion.identity);
+            _placeables[newU, newV] = _placeables[startU, startV];
+            _placeables[startU, startV] = null;
         }
     }
 
-#if UNITY_EDITOR
-    UnityEditor.EditorUtility.SetDirty(_gridData);
-#endif
-}
-
-public void PlaceableGenerator()
-{
-    Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
-    if (placeableFolder == null)
-        placeableFolder = new GameObject("PlaceableItems").transform;
-
-    for (int y = 0; y < _gridData.height; y++)
+    public void PlaceableGenerator()
     {
-        for (int x = 0; x < _gridData.width; x++)
+        Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
+        if (placeableFolder == null)
+            placeableFolder = new GameObject("PlaceableItems").transform;
+
+        Vector2Int size = ViewSize;
+
+        for (int v = 0; v < size.y; v++)
         {
-            GridCell cell = _gridData.GetCell(x, y);
-            if (_gridData.GetType(x, y) != CellType.Occupied || cell.item == null) continue;
-
-            Vector3 localPos = new Vector3(x, 0f, y) + cell.item.placementOffset;
-            Vector3 worldPos = transform.TransformPoint(localPos);
-
-            Quaternion spawnRot = cell.rotation != Quaternion.identity ? cell.rotation : transform.rotation;
-            GameObject instance = Instantiate(cell.item.prefab, worldPos, spawnRot, placeableFolder);
-
-            PlaceableObject placeable = instance.GetComponent<PlaceableObject>();
-
-            if (placeable != null)
+            for (int u = 0; u < size.x; u++)
             {
-                placeable.SetGridManager(this);
-                placeable.InstancePlaceableObjectCreated(x, y);
-                placeable.Init(cell.item);
-                _placeables[x, y] = placeable;
-            }
-        }
-    }
+                Vector3Int vox = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                if (_voxelData.GetType(vox.x, vox.y, vox.z) != CellType.Occupied || cell.item == null) continue;
 
-    if (_surface == PlaceableSurface.Floor)
-    {
-        for (int y = 0; y < _gridData.height; y++)
-        {
-            for (int x = 0; x < _gridData.width; x++)
-            {
-                PlaceableObject placeable = _placeables[x, y];
-                if (placeable == null) continue;
-                if (placeable.GetItemData().category == PlaceableCategory.Chair)
-                    RotateTowardsTable(placeable, x, y);
+                Vector3 localPos = new Vector3(u, 0f, v) + cell.item.placementOffset;
+                Vector3 worldPos = transform.TransformPoint(localPos);
+
+                Quaternion spawnRot = cell.rotation != Quaternion.identity ? cell.rotation : transform.rotation;
+                GameObject instance = Instantiate(cell.item.prefab, worldPos, spawnRot, placeableFolder);
+
+                PlaceableObject placeable = instance.GetComponent<PlaceableObject>();
+
+                if (placeable != null)
+                {
+                    placeable.SetGridManager(this);
+                    placeable.InstancePlaceableObjectCreated(u, v);
+                    placeable.Init(cell.item);
+                    _placeables[u, v] = placeable;
+                }
             }
         }
 
-        if (SceneController.Instance.IsSceneLoaded("PreparationScene"))
-            ValidateAllChairs();
+        if (_view == GridView.Floor)
+        {
+            for (int v = 0; v < size.y; v++)
+            {
+                for (int u = 0; u < size.x; u++)
+                {
+                    PlaceableObject placeable = _placeables[u, v];
+                    if (placeable == null) continue;
+                    if (placeable.GetItemData().category == PlaceableCategory.Chair)
+                        RotateTowardsTable(placeable, u, v);
+                }
+            }
+
+            if (SceneController.Instance.IsSceneLoaded("PreparationScene"))
+                ValidateAllChairs();
+        }
     }
-}
+
     public void ValidateAllChairs()
     {
-        if (_surface != PlaceableSurface.Floor) return;
+        if (_view != GridView.Floor) return;
 
-        for (int y = 0; y < _gridData.height; y++)
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                GridCell cell = _gridData.GetCell(x, y);
+                Vector3Int vox = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                 {
-                    PlaceableObject chair = _placeables[x, y];
+                    PlaceableObject chair = _placeables[u, v];
 
                     if (chair == null) continue;
 
-                    if(CountAdjacentTables(x, y) == 1 && IsCellReachableFromEntrance(x,y)) chair.SetValid(true);
+                    if (CountAdjacentTables(u, v) == 1 && IsCellReachableFromEntrance(u, v)) chair.SetValid(true);
                     else chair.SetValid(false);
                 }
             }
@@ -217,7 +250,7 @@ public void PlaceableGenerator()
 
     public bool CheckPlaceables()
     {
-        if(CountChairs() > 0 && CountTables() > 0)
+        if (CountChairs() > 0 && CountTables() > 0)
             return true;
         return false;
     }
@@ -225,73 +258,78 @@ public void PlaceableGenerator()
     public int CountChairs()
     {
         int numChairs = 0;
-        for (int y = 0; y < _gridData.height; y++)
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                GridCell cell = _gridData.GetCell(x, y);
+                Vector3Int vox = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
-                if (cell.item != null && !cell.isWarehouse && cell.item.category == PlaceableCategory.Chair)
-                {
+                if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                     numChairs++;
-                }
             }
         }
         return numChairs;
     }
+
     public int CountTables()
     {
         int numTables = 0;
-        for (int y = 0; y < _gridData.height; y++)
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                GridCell cell = _gridData.GetCell(x, y);
+                Vector3Int vox = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
-                if (cell.item != null && !cell.isWarehouse && cell.item.category == PlaceableCategory.Table)
-                {
+                if (cell.item != null && cell.item.category == PlaceableCategory.Table)
                     numTables++;
-                }
             }
         }
         return numTables;
     }
-    public bool IsValidTablePlacement(int posX, int posY, int startX, int startY)
+
+    public bool IsValidTablePlacement(int posU, int posV, int startU, int startV)
     {
-        if(CountAdjacentTables(posX, posY, startX, startY) > 0)
+        if (CountAdjacentTables(posU, posV, startU, startV) > 0)
             return true;
-        for(int y = 0; y < _gridData.height; y++)
+
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for(int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                if (x == startX && y == startY) continue;
+                if (u == startU && v == startV) continue;
 
-                GridCell cell = _gridData.GetCell(x,y);
+                Vector3Int vox = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
-                if(cell.item == null || cell.item.category != PlaceableCategory.Table) continue;
+                if (cell.item == null || cell.item.category != PlaceableCategory.Table) continue;
 
-                int dx = Mathf.Abs(x - posX);
-                int dy = Mathf.Abs(y - posY);
-                
-                int dist = dx + dy;
+                int du = Mathf.Abs(u - posU);
+                int dv = Mathf.Abs(v - posV);
 
-                if(dist == 1) continue;
-                if(dist < MIN_DISTANCE) return false;
+                int dist = du + dv;
+
+                if (dist == 1) continue;
+                if (dist < MIN_DISTANCE) return false;
             }
         }
         return true;
     }
 
-    public void RotateTowardsTable(PlaceableObject obj, int x, int y)
+    public void RotateTowardsTable(PlaceableObject obj, int u, int v)
     {
-        if (GetAdjacentTableDirection(x, y) == Vector2Int.zero) return;
-        obj.transform.rotation = GetChairRotation(x, y);
+        if (GetAdjacentTableDirection(u, v) == Vector2Int.zero) return;
+        obj.transform.rotation = GetChairRotation(u, v);
     }
 
-    // rotation a chair takes facing its adjacent table; grid rotation if none
-    public Quaternion GetChairRotation(int x, int y)
+    // rotación que toma una silla mirando a su mesa adyacente; rotación del grid si no hay ninguna
+    public Quaternion GetChairRotation(int u, int v)
     {
-        Vector2Int dir = GetAdjacentTableDirection(x, y);
+        Vector2Int dir = GetAdjacentTableDirection(u, v);
         if (dir == Vector2Int.zero) return transform.rotation;
 
         float angle = 0f;
@@ -305,153 +343,161 @@ public void PlaceableGenerator()
 
     public bool CanStartDay()
     {
-        for (int y = 0; y < _gridData.height; y++)
+        Vector2Int size = ViewSize;
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                var cell = _gridData.GetCell(x, y);
+                Vector3Int vox = ToVoxel(u, v);
+                var cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                 {
-                    if (!CanPlaceItem(x, y, x, y, cell.item ))
+                    if (!CanPlaceItem(u, v, u, v, cell.item))
                         return false;
                 }
             }
         }
-        if(!CheckPlaceables())
+        if (!CheckPlaceables())
             return false;
         return true;
     }
 
-    public bool CanPlaceItem(int x, int y, int startX, int startY, PlaceableItemData item, bool ignoreChairRules = false)
+    public bool CanPlaceItem(int u, int v, int startU, int startV, PlaceableItemData item, bool ignoreChairRules = false)
     {
-        if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+        Vector2Int size = ViewSize;
+        if (u < 0 || v < 0 || u >= size.x || v >= size.y)
             return false;
 
-        if (_gridData.GetType(x, y) != CellType.Empty && !(x == startX && y == startY))
+        Vector3Int vox = ToVoxel(u, v);
+        if (_voxelData.GetType(vox.x, vox.y, vox.z) != CellType.Empty && !(u == startU && v == startV))
             return false;
 
         if (item.category == PlaceableCategory.Chair && !ignoreChairRules)
         {
-            if (CountAdjacentTables(x, y, startX, startY) != 1)
+            if (CountAdjacentTables(u, v, startU, startV) != 1)
                 return false;
-            if(!IsCellReachableFromEntrance(x,y))
+            if (!IsCellReachableFromEntrance(u, v))
                 return false;
         }
-        if(item.category == PlaceableCategory.Table)
+        if (item.category == PlaceableCategory.Table)
         {
-            if(!IsValidTablePlacement(x, y, startX, startY))
+            if (!IsValidTablePlacement(u, v, startU, startV))
                 return false;
         }
 
         return true;
     }
-    public int CountAdjacentTables(int x, int y, int ignoreX = -1, int ignoreY = -1)
+
+    public int CountAdjacentTables(int u, int v, int ignoreU = -1, int ignoreV = -1)
     {
         int count = 0;
 
-        // Arriba
-        if (IsTable(x, y + 1, ignoreX, ignoreY))
-            count++;
-        // Abajo
-        if (IsTable(x, y - 1, ignoreX, ignoreY))
-            count++;
-        // Derecha
-        if (IsTable(x + 1, y, ignoreX, ignoreY))
-            count++;
-        // Izquierda
-        if (IsTable(x - 1, y, ignoreX, ignoreY))
-            count++;
+        if (IsTable(u, v + 1, ignoreU, ignoreV)) count++;
+        if (IsTable(u, v - 1, ignoreU, ignoreV)) count++;
+        if (IsTable(u + 1, v, ignoreU, ignoreV)) count++;
+        if (IsTable(u - 1, v, ignoreU, ignoreV)) count++;
+
         return count;
     }
-    public Vector2Int GetAdjacentTableDirection(int x, int y)
+
+    public Vector2Int GetAdjacentTableDirection(int u, int v)
     {
-        if (IsTable(x, y + 1)) 
-            return Vector2Int.up;
-        if (IsTable(x, y - 1)) 
-            return Vector2Int.down;
-        if (IsTable(x + 1, y)) 
-            return Vector2Int.right;
-        if (IsTable(x - 1, y)) 
-            return Vector2Int.left;
+        if (IsTable(u, v + 1)) return Vector2Int.up;
+        if (IsTable(u, v - 1)) return Vector2Int.down;
+        if (IsTable(u + 1, v)) return Vector2Int.right;
+        if (IsTable(u - 1, v)) return Vector2Int.left;
 
         return Vector2Int.zero;
     }
-    // table can't be lifted while chairs are tucked against it
-    public bool HasAdjacentChairs(int x, int y)
+
+    // una mesa no se puede levantar mientras tenga sillas arrimadas
+    public bool HasAdjacentChairs(int u, int v)
     {
-        return IsChair(x, y + 1) || IsChair(x, y - 1) || IsChair(x + 1, y) || IsChair(x - 1, y);
+        return IsChair(u, v + 1) || IsChair(u, v - 1) || IsChair(u + 1, v) || IsChair(u - 1, v);
     }
-    private bool IsChair(int x, int y)
+
+    private bool IsChair(int u, int v)
     {
-        if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+        Vector2Int size = ViewSize;
+        if (u < 0 || v < 0 || u >= size.x || v >= size.y)
             return false;
 
-        GridCell cell = _gridData.GetCell(x, y);
+        Vector3Int vox = ToVoxel(u, v);
+        GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
         return cell.item != null && cell.item.category == PlaceableCategory.Chair;
     }
 
-    private bool IsTable(int x, int y, int ignoreX = -1, int ignoreY = -1)
+    private bool IsTable(int u, int v, int ignoreU = -1, int ignoreV = -1)
     {
-        if (x < 0 || y < 0 || x >= _gridData.width || y >= _gridData.height)
+        Vector2Int size = ViewSize;
+        if (u < 0 || v < 0 || u >= size.x || v >= size.y)
             return false;
 
-        if (x == ignoreX && y == ignoreY)
+        if (u == ignoreU && v == ignoreV)
             return false;
 
-        GridCell cell = _gridData.GetCell(x,y);
+        Vector3Int vox = ToVoxel(u, v);
+        GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
 
-        if(cell.item != null)
+        if (cell.item != null)
         {
-            if(cell.item.category == PlaceableCategory.Table)
+            if (cell.item.category == PlaceableCategory.Table)
                 return true;
         }
         return false;
     }
-    public bool IsCellReachableFromEntrance(int targetX, int targetY)
+
+    public bool IsCellReachableFromEntrance(int targetU, int targetV)
     {
-        bool[,] visited = new bool[_gridData.width, _gridData.height];
+        Vector2Int size = ViewSize;
+        bool[,] visited = new bool[size.x, size.y];
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        for (int y = 0; y < _gridData.height; y++)
+
+        for (int v = 0; v < size.y; v++)
         {
-            for (int x = 0; x < _gridData.width; x++)
+            for (int u = 0; u < size.x; u++)
             {
-                if (_gridData.GetIsEntrance(x, y))
+                Vector3Int vox = ToVoxel(u, v);
+                if (_voxelData.GetIsEntrance(vox.x, vox.y, vox.z))
                 {
-                    queue.Enqueue(new Vector2Int(x, y));
-                    visited[x, y] = true;
+                    queue.Enqueue(new Vector2Int(u, v));
+                    visited[u, v] = true;
                 }
             }
         }
+
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         while (queue.Count > 0)
         {
             Vector2Int current = queue.Dequeue();
 
-            if (current.x == targetX && current.y == targetY)
+            if (current.x == targetU && current.y == targetV)
                 return true;
 
             foreach (var dir in directions)
             {
-                int nx = current.x + dir.x;
-                int ny = current.y + dir.y;
+                int nu = current.x + dir.x;
+                int nv = current.y + dir.y;
 
-                if (nx < 0 || ny < 0 || nx >= _gridData.width || ny >= _gridData.height) continue;
-                if (visited[nx, ny]) continue;
+                if (nu < 0 || nv < 0 || nu >= size.x || nv >= size.y) continue;
+                if (visited[nu, nv]) continue;
 
-                bool isTarget  = (nx == targetX && ny == targetY);
-                bool isWalkable = _gridData.GetType(nx, ny) == CellType.Empty 
-                            || _gridData.GetIsEntrance(nx, ny);
+                bool isTarget = (nu == targetU && nv == targetV);
 
-                if ( isTarget || isWalkable)
+                Vector3Int nvox = ToVoxel(nu, nv);
+                bool isWalkable = _voxelData.GetType(nvox.x, nvox.y, nvox.z) == CellType.Empty
+                            || _voxelData.GetIsEntrance(nvox.x, nvox.y, nvox.z);
+
+                if (isTarget || isWalkable)
                 {
-                    visited[nx, ny] = true;
-                    queue.Enqueue(new Vector2Int(nx, ny));
+                    visited[nu, nv] = true;
+                    queue.Enqueue(new Vector2Int(nu, nv));
                 }
             }
         }
         return false;
     }
-    public PlaceableObject GetPlaceableAt(int x, int y) { return _placeables[x,y]; }
-    public void SetPlaceableAt(int x, int y, PlaceableObject obj){ _placeables[x, y] = obj; }
+    public PlaceableObject GetPlaceableAt(int u, int v) { return _placeables[u, v]; }
+    public void SetPlaceableAt(int u, int v, PlaceableObject obj) { _placeables[u, v] = obj; }
 }
