@@ -94,7 +94,7 @@ public class NeveraMinigame : MonoBehaviour, IMinigameControllable
             MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "nevera_success");
 
             if (currentRecipe.foodPrefab != null)
-                player.CreateAndHoldFood(currentRecipe.foodPrefab);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab, currentRecipe);
             else
                 Debug.LogWarning($"[NeveraMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

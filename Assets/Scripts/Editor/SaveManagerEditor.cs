@@ -41,6 +41,9 @@ public class SaveManagerEditor : Editor
                     "Reset", "Cancel"))
             {
                 manager.ResetSave();
+                // ResetSave clears the GridData ScriptableObject(s) and marks them
+                // dirty; write them to disk so a rebuilt player starts empty.
+                AssetDatabase.SaveAssets();
             }
         }
         GUI.backgroundColor = prev;

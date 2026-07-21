@@ -246,6 +246,10 @@ public class Table : MonoBehaviour
     {
         if (!IsOccupied || OccupyingGroup == null) return false;
 
+        // One plate feeds one diner: we can keep placing while the group is not
+        // yet fully fed (and at least one member is still waiting for food).
+        if (OccupyingGroup.AllFed) return false;
+
         foreach (var member in OccupyingGroup.Members)
         {
             if (member != null && member.CurrentState == Client.State.WaitingForFood)
@@ -255,20 +259,70 @@ public class Table : MonoBehaviour
         return false;
     }
 
-    public void PlaceFood(Food food)
+    /// <summary>Serves a plate to the seated group. Returns true if accepted
+    /// (player drops the plate), false if rejected (wrong dish — plate stays in
+    /// the player's hands so they can take it to the right table).</summary>
+    public bool PlaceFood(Food food)
     {
-        if (food == null || OccupyingGroup == null) return;
-        Transform targetPoint = foodPoint != null ? foodPoint : this.transform;
-        food.PlaceOnTable(targetPoint);
-        foreach (var member in OccupyingGroup.Members)
+        if (food == null || OccupyingGroup == null) return false;
+        ClientGroup g = OccupyingGroup;
+
+        // ── Order check: reject a dish the group didn't order ──
+        if (!g.WantsRecipe(food.recipe))
         {
-            if (member != null)
-            {
-                member.ReceiveFood();
-            }
+            RejectOrder(food);
+            return false;
         }
 
-        Debug.Log($"[Table {tableNumber}] Food {food.foodName} served to group {OccupyingGroup.GroupID}");
+        // One plate feeds one or two diners: a group may share dishes, in which
+        // case the last plate of the order feeds two diners. Feed that many
+        // still-waiting diners from the group.
+        int dinersToFeed = g.DinersForNextPlate();
+        if (dinersToFeed <= 0) return false;
+
+        int fed = 0;
+        foreach (var member in g.Members)
+        {
+            if (member != null && member.CurrentState == Client.State.WaitingForFood)
+            {
+                member.ReceiveFood();
+                fed++;
+                if (fed >= dinersToFeed) break;
+            }
+        }
+        if (fed == 0) return false; // nobody waiting — shouldn't happen (CanPlaceFood guards)
+
+        // Count the plate, consume one matching order slot, refill patience.
+        g.OnPlateServed();
+        g.TryConsumeOrder(food.recipe);
+
+        // Stack plates in a small 2x2 grid on the food point so multiple plates
+        // don't overlap when serving a group of several diners.
+        Transform targetPoint = foodPoint != null ? foodPoint : this.transform;
+        food.PlaceOnTable(targetPoint);
+        int idx = g.PlatesServed - 1; // already incremented above
+        Vector3 off = new Vector3((idx % 2) * 0.35f - 0.175f, 0f, (idx / 2) * 0.35f - 0.175f);
+        food.transform.localPosition = off;
+
+        Debug.Log($"[Table {tableNumber}] Food {food.foodName} served ({g.PlatesServed}/{g.PlatesNeeded}, fed {fed} diners{(g.IsSharing ? ", sharing" : "")}) to group {g.GroupID}");
+        return true;
+    }
+
+    /// <summary>Called when the player serves a dish the group didn't order.
+    /// Small patience penalty + feedback; the plate stays in the player's hands
+    /// (PlaceFood returns false, so PlayerController keeps holding it).</summary>
+    private void RejectOrder(Food food)
+    {
+        ClientGroup g = OccupyingGroup;
+        // Knock a few seconds off the patience bar as a penalty (reuse the
+        // existing tick; TickPatience ignores the return — we're not angering
+        // the whole group over one wrong plate, just nudging the bar).
+        g?.TickPatience(5f);
+
+        string dishLabel = food.recipe != null ? food.recipe.dishName : food.foodName;
+        HUDMessage.Instance?.ShowWarning($"¡La mesa {tableNumber} no ha pedido {dishLabel}!");
+        AudioManager.Instance?.PlaySFX("client_angry");
+        Debug.Log($"[Table {tableNumber}] Rejected {dishLabel}: not on the order for group {g?.GroupID}.");
     }
 
     private void GenerateSeatPoints()

@@ -29,6 +29,18 @@ public class CashUI : MonoBehaviour
             _popupStartAnchoredPos = _popupRect.anchoredPosition;
             SetPopupAlpha(0f);
         }
+
+        // Suscrito en Awake/OnDestroy (no OnEnable/OnDisable) porque SetVisible()
+        // apaga estos mismos GameObjects hijos; si se suscribiera en OnEnable se
+        // perdería la suscripción justo cuando hace falta volver a mostrarlos.
+        DialogueReaction.OnDialogueReactionStart += HandleDialogueStart;
+        DialogueReaction.OnDialogueReactionFinish += HandleDialogueFinish;
+    }
+
+    void OnDestroy()
+    {
+        DialogueReaction.OnDialogueReactionStart -= HandleDialogueStart;
+        DialogueReaction.OnDialogueReactionFinish -= HandleDialogueFinish;
     }
 
     void OnEnable()
@@ -44,6 +56,16 @@ public class CashUI : MonoBehaviour
     {
         if (MoneyManager.Instance != null)
             MoneyManager.Instance.OnMoneyChangedDelta -= HandleMoneyChanged;
+    }
+
+    // El dinero no debería competir visualmente con el diálogo (p.ej. el tío en el tutorial).
+    private void HandleDialogueStart(string text, Color color, Sprite portrait) => SetVisible(false);
+    private void HandleDialogueFinish() => SetVisible(true);
+
+    private void SetVisible(bool visible)
+    {
+        if (moneyText != null) moneyText.gameObject.SetActive(visible);
+        if (popupText != null) popupText.gameObject.SetActive(visible);
     }
 
     private void HandleMoneyChanged(int newBalance, int delta)

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -7,16 +8,20 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
-    [SerializeField] 
+    [SerializeField]
     private GameObject _dialoguePanel;
-    [SerializeField] 
+    [SerializeField]
     private TextMeshProUGUI _dialogueText;
-    [SerializeField] 
+    [SerializeField]
     private Image _portraitImage;
+
     [SerializeField]
     [Tooltip("Tecla que el jugador debe pulsar para avanzar la reacción.")]
     private Key _confirmKey = Key.E;
     public Key ConfirmKey => _confirmKey;
+
+    public bool IsShowingDialogue { get; private set; }
+    private bool _advanceRequested;
 
     void Awake()
     {
@@ -53,9 +58,30 @@ public class DialogueManager : MonoBehaviour
         {
             _portraitImage.gameObject.SetActive(false);
         }
+
+        IsShowingDialogue = true;
+        InputManager.Instance?.EnterDialogue();
     }
     private void HideDialogue()
     {
         _dialoguePanel.SetActive(false);
+        IsShowingDialogue = false;
+        InputManager.Instance?.ExitDialogue();
+    }
+
+    /// <summary>Llamado por el input del jugador (ver DialogueControllable) para avanzar el diálogo.</summary>
+    public void RequestAdvance()
+    {
+        if (IsShowingDialogue) _advanceRequested = true;
+    }
+
+    /// <summary>Usado por DialogueReaction para esperar a que el jugador avance en vez de un tiempo fijo.</summary>
+    public IEnumerator WaitForAdvance()
+    {
+        _advanceRequested = false;
+        // deja pasar un frame para no consumir con la misma pulsación que abrió esta línea
+        yield return null;
+        while (!_advanceRequested)
+            yield return null;
     }
 }

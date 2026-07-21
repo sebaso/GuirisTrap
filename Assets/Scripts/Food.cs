@@ -6,6 +6,11 @@ public class Food : MonoBehaviour
     public string foodName = "Food";
     public float price = 10f;
 
+    // The recipe that produced this plate. Set at cook time by
+    // PlayerController.CreateAndHoldFood so orders can be matched by reference
+    // (foodName strings are unreliable across prefabs). Null for legacy plates.
+    public RecipeData recipe;
+
     private Rigidbody rb;
     // The pickup logic finds Food via GetComponentInParent, so the collider(s)
     // may live on children of the prefab root. Toggle all of them together,

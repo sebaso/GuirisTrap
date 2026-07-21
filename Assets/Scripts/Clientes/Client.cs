@@ -14,6 +14,7 @@ public class Client : MonoBehaviour
         WalkingToTable,     // Told where to sit, navigating to seat
         WaitingForFood,     // Seated, patience ticking down
         Eating,             // Food arrived — eating timer running
+        DoneEating,         // Finished eating, waiting for the rest of the group
         Leaving,            // Walking to exit, will be destroyed on arrival
         Angry               // Patience ran out — leaving unhappy
     }
@@ -105,10 +106,8 @@ public class Client : MonoBehaviour
                     SitDown();
                 break;
 
-            case State.WaitingForFood:
-                // leader runs the group's meal timer
-                if (!IsInGroup || IsGroupLeader)
-                    TickSeatedPatience();
+            case State.DoneEating:
+                // Finished eating; just wait for the rest of the group to leave together.
                 break;
 
             case State.Leaving:
@@ -116,6 +115,16 @@ public class Client : MonoBehaviour
                 if (HasReachedDestination())
                     Destroy(gameObject);
                 break;
+        }
+
+        // Seated patience ticks while the group is still waiting for food, even
+        // if the leader is already eating. Group-driven so the bar keeps
+        // draining for the remaining unfed diners (and a refill on each plate
+        // tops it back up). Leader runs it once for the whole group.
+        if (IsInGroup && IsGroupLeader && _group.IsWaitingForFood)
+        {
+            if (_group.TickPatience(Time.deltaTime))
+                GroupLeaveAngry();
         }
     }
 
@@ -206,13 +215,8 @@ public class Client : MonoBehaviour
         }
     }
 
-    // ponytail: only the leader ticks — fine, a leader leaves only when the whole group does
-    private void TickSeatedPatience()
-    {
-        if (_group == null) return;
-        if (_group.TickPatience(Time.deltaTime))
-            GroupLeaveAngry();
-    }
+    // seated patience is now ticked group-driven in Update() (see IsWaitingForFood
+    // branch), so it keeps draining even if the leader is already eating.
 
     private void TickQueuePatience()
     {
@@ -271,22 +275,37 @@ public class Client : MonoBehaviour
     private IEnumerator EatCoroutine()
     {
         yield return new WaitForSeconds(eatDuration);
-        LeaveHappy();
+        FinishEating();
     }
 
-    private void LeaveHappy()
+    /// <summary>Called when a diner finishes eating. Pays up and waits in
+    /// DoneEating for the rest of the group; the group leaves together once
+    /// everyone is done (handled by ClientGroup.OnMemberFinishedEating).</summary>
+    private void FinishEating()
     {
+        // The group may have left angry (patience ran out) while this diner was
+        // still in the EatCoroutine delay; in that case bail out — the angry
+        // path already handled payment/leaving.
+        if (CurrentState == State.Angry || CurrentState == State.Leaving) return;
+
         happiness += 10;
 
         // Usar el dinero asignado al cliente (aleatorio en spawn) en vez de hardcode
         int payment = money > 0 ? money : 20;
         MoneyManager.Instance?.Earn(payment);
-        Debug.Log($"[Client] Finished eating. Leaving happy. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
+        Debug.Log($"[Client] Finished eating. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
         DayReport.Instance?.RegisterSatisfiedClient();
         DayReport.Instance?.RegisterEarnings(payment);
         AudioManager.Instance?.PlaySFX("client_happy");
-        StartLeaving();
+
+        SetState(State.DoneEating);
+        _group?.OnMemberFinishedEating(this);
+
+        // Solo diners (no group) leave immediately; group members wait for the
+        // last diner, which triggers StartLeaving on everyone via the group.
+        if (!IsInGroup)
+            StartLeaving();
     }
 
     private void LeaveAngry()
@@ -308,7 +327,7 @@ public class Client : MonoBehaviour
         WalkToExit();
     }
 
-    private void StartLeaving()
+    public void StartLeaving()
     {
         // Solo el líder o un cliente individual libera la mesa
         if (!IsInGroup || IsGroupLeader)

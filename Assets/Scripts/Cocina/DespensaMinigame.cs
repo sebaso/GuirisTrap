@@ -176,7 +176,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
             MinigameFeedback.Show(true, $"¡{currentRecipe.dishName} listo!", "despensa_success");
 
             if (currentRecipe.foodPrefab != null)
-                player.CreateAndHoldFood(currentRecipe.foodPrefab);
+                player.CreateAndHoldFood(currentRecipe.foodPrefab, currentRecipe);
             else
                 Debug.LogWarning($"[DespensaMinigame] {currentRecipe.dishName} no tiene foodPrefab.");
         }

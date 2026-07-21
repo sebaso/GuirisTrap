@@ -335,7 +335,7 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
             MinigameFeedback.Show(true, $"¡{_currentRecipe.dishName} listo!", "especias_success");
 
             if (_currentRecipe.foodPrefab != null)
-                _player.CreateAndHoldFood(_currentRecipe.foodPrefab);
+                _player.CreateAndHoldFood(_currentRecipe.foodPrefab, _currentRecipe);
             else
                 Debug.LogWarning($"[EspeciasMinigame] {_currentRecipe.dishName} no tiene foodPrefab.");
         }

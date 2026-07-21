@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class DialogueReaction : Reaction
@@ -9,7 +10,7 @@ public class DialogueReaction : Reaction
     private string _textKey;
     [SerializeField]
     private Color _color;
-    [SerializeField] 
+    [SerializeField]
     private Sprite _portrait;
     protected override void React()
     {
@@ -23,4 +24,20 @@ public class DialogueReaction : Reaction
         OnDialogueReactionFinish?.Invoke();
     }
 
+    // El diálogo espera a que el jugador lo avance en vez de esperar _duration.
+    public override void ExecuteReaction()
+    {
+        StartCoroutine(DialogueCoroutine());
+    }
+
+    private IEnumerator DialogueCoroutine()
+    {
+        React();
+
+        if (DialogueManager.Instance != null)
+            yield return DialogueManager.Instance.WaitForAdvance();
+
+        PostReact();
+        Delegate?.OnReactionFinished(this);
+    }
 }

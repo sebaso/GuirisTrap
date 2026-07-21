@@ -182,6 +182,13 @@ public class SaveManager : MonoBehaviour
     {
         _data = new SaveData();
         if (File.Exists(SavePath)) File.Delete(SavePath);
+
+        // Las mesas/sillas colocadas viven en el ScriptableObject GridData, no en
+        // save.json, así que limpiamos también las grids para que "resetear"
+        // borre de verdad el layout.
+        foreach (var manager in FindObjectsByType<GameGridManager>(FindObjectsSortMode.None))
+            manager.ClearPlacedItems();
+
         Debug.Log($"[SaveManager] Save reset → {SavePath}");
     }
 

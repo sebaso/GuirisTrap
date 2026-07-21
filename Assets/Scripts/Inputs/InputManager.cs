@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
     [Header("Controllables")]
     private ControllableMonoBehaviour _playerControllable;
     [SerializeField] private MinigameControllable      _minigameControllable;
+    private DialogueControllable _dialogueControllable;
 
     private InputSystem_Actions       _inputs;
     private ControllableMonoBehaviour _current;
@@ -18,6 +19,8 @@ public class InputManager : MonoBehaviour, IPlayerActions
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        _dialogueControllable = gameObject.AddComponent<DialogueControllable>();
 
         _inputs = new InputSystem_Actions();
         _inputs.Enable();
@@ -72,6 +75,20 @@ public class InputManager : MonoBehaviour, IPlayerActions
         _minigameControllable.ClearActive();
         _current = _playerControllable;
 
+        (_playerControllable as PlayerController)?.UnlockMovement();
+    }
+
+    /// <summary>Llamado por DialogueManager al mostrar una línea: congela al jugador y desvía Interactuar/Aceptar hacia el diálogo.</summary>
+    public void EnterDialogue()
+    {
+        (_playerControllable as PlayerController)?.LockMovement();
+        _current = _dialogueControllable;
+    }
+
+    /// <summary>Llamado por DialogueManager al ocultar el diálogo: devuelve el control al jugador.</summary>
+    public void ExitDialogue()
+    {
+        _current = _playerControllable;
         (_playerControllable as PlayerController)?.UnlockMovement();
     }
 
