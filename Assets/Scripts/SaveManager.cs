@@ -36,7 +36,14 @@ public class SaveManager : MonoBehaviour
         get => _data.lastGradedDay;
         set => _data.lastGradedDay = value;
     }
+    private bool _hasSyncedGridsThisSession = false;
 
+    public bool ShouldSyncGridsOnLoad()
+    {
+        if (_hasSyncedGridsThisSession) return false;
+        _hasSyncedGridsThisSession = true;
+        return true;
+    }
     void Awake()
     {
         if (Instance == null)

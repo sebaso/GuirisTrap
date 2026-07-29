@@ -82,7 +82,6 @@ public class Reaction : MonoBehaviour
     protected virtual IEnumerator WaitForInputCoroutine()
     {
         yield return null;
-
         while (Keyboard.current != null && !Keyboard.current[DialogueManager.Instance.ConfirmKey].wasPressedThisFrame)
         {
             yield return null;

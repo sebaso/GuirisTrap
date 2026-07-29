@@ -60,6 +60,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         IsShowingDialogue = true;
+        Debug.Log(InputManager.Instance);
         InputManager.Instance?.EnterDialogue();
     }
     private void HideDialogue()
@@ -72,6 +73,8 @@ public class DialogueManager : MonoBehaviour
     /// <summary>Llamado por el input del jugador (ver DialogueControllable) para avanzar el diálogo.</summary>
     public void RequestAdvance()
     {
+            Debug.Log("RequestAdvance");
+
         if (IsShowingDialogue) _advanceRequested = true;
     }
 

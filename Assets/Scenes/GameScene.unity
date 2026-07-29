@@ -595,9 +595,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 3dcbc45132361ad4faa2db9f845cb1b9, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 3
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &175002385
 Transform:
   m_ObjectHideFlags: 0
@@ -613,64 +613,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
---- !u!1 &282489372
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 282489375}
-  - component: {fileID: 282489374}
-  - component: {fileID: 282489373}
-  m_Layer: 0
-  m_Name: InputManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &282489373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 282489372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87291cff59433a842a2ede35dc10517d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MinigameControllable
---- !u!114 &282489374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 282489372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb670bff64134ef47ace26b9e723a705, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  _minigameControllable: {fileID: 282489373}
---- !u!4 &282489375
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 282489372}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &301250415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2304,7 +2246,7 @@ GameObject:
   - component: {fileID: 708394289}
   - component: {fileID: 708394288}
   m_Layer: 0
-  m_Name: SWallGridManager
+  m_Name: NWallGridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2322,9 +2264,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: ce37d692c4588f746b76c90481c7ab33, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 1
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &708394289
 Transform:
   m_ObjectHideFlags: 0
@@ -3211,9 +3153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 06f0d4e6119282d46a4d6517ba3c3e46, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 2
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 1
 --- !u!4 &1248923387
 Transform:
   m_ObjectHideFlags: 0
@@ -4213,9 +4155,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fedf3cb854fba2e489b7c1bdaebbb132, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameGridManager
-  _gridData: {fileID: 11400000, guid: 4b86380083e03d549af5f84dd90ee323, type: 2}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _view: 0
   _gridViewCellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
-  _surface: 0
 --- !u!4 &1729561188
 Transform:
   m_ObjectHideFlags: 0
@@ -4626,6 +4568,50 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.96579, y: 2, z: 5.48642}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1969252431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1969252434}
+  - component: {fileID: 1969252432}
+  m_Layer: 0
+  m_Name: MinigameControllable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1969252432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969252431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87291cff59433a842a2ede35dc10517d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinigameControllable
+--- !u!4 &1969252434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969252431}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5953,8 +5939,8 @@ SceneRoots:
   - {fileID: 1965120465}
   - {fileID: 5335917517255860235}
   - {fileID: 1525155059}
+  - {fileID: 1969252434}
   - {fileID: 572157846}
-  - {fileID: 282489375}
   - {fileID: 1729561188}
   - {fileID: 1248923387}
   - {fileID: 175002385}

@@ -38,16 +38,16 @@ public class GameGridManager : MonoBehaviour
     public bool IsCellEmpty(int u, int v)
     {
         if (!IsWithinBounds(u, v)) return false;
-        Vector3Int vox = ToVoxel(u, v);
-        return _voxelData.GetType(vox.x, vox.y, vox.z) == CellType.Empty;
+        Vector3Int voxel = ToVoxel(u, v);
+        return _voxelData.GetType(voxel.x, voxel.y, voxel.z) == CellType.Empty;
     }
 
     public void ClearCell(int u, int v)
     {
         if (!IsWithinBounds(u, v)) return;
-        Vector3Int vox = ToVoxel(u, v);
-        _voxelData.SetType(vox.x, vox.y, vox.z, CellType.Empty);
-        _voxelData.SetItem(vox.x, vox.y, vox.z, null);
+        Vector3Int voxel = ToVoxel(u, v);
+        _voxelData.SetType(voxel.x, voxel.y, voxel.z, CellType.Empty);
+        _voxelData.SetItem(voxel.x, voxel.y, voxel.z, null);
     }
 
     public Vector3 GetWorldPosition(int u, int v, Vector3 offset)
@@ -128,8 +128,8 @@ public class GameGridManager : MonoBehaviour
             for (int u = 0; u < size.x; u++)
             {
                 _cells[u, v].SetState(CellVisualState.Default);
-                Vector3Int vox = ToVoxel(u, v);
-                if (_voxelData.GetIsEntrance(vox.x, vox.y, vox.z))
+                Vector3Int voxel = ToVoxel(u, v);
+                if (_voxelData.GetIsEntrance(voxel.x, voxel.y, voxel.z))
                 {
                     _cells[u, v].SetState(CellVisualState.Blocked);
                 }
@@ -152,26 +152,27 @@ public class GameGridManager : MonoBehaviour
         Vector2Int size = ViewSize;
         if (newU < 0 || newV < 0 || newU >= size.x || newV >= size.y) return;
 
-        Vector3Int newVox = ToVoxel(newU, newV);
-        _voxelData.SetType(newVox.x, newVox.y, newVox.z, CellType.Occupied);
-        _voxelData.SetItem(newVox.x, newVox.y, newVox.z, itemData);
-        _voxelData.SetRotation(newVox.x, newVox.y, newVox.z, rotation == default ? Quaternion.identity : rotation);
+        Vector3Int newVoxel = ToVoxel(newU, newV);
+        _voxelData.SetType(newVoxel.x, newVoxel.y, newVoxel.z, CellType.Occupied);
+        _voxelData.SetItem(newVoxel.x, newVoxel.y, newVoxel.z, itemData);
+        _voxelData.SetRotation(newVoxel.x, newVoxel.y, newVoxel.z, rotation == default ? Quaternion.identity : rotation);
+        _voxelData.SetPlacedView(newVoxel.x, newVoxel.y, newVoxel.z, _view);
 
         bool hasValidStart = startU != -1 && startV != -1;
         bool movedToNewCell = startU != newU || startV != newV;
 
         if (hasValidStart && movedToNewCell)
         {
-            Vector3Int startVox = ToVoxel(startU, startV);
-            _voxelData.SetType(startVox.x, startVox.y, startVox.z, CellType.Empty);
-            _voxelData.SetItem(startVox.x, startVox.y, startVox.z, null);
-            _voxelData.SetRotation(startVox.x, startVox.y, startVox.z, Quaternion.identity);
+            Vector3Int startVoxel = ToVoxel(startU, startV);
+            _voxelData.SetType(startVoxel.x, startVoxel.y, startVoxel.z, CellType.Empty);
+            _voxelData.SetItem(startVoxel.x, startVoxel.y, startVoxel.z, null);
+            _voxelData.SetRotation(startVoxel.x, startVoxel.y, startVoxel.z, Quaternion.identity);
             _placeables[newU, newV] = _placeables[startU, startV];
             _placeables[startU, startV] = null;
         }
     }
 
-    public void PlaceableGenerator()
+   public void PlaceableGenerator()
     {
         Transform placeableFolder = GameObject.Find("PlaceableItems")?.transform;
         if (placeableFolder == null)
@@ -183,9 +184,12 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
-                if (_voxelData.GetType(vox.x, vox.y, vox.z) != CellType.Occupied || cell.item == null) continue;
+                Vector3Int voxel = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
+
+                if (_voxelData.GetType(voxel.x, voxel.y, voxel.z) != CellType.Occupied || cell.item == null) continue;
+
+                if (cell.placedView != _view) continue;
 
                 Vector3 localPos = new Vector3(u, 0f, v) + cell.item.placementOffset;
                 Vector3 worldPos = transform.TransformPoint(localPos);
@@ -194,14 +198,12 @@ public class GameGridManager : MonoBehaviour
                 GameObject instance = Instantiate(cell.item.prefab, worldPos, spawnRot, placeableFolder);
 
                 PlaceableObject placeable = instance.GetComponent<PlaceableObject>();
+                if (placeable == null) continue;
 
-                if (placeable != null)
-                {
-                    placeable.SetGridManager(this);
-                    placeable.InstancePlaceableObjectCreated(u, v);
-                    placeable.Init(cell.item);
-                    _placeables[u, v] = placeable;
-                }
+                placeable.SetGridManager(this);
+                placeable.InstancePlaceableObjectCreated(u, v);
+                placeable.Init(cell.item);
+                _placeables[u, v] = placeable;
             }
         }
 
@@ -222,7 +224,6 @@ public class GameGridManager : MonoBehaviour
                 ValidateAllChairs();
         }
     }
-
     public void ValidateAllChairs()
     {
         if (_view != GridView.Floor) return;
@@ -232,8 +233,8 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                Vector3Int voxel = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                 {
@@ -263,8 +264,8 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                Vector3Int voxel = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                     numChairs++;
@@ -281,8 +282,8 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                Vector3Int voxel = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Table)
                     numTables++;
@@ -303,8 +304,8 @@ public class GameGridManager : MonoBehaviour
             {
                 if (u == startU && v == startV) continue;
 
-                Vector3Int vox = ToVoxel(u, v);
-                GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                Vector3Int voxel = ToVoxel(u, v);
+                GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
                 if (cell.item == null || cell.item.category != PlaceableCategory.Table) continue;
 
@@ -348,8 +349,8 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                var cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+                Vector3Int voxel = ToVoxel(u, v);
+                var cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
                 if (cell.item != null && cell.item.category == PlaceableCategory.Chair)
                 {
@@ -369,8 +370,8 @@ public class GameGridManager : MonoBehaviour
         if (u < 0 || v < 0 || u >= size.x || v >= size.y)
             return false;
 
-        Vector3Int vox = ToVoxel(u, v);
-        if (_voxelData.GetType(vox.x, vox.y, vox.z) != CellType.Empty && !(u == startU && v == startV))
+        Vector3Int voxel = ToVoxel(u, v);
+        if (_voxelData.GetType(voxel.x, voxel.y, voxel.z) != CellType.Empty && !(u == startU && v == startV))
             return false;
 
         if (item.category == PlaceableCategory.Chair && !ignoreChairRules)
@@ -423,8 +424,8 @@ public class GameGridManager : MonoBehaviour
         if (u < 0 || v < 0 || u >= size.x || v >= size.y)
             return false;
 
-        Vector3Int vox = ToVoxel(u, v);
-        GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+        Vector3Int voxel = ToVoxel(u, v);
+        GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
         return cell.item != null && cell.item.category == PlaceableCategory.Chair;
     }
 
@@ -437,8 +438,8 @@ public class GameGridManager : MonoBehaviour
         if (u == ignoreU && v == ignoreV)
             return false;
 
-        Vector3Int vox = ToVoxel(u, v);
-        GridCell cell = _voxelData.GetCell(vox.x, vox.y, vox.z);
+        Vector3Int voxel = ToVoxel(u, v);
+        GridCell cell = _voxelData.GetCell(voxel.x, voxel.y, voxel.z);
 
         if (cell.item != null)
         {
@@ -458,8 +459,8 @@ public class GameGridManager : MonoBehaviour
         {
             for (int u = 0; u < size.x; u++)
             {
-                Vector3Int vox = ToVoxel(u, v);
-                if (_voxelData.GetIsEntrance(vox.x, vox.y, vox.z))
+                Vector3Int voxel = ToVoxel(u, v);
+                if (_voxelData.GetIsEntrance(voxel.x, voxel.y, voxel.z))
                 {
                     queue.Enqueue(new Vector2Int(u, v));
                     visited[u, v] = true;
@@ -485,9 +486,9 @@ public class GameGridManager : MonoBehaviour
 
                 bool isTarget = (nu == targetU && nv == targetV);
 
-                Vector3Int nvox = ToVoxel(nu, nv);
-                bool isWalkable = _voxelData.GetType(nvox.x, nvox.y, nvox.z) == CellType.Empty
-                            || _voxelData.GetIsEntrance(nvox.x, nvox.y, nvox.z);
+                Vector3Int nvoxel = ToVoxel(nu, nv);
+                bool isWalkable = _voxelData.GetType(nvoxel.x, nvoxel.y, nvoxel.z) == CellType.Empty
+                            || _voxelData.GetIsEntrance(nvoxel.x, nvoxel.y, nvoxel.z);
 
                 if (isTarget || isWalkable)
                 {

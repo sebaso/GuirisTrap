@@ -7,4 +7,5 @@ public class GridCell
     public bool isEntrance = false;
     public PlaceableItemData item;
     public Quaternion rotation = Quaternion.identity;
+    public GridView placedView = GridView.Floor;
 }

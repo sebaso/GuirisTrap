@@ -33,7 +33,6 @@ void Start()
     if (_wallNorthGridManager != null) _wallNorthGridManager.SetGridVisible(false);
     if (_wallEastGridManager != null)  _wallEastGridManager.SetGridVisible(false);
     if (_wallWestGridManager != null)  _wallWestGridManager.SetGridVisible(false);
-    if (_perspectiveVoxelView != null) _perspectiveVoxelView.SetVisible(false);
 
     OnCameraViewChanged(_cameraController.CurrentView);
 }
@@ -56,20 +55,15 @@ void Start()
     {
         GameGridManager targetManager = GetManagerForView(view);
         SetActiveGrid(targetManager);
-
-        if (_perspectiveVoxelView != null)
-            _perspectiveVoxelView.SetVisible(view == CameraView.Perspective);
     }
     private GameGridManager GetManagerForView(CameraView view)
     {
         switch (view)
         {
-            case CameraView.TopDown:   return _floorGridManager;
             case CameraView.WallNorth: return _wallNorthGridManager;
             case CameraView.WallEast:  return _wallEastGridManager;
             case CameraView.WallWest:  return _wallWestGridManager;
-            // Perspective es solo overview visual, no hay grid editable activo aquí.
-            default:                   return null;
+            default:                   return _floorGridManager;
         }
     }
     private void SetActiveGrid(GameGridManager newManager)

@@ -618,6 +618,7 @@ GameObject:
   - component: {fileID: 945883624}
   - component: {fileID: 945883627}
   - component: {fileID: 945883628}
+  - component: {fileID: 945883629}
   m_Layer: 0
   m_Name: PersistentManagers
   m_TagString: Untagged
@@ -648,7 +649,7 @@ MonoBehaviour:
     stars: 0
     lastGradedDay: -1
     weekGrades: 
-    grids: []
+    cells: []
     ownedItems: []
 --- !u!114 &945883625
 MonoBehaviour:
@@ -704,6 +705,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7921f3d8a87c4f64488bc7f93b8de610, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OwnedItemsManager
+--- !u!114 &945883629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945883623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb670bff64134ef47ace26b9e723a705, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
 --- !u!1 &1067082506
 GameObject:
   m_ObjectHideFlags: 0

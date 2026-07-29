@@ -9,16 +9,18 @@ public class InputManager : MonoBehaviour, IPlayerActions
 
     [Header("Controllables")]
     private ControllableMonoBehaviour _playerControllable;
-    [SerializeField] private MinigameControllable      _minigameControllable;
+    private MinigameControllable _minigameControllable;
     private DialogueControllable _dialogueControllable;
 
-    private InputSystem_Actions       _inputs;
+    private InputSystem_Actions _inputs;
     private ControllableMonoBehaviour _current;
 
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        DontDestroyOnLoad(gameObject);
 
         _dialogueControllable = gameObject.AddComponent<DialogueControllable>();
 
@@ -32,44 +34,36 @@ public class InputManager : MonoBehaviour, IPlayerActions
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("OnSceneLoaded: " + scene.name + " modo: " + mode);
         PlayerController player = FindAnyObjectByType<PlayerController>();
+        _playerControllable = player;
 
-        if (player != null)
-        {
-            Debug.Log("ENCUENTRA EL PLAYER");
-            _playerControllable = player;
-            _current = _playerControllable;
-        }
-        else
-        {
-                        Debug.Log("NOOOO ENCUENTRA EL PLAYER");
+        _minigameControllable = FindAnyObjectByType<MinigameControllable>();
 
-            _playerControllable = null;
-            _current = null;
-        }
+        _current = _playerControllable;
     }
     private void OnDestroy()
 {
-    // 1. Nos desuscribimos del evento de carga de escena 
     SceneManager.sceneLoaded -= OnSceneLoaded;
 
-    // 2. Apagamos y vaciamos la memoria de los inputs viejos
     if (_inputs != null)
     {
         _inputs.Disable();
         _inputs.Dispose();
     }
 }
-    public void EnterMinigame(IMinigameControllable minigame)
+public void EnterMinigame(IMinigameControllable minigame)
+{
+    if (_minigameControllable == null)
     {
-        // Detiene al jugador para que no patine mientras juega el minijuego.
-        (_playerControllable as PlayerController)?.LockMovement();
-
-        _minigameControllable.SetActive(minigame);
-        _current = _minigameControllable;
+        Debug.LogError("No existe un MinigameControllable en esta escena.");
+        return;
     }
 
+    (_playerControllable as PlayerController)?.LockMovement();
+
+    _minigameControllable.SetActive(minigame);
+    _current = _minigameControllable;
+}
     public void ExitMinigame()
     {
         _minigameControllable.ClearActive();
@@ -102,8 +96,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-            // Debug.Log("OnMove: " + context.ReadValue<Vector2>() + " current: " + _current?.name);
-_current?.OnMove(context.ReadValue<Vector2>());
+        _current?.OnMove(context.ReadValue<Vector2>());
     }
 
     public void OnLook(InputAction.CallbackContext context)

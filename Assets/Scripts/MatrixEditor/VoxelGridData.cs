@@ -7,7 +7,6 @@ public class VoxelGridData : ScriptableObject
     public int height;
     public int depth;
     public GridCell[] _cells;
-
     private int Index(int x, int y, int z) => x + y * width + z * width * height;
 
     public CellType GetType(int x, int y, int z) => _cells[Index(x, y, z)].type;
@@ -22,4 +21,7 @@ public class VoxelGridData : ScriptableObject
 
     public Quaternion GetRotation(int x, int y, int z) => _cells[Index(x, y, z)].rotation;
     public void SetRotation(int x, int y, int z, Quaternion rot) => _cells[Index(x, y, z)].rotation = rot;
+    public GridView GetPlacedView(int x, int y, int z) => _cells[Index(x, y, z)].placedView;
+    public void SetPlacedView(int x, int y, int z, GridView view) => _cells[Index(x, y, z)].placedView = view;
+
 }

@@ -15,6 +15,7 @@ public class DialogueReaction : Reaction
     protected override void React()
     {
         base.React();
+
         string text = TranslateManager.Instance.GetTextWithKey(_textKey);
         OnDialogueReactionStart?.Invoke(text, _color, _portrait);
     }

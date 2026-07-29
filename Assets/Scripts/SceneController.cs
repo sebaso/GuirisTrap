@@ -43,12 +43,14 @@ public class SceneController : MonoBehaviour
         foreach (GameGridManager manager in allManagers)
             manager.Init();
 
-        PerspectiveVoxelView perspectiveView = FindFirstObjectByType<PerspectiveVoxelView>();
-        if (perspectiveView != null)
-            perspectiveView.Init();
-
-        if (SaveManager.Instance != null)
-            SaveManager.Instance.LoadGrids(allManagers);
+        if (SaveManager.Instance != null && allManagers.Length > 0)
+        {
+            if (SaveManager.Instance.ShouldSyncGridsOnLoad())
+            {
+                allManagers[0].ClearPlacedItems();
+                SaveManager.Instance.LoadGrids(allManagers);
+            }
+        }
 
         foreach (GameGridManager manager in allManagers)
             manager.PlaceableGenerator();

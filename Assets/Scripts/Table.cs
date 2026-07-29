@@ -64,15 +64,9 @@ public class Table : MonoBehaviour
     {
         _placeable = GetComponent<PlaceableObject>();
         RestaurantManager.Instance?.RegisterTable(this);
-        if (_placeable == null)
-        {
-            IsPlaced = true;
-            RestaurantManager.Instance?.TablePlaced(this);
-        }
-        else
-        {
-            IsPlaced = false;
-        }
+
+        IsPlaced = true;
+        RestaurantManager.Instance?.TablePlaced(this);
     }
 
     void Update()
