@@ -45,21 +45,6 @@ public class InventorySlotUI : MonoBehaviour
         if (_quantityText != null)
             _quantityText.text = slot.quantity > 1 ? slot.quantity.ToString() : "";
     }
-
-    public void RefreshCompatibility(PlaceableSurface activeSurface)
-    {
-        if (_currentItem == null || _icon == null) return;
-
-        bool compatible = _currentItem.IsCompatibleWith(activeSurface);
-
-        Color color = _icon.color;
-        color.a = compatible ? ENABLED_ALPHA : DISABLED_ALPHA;
-        _icon.color = color;
-
-        if (_button != null)
-            _button.interactable = compatible;
-    }
-
     public void OnClick()
     {
         GameManager.Instance.Place(_posX, _posY);

@@ -2,16 +2,13 @@ using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
-    [SerializeField] private Inventory _inventory;
-    [SerializeField] private InventorySlotUI[] _slotsUI;
-    [SerializeField] private GridController _gridController;
+    [SerializeField] 
+    private Inventory _inventory;
 
-    // Prefer the live singleton over the serialized reference: a panel-baked
-    // Inventory destroys itself as a duplicate once the real singleton exists,
-    // and Unity defers that Destroy to end-of-frame, so on first open the
-    // serialized field can still point at the soon-to-be-destroyed (empty)
-    // instance. Reading Instance keeps the UI on the inventory that actually
-    // holds the purchased items.
+    [SerializeField] 
+    private InventorySlotUI[] _slotsUI;
+
+
     private Inventory Inv => Inventory.Instance != null ? Inventory.Instance : _inventory;
 
     void OnEnable()
@@ -32,11 +29,6 @@ public class InventoryUI : MonoBehaviour
         Inventory.OnAnyInventoryChanged -= Refresh;
     }
 
-    void Update()
-    {
-        RefreshCompatibility();
-    }
-
     public void Refresh()
     {
         Inventory inv = Inv;
@@ -53,19 +45,6 @@ public class InventoryUI : MonoBehaviour
                 _slotsUI[index].Init(x, y);
                 _slotsUI[index].SetSlot(slot);
             }
-        }
-    }
-
-    private void RefreshCompatibility()
-    {
-        if (_gridController == null || _slotsUI == null) return;
-
-        PlaceableSurface activeSurface = _gridController.GetActiveSurface();
-
-        foreach (InventorySlotUI slotUI in _slotsUI)
-        {
-            if (slotUI == null) continue;
-            slotUI.RefreshCompatibility(activeSurface);
         }
     }
 }

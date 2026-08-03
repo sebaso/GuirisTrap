@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d58836f209852a647b9885db6d2309d4, type: 3}
+  m_Script: {fileID: 11500000, guid: 18c10041d973c304e8d33cb6ca3338ab, type: 3}
   m_Name: VoxelGridData
   m_EditorClassIdentifier: Assembly-CSharp::VoxelGridData
   width: 12
@@ -17,1010 +17,758 @@ MonoBehaviour:
   depth: 7
   _cells:
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 0}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 3cca875970521f54b9662cf507bbb03e, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
-    rotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
-    rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    isEntrance: 0
-    item: {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
-    rotation: {x: 0, y: 0.70710677, z: -0.70710677, w: 0}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 1
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
   - type: 0
-    isEntrance: 0
     item: {fileID: 0}
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}
+  - type: 0
+    item: {fileID: 0}
+    anchor: {x: 0, y: 0, z: 0}

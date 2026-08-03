@@ -1,0 +1,129 @@
+using UnityEngine;
+
+public enum WallSide
+{
+    North,
+    East,
+    West
+}
+
+public class WallGridProjection : MonoBehaviour
+{
+    [SerializeField] 
+    private VoxelGridData _voxelData;
+    [SerializeField] 
+    private GridVisualCell _cellPrefab;
+    [SerializeField] 
+    private WallSide _side;
+
+    private GridVisualCell[,] _cells;
+
+    private int USize => _side == WallSide.North ? _voxelData.width : _voxelData.depth;
+    private int VSize => _voxelData.height;
+
+    private void GetVoxelCoords(int u, int v, out int x, out int y, out int z)
+    {
+        y = v;
+        switch (_side)
+        {
+            case WallSide.North:
+                x = u;
+                z = _voxelData.depth - 1;
+                break;
+            case WallSide.East:
+                x = _voxelData.width - 1;
+                z = u;
+                break;
+            default: // West
+                x = 0;
+                z = u;
+                break;
+        }
+    }
+
+    private Vector3 GetLocalPos(int u, int v)
+    {
+        switch (_side)
+        {
+            case WallSide.North:
+                return new Vector3(u, v, _voxelData.depth);
+            case WallSide.East:
+                return new Vector3(_voxelData.width, v, u);
+            default: // West
+                return new Vector3(0f, v, u);
+        }
+    }
+
+    private Vector3 InwardNormalLocal => _side switch
+    {
+        WallSide.North => Vector3.back,
+        WallSide.East  => Vector3.left,
+        _              => Vector3.right, // West
+    };
+
+    private Quaternion GetCellRotation()
+    {
+        Quaternion localRot = Quaternion.FromToRotation(Vector3.up, InwardNormalLocal);
+        return transform.rotation * localRot;
+    }
+
+    [ContextMenu("TEST: Init (instanciar cubos visuales)")]
+    public void Init()
+    {
+        if (_voxelData == null || _cellPrefab == null)
+        {
+            Debug.LogWarning("[WallGridProjection] Falta VoxelGridData o el prefab de celda.");
+            return;
+        }
+
+        int uSize = USize;
+        int vSize = VSize;
+        _cells = new GridVisualCell[uSize, vSize];
+
+        for (int v = 0; v < vSize; v++)
+        {
+            for (int u = 0; u < uSize; u++)
+            {
+                Vector3 worldPos = transform.TransformPoint(GetLocalPos(u, v));
+
+                GridVisualCell cell = Instantiate(_cellPrefab, worldPos, GetCellRotation(), transform);
+                cell.Init(u, v);
+                _cells[u, v] = cell;
+            }
+        }
+
+        RefreshAll();
+    }
+
+    [ContextMenu("TEST: Refrescar estado visual")]
+    public void RefreshAll()
+    {
+        if (_cells == null || _voxelData == null) return;
+
+        int uSize = USize;
+        int vSize = VSize;
+
+        for (int v = 0; v < vSize; v++)
+        {
+            for (int u = 0; u < uSize; u++)
+            {
+                GetVoxelCoords(u, v, out int x, out int y, out int z);
+                CellType type = _voxelData.GetType(x, y, z);
+                CellVisualState state = (type == CellType.Empty) ? CellVisualState.Default : CellVisualState.Blocked;
+                _cells[u, v].SetState(state);
+            }
+        }
+    }
+    public void SetVisible(bool visible)
+    {
+        if (_cells == null) return;
+
+        int uSize = USize;
+        int vSize = VSize;
+
+        for (int v = 0; v < vSize; v++)
+            for (int u = 0; u < uSize; u++)
+                if (_cells[u, v] != null)
+                    _cells[u, v].SetVisible(visible);
+    }
+}

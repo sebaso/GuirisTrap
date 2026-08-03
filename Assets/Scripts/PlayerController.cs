@@ -334,7 +334,6 @@ public class PlayerController : ControllableMonoBehaviour
 
         if (best == null) return;
 
-        GameGridManager grid = best.GridManager;
         PlaceableCategory category = best.GetItemData().category;
 
         if (category == PlaceableCategory.Table)
@@ -344,12 +343,6 @@ public class PlayerController : ControllableMonoBehaviour
             {
                 Debug.LogWarning("[Carry] That table is in use — wait until the group leaves.");
                 HUDMessage.Instance?.ShowWarning("Mesa ocupada — espera a que el grupo termine.");
-                return;
-            }
-            if (grid != null && grid.HasAdjacentChairs(best.CurrentCellX, best.CurrentCellY))
-            {
-                Debug.LogWarning("[Carry] Take the chairs out before moving this table.");
-                HUDMessage.Instance?.ShowWarning("Quita las sillas antes de mover la mesa.");
                 return;
             }
             table?.SetCarried(true);
@@ -420,32 +413,22 @@ public class PlayerController : ControllableMonoBehaviour
             return;
         }
 
-        GameGridManager grid = _heldPlaceable.GridManager;
         PlaceableItemData item = _heldPlaceable.GetItemData();
         int x = _dropX, y = _dropY;
 
         _heldPlaceable.transform.SetParent(null);
-        Vector3 localPos = new Vector3(x, 0f, y) + item.placementOffset;
-        Vector3 targetWorld = grid.transform.TransformPoint(localPos);
-        Quaternion targetRot = item.category == PlaceableCategory.Chair
-            ? grid.GetChairRotation(x, y)
-            : grid.transform.rotation;
-
+        
         Collider c = _heldPlaceable.GetComponent<Collider>();
         if (c != null) c.enabled = true;
 
         if (_ghost != null) { Destroy(_ghost); _ghost = null; }
 
-        grid.SaveGrid(x, y, _heldPlaceable.StartCellX, _heldPlaceable.StartCellY, item, targetRot);
         _heldPlaceable.InstancePlaceableObjectCreated(x, y);
 
         if (item.category == PlaceableCategory.Chair)
             _heldPlaceable.GetComponent<Chair>()?.SetCarried(false);
         else
             _heldPlaceable.GetComponent<Table>()?.SetCarried(false);
-
-        _heldPlaceable.LerpTo(targetWorld, targetRot);
-        _heldPlaceable = null;
 
         RestaurantManager.Instance?.NotifyTablesRearranged();
     }
@@ -455,26 +438,16 @@ public class PlayerController : ControllableMonoBehaviour
         _heldPlaceable.transform.localPosition = Vector3.Lerp(
             _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
 
-        GameGridManager grid = _heldPlaceable.GridManager;
-        if (grid == null) { _dropValid = false; return; }
 
         // one cell ahead of the player
         Vector3 targetWorld = transform.position + _lastFacing;
-        Vector3 local = grid.transform.InverseTransformPoint(targetWorld);
-        _dropX = Mathf.FloorToInt(local.x);
-        _dropY = Mathf.FloorToInt(local.z);
+  
 
         PlaceableItemData item = _heldPlaceable.GetItemData();
         // chairs ignore adjacency rules so they can be staged anywhere to clear a table
-        _dropValid = grid.CanPlaceItem(_dropX, _dropY, _heldPlaceable.StartCellX, _heldPlaceable.StartCellY, item, ignoreChairRules: true);
 
         if (_ghost != null)
         {
-            Vector3 ghostLocal = new Vector3(_dropX, 0f, _dropY) + item.placementOffset;
-            _ghost.transform.position = grid.transform.TransformPoint(ghostLocal);
-            _ghost.transform.rotation = item.category == PlaceableCategory.Chair
-                ? grid.GetChairRotation(_dropX, _dropY)
-                : grid.transform.rotation;
             TintGhost(_dropValid ? GhostOk : GhostBad);
         }
     }

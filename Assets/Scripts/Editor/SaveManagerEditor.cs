@@ -16,8 +16,6 @@ public class SaveManagerEditor : Editor
 
         // Sincroniza con MoneyManager y las grids de la escena: solo en Play.
         GUI.enabled = Application.isPlaying;
-        if (GUILayout.Button("Force Save (sync live state)"))
-            manager.ForceSave();
         GUI.enabled = true;
 
         // Persiste los valores editados a mano sin sincronizar nada más.

@@ -24,17 +24,9 @@ public class PlaceableObject : MonoBehaviour
     public int LastCellX => _lastCellX;
     public int LastCellY => _lastCellY;
 
-    private GameGridManager _gridManager;
-    public GameGridManager GridManager => _gridManager;
-
     private PlaceableItemData _itemData;
     private bool _isValid = true;
     public bool IsValid => _isValid;
-
-    void Awake()
-    {
-        _gridManager = FindAnyObjectByType<GameGridManager>();
-    }
 
     void Start()
     {
@@ -48,19 +40,9 @@ public class PlaceableObject : MonoBehaviour
     }
 
 
-public void Init(PlaceableItemData itemData)
+    public void Init(PlaceableItemData itemData)
     {
         _itemData = itemData;
-    }
-
-    void Update()
-    {
-        MovePlaceableObject();
-    }
-
-    public void SetGridManager(GameGridManager gridManager)
-    {
-        _gridManager = gridManager;
     }
 
     public void IsPlacedAtCell()
@@ -81,28 +63,6 @@ public void Init(PlaceableItemData itemData)
         _lastCellY = y;
         _isMoved = false;
     }    
-
-    private void MovePlaceableObject()
-    {
-        if (!_isSelected) return;
-
-        Vector3 localPos = _gridManager.transform.InverseTransformPoint(transform.position);
-
-        _actualCellX = Mathf.FloorToInt(localPos.x);
-        _actualCellY = Mathf.FloorToInt(localPos.z);
-
-        _gridManager.ClearLastCell(_lastCellX, _lastCellY);
-        _lastCellX = -1;
-        _lastCellY = -1;
-
-        if (_gridManager.UpdateVisualCell(_actualCellX, _actualCellY, _cellOccupiedAtStartX, _cellOccupiedAtStartY, _itemData))
-        {
-            _lastCellX = _actualCellX;
-            _lastCellY = _actualCellY;
-        }
-        
-        _isMoved = true;
-    }
 
     public void RestartCell()
     {

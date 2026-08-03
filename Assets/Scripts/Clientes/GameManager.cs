@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Inventory _inventory;
-    [SerializeField] private GridController _gridController;
+    [SerializeField] 
+    private Inventory _inventory;
+
     private static GameManager _instance;
     public static GameManager Instance => _instance;
 
@@ -81,50 +82,11 @@ public class GameManager : MonoBehaviour
         if (folder == null)
             folder = new GameObject("PlaceableItems").transform;
 
-        if (itemData == null || itemData.prefab == null || _gridController == null)
+        if (itemData == null || itemData.prefab == null)
         {
-            Debug.LogWarning("No hay prefab o GridController asignado en GameManager");
+            Debug.LogWarning("No hay prefab");
             return;
         }
-
-        GameGridManager activeManager = _gridController.ActiveGridManager;
-        if (activeManager == null) return;
-
-        if (!itemData.IsCompatibleWith(activeManager.Surface))
-        {
-            Debug.Log("El objeto no es compatible con la superficie activa");
-            HUDMessage.Instance?.ShowWarning("No se puede colocar aquí, superficie incompatible.");
-            return;
-        }
-
-        for (int v = 0; v < activeManager.Height; v++)
-        {
-            for (int u = 0; u < activeManager.Width; u++)
-            {
-                if (!activeManager.IsCellEmpty(u, v)) continue;
-
-                Vector3 worldPos = activeManager.GetWorldPosition(u, v, itemData.placementOffset);
-
-                GameObject obj = Instantiate(itemData.prefab, worldPos, activeManager.transform.rotation, folder);
-                PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
-
-                activeManager.SaveGrid(u, v, -1, -1, itemData);
-
-                placeable.SetGridManager(activeManager);
-                placeable.InstancePlaceableObjectCreated(u, v);
-                placeable.Init(itemData);
-
-                activeManager.SetPlaceableAt(u, v, placeable);
-                inv.RemoveItem(posX, posY);
-
-                if (itemData.category == PlaceableCategory.Chair || itemData.category == PlaceableCategory.Table)
-                    activeManager.ValidateAllChairs();
-
-                return;
-            }
-        }
-
-        Debug.Log("No hay espacio en el grid activo");
         HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
     }
 }

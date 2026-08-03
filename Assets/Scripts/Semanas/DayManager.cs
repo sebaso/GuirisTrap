@@ -91,9 +91,6 @@ public class DayManager : MonoBehaviour
 
     private void HandleDayEnd()
     {
-        if (SaveManager.Instance != null)
-            SaveManager.Instance.ForceSave();
-
         Debug.Log("[DayManager] Día terminado. Mostrando pantalla de Stats...");
     }
 

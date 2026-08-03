@@ -1,34 +1,16 @@
 using UnityEngine;
 
-public enum PlaceableSurface
-{
-    Floor,
-    Wall,
-    Both
-}
-
 [CreateAssetMenu(fileName = "PlaceableItemData", menuName = "Scriptable Objects/PlaceableItemData")]
 public class PlaceableItemData : ScriptableObject
 {
     public GameObject prefab;
     public Sprite icon;
     public PlaceableCategory category;
-    public PlaceableSurface surface;
 
     public int cost;
     public int maxStack;
 
     public bool ocuppied;
+    public Vector3Int size = Vector3Int.one;
 
-    [Header("Placement")]
-    public Vector3 placementOffset;
-
-    [Header("Object height")]
-    public int wallHeightCells = 1;
-
-    public bool IsCompatibleWith(PlaceableSurface activeSurface)
-    {
-        if (surface == PlaceableSurface.Both) return true;
-        return surface == activeSurface;
-    }
 }
