@@ -140,6 +140,55 @@ public class WallGridProjection : MonoBehaviour
         rot = GetCellRotation();
         return true;
     }
+    public bool TryGetVoxelUnderRay(Ray ray, out Vector3Int voxel)
+    {
+        voxel = default;
+
+        Vector3 localNormal = _side == WallSide.North ? Vector3.forward : Vector3.right;
+        Vector3 worldNormal = transform.TransformDirection(localNormal);
+        Vector3 pointOnPlane = transform.TransformPoint(GetLocalPos(0, 0));
+
+        Plane plane = new Plane(worldNormal, pointOnPlane);
+        if (!plane.Raycast(ray, out float dist)) return false;
+
+        Vector3 local = transform.InverseTransformPoint(ray.GetPoint(dist));
+
+        int u = _side == WallSide.North ? Mathf.FloorToInt(local.x) : Mathf.FloorToInt(local.z);
+        int v = Mathf.FloorToInt(local.y);
+
+        if (u < 0 || v < 0 || u >= USize || v >= VSize) return false;
+
+        GetVoxelCoords(u, v, out int x, out int y, out int z);
+        voxel = new Vector3Int(x, y, z);
+        return true;
+    }
+
+    public void SetCellVisual(Vector3Int voxel, CellVisualState state)
+    {
+        if (_cells == null || !TryVoxelToUV(voxel, out int u, out int v)) return;
+        _cells[u, v].SetState(state);
+    }
+
+    private bool TryVoxelToUV(Vector3Int voxel, out int u, out int v)
+    {
+        u = v = 0;
+        switch (_side)
+        {
+            case WallSide.North:
+                if (voxel.z != _voxelData.depth - 1) return false;
+                u = voxel.x; v = voxel.y;
+                break;
+            case WallSide.East:
+                if (voxel.x != _voxelData.width - 1) return false;
+                u = voxel.z; v = voxel.y;
+                break;
+            default:
+                if (voxel.x != 0) return false;
+                u = voxel.z; v = voxel.y;
+                break;
+        }
+        return u >= 0 && v >= 0 && u < USize && v < VSize;
+    }
     public void SetVisible(bool visible)
     {
         if (_cells == null) return;

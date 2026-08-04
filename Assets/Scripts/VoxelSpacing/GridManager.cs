@@ -39,17 +39,50 @@ public class GridManager : MonoBehaviour
         return cells;
     }
  
-    public bool CanPlaceItem(int x, int y, int z, PlaceableItemData item)
+    public bool CanPlaceItem(int x, int y, int z, PlaceableItemData item, Vector3Int? ignoreAnchor = null)
     {
         if (item == null) return false;
- 
+
         var cells = GetFootprintCells(x, y, z, item);
         if (cells == null) return false;
- 
+
+        List<Vector3Int> ignoreCells = null;
+        if (ignoreAnchor.HasValue)
+            ignoreCells = GetFootprintCells(ignoreAnchor.Value.x, ignoreAnchor.Value.y, ignoreAnchor.Value.z, item);
+
         foreach (var c in cells)
-            if (_voxelData.GetType(c.x, c.y, c.z) != CellType.Empty)
-                return false;
- 
+        {
+            if (ignoreCells != null && ignoreCells.Contains(c)) continue;
+            if (_voxelData.GetType(c.x, c.y, c.z) != CellType.Empty) return false;
+        }
+        return true;
+    }
+
+    public bool MoveItem(Vector3Int fromAnchor, Vector3Int toAnchor, PlaceableItemData item)
+    {
+        if (item == null) return false;
+        if (!CanPlaceItem(toAnchor.x, toAnchor.y, toAnchor.z, item, fromAnchor)) return false;
+
+        var oldCells = GetFootprintCells(fromAnchor.x, fromAnchor.y, fromAnchor.z, item);
+        if (oldCells != null)
+        {
+            foreach (var c in oldCells)
+            {
+                _voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
+                _voxelData.SetItem(c.x, c.y, c.z, null);
+                _voxelData.SetAnchor(c.x, c.y, c.z, default);
+            }
+        }
+
+        var newCells = GetFootprintCells(toAnchor.x, toAnchor.y, toAnchor.z, item);
+        foreach (var c in newCells)
+        {
+            _voxelData.SetType(c.x, c.y, c.z, CellType.Occupied);
+            _voxelData.SetAnchor(c.x, c.y, c.z, toAnchor);
+        }
+        _voxelData.SetItem(toAnchor.x, toAnchor.y, toAnchor.z, item);
+
+        OnGridChanged?.Invoke();
         return true;
     }
  
@@ -67,7 +100,7 @@ public class GridManager : MonoBehaviour
         }
 
         _voxelData.SetItem(x, y, z, item);
-
+Debug.Log($"[GridManager] OnGridChanged disparado, suscriptores: {OnGridChanged?.GetInvocationList().Length ?? 0}");
         OnGridChanged?.Invoke();
         return true;
     }

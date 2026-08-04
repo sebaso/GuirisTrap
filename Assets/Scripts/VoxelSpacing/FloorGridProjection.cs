@@ -64,6 +64,28 @@ public class FloorGridProjection : MonoBehaviour
         rot = transform.rotation;
         return true;
     }
+    public bool TryGetVoxelUnderRay(Ray ray, out Vector3Int voxel)
+    {
+        voxel = default;
+        Plane plane = new Plane(transform.up, transform.position);
+        if (!plane.Raycast(ray, out float dist)) return false;
+
+        Vector3 local = transform.InverseTransformPoint(ray.GetPoint(dist));
+        int x = Mathf.FloorToInt(local.x);
+        int z = Mathf.FloorToInt(local.z);
+
+        if (x < 0 || z < 0 || x >= _voxelData.width || z >= _voxelData.depth) return false;
+
+        voxel = new Vector3Int(x, 0, z);
+        return true;
+    }
+
+    public void SetCellVisual(Vector3Int voxel, CellVisualState state)
+    {
+        if (_cells == null) return;
+        if (voxel.y != 0 || voxel.x < 0 || voxel.z < 0 || voxel.x >= _voxelData.width || voxel.z >= _voxelData.depth) return;
+        _cells[voxel.x, voxel.z].SetState(state);
+    }
     public void SetVisible(bool visible)
     {
         if (_cells == null) return;

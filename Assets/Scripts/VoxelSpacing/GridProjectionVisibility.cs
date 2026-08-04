@@ -78,4 +78,38 @@ public class GridProjectionVisibility : MonoBehaviour
                 return false;
         }
     }
+    public bool TryGetVoxelUnderRay(CameraView view, Ray ray, out Vector3Int voxel)
+    {
+        voxel = default;
+        return view switch
+        {
+            CameraView.Perspective or CameraView.TopDown => _floor != null && _floor.TryGetVoxelUnderRay(ray, out voxel),
+            CameraView.WallNorth => _wallNorth != null && _wallNorth.TryGetVoxelUnderRay(ray, out voxel),
+            CameraView.WallEast  => _wallEast != null && _wallEast.TryGetVoxelUnderRay(ray, out voxel),
+            CameraView.WallWest  => _wallWest != null && _wallWest.TryGetVoxelUnderRay(ray, out voxel),
+            _ => false
+        };
+    }
+
+    public void RefreshActive(CameraView view)
+    {
+        switch (view)
+        {
+            case CameraView.Perspective: case CameraView.TopDown: _floor?.RefreshAll(); break;
+            case CameraView.WallNorth: _wallNorth?.RefreshAll(); break;
+            case CameraView.WallEast:  _wallEast?.RefreshAll(); break;
+            case CameraView.WallWest:  _wallWest?.RefreshAll(); break;
+        }
+    }
+
+    public void SetPreview(CameraView view, Vector3Int voxel, CellVisualState state)
+    {
+        switch (view)
+        {
+            case CameraView.Perspective: case CameraView.TopDown: _floor?.SetCellVisual(voxel, state); break;
+            case CameraView.WallNorth: _wallNorth?.SetCellVisual(voxel, state); break;
+            case CameraView.WallEast:  _wallEast?.SetCellVisual(voxel, state); break;
+            case CameraView.WallWest:  _wallWest?.SetCellVisual(voxel, state); break;
+        }
+    }
 }
