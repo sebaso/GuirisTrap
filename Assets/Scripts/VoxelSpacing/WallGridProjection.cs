@@ -114,6 +114,32 @@ public class WallGridProjection : MonoBehaviour
             }
         }
     }
+    public bool TryGetWorldTransform(Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    {
+        pos = default;
+        rot = Quaternion.identity;
+
+        int u, v;
+        switch (_side)
+        {
+            case WallSide.North:
+                if (voxel.z != _voxelData.depth - 1) return false;
+                u = voxel.x; v = voxel.y;
+                break;
+            case WallSide.East:
+                if (voxel.x != _voxelData.width - 1) return false;
+                u = voxel.z; v = voxel.y;
+                break;
+            default: // West
+                if (voxel.x != 0) return false;
+                u = voxel.z; v = voxel.y;
+                break;
+        }
+
+        pos = transform.TransformPoint(GetLocalPos(u, v));
+        rot = GetCellRotation();
+        return true;
+    }
     public void SetVisible(bool visible)
     {
         if (_cells == null) return;

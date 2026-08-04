@@ -22,7 +22,7 @@ public class InventorySlotUI : MonoBehaviour
         _posY = y;
     }
 
-    public void SetSlot(InventorySlot slot)
+    public void SetSlot(InventorySlot slot, bool isCompatible)
     {
         if (slot == null)
         {
@@ -38,9 +38,12 @@ public class InventorySlotUI : MonoBehaviour
         {
             _icon.sprite = slot.item != null ? slot.item.icon : null;
             Color c = _icon.color;
-            c.a = ENABLED_ALPHA;
+            c.a = isCompatible ? ENABLED_ALPHA : DISABLED_ALPHA;
             _icon.color = c;
         }
+
+        if (_button != null)
+            _button.interactable = isCompatible;
 
         if (_quantityText != null)
             _quantityText.text = slot.quantity > 1 ? slot.quantity.ToString() : "";

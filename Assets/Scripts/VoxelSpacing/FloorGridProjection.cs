@@ -52,6 +52,18 @@ public class FloorGridProjection : MonoBehaviour
             }
         }
     }
+    public bool TryGetWorldTransform(Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    {
+        pos = default;
+        rot = Quaternion.identity;
+
+        if (voxel.y != 0 || voxel.x < 0 || voxel.z < 0 || voxel.x >= _voxelData.width || voxel.z >= _voxelData.depth)
+            return false;
+
+        pos = transform.TransformPoint(new Vector3(voxel.x + 0.5f, 0f, voxel.z + 0.5f));
+        rot = transform.rotation;
+        return true;
+    }
     public void SetVisible(bool visible)
     {
         if (_cells == null) return;

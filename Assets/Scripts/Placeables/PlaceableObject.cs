@@ -26,6 +26,8 @@ public class PlaceableObject : MonoBehaviour
 
     private PlaceableItemData _itemData;
     private bool _isValid = true;
+    private Vector3Int _anchorVoxel;
+    public Vector3Int AnchorVoxel => _anchorVoxel;
     public bool IsValid => _isValid;
 
     void Start()
@@ -52,17 +54,18 @@ public class PlaceableObject : MonoBehaviour
         _isMoved = false;
     }
 
-    public void InstancePlaceableObjectCreated(int x, int y)
+    public void InstancePlaceableObjectCreated(Vector3Int anchor)
     {
         _wasInitialized = true;
-        _cellOccupiedAtStartX = x;
-        _cellOccupiedAtStartY = y;
-        _actualCellX = x;
-        _actualCellY = y;
-        _lastCellX = x;
-        _lastCellY = y;
+        _anchorVoxel = anchor;
+        _cellOccupiedAtStartX = anchor.x;
+        _cellOccupiedAtStartY = anchor.z;
+        _actualCellX = anchor.x;
+        _actualCellY = anchor.z;
+        _lastCellX = anchor.x;
+        _lastCellY = anchor.z;
         _isMoved = false;
-    }    
+    }
 
     public void RestartCell()
     {

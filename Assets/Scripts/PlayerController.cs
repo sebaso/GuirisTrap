@@ -423,7 +423,7 @@ public class PlayerController : ControllableMonoBehaviour
 
         if (_ghost != null) { Destroy(_ghost); _ghost = null; }
 
-        _heldPlaceable.InstancePlaceableObjectCreated(x, y);
+        //_heldPlaceable.InstancePlaceableObjectCreated(x, y);
 
         if (item.category == PlaceableCategory.Chair)
             _heldPlaceable.GetComponent<Chair>()?.SetCarried(false);

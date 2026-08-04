@@ -4,10 +4,15 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] 
     private Inventory _inventory;
-
+    [SerializeField] 
+    private GridManager _gridManager;
+    [SerializeField] 
+    private GridProjectionVisibility 
+    _gridProjectionVisibility;
+    [SerializeField] 
+    private CameraController _cameraController;
     private static GameManager _instance;
     public static GameManager Instance => _instance;
-
     private Inventory Inv
     {
         get
@@ -68,25 +73,50 @@ public class GameManager : MonoBehaviour
     public void Place(int posX, int posY)
     {
         Inventory inv = Inv;
-        if (inv == null)
-        {
-            Debug.LogWarning("[GameManager] No Inventory encontrado al colocar.");
-            return;
-        }
+        if (inv == null) return;
 
         InventorySlot slot = inv.GetSlot(posX, posY);
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
-        Transform folder = GameObject.Find("PlaceableItems")?.transform;
-        if (folder == null)
-            folder = new GameObject("PlaceableItems").transform;
+        if (itemData == null || itemData.prefab == null || _gridManager == null
+            || _gridProjectionVisibility == null || _cameraController == null)
+            return;
 
-        if (itemData == null || itemData.prefab == null)
+        CameraView view = _cameraController.CurrentView;
+        PlaceableSurface activeSurface = GridProjectionVisibility.SurfaceForView(view);
+
+        if (!itemData.IsCompatibleWith(activeSurface))
         {
-            Debug.LogWarning("No hay prefab");
+            HUDMessage.Instance?.ShowWarning("Este objeto no se puede colocar aquí.");
             return;
         }
-        HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
+
+        if (!_gridManager.TryFindFreeCellInLayer(view, itemData, out Vector3Int cell))
+        {
+            HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
+            return;
+        }
+
+        if (!_gridProjectionVisibility.TryGetWorldTransform(view, cell, out Vector3 worldPos, out Quaternion rot))
+        {
+            Debug.LogWarning($"[GameManager] No se pudo resolver transform de mundo para {cell}.");
+            return;
+        }
+
+        worldPos += rot * itemData.placementOffset;
+
+        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData))
+            return;
+
+        Transform folder = GameObject.Find("PlaceableItems")?.transform;
+        if (folder == null) folder = new GameObject("PlaceableItems").transform;
+
+        GameObject obj = Instantiate(itemData.prefab, worldPos, rot, folder);
+        PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
+        placeable.Init(itemData);
+        placeable.InstancePlaceableObjectCreated(cell);
+
+        inv.RemoveItem(posX, posY);
     }
 }

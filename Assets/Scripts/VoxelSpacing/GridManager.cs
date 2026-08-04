@@ -5,12 +5,8 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] 
     private VoxelGridData _voxelData;
-    public System.Action OnGridReady;
+    public System.Action OnGridChanged;
 
-    void Start()
-    {
-        OnGridReady?.Invoke();
-    }
     public bool IsInBounds(int x, int y, int z)
     {
         return _voxelData != null && _voxelData.IsInBounds(x, y, z);
@@ -60,21 +56,22 @@ public class GridManager : MonoBehaviour
     public bool PlaceItem(int x, int y, int z, PlaceableItemData item)
     {
         if (!CanPlaceItem(x, y, z, item)) return false;
- 
+
         var cells = GetFootprintCells(x, y, z, item);
         var anchor = new Vector3Int(x, y, z);
- 
+
         foreach (var c in cells)
         {
             _voxelData.SetType(c.x, c.y, c.z, CellType.Occupied);
             _voxelData.SetAnchor(c.x, c.y, c.z, anchor);
         }
- 
+
         _voxelData.SetItem(x, y, z, item);
- 
+
+        OnGridChanged?.Invoke();
         return true;
     }
- 
+
     public bool TryGetItemAt(int x, int y, int z, out PlaceableItemData item, out Vector3Int anchor)
     {
         item = null;
@@ -91,18 +88,70 @@ public class GridManager : MonoBehaviour
     public bool RemoveItemAt(int x, int y, int z)
     {
         if (!TryGetItemAt(x, y, z, out var item, out var anchor)) return false;
- 
+
         var cells = GetFootprintCells(anchor.x, anchor.y, anchor.z, item);
         if (cells == null) return false;
- 
+
         foreach (var c in cells)
         {
             _voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
             _voxelData.SetItem(c.x, c.y, c.z, null);
             _voxelData.SetAnchor(c.x, c.y, c.z, default);
         }
- 
+
+        OnGridChanged?.Invoke();
         return true;
+    }
+
+    public bool TryFindFreeCellInLayer(CameraView view, PlaceableItemData item, out Vector3Int cell)
+    {
+        cell = default;
+        if (_voxelData == null || item == null) return false;
+
+        switch (view)
+        {
+            case CameraView.Perspective:
+            case CameraView.TopDown:
+                for (int z = 0; z < _voxelData.depth; z++)
+                    for (int x = 0; x < _voxelData.width; x++)
+                        if (CanPlaceItem(x, 0, z, item)) { cell = new Vector3Int(x, 0, z); return true; }
+                break;
+
+            case CameraView.WallNorth:
+                for (int y = 0; y < _voxelData.height; y++)
+                    for (int x = 0; x < _voxelData.width; x++)
+                        if (CanPlaceItem(x, y, _voxelData.depth - 1, item)) { cell = new Vector3Int(x, y, _voxelData.depth - 1); return true; }
+                break;
+
+            case CameraView.WallEast:
+                for (int y = 0; y < _voxelData.height; y++)
+                    for (int z = 0; z < _voxelData.depth; z++)
+                        if (CanPlaceItem(_voxelData.width - 1, y, z, item)) { cell = new Vector3Int(_voxelData.width - 1, y, z); return true; }
+                break;
+
+            case CameraView.WallWest:
+                for (int y = 0; y < _voxelData.height; y++)
+                    for (int z = 0; z < _voxelData.depth; z++)
+                        if (CanPlaceItem(0, y, z, item)) { cell = new Vector3Int(0, y, z); return true; }
+                break;
+        }
+        return false;
+    }
+    [ContextMenu("TEST: Limpiar el grid")]
+    public void ClearAll()
+    {
+        if (_voxelData == null) return;
+
+        for (int z = 0; z < _voxelData.depth; z++)
+            for (int y = 0; y < _voxelData.height; y++)
+                for (int x = 0; x < _voxelData.width; x++)
+                {
+                    _voxelData.SetType(x, y, z, CellType.Empty);
+                    _voxelData.SetItem(x, y, z, null);
+                    _voxelData.SetAnchor(x, y, z, default);
+                }
+
+        OnGridChanged?.Invoke();
     }
     #region "TEST"
     

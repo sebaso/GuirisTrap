@@ -19,38 +19,63 @@ public class GridProjectionVisibility : MonoBehaviour
 
     void OnEnable()
     {
-        if (_gridManager != null) _gridManager.OnGridReady += InitProjections;
-
         if (_cameraController != null) _cameraController.OnViewChanged += HandleViewChanged;
+        if (_gridManager != null) _gridManager.OnGridChanged += RefreshAllProjections;
     }
 
     void OnDisable()
     {
-        if (_gridManager != null) _gridManager.OnGridReady -= InitProjections;
         if (_cameraController != null) _cameraController.OnViewChanged -= HandleViewChanged;
+        if (_gridManager != null) _gridManager.OnGridChanged -= RefreshAllProjections;
     }
 
     void Start()
-    {
-        if (_cameraController != null)
-            HandleViewChanged(_cameraController.CurrentView);
-    }
-    private void InitProjections()
     {
         _floor?.Init();
         _wallNorth?.Init();
         _wallEast?.Init();
         _wallWest?.Init();
 
-        if (_cameraController != null)
-            HandleViewChanged(_cameraController.CurrentView);
+        if (_cameraController != null) HandleViewChanged(_cameraController.CurrentView);
+    }
+    public static PlaceableSurface SurfaceForView(CameraView view)
+    {
+        return (view == CameraView.WallNorth || view == CameraView.WallEast || view == CameraView.WallWest)
+            ? PlaceableSurface.Wall
+            : PlaceableSurface.Floor; // Perspective y TopDown → suelo
+    }
+    private void RefreshAllProjections()
+    {
+        _floor?.RefreshAll();
+        _wallNorth?.RefreshAll();
+        _wallEast?.RefreshAll();
+        _wallWest?.RefreshAll();
     }
     public void HandleViewChanged(CameraView view)
     {
-            Debug.Log($"[GridProjectionVisibility] HandleViewChanged → {view}");
         _floor?.SetVisible(view == CameraView.Perspective || view == CameraView.TopDown);
         _wallNorth?.SetVisible(view == CameraView.WallNorth);
         _wallEast?.SetVisible(view == CameraView.WallEast);
         _wallWest?.SetVisible(view == CameraView.WallWest);
+    }
+    public bool TryGetWorldTransform(CameraView view, Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    {
+        pos = default;
+        rot = Quaternion.identity;
+
+        switch (view)
+        {
+            case CameraView.Perspective:
+            case CameraView.TopDown:
+                return _floor != null && _floor.TryGetWorldTransform(voxel, out pos, out rot);
+            case CameraView.WallNorth:
+                return _wallNorth != null && _wallNorth.TryGetWorldTransform(voxel, out pos, out rot);
+            case CameraView.WallEast:
+                return _wallEast != null && _wallEast.TryGetWorldTransform(voxel, out pos, out rot);
+            case CameraView.WallWest:
+                return _wallWest != null && _wallWest.TryGetWorldTransform(voxel, out pos, out rot);
+            default:
+                return false;
+        }
     }
 }
