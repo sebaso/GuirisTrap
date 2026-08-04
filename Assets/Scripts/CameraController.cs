@@ -31,7 +31,12 @@ public class CameraController : MonoBehaviour
 
     private Transform _currentTarget;
     private CameraView _currentView = CameraView.Perspective;
+
+    private bool _inputLocked = false;
+    public bool IsLocked => _inputLocked;
+
     public bool IsTransitioning { get; private set; }
+    public void SetInputLocked(bool locked) => _inputLocked = locked;
 
     void Start()
     {
@@ -53,6 +58,7 @@ public class CameraController : MonoBehaviour
 
     public void SetView(CameraView view)
     {
+        if (_inputLocked) return;
         _currentView = view;
         switch (view)
         {

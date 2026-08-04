@@ -118,8 +118,8 @@ public class GameManager : MonoBehaviour
         GameObject obj = Instantiate(itemData.prefab, worldPos, rot, folder);
         PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
         placeable.Init(itemData);
-        placeable.InstancePlaceableObjectCreated(cell);
-
+        placeable.InstancePlaceableObjectCreated(cell, view);
+        
         inv.RemoveItem(posX, posY);
     }
 }

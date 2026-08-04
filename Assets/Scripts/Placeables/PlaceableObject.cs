@@ -16,6 +16,11 @@ public class PlaceableObject : MonoBehaviour
     private bool _isMoved = false;
     private bool _wasInitialized = false;
 
+    private PlaceableItemData _itemData;
+    private bool _isValid = true;
+    private Vector3Int _anchorVoxel;
+    private CameraView _placedView;
+
     public bool OnMoved => _isMoved;
     public int CurrentCellX => _actualCellX;
     public int CurrentCellY => _actualCellY;
@@ -23,12 +28,9 @@ public class PlaceableObject : MonoBehaviour
     public int StartCellY => _cellOccupiedAtStartY;
     public int LastCellX => _lastCellX;
     public int LastCellY => _lastCellY;
-
-    private PlaceableItemData _itemData;
-    private bool _isValid = true;
-    private Vector3Int _anchorVoxel;
-    public Vector3Int AnchorVoxel => _anchorVoxel;
     public bool IsValid => _isValid;
+    public Vector3Int AnchorVoxel => _anchorVoxel;
+    public CameraView PlacedView => _placedView;
 
     void Start()
     {
@@ -54,10 +56,11 @@ public class PlaceableObject : MonoBehaviour
         _isMoved = false;
     }
 
-    public void InstancePlaceableObjectCreated(Vector3Int anchor)
+    public void InstancePlaceableObjectCreated(Vector3Int anchor, CameraView placedView)
     {
         _wasInitialized = true;
         _anchorVoxel = anchor;
+        _placedView = placedView;
         _cellOccupiedAtStartX = anchor.x;
         _cellOccupiedAtStartY = anchor.z;
         _actualCellX = anchor.x;
