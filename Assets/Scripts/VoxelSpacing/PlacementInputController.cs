@@ -56,7 +56,8 @@ public class PlacementInputController : MonoBehaviour
         if (!_hasDragTarget) { _dragValid = false; return; }
 
         PlaceableItemData item = _selected.GetItemData();
-        _dragValid = _gridManager.CanPlaceItem(_dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, _selected.AnchorVoxel);
+        PlacementAxis axis = GridManager.AxisForView(view);
+        _dragValid = _gridManager.CanPlaceItem(_dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, axis, _selected.AnchorVoxel);
 
         _gridProjectionVisibility.SetPreview(view, _dragTargetVoxel, _dragValid ? CellVisualState.Empty : CellVisualState.Blocked);
 
@@ -71,10 +72,11 @@ public class PlacementInputController : MonoBehaviour
     {
         CameraView view = _cameraController.CurrentView;
         PlaceableItemData item = _selected.GetItemData();
+        PlacementAxis axis = GridManager.AxisForView(view);
 
         if (_hasDragTarget && _dragValid)
         {
-            _gridManager.MoveItem(_selected.AnchorVoxel, _dragTargetVoxel, item);
+            _gridManager.MoveItem(_selected.AnchorVoxel, _dragTargetVoxel, item, axis);
             _selected.InstancePlaceableObjectCreated(_dragTargetVoxel);
         }
         else if (_gridProjectionVisibility.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))

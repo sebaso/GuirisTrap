@@ -106,7 +106,10 @@ public class GameManager : MonoBehaviour
 
         worldPos += rot * itemData.placementOffset;
 
-        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData))
+        // PlaceItem necesita saber la superficie para intercambiar ancho/profundidad
+        // correctamente en paredes este/oeste (ver PlacementAxis en GridManager).
+        PlacementAxis axis = GridManager.AxisForView(view);
+        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis))
             return;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;

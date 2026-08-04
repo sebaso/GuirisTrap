@@ -64,7 +64,20 @@ public class WallGridProjection : MonoBehaviour
     private Quaternion GetCellRotation()
     {
         Quaternion localRot = Quaternion.FromToRotation(Vector3.up, InwardNormalLocal);
-        return transform.rotation * localRot;
+        return transform.rotation * localRot * RotationCorrection();
+    }    
+    private Quaternion RotationCorrection()
+    {
+        if (_side == WallSide.North)
+            return Quaternion.Euler(0f, 180f, 0f);
+ 
+        if (_side == WallSide.East)
+            return Quaternion.Euler(0f, -90f, 0f);
+ 
+        if (_side == WallSide.West)
+            return Quaternion.Euler(0f, 90f, 0f);
+ 
+        return Quaternion.identity;
     }
 
     [ContextMenu("TEST: Init (instanciar cubos visuales)")]
