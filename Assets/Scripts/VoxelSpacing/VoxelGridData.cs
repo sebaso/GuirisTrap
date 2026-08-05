@@ -39,4 +39,6 @@ public class VoxelGridData : ScriptableObject
 
     public Vector3Int GetAnchor(int x, int y, int z) => _cells[Index(x, y, z)].anchor;
     public void SetAnchor(int x, int y, int z, Vector3Int anchor) => _cells[Index(x, y, z)].anchor = anchor;
+    public bool GetIsEntrance(int x, int y, int z) => _cells[Index(x, y, z)].isEntrance;
+    public void SetIsEntrance(int x, int y, int z, bool isEntrance) => _cells[Index(x, y, z)].isEntrance = isEntrance;
 }
