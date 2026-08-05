@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using static InputSystem_Actions;
 
 public class PlacementInputController : MonoBehaviour, IUIActions
@@ -32,6 +33,10 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         if (_cameraController != null && _cameraController.IsTransitioning) return;
         if (_selected != null) UpdateDrag();
     }
+    private bool IsPointerOverUI()
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    }
 
     // ── UI Actions ───────────────────────────────────────────────────────
 
@@ -41,6 +46,8 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     public void OnClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
+        if (IsPointerOverUI()) return;
+
         if (_selected == null) TrySelect();
         else ConfirmOrCancel();
     }
@@ -48,6 +55,8 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     public void OnRightClick(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
+        if (IsPointerOverUI()) return;
+
         if (_selected == null) TryPickUpToInventory();
     }
 
