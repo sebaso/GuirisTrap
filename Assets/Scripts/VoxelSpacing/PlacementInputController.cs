@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using static InputSystem_Actions;
+using System.Collections.Generic;
 
 public class PlacementInputController : MonoBehaviour, IUIActions
 {
@@ -68,7 +69,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     public void OnTrackedDevicePosition(InputAction.CallbackContext context) { }
     public void OnTrackedDeviceOrientation(InputAction.CallbackContext context) { }
 
-
+    private static bool IsFloorView(CameraView view) => view == CameraView.Perspective || view == CameraView.TopDown;
     private void TrySelect()
     {
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
@@ -76,7 +77,12 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         PlaceableObject placeable = hit.transform.GetComponentInParent<PlaceableObject>();
         if (placeable == null) return;
-        if (placeable.PlacedView != _cameraController.CurrentView) return;
+
+        CameraView current = _cameraController.CurrentView;
+        bool sameView = placeable.PlacedView == current;
+        bool bothFloor = IsFloorView(placeable.PlacedView) && IsFloorView(current);
+
+        if (!sameView && !bothFloor) return;
 
         _selected = placeable;
         _selected.Select(true);
@@ -116,7 +122,12 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         if (_hasDragTarget && _dragValid)
         {
-            _gridManager.MoveItem(_selected.AnchorVoxel, _dragTargetVoxel, item, axis);
+            Vector3Int oldAnchor = _selected.AnchorVoxel;
+
+            PlaceableInstanceRegistry.Instance?.Unregister(oldAnchor);
+            PlaceableInstanceRegistry.Instance?.Register(_dragTargetVoxel, _selected);
+
+            _gridManager.MoveItem(oldAnchor, _dragTargetVoxel, item, axis);
             _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
         }
         else if (_gridProjectionVisibility.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
@@ -160,6 +171,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
             return;
         }
 
+        PlaceableInstanceRegistry.Instance?.Unregister(anchor);
         Destroy(placeable.gameObject);
     }
 }

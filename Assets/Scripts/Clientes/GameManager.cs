@@ -98,28 +98,33 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!_gridProjectionVisibility.TryGetWorldTransform(view, cell, out Vector3 worldPos, out Quaternion rot))
+        if (!_gridProjectionVisibility.TryGetWorldTransform(view, cell, out Vector3 basePos, out Quaternion baseRot))
         {
             Debug.LogWarning($"[GameManager] No se pudo resolver transform de mundo para {cell}.");
             return;
         }
 
-        worldPos += rot * itemData.placementOffset;
-
-        // PlaceItem necesita saber la superficie para intercambiar ancho/profundidad
-        // correctamente en paredes este/oeste (ver PlacementAxis en GridManager).
         PlacementAxis axis = GridManager.AxisForView(view);
-        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis))
-            return;
+        Vector3 worldPos = basePos + baseRot * itemData.placementOffset;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
 
-        GameObject obj = Instantiate(itemData.prefab, worldPos, rot, folder);
+        GameObject obj = Instantiate(itemData.prefab, worldPos, baseRot, folder);
         PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
         placeable.Init(itemData);
         placeable.InstancePlaceableObjectCreated(cell, view);
-        
+
+
+        PlaceableInstanceRegistry.Instance?.Register(cell, placeable);
+
+        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis))
+        {
+            PlaceableInstanceRegistry.Instance?.Unregister(cell);
+            Destroy(obj);
+            return;
+        }
+
         inv.RemoveItem(posX, posY);
     }
 }

@@ -7,6 +7,8 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] 
     private VoxelGridData _voxelData;
+    private const int MIN_TABLE_DISTANCE = 4;
+
     public System.Action OnGridChanged;
 
     public bool IsInBounds(int x, int y, int z)
@@ -30,8 +32,6 @@ public class GridManager : MonoBehaviour
         int sy = Mathf.Max(1, item.size.y);
         int sz = Mathf.Max(1, item.size.z);
 
-        // En pared Este/Oeste, la "anchura" del item (size.x, pensada para
-        // moverse en X en Floor/North) en realidad se mueve en Z. Intercambiamos.
         if (axis == PlacementAxis.WallEastWest)
             (sx, sz) = (sz, sx);
 
@@ -72,6 +72,13 @@ public class GridManager : MonoBehaviour
             if (ignoreCells != null && ignoreCells.Contains(c)) continue;
             if (_voxelData.GetType(c.x, c.y, c.z) != CellType.Empty) return false;
         }
+
+        if (item.category == PlaceableCategory.Table)
+        {
+            if (!IsValidTablePlacement(new Vector3Int(x, y, z), ignoreAnchor))
+                return false;
+        }
+
         return true;
     }
 
@@ -188,7 +195,95 @@ public class GridManager : MonoBehaviour
         }
         return false;
     }
+    public bool IsValidTablePlacement(Vector3Int cell, Vector3Int? ignoreAnchor = null)
+    {
+        bool hasAdjacent = false;
 
+        for (int z = 0; z < _voxelData.depth; z++)
+        {
+            for (int x = 0; x < _voxelData.width; x++)
+            {
+                Vector3Int other = new Vector3Int(x, 0, z);
+                if (_voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int otherAnchor = _voxelData.GetAnchor(x, 0, z);
+                if (otherAnchor != other) continue;
+                if (ignoreAnchor.HasValue && otherAnchor == ignoreAnchor.Value) continue;
+
+                PlaceableItemData item = _voxelData.GetItem(otherAnchor.x, otherAnchor.y, otherAnchor.z);
+                if (item == null || item.category != PlaceableCategory.Table) continue;
+
+                int dist = Mathf.Abs(cell.x - otherAnchor.x) + Mathf.Abs(cell.z - otherAnchor.z);
+
+                if (dist == 1) hasAdjacent = true;
+            }
+        }
+
+        if (hasAdjacent) return true;
+
+        // Si no está pegada a ninguna,  debe respetar la distancia mínima con TODAS.
+        for (int z = 0; z < _voxelData.depth; z++)
+        {
+            for (int x = 0; x < _voxelData.width; x++)
+            {
+                Vector3Int other = new Vector3Int(x, 0, z);
+                if (_voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int otherAnchor = _voxelData.GetAnchor(x, 0, z);
+                if (otherAnchor != other) continue;
+                if (ignoreAnchor.HasValue && otherAnchor == ignoreAnchor.Value) continue;
+
+                PlaceableItemData item = _voxelData.GetItem(otherAnchor.x, otherAnchor.y, otherAnchor.z);
+                if (item == null || item.category != PlaceableCategory.Table) continue;
+
+                int dist = Mathf.Abs(cell.x - otherAnchor.x) + Mathf.Abs(cell.z - otherAnchor.z);
+                if (dist < MIN_TABLE_DISTANCE) return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool TryGetAdjacentTableDirection(Vector3Int cell, out Vector3Int direction)
+    {
+        Vector3Int[] dirs = {
+            new Vector3Int(1, 0, 0), new Vector3Int(-1, 0, 0),
+            new Vector3Int(0, 0, 1), new Vector3Int(0, 0, -1)
+        };
+
+        foreach (var d in dirs)
+        {
+            Vector3Int neighbor = cell + d;
+            if (!IsInBounds(neighbor.x, neighbor.y, neighbor.z)) continue;
+            if (_voxelData.GetType(neighbor.x, neighbor.y, neighbor.z) != CellType.Occupied) continue;
+
+            Vector3Int anchor = _voxelData.GetAnchor(neighbor.x, neighbor.y, neighbor.z);
+            PlaceableItemData item = _voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+
+            if (item != null && item.category == PlaceableCategory.Table)
+            {
+                direction = d;
+                return true;
+            }
+        }
+
+        direction = Vector3Int.zero;
+        return false;
+    }
+
+    public Quaternion GetChairRotationTowardsTable(Vector3Int cell, Quaternion fallbackRotation)
+    {
+        if (!TryGetAdjacentTableDirection(cell, out Vector3Int dir))
+            return fallbackRotation;
+
+        float angle = 0f;
+        if (dir == new Vector3Int(0, 0, 1)) angle = 0f;
+        else if (dir == new Vector3Int(0, 0, -1)) angle = 180f;
+        else if (dir == new Vector3Int(1, 0, 0)) angle = 90f;
+        else if (dir == new Vector3Int(-1, 0, 0)) angle = -90f;
+
+        return Quaternion.Euler(0f, angle, 0f);
+    }
     [ContextMenu("TEST: Limpiar el grid")]
     public void ClearAll()
     {
@@ -204,6 +299,128 @@ public class GridManager : MonoBehaviour
                 }
 
         OnGridChanged?.Invoke();
+    }
+    public bool HasAdjacentTable(Vector3Int cell)
+    {
+        return IsTableAt(cell + new Vector3Int(1, 0, 0))
+            || IsTableAt(cell + new Vector3Int(-1, 0, 0))
+            || IsTableAt(cell + new Vector3Int(0, 0, 1))
+            || IsTableAt(cell + new Vector3Int(0, 0, -1));
+    }
+
+    private bool IsTableAt(Vector3Int cell)
+    {
+        if (!IsInBounds(cell.x, cell.y, cell.z)) return false;
+        if (_voxelData.GetType(cell.x, cell.y, cell.z) != CellType.Occupied) return false;
+
+        Vector3Int anchor = _voxelData.GetAnchor(cell.x, cell.y, cell.z);
+        PlaceableItemData item = _voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+        return item != null && item.category == PlaceableCategory.Table;
+    }
+
+    public Dictionary<Vector3Int, bool> ValidateAllChairs()
+    {
+        var result = new Dictionary<Vector3Int, bool>();
+        if (_voxelData == null) return result;
+
+        for (int z = 0; z < _voxelData.depth; z++)
+        {
+            for (int x = 0; x < _voxelData.width; x++)
+            {
+                if (_voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int anchor = _voxelData.GetAnchor(x, 0, z);
+                if (anchor != new Vector3Int(x, 0, z)) continue;
+
+                PlaceableItemData item = _voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+                if (item == null || item.category != PlaceableCategory.Chair) continue;
+
+                bool hasTable = HasAdjacentTable(anchor);
+                bool reachable = IsCellReachableFromEntrance(anchor);
+
+                result[anchor] = hasTable && reachable;
+            }
+        }
+        return result;
+    }
+    
+    public bool IsCellReachableFromEntrance(Vector3Int target)
+    {
+        bool[,] visited = new bool[_voxelData.width, _voxelData.depth];
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+
+        for (int z = 0; z < _voxelData.depth; z++)
+        {
+            for (int x = 0; x < _voxelData.width; x++)
+            {
+                if (_voxelData.GetIsEntrance(x, 0, z))
+                {
+                    queue.Enqueue(new Vector2Int(x, z));
+                    visited[x, z] = true;
+                }
+            }
+        }
+
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        Vector2Int targetXZ = new Vector2Int(target.x, target.z);
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+            if (current == targetXZ) return true;
+
+            foreach (var dir in directions)
+            {
+                int nx = current.x + dir.x;
+                int nz = current.y + dir.y;
+
+                if (nx < 0 || nz < 0 || nx >= _voxelData.width || nz >= _voxelData.depth) continue;
+                if (visited[nx, nz]) continue;
+
+                bool isTarget = (nx == targetXZ.x && nz == targetXZ.y);
+                bool isWalkable = _voxelData.GetType(nx, 0, nz) != CellType.Occupied;
+
+                if (isTarget || isWalkable)
+                {
+                    visited[nx, nz] = true;
+                    queue.Enqueue(new Vector2Int(nx, nz));
+                }
+            }
+        }
+        return false;
+    }
+    public bool CanStartDay()
+    {
+        if (CountByCategory(PlaceableCategory.Table) == 0) return false;
+        if (CountByCategory(PlaceableCategory.Chair) == 0) return false;
+
+        var validity = ValidateAllChairs();
+        foreach (var kvp in validity)
+        {
+            if (!kvp.Value) return false;
+        }
+
+        return true;
+    }
+
+    private int CountByCategory(PlaceableCategory category)
+    {
+        int count = 0;
+        for (int z = 0; z < _voxelData.depth; z++)
+        {
+            for (int x = 0; x < _voxelData.width; x++)
+            {
+                if (_voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int anchor = _voxelData.GetAnchor(x, 0, z);
+                if (anchor != new Vector3Int(x, 0, z)) continue;
+
+                PlaceableItemData item = _voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+                if (item != null && item.category == category)
+                    count++;
+            }
+        }
+        return count;
     }
 
     #region "TEST"

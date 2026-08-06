@@ -9428,6 +9428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1010299642}
   - component: {fileID: 1010299643}
+  - component: {fileID: 1010299644}
   m_Layer: 5
   m_Name: CameraHUD
   m_TagString: Untagged
@@ -9477,6 +9478,20 @@ MonoBehaviour:
   _wallNorth: {fileID: 1436984572}
   _wallEast: {fileID: 152414315}
   _wallWest: {fileID: 426561419}
+--- !u!114 &1010299644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010299641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2a444da4f7e01e4ca8478cf77ff8330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChairRefreshUtility
+  _gridManager: {fileID: 1447126352}
+  _gridProjectionVisibility: {fileID: 1010299643}
 --- !u!1 &1011705416
 GameObject:
   m_ObjectHideFlags: 0
@@ -14659,6 +14674,7 @@ GameObject:
   - component: {fileID: 1447126353}
   - component: {fileID: 1447126352}
   - component: {fileID: 1447126354}
+  - component: {fileID: 1447126355}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -14681,6 +14697,7 @@ MonoBehaviour:
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
   _testItem: {fileID: 0}
   _testCell: {x: 2, y: 0, z: 2}
+  _testAxis: 0
 --- !u!4 &1447126353
 Transform:
   m_ObjectHideFlags: 0
@@ -14712,6 +14729,18 @@ MonoBehaviour:
   _gridManager: {fileID: 1447126352}
   _gridProjectionVisibility: {fileID: 1010299643}
   _cameraController: {fileID: 833304417}
+--- !u!114 &1447126355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447126351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5387396504e8b2346b114f83bf64498c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableInstanceRegistry
 --- !u!1 &1451894743
 GameObject:
   m_ObjectHideFlags: 0

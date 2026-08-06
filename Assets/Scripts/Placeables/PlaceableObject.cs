@@ -87,9 +87,7 @@ public class PlaceableObject : MonoBehaviour
         if (renders == null) return;
 
         foreach (var r in renders)
-        {
             r.material.color = valid ? Color.green : Color.red;
-        }
     }
 
     public void LerpTo(Vector3 targetWorldPos, Quaternion targetRot, float duration = 0.25f)

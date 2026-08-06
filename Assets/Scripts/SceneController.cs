@@ -21,6 +21,16 @@ public class SceneController : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+        if (sceneName == "GameScene")
+        {
+            GridManager gridManager = FindAnyObjectByType<GridManager>();
+            if (gridManager != null && !gridManager.CanStartDay())
+            {
+                HUDMessage.Instance?.ShowWarning("Hay sillas que no se pueden usar. Revisa el restaurante antes de empezar el día.");
+                return;
+            }
+        }
+
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.LoadScene(sceneName);
     }
