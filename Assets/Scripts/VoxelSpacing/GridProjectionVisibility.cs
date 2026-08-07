@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GridProjectionVisibility : MonoBehaviour
+public class GridProjectionVisibility : MonoBehaviour, IGridWorldResolver
 {
     [SerializeField] 
     private GridManager _gridManager;

@@ -66,6 +66,11 @@ public class SceneController : MonoBehaviour
             PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();
             generator?.Generate();
         }
+        if (scene.name == "GameScene")
+        {
+            PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();
+            generator?.Generate();
+        }
     }
 
     public bool IsSceneLoaded(string sceneName)

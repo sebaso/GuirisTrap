@@ -1,13 +1,22 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlaceableGenerator : MonoBehaviour
 {
-    [SerializeField] private GridManager _gridManager;
-    [SerializeField] private GridProjectionVisibility _gridProjectionVisibility;
+    [SerializeField] 
+    private GridManager _gridManager;
+    [SerializeField] 
+    private MonoBehaviour _resolverBehaviour;
+    private IGridWorldResolver _resolver;
+
+    void Awake()
+    {
+        _resolver = _resolverBehaviour as IGridWorldResolver;
+    }
 
     public void Generate()
     {
-        if (_gridManager == null || _gridProjectionVisibility == null) return;
+        if (_gridManager == null || _resolver == null) return;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
@@ -20,7 +29,7 @@ public class PlaceableGenerator : MonoBehaviour
             CameraView view = _gridManager.DetermineViewForAnchor(anchor, item);
             Quaternion rot = _gridManager.GetRotationAtAnchor(anchor);
 
-            if (!_gridProjectionVisibility.TryGetWorldTransform(view, anchor, out Vector3 basePos, out _))
+            if (!_resolver.TryGetWorldTransform(view, anchor, out Vector3 basePos, out _))
                 continue;
 
             Vector3 worldPos = basePos + rot * item.placementOffset;
@@ -32,6 +41,7 @@ public class PlaceableGenerator : MonoBehaviour
 
             PlaceableInstanceRegistry.Instance?.Register(anchor, placeable);
         }
-        ChairRefreshUtility.ApplyValidityColorsOnly(_gridManager);
+        if (SceneManager.GetActiveScene().name == "PreparationScene")
+                ChairRefreshUtility.ApplyValidityColorsOnly(_gridManager);
     }
 }
