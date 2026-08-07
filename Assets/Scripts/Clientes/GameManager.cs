@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
 
         PlaceableInstanceRegistry.Instance?.Register(cell, placeable);
 
-        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis))
+        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis, baseRot))
         {
             PlaceableInstanceRegistry.Instance?.Unregister(cell);
             Destroy(obj);

@@ -38,9 +38,18 @@ public class ChairRefreshUtility : MonoBehaviour
                 Quaternion chairRot = _gridManager.GetChairRotationTowardsTable(anchor, baseRot);
                 obj.transform.position = basePos + chairRot * item.placementOffset;
                 obj.transform.rotation = chairRot;
+
+                _gridManager.SetRotationAtAnchor(anchor, chairRot);
             }
 
             obj.SetValid(isValid);
         }
+    }
+
+    public static void ApplyValidityColorsOnly(GridManager gridManager)
+    {
+        var validity = gridManager.ValidateAllChairs();
+        foreach (var kvp in validity)
+            PlaceableInstanceRegistry.Instance?.Get(kvp.Key)?.SetValid(kvp.Value);
     }
 }

@@ -14675,6 +14675,7 @@ GameObject:
   - component: {fileID: 1447126352}
   - component: {fileID: 1447126354}
   - component: {fileID: 1447126355}
+  - component: {fileID: 1447126356}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -14695,9 +14696,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
-  _testItem: {fileID: 0}
-  _testCell: {x: 2, y: 0, z: 2}
-  _testAxis: 0
 --- !u!4 &1447126353
 Transform:
   m_ObjectHideFlags: 0
@@ -14741,6 +14739,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5387396504e8b2346b114f83bf64498c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableInstanceRegistry
+--- !u!114 &1447126356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447126351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9265c03eeaf762f44a3ca36c31901ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableGenerator
+  _gridManager: {fileID: 1447126352}
+  _gridProjectionVisibility: {fileID: 1010299643}
 --- !u!1 &1451894743
 GameObject:
   m_ObjectHideFlags: 0

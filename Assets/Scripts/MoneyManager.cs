@@ -138,4 +138,8 @@ public class MoneyManager : MonoBehaviour
         // garantizar el traspaso gameplay → planificación.
         Instance.RestoreFromSave();
     }
+    public void ResetToStarting()
+    {
+        SetMoney(_initialMoney);
+    }
 }

@@ -123,11 +123,10 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         if (_hasDragTarget && _dragValid)
         {
             Vector3Int oldAnchor = _selected.AnchorVoxel;
-
             PlaceableInstanceRegistry.Instance?.Unregister(oldAnchor);
             PlaceableInstanceRegistry.Instance?.Register(_dragTargetVoxel, _selected);
 
-            _gridManager.MoveItem(oldAnchor, _dragTargetVoxel, item, axis);
+            _gridManager.MoveItem(oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
             _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
         }
         else if (_gridProjectionVisibility.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
@@ -166,7 +165,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         if (!added)
         {
-            _gridManager.PlaceItem(anchor.x, anchor.y, anchor.z, item, axis);
+            _gridManager.PlaceItem(anchor.x, anchor.y, anchor.z, item, axis, _selected.transform.rotation);
             HUDMessage.Instance?.ShowWarning("Inventario lleno.");
             return;
         }

@@ -38,7 +38,7 @@ public class SaveManagerEditor : Editor
                     "This will clear all saved data and delete the save file on disk. This cannot be undone.",
                     "Reset", "Cancel"))
             {
-                manager.ResetSave();
+                //manager.ResetSave();
                 // ResetSave clears the GridData ScriptableObject(s) and marks them
                 // dirty; write them to disk so a rebuilt player starts empty.
                 AssetDatabase.SaveAssets();

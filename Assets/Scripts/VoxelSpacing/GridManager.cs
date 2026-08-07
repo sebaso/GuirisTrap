@@ -82,7 +82,7 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    public bool MoveItem(Vector3Int fromAnchor, Vector3Int toAnchor, PlaceableItemData item, PlacementAxis axis)
+    public bool MoveItem(Vector3Int fromAnchor, Vector3Int toAnchor, PlaceableItemData item, PlacementAxis axis, Quaternion rotation)
     {
         if (item == null) return false;
         if (!CanPlaceItem(toAnchor.x, toAnchor.y, toAnchor.z, item, axis, fromAnchor)) return false;
@@ -95,6 +95,7 @@ public class GridManager : MonoBehaviour
                 _voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
                 _voxelData.SetItem(c.x, c.y, c.z, null);
                 _voxelData.SetAnchor(c.x, c.y, c.z, default);
+                _voxelData.SetRotation(c.x, c.y, c.z, Quaternion.identity);
             }
         }
 
@@ -105,12 +106,13 @@ public class GridManager : MonoBehaviour
             _voxelData.SetAnchor(c.x, c.y, c.z, toAnchor);
         }
         _voxelData.SetItem(toAnchor.x, toAnchor.y, toAnchor.z, item);
+        _voxelData.SetRotation(toAnchor.x, toAnchor.y, toAnchor.z, rotation);
 
         OnGridChanged?.Invoke();
         return true;
     }
 
-    public bool PlaceItem(int x, int y, int z, PlaceableItemData item, PlacementAxis axis)
+    public bool PlaceItem(int x, int y, int z, PlaceableItemData item, PlacementAxis axis, Quaternion rotation)
     {
         if (!CanPlaceItem(x, y, z, item, axis)) return false;
 
@@ -124,6 +126,7 @@ public class GridManager : MonoBehaviour
         }
 
         _voxelData.SetItem(x, y, z, item);
+        _voxelData.SetRotation(x, y, z, rotation);
         OnGridChanged?.Invoke();
         return true;
     }
@@ -153,8 +156,8 @@ public class GridManager : MonoBehaviour
             _voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
             _voxelData.SetItem(c.x, c.y, c.z, null);
             _voxelData.SetAnchor(c.x, c.y, c.z, default);
+            _voxelData.SetRotation(c.x, c.y, c.z, Quaternion.identity);
         }
-
         OnGridChanged?.Invoke();
         return true;
     }
@@ -422,57 +425,80 @@ public class GridManager : MonoBehaviour
         }
         return count;
     }
+    public CameraView DetermineViewForAnchor(Vector3Int anchor, PlaceableItemData item)
+    {
+        if (item.surface == PlaceableSurface.Floor) return CameraView.Perspective;
+        if (anchor.z == _voxelData.depth - 1) return CameraView.WallNorth;
+        if (anchor.x == _voxelData.width - 1) return CameraView.WallEast;
+        return CameraView.WallWest;
+    }
+    public SaveManager.CellSaveData3D[] ToSaveData()
+    {
+        if (_voxelData == null) return new SaveManager.CellSaveData3D[0];
 
-    #region "TEST"
-
-        [Header("Solo para probar con el menú contextual (clic derecho en el componente)")]
-        [SerializeField] private PlaceableItemData _testItem;
-        [SerializeField] private Vector3Int _testCell = new Vector3Int(2, 0, 2);
-        [SerializeField] private PlacementAxis _testAxis = PlacementAxis.Floor;
-
-        [ContextMenu("TEST: Colocar en _testCell")]
-        private void TestPlace()
+        var list = new List<SaveManager.CellSaveData3D>();
+        for (int z = 0; z < _voxelData.depth; z++)
         {
-            bool placed = PlaceItem(_testCell.x, _testCell.y, _testCell.z, _testItem, _testAxis);
-            Debug.Log($"[GridManager] PlaceItem en {_testCell} con '{_testItem?.name}' ({_testAxis}) → {placed}");
+            for (int y = 0; y < _voxelData.height; y++)
+            {
+                for (int x = 0; x < _voxelData.width; x++)
+                {
+                    VoxelCell cell = _voxelData.GetCell(x, y, z);
+                    list.Add(new SaveManager.CellSaveData3D
+                    {
+                        x = x, y = y, z = z,
+                        type = cell.type,
+                        itemName = cell.item != null ? cell.item.name : "",
+                        anchorX = cell.anchor.x, anchorY = cell.anchor.y, anchorZ = cell.anchor.z,
+                        isEntrance = cell.isEntrance,
+                        rotation = cell.rotation
+                    });
+                }
+            }
+        }
+        return list.ToArray();
+    }
+
+    public void LoadFromSaveData(SaveManager.CellSaveData3D[] cells, PlaceableItemData[] allItems)
+    {
+        if (_voxelData == null || cells == null) return;
+
+        foreach (var c in cells)
+        {
+            if (!IsInBounds(c.x, c.y, c.z)) continue; // el grid de diseño pudo cambiar de tamaño
+
+            _voxelData.SetType(c.x, c.y, c.z, c.type);
+            _voxelData.SetAnchor(c.x, c.y, c.z, new Vector3Int(c.anchorX, c.anchorY, c.anchorZ));
+            _voxelData.SetIsEntrance(c.x, c.y, c.z, c.isEntrance);
+            _voxelData.SetRotation(c.x, c.y, c.z, c.rotation);
+
+            PlaceableItemData item = string.IsNullOrEmpty(c.itemName)
+                ? null
+                : System.Array.Find(allItems, i => i.name == c.itemName);
+            _voxelData.SetItem(c.x, c.y, c.z, item);
         }
 
-        [ContextMenu("TEST: Comprobar CanPlaceItem en _testCell")]
-        private void TestCanPlace()
-        {
-            bool canPlace = CanPlaceItem(_testCell.x, _testCell.y, _testCell.z, _testItem, _testAxis);
-            Debug.Log($"[GridManager] CanPlaceItem en {_testCell} con '{_testItem?.name}' ({_testAxis}) → {canPlace}");
-        }
+        OnGridChanged?.Invoke();
+    }
+    public System.Collections.Generic.List<Vector3Int> GetAllAnchors()
+    {
+        var result = new System.Collections.Generic.List<Vector3Int>();
+        for (int z = 0; z < _voxelData.depth; z++)
+            for (int y = 0; y < _voxelData.height; y++)
+                for (int x = 0; x < _voxelData.width; x++)
+                {
+                    if (_voxelData.GetType(x, y, z) != CellType.Occupied) continue;
+                    Vector3Int anchor = _voxelData.GetAnchor(x, y, z);
+                    if (anchor == new Vector3Int(x, y, z))
+                        result.Add(anchor);
+                }
+        return result;
+    }
 
-        [ContextMenu("TEST: Quitar de _testCell")]
-        private void TestRemove()
-        {
-            bool removed = RemoveItemAt(_testCell.x, _testCell.y, _testCell.z, _testAxis);
-            Debug.Log($"[GridManager] RemoveItemAt en {_testCell} → {removed}");
-        }
-        [ContextMenu("TEST: Consultar TryGetItemAt en _testCell")]
-        private void TestGetItemAt()
-        {
-            bool found = TryGetItemAt(_testCell.x, _testCell.y, _testCell.z, out var item, out var anchor);
-            Debug.Log($"[GridManager] TryGetItemAt en {_testCell} → found={found}, item={(item != null ? item.name : "null")}, ancla={anchor}");
-        }
-        [ContextMenu("TEST: Volcar estado de toda la matriz")]
-        private void TestDumpGrid()
-        {
-            if (_voxelData == null) { Debug.LogWarning("Sin VoxelGridData asignado."); return; }
-
-            int occupiedCount = 0;
-            for (int z = 0; z < _voxelData.depth; z++)
-                for (int y = 0; y < _voxelData.height; y++)
-                    for (int x = 0; x < _voxelData.width; x++)
-                        if (_voxelData.GetType(x, y, z) == CellType.Occupied)
-                        {
-                            occupiedCount++;
-                            var item = _voxelData.GetItem(x, y, z);
-                            Debug.Log($"  Ocupada ({x},{y},{z}) → item: {(item != null ? item.name : "null (celda secundaria de un footprint)")}");
-                        }
-
-            Debug.Log($"[GridManager] Total celdas ocupadas: {occupiedCount}");
-        }
-    #endregion
+    public PlaceableItemData GetItemAtAnchor(Vector3Int anchor) => _voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+    public Quaternion GetRotationAtAnchor(Vector3Int anchor) => _voxelData.GetRotation(anchor.x, anchor.y, anchor.z);
+    public void SetRotationAtAnchor(Vector3Int anchor, Quaternion rotation)
+    {
+        _voxelData.SetRotation(anchor.x, anchor.y, anchor.z, rotation);
+    }
 }
