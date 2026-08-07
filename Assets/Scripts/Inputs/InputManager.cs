@@ -72,14 +72,12 @@ public void EnterMinigame(IMinigameControllable minigame)
         (_playerControllable as PlayerController)?.UnlockMovement();
     }
 
-    /// <summary>Llamado por DialogueManager al mostrar una línea: congela al jugador y desvía Interactuar/Aceptar hacia el diálogo.</summary>
     public void EnterDialogue()
     {
         (_playerControllable as PlayerController)?.LockMovement();
         _current = _dialogueControllable;
     }
 
-    /// <summary>Llamado por DialogueManager al ocultar el diálogo: devuelve el control al jugador.</summary>
     public void ExitDialogue()
     {
         _current = _playerControllable;
@@ -92,7 +90,6 @@ public void EnterMinigame(IMinigameControllable minigame)
         else       _inputs.Player.Disable();
     }
 
-    //  Callbacks 
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -108,13 +105,11 @@ public void EnterMinigame(IMinigameControllable minigame)
         else if (context.canceled)  _current?.OnInteractUp();
     }
 
-    // Cancel = Q 
     public void OnCancel(InputAction.CallbackContext context)
     {
         if (context.performed) _current?.OnCancelDown();
     }
 
-    // Todavia no tienen nada... 
     public void OnAttack(InputAction.CallbackContext context)   { }
     public void OnCrouch(InputAction.CallbackContext context)   { }
     public void OnJump(InputAction.CallbackContext context)
@@ -125,4 +120,6 @@ public void EnterMinigame(IMinigameControllable minigame)
     public void OnPrevious(InputAction.CallbackContext context) { }
     public void OnNext(InputAction.CallbackContext context)     { }
     public void OnSprint(InputAction.CallbackContext context)   { }
+
+    public void OnPause(InputAction.CallbackContext context)    {}
 }
