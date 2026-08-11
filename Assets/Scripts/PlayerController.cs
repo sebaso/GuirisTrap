@@ -25,6 +25,15 @@ public class PlayerController : ControllableMonoBehaviour
     public float promptPopupSpeed = 12f; // Velocidad del escalado suave
     private bool isNearInteractable = false;
     private Vector3 originalPromptScale;
+    [Header("Furniture Carry — Colocación")]
+    [SerializeField] 
+    private FloorGridProjection _floorProjection;
+    [SerializeField] 
+    private LayerMask _furnitureObstacleMask;
+    public float dropDistance = 1.2f;
+    public float dropCheckRadius = 0.45f;
+    private Vector3 _dropTargetPos;
+    private Quaternion _dropTargetRot;
 
     void Start()
     {
@@ -306,14 +315,13 @@ public class PlayerController : ControllableMonoBehaviour
     // Day-time table/chair moving; same placement rules as the editor (CanPlaceItem + SaveGrid).
 
     private PlaceableObject _heldPlaceable;
-    private int _dropX, _dropY;
     private bool _dropValid;
     private Vector3 _lastFacing = Vector3.forward;
     public float carryLerpSpeed = 12f;
     private GameObject _ghost; // translucent drop-spot preview
     private static readonly Color GhostOk  = new Color(0.3f, 1f, 0.3f, 0.45f);
     private static readonly Color GhostBad = new Color(1f, 0.3f, 0.3f, 0.45f);
-
+    
     private void TryPickUpFurniture()
     {
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
@@ -341,10 +349,16 @@ public class PlayerController : ControllableMonoBehaviour
             Table table = best.GetComponent<Table>();
             if (table != null && table.IsOccupied)
             {
-                Debug.LogWarning("[Carry] That table is in use — wait until the group leaves.");
                 HUDMessage.Instance?.ShowWarning("Mesa ocupada — espera a que el grupo termine.");
                 return;
             }
+
+            if (table != null && table.GetSeatPoints().Count > 0)
+            {
+                HUDMessage.Instance?.ShowWarning("Quita las sillas antes de mover la mesa.");
+                return;
+            }
+
             table?.SetCarried(true);
         }
         else // Chair
@@ -352,7 +366,6 @@ public class PlayerController : ControllableMonoBehaviour
             Chair chair = best.GetComponent<Chair>();
             if (chair != null && chair.IsBeingSatOn)
             {
-                Debug.LogWarning("[Carry] Someone is sitting or walking to this chair — can't take it.");
                 HUDMessage.Instance?.ShowWarning("Alguien está usando esta silla.");
                 return;
             }
@@ -364,24 +377,20 @@ public class PlayerController : ControllableMonoBehaviour
         Collider c = best.GetComponent<Collider>();
         if (c != null) c.enabled = false;
 
-        // keep world pos so it glides to the head instead of snapping
         best.transform.SetParent(holdPoint, worldPositionStays: true);
 
-        _ghost = CreateGhost(best.GetItemData());
+        Vector3 initialGhostPos = transform.position + _lastFacing * dropDistance;
+        _ghost = CreateGhost(best.GetItemData(), initialGhostPos, Quaternion.LookRotation(_lastFacing, Vector3.up));
     }
 
-    // logic/physics-free clone, just to show where the item will land
-    private GameObject CreateGhost(PlaceableItemData item)
+    private GameObject CreateGhost(PlaceableItemData item, Vector3 initialPos, Quaternion initialRot)
     {
         if (item == null || item.prefab == null) return null;
 
-        GameObject g = Instantiate(item.prefab);
+        GameObject g = Instantiate(item.prefab, initialPos, initialRot);
         foreach (var mb in g.GetComponentsInChildren<MonoBehaviour>()) mb.enabled = false;
         foreach (var col in g.GetComponentsInChildren<Collider>()) col.enabled = false;
 
-        // Holograma para el preview: transparencia REAL (tintar con alpha los
-        // materiales opacos del prefab no hace nada) + scanlines + fresnel.
-        // Si el shader no está en el proyecto, se mantiene el tinte clásico.
         Shader holo = Shader.Find("Guiri/Hologram");
         if (holo != null)
         {
@@ -408,29 +417,58 @@ public class PlayerController : ControllableMonoBehaviour
     {
         if (!_dropValid)
         {
-            Debug.LogWarning("[Carry] Can't put it there.");
             HUDMessage.Instance?.ShowWarning("No puedes ponerlo ahí.");
             return;
         }
 
         PlaceableItemData item = _heldPlaceable.GetItemData();
-        int x = _dropX, y = _dropY;
+
+        Quaternion finalRot = item.category == PlaceableCategory.Chair
+            ? GetChairDropRotation(_dropTargetPos, _dropTargetRot)
+            : _dropTargetRot;
 
         _heldPlaceable.transform.SetParent(null);
-        
+        _heldPlaceable.transform.position = _dropTargetPos;
+        _heldPlaceable.transform.rotation = finalRot;
+
         Collider c = _heldPlaceable.GetComponent<Collider>();
         if (c != null) c.enabled = true;
 
         if (_ghost != null) { Destroy(_ghost); _ghost = null; }
 
-        //_heldPlaceable.InstancePlaceableObjectCreated(x, y);
-
         if (item.category == PlaceableCategory.Chair)
+        {
             _heldPlaceable.GetComponent<Chair>()?.SetCarried(false);
+        }
         else
+        {
             _heldPlaceable.GetComponent<Table>()?.SetCarried(false);
+            RealignNearbyChairs(_dropTargetPos);
+        }
 
         RestaurantManager.Instance?.NotifyTablesRearranged();
+
+        _heldPlaceable = null;
+    }
+
+    private void RealignNearbyChairs(Vector3 tablePos)
+    {
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.right, Vector3.left };
+
+        foreach (var dir in directions)
+        {
+            Vector3 checkPos = tablePos + dir * 1.1f;
+            Collider[] hits = Physics.OverlapSphere(checkPos, 0.5f, _furnitureObstacleMask);
+
+            foreach (var hit in hits)
+            {
+                Chair chair = hit.GetComponentInParent<Chair>();
+                if (chair != null && chair.IsPlaced)
+                {
+                    chair.transform.rotation = Quaternion.LookRotation(-dir, Vector3.up);
+                }
+            }
+        }
     }
 
     private void UpdateCarryPreview()
@@ -438,16 +476,21 @@ public class PlayerController : ControllableMonoBehaviour
         _heldPlaceable.transform.localPosition = Vector3.Lerp(
             _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
 
+        Vector3 targetWorld = transform.position + _lastFacing * dropDistance;
+        targetWorld.y = transform.position.y; // suelo plano; ajusta si tu sala tiene desniveles
 
-        // one cell ahead of the player
-        Vector3 targetWorld = transform.position + _lastFacing;
-  
+        bool withinRoom = _floorProjection != null && _floorProjection.TryGetVoxelAtWorldPos(targetWorld, out _);
 
-        PlaceableItemData item = _heldPlaceable.GetItemData();
-        // chairs ignore adjacency rules so they can be staged anywhere to clear a table
+        bool overlapsFurniture = Physics.CheckSphere(targetWorld, dropCheckRadius, _furnitureObstacleMask);
+
+        _dropValid = withinRoom && !overlapsFurniture;
+        _dropTargetPos = targetWorld;
+        _dropTargetRot = Quaternion.LookRotation(_lastFacing, Vector3.up);
 
         if (_ghost != null)
         {
+            _ghost.transform.position = targetWorld;
+            _ghost.transform.rotation = _dropTargetRot;
             TintGhost(_dropValid ? GhostOk : GhostBad);
         }
     }
@@ -477,4 +520,26 @@ public class PlayerController : ControllableMonoBehaviour
     }
 
     public void ResetInput() { }
+
+    private Quaternion GetChairDropRotation(Vector3 dropPos, Quaternion fallbackRot)
+    {
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.right, Vector3.left };
+
+        foreach (var dir in directions)
+        {
+            Vector3 checkPos = dropPos + dir * 1.1f;
+            Collider[] hits = Physics.OverlapSphere(checkPos, 0.5f, _furnitureObstacleMask);
+
+            foreach (var hit in hits)
+            {
+                Table table = hit.GetComponentInParent<Table>();
+                if (table != null && table.IsPlaced)
+                {
+                    return Quaternion.LookRotation(dir, Vector3.up);
+                }
+            }
+        }
+
+        return fallbackRot;
+    }
 }

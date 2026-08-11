@@ -3848,7 +3848,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableGenerator
   _gridManager: {fileID: 1489178170}
   _resolverBehaviour: {fileID: 1489178172}
-  _gridProjectionVisibility: {fileID: 0}
 --- !u!114 &1489178169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5775,6 +5774,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 359277194581391886, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
+      propertyPath: _floorProjection
+      value: 
+      objectReference: {fileID: 1840258590}
+    - target: {fileID: 359277194581391886, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
+      propertyPath: _furnitureObstacleMask.m_Bits
+      value: 320
+      objectReference: {fileID: 0}
     - target: {fileID: 838855539326600840, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.2593594

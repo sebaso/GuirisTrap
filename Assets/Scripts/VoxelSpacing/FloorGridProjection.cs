@@ -95,4 +95,16 @@ public class FloorGridProjection : MonoBehaviour
                 if (_cells[x, z] != null)
                     _cells[x, z].SetVisible(visible);
     }
+    public bool TryGetVoxelAtWorldPos(Vector3 worldPos, out Vector3Int voxel)
+    {
+        voxel = default;
+        Vector3 local = transform.InverseTransformPoint(worldPos);
+        int x = Mathf.FloorToInt(local.x);
+        int z = Mathf.FloorToInt(local.z);
+
+        if (x < 0 || z < 0 || x >= _voxelData.width || z >= _voxelData.depth) return false;
+
+        voxel = new Vector3Int(x, 0, z);
+        return true;
+    }
 }
