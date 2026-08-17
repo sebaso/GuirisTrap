@@ -4,32 +4,28 @@ using UnityEngine.SceneManagement;
 public class PlaceableGenerator : MonoBehaviour
 {
     [SerializeField] 
-    private GridManager _gridManager;
-    [SerializeField] 
-    private MonoBehaviour _resolverBehaviour;
-    private IGridWorldResolver _resolver;
-
-    void Awake()
-    {
-        _resolver = _resolverBehaviour as IGridWorldResolver;
-    }
+    private GridZone _zone;
 
     public void Generate()
     {
-        if (_gridManager == null || _resolver == null) return;
+        if (_zone == null || _zone.GridManager == null || _zone.Resolver == null || _zone.Registry == null) return;
+
+        GridManager gridManager = _zone.GridManager;
+        IGridWorldResolver resolver = _zone.Resolver;
+        PlaceableInstanceRegistry registry = _zone.Registry;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
 
-        foreach (var anchor in _gridManager.GetAllAnchors())
+        foreach (var anchor in gridManager.GetAllAnchors())
         {
-            PlaceableItemData item = _gridManager.GetItemAtAnchor(anchor);
+            PlaceableItemData item = gridManager.GetItemAtAnchor(anchor);
             if (item == null || item.prefab == null) continue;
 
-            CameraView view = _gridManager.DetermineViewForAnchor(anchor, item);
-            Quaternion rot = _gridManager.GetRotationAtAnchor(anchor);
+            CameraView view = gridManager.DetermineViewForAnchor(anchor, item);
+            Quaternion rot = gridManager.GetRotationAtAnchor(anchor);
 
-            if (!_resolver.TryGetWorldTransform(view, anchor, out Vector3 basePos, out _))
+            if (!resolver.TryGetWorldTransform(view, anchor, out Vector3 basePos, out _))
                 continue;
 
             Vector3 worldPos = basePos + rot * item.placementOffset;
@@ -39,9 +35,10 @@ public class PlaceableGenerator : MonoBehaviour
             placeable.Init(item);
             placeable.InstancePlaceableObjectCreated(anchor, view);
 
-            PlaceableInstanceRegistry.Instance?.Register(anchor, placeable);
+            registry.Register(anchor, placeable);
         }
+
         if (SceneManager.GetActiveScene().name == "PreparationScene")
-                ChairRefreshUtility.ApplyValidityColorsOnly(_gridManager);
+            ChairRefreshUtility.ApplyValidityColorsOnly(gridManager, registry);
     }
 }

@@ -3,53 +3,55 @@ using UnityEngine;
 public class ChairRefreshUtility : MonoBehaviour
 {
     [SerializeField] 
-    private GridManager _gridManager;
-    [SerializeField] 
-    private GridProjectionVisibility _gridProjectionVisibility;
+    private GridZone _zone;
 
     void OnEnable()
     {
-        if (_gridManager != null)
-            _gridManager.OnGridChanged += RefreshChairs;
+        if (_zone != null && _zone.GridManager != null)
+            _zone.GridManager.OnGridChanged += RefreshChairs;
     }
 
     void OnDisable()
     {
-        if (_gridManager != null)
-            _gridManager.OnGridChanged -= RefreshChairs;
+        if (_zone != null && _zone.GridManager != null)
+            _zone.GridManager.OnGridChanged -= RefreshChairs;
     }
 
     private void RefreshChairs()
     {
-        var validity = _gridManager.ValidateAllChairs();
+        GridManager gridManager = _zone.GridManager;
+        PlaceableInstanceRegistry registry = _zone.Registry;
+        IGridWorldResolver resolver = _zone.Resolver;
+
+        var validity = gridManager.ValidateAllChairs();
 
         foreach (var kvp in validity)
         {
             Vector3Int anchor = kvp.Key;
             bool isValid = kvp.Value;
 
-            PlaceableObject obj = PlaceableInstanceRegistry.Instance?.Get(anchor);
+            PlaceableObject obj = registry.Get(anchor);
             if (obj == null) continue;
 
             PlaceableItemData item = obj.GetItemData();
 
-            if (_gridProjectionVisibility.TryGetWorldTransform(CameraView.Perspective, anchor, out Vector3 basePos, out Quaternion baseRot))
+            if (resolver.TryGetWorldTransform(CameraView.Perspective, anchor, out Vector3 basePos, out Quaternion baseRot))
             {
-                Quaternion chairRot = _gridManager.GetChairRotationTowardsTable(anchor, baseRot);
+                Quaternion chairRot = gridManager.GetChairRotationTowardsTable(anchor, baseRot);
                 obj.transform.position = basePos + chairRot * item.placementOffset;
                 obj.transform.rotation = chairRot;
 
-                _gridManager.SetRotationAtAnchor(anchor, chairRot);
+                gridManager.SetRotationAtAnchor(anchor, chairRot);
             }
 
             obj.SetValid(isValid);
         }
     }
 
-    public static void ApplyValidityColorsOnly(GridManager gridManager)
+    public static void ApplyValidityColorsOnly(GridManager gridManager, PlaceableInstanceRegistry registry)
     {
         var validity = gridManager.ValidateAllChairs();
         foreach (var kvp in validity)
-            PlaceableInstanceRegistry.Instance?.Get(kvp.Key)?.SetValid(kvp.Value);
+            registry?.Get(kvp.Key)?.SetValid(kvp.Value);
     }
 }

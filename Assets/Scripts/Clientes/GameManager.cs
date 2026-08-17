@@ -5,14 +5,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     private Inventory _inventory;
     [SerializeField] 
-    private GridManager _gridManager;
-    [SerializeField] 
-    private GridProjectionVisibility 
-    _gridProjectionVisibility;
+    private GridZone _zone;
     [SerializeField] 
     private CameraController _cameraController;
+
     private static GameManager _instance;
     public static GameManager Instance => _instance;
+
     private Inventory Inv
     {
         get
@@ -25,7 +24,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if(_instance == null)
+        if (_instance == null)
         {
             _instance = this;
         }
@@ -35,6 +34,7 @@ public class GameManager : MonoBehaviour
         }
         Inventory.EnsureExists().Init();
     }
+
     public void Buy(PlaceableItemData itemData)
     {
         if (itemData == null)
@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
             HUDMessage.Instance?.ShowWarning("Inventario lleno. Dinero devuelto.");
         }
     }
+
     public void Place(int posX, int posY)
     {
         Inventory inv = Inv;
@@ -79,9 +80,14 @@ public class GameManager : MonoBehaviour
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
-        if (itemData == null || itemData.prefab == null || _gridManager == null
-            || _gridProjectionVisibility == null || _cameraController == null)
+        if (itemData == null || itemData.prefab == null || _zone == null
+            || _zone.GridManager == null || _zone.Resolver == null || _zone.Registry == null
+            || _cameraController == null)
             return;
+
+        GridManager gridManager = _zone.GridManager;
+        IGridWorldResolver resolver = _zone.Resolver;
+        PlaceableInstanceRegistry registry = _zone.Registry;
 
         CameraView view = _cameraController.CurrentView;
         PlaceableSurface activeSurface = GridProjectionVisibility.SurfaceForView(view);
@@ -92,19 +98,22 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!_gridManager.TryFindFreeCellInLayer(view, itemData, out Vector3Int cell))
+        if (!gridManager.TryFindFreeCellInLayer(view, itemData, out Vector3Int cell))
         {
             HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
             return;
         }
 
-        if (!_gridProjectionVisibility.TryGetWorldTransform(view, cell, out Vector3 basePos, out Quaternion baseRot))
+        if (!resolver.TryGetWorldTransform(view, cell, out Vector3 basePos, out Quaternion baseRot))
         {
             Debug.LogWarning($"[GameManager] No se pudo resolver transform de mundo para {cell}.");
             return;
         }
 
         PlacementAxis axis = GridManager.AxisForView(view);
+        if (!gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis, baseRot))
+            return;
+
         Vector3 worldPos = basePos + baseRot * itemData.placementOffset;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
@@ -115,16 +124,7 @@ public class GameManager : MonoBehaviour
         placeable.Init(itemData);
         placeable.InstancePlaceableObjectCreated(cell, view);
 
-
-        PlaceableInstanceRegistry.Instance?.Register(cell, placeable);
-
-        if (!_gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis, baseRot))
-        {
-            PlaceableInstanceRegistry.Instance?.Unregister(cell);
-            Destroy(obj);
-            return;
-        }
-
+        registry.Register(cell, placeable);
         inv.RemoveItem(posX, posY);
     }
 }

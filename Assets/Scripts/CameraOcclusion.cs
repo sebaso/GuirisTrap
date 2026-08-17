@@ -32,7 +32,7 @@ public class CameraOcclusion : MonoBehaviour
             if (!_wallsHitted.Contains(wall))
             {
                 _wallsHitted.Add(wall);
-                fade.SetIsOcclusing(true);
+                fade.SetIsOccluding(true);
             }
         }
         List<GameObject> toRemove = new List<GameObject>();
@@ -47,7 +47,7 @@ public class CameraOcclusion : MonoBehaviour
         }
         foreach (GameObject wall in toRemove)
         {
-            wall.GetComponent<FadeEffectComponent>().SetIsOcclusing(false);
+            wall.GetComponent<FadeEffectComponent>().SetIsOccluding(false);
             _wallsHitted.Remove(wall);
         }
     }
