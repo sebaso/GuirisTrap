@@ -15,6 +15,7 @@ public class PlayerController : ControllableMonoBehaviour
     public Transform holdPoint;
     public float interactionRange = 2f;
     private Food heldFood;
+    public bool IsCarryingFood => heldFood != null;
 
     [Header("Minigame System")]
     public RecipeData currentRecipe;
@@ -129,6 +130,12 @@ public class PlayerController : ControllableMonoBehaviour
         CookingStation bestStation  = null;
         ExtintorPickup bestExtintor = null;
         ExtintorSoporte bestSoporte = null;
+        FregonaPickup  bestFregona  = null;
+        FregonaSoporte bestFregSop  = null;
+        CacaGaviota    bestCaca     = null;
+        float bestFregonaDist  = float.MaxValue;
+        float bestFregSopDist  = float.MaxValue;
+        float bestCacaDist     = float.MaxValue;
         float bestStorageDist  = float.MaxValue;
         float bestEspetoDist   = float.MaxValue;
         float bestStationDist  = float.MaxValue;
@@ -164,6 +171,22 @@ public class PlayerController : ControllableMonoBehaviour
                 if (sop != null && dist < bestSoporteDist) { bestSoporte = sop; bestSoporteDist = dist; }
             }
 
+            // Fregona: mismo patrón que el extintor. Si la llevas, pulsar E
+            // cerca de una caca de gaviota la limpia.
+            if (!FregonaPickup.IsPlayerCarrying)
+            {
+                FregonaPickup fre = col.GetComponent<FregonaPickup>() ?? col.GetComponentInParent<FregonaPickup>();
+                if (fre != null && !fre.IsCarried && dist < bestFregonaDist) { bestFregona = fre; bestFregonaDist = dist; }
+            }
+            else
+            {
+                FregonaSoporte fsop = col.GetComponent<FregonaSoporte>() ?? col.GetComponentInParent<FregonaSoporte>();
+                if (fsop != null && dist < bestFregSopDist) { bestFregSop = fsop; bestFregSopDist = dist; }
+
+                CacaGaviota caca = col.GetComponent<CacaGaviota>() ?? col.GetComponentInParent<CacaGaviota>();
+                if (caca != null && dist < bestCacaDist) { bestCaca = caca; bestCacaDist = dist; }
+            }
+
             // Only loose, grabbable food counts (mirrors TryPickUpFood's filter).
             if (heldFood == null)
             {
@@ -177,9 +200,28 @@ public class PlayerController : ControllableMonoBehaviour
         //  estación de cocina es la acción de "cocinar" lo que llevas.)
         // Cada estación solo gana si además está más cerca que la comida suelta;
         // si la comida es lo más cercano, caemos a TryPickUpFood más abajo.
-        if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= bestStationDist && bestExtintorDist <= bestFoodDist)
+        if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= bestStationDist && bestExtintorDist <= bestFoodDist
+            && bestExtintorDist <= bestFregonaDist && bestExtintorDist <= bestCacaDist && bestExtintorDist <= bestFregSopDist)
         {
             bestExtintor.TryPickUp(this); return;
+        }
+        // Coger la fregona de su soporte.
+        if (bestFregona != null && bestFregonaDist <= bestStorageDist && bestFregonaDist <= bestEspetoDist && bestFregonaDist <= bestStationDist && bestFregonaDist <= bestFoodDist)
+        {
+            bestFregona.TryPickUp(this); return;
+        }
+        // Limpiar una caca de gaviota con la fregona.
+        if (bestCaca != null && bestCacaDist <= bestStorageDist && bestCacaDist <= bestEspetoDist && bestCacaDist <= bestStationDist && bestCacaDist <= bestFoodDist && bestCacaDist <= bestFregSopDist)
+        {
+            bestCaca.LimpiarConFregona(); return;
+        }
+        // Devolver la fregona a su soporte.
+        if (bestFregSop != null && bestFregSopDist <= bestStorageDist && bestFregSopDist <= bestEspetoDist && bestFregSopDist <= bestStationDist && bestFregSopDist <= bestFoodDist)
+        {
+            FregonaPickup.Carried?.ReturnToHolder();
+            AudioManager.Instance?.PlaySFX("fregona_pickup");
+            HUDMessage.Instance?.ShowGood("Fregona devuelta a su soporte.");
+            return;
         }
         // Devolver el extintor a su soporte pulsando E (si lo llevas encima).
         if (bestSoporte != null && bestSoporteDist <= bestStorageDist && bestSoporteDist <= bestEspetoDist && bestSoporteDist <= bestStationDist && bestSoporteDist <= bestFoodDist)
@@ -210,6 +252,14 @@ public class PlayerController : ControllableMonoBehaviour
 
         // 4. Intentar recoger una mesa o silla para reorganizar.
         TryPickUpFurniture();
+    }
+
+    /// <summary>Pierde el plato que lleva (impacto de caca de gaviota).</summary>
+    public void LoseHeldFood()
+    {
+        if (heldFood == null) return;
+        Destroy(heldFood.gameObject);
+        heldFood = null;
     }
 
     // ── Pickup System ─────────────────────────────────────────────────────
@@ -292,6 +342,15 @@ public class PlayerController : ControllableMonoBehaviour
                 // PlaceFood now returns false when the plate is a dish the
                 // group didn't order — in that case keep holding it so the
                 // player can carry it to the right table.
+                // Clientes especiales: veto de ingredientes (Poseidón + pescado)
+                // y pedidos "sorpréndeme". Si se queda el plato, lo perdemos.
+                if (SpecialClientManager.Instance != null &&
+                    SpecialClientManager.Instance.TryInterceptServe(table, heldFood))
+                {
+                    heldFood = null;
+                    return;
+                }
+
                 if (table.PlaceFood(heldFood))
                 {
                     heldFood = null;

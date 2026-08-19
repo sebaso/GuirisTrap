@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d27b8e96ea677ff489cb90f250ff525f, type: 3}
+  m_Name: Guirincianos
+  m_EditorClassIdentifier: Assembly-CSharp::SpecialClientData
+  clientName: Guirincianos
+  visualPrefab: {fileID: 0}
+  portrait: {fileID: 21300000, guid: b2e0584dcd86bec3c8f320cef7b4a394, type: 3}
+  dialogueColor: {r: 0.8018868, g: 0.45610115, b: 0.21560162, a: 1}
+  groupSize: 3
+  orderMode: 2
+  fixedDish: {fileID: 11400000, guid: b9b74e86a9284fd468bc2655f951091c, type: 2}
+  surpriseDishPlaceholder: {fileID: 0}
+  forbiddenTags: 0
+  patienceMultiplier: 1.5
+  paymentOverride: 30
+  requiredDecoration:
+  - {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
+  - {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
+  decorationMaxDistance: 0
+  tipIfDecorMet: 60
+  onFail: 0
+  arrivalAnnouncement: 
+  entryLines:
+  - Xe, bon dia! Volem paella, com la de ma mare!
+  successLines:
+  - "\xA1\xBFEixos quadres?! \xA1VISCA EL GUIRILENCIA! Est\xE1 bon\xEDssima!"
+  failLines:
+  - 
+  unhappyLines:
+  - "Esto no \xE9s paella... esto \xE9s arr\xF2s con coses. Nunca ser\xE0 com la
+    de mi mare"

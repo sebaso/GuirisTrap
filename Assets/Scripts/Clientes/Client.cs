@@ -295,9 +295,16 @@ public class Client : MonoBehaviour
         MoneyManager.Instance?.Earn(payment);
         Debug.Log($"[Client] Finished eating. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
-        DayReport.Instance?.RegisterSatisfiedClient();
+        // Clientes especiales que no han quedado contentos 
+        //  pagan igual, pero cuentan como descontentos.
+        // Para un cliente normal esto siempre devuelve true.
+        bool leavesHappy = SpecialClientManager.ClientLeavesHappy(this);
+
+        if (leavesHappy) DayReport.Instance?.RegisterSatisfiedClient();
+        else             DayReport.Instance?.RegisterAngryClient();
+
         DayReport.Instance?.RegisterEarnings(payment);
-        AudioManager.Instance?.PlaySFX("client_happy");
+        AudioManager.Instance?.PlaySFX(leavesHappy ? "client_happy" : "client_angry");
 
         SetState(State.DoneEating);
         _group?.OnMemberFinishedEating(this);

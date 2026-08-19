@@ -2,27 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// MINIJUEGO DE APAGAR INCENDIOS (GDD):
-///
-/// - SIN extintor (difícil): soplar → alternar A-D (←/→) muy rápido para
-///   llenar la barra. El progreso DECAE con el tiempo. Límite 10s (GDD).
-///
-/// - CON extintor (muy fácil): pulsar E unas pocas veces, sin decaimiento.
-///   El extintor es el objeto FÍSICO que se coge de su soporte
-///   (ExtintorPickup). Es de UN SOLO USO por viaje: al terminar este
-///   minijuego (se gane o se pierda), el extintor vuelve a su soporte.
-///
-/// Si se falla, el fuego SIGUE ardiendo y se puede reintentar interactuando
-/// otra vez con la estación (pero si usaste el extintor, tendrás que ir a por
-/// él de nuevo → el reintento sería a soplo limpio).
-///
-/// SETUP (mismo patrón que DespensaMinigame):
-///   1. Añadir este script al objeto SistemasMinijuegos.
-///   2. Panel en el Canvas (duplica el de Despensa): barra de progreso
-///      (Image fill), texto de instrucción y texto de timer.
-///   3. Arrastrar el panel/refs, y este script al FireEventManager.
-/// </summary>
+
 public class IncendioMinigame : MonoBehaviour, IMinigameControllable
 {
     [Header("UI References")]
@@ -66,8 +46,6 @@ public class IncendioMinigame : MonoBehaviour, IMinigameControllable
         _station = station;
         _player  = currentPlayer;
 
-        // Modo fácil solo si el jugador LLEVA el extintor físico encima
-        // (lo cogió de su soporte). GDD: "debes tener a mano el extintor".
         _easyMode     = ExtintorPickup.IsPlayerCarrying;
         _usedExtintor = _easyMode;
 

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d27b8e96ea677ff489cb90f250ff525f, type: 3}
+  m_Name: Poseidon
+  m_EditorClassIdentifier: Assembly-CSharp::SpecialClientData
+  clientName: Poseidon
+  visualPrefab: {fileID: 0}
+  portrait: {fileID: 21300000, guid: fc3fdd4e8c31226b098cb55d57557666, type: 3}
+  dialogueColor: {r: 0.005339978, g: 0.055377033, b: 0.0754717, a: 1}
+  groupSize: 1
+  orderMode: 1
+  fixedDish: {fileID: 0}
+  surpriseDishPlaceholder: {fileID: 11400000, guid: 141680876b88a15498aa1ac08fd5292a, type: 2}
+  forbiddenTags: 1
+  patienceMultiplier: 2
+  paymentOverride: 250
+  requiredDecoration: []
+  decorationMaxDistance: 0
+  tipIfDecorMet: 0
+  onFail: 1
+  arrivalAnnouncement: "\xA1Algo emerge del mar...!"
+  entryLines:
+  - "Mortal... He salio de las profundidades atra\xEDo por el olor de tu chiringuito."
+  - "Sorpr\xE9ndeme con lo mejor de tu cocina. Pero cuidao con lo que me sirves del
+    mar..."
+  successLines:
+  - "\xA1MAGN\xCDFICO! Un mortal digno de mi paladar. Toma, un tributo de la Sevill\xE1ntida."
+  failLines:
+  - "\xBF\xA1PESCAO!? \xBF\xA1Me sirves a MIS S\xDABDITOS!? \xA1PAGAR\xC1S POR ESTO!"
+  unhappyLines: []
