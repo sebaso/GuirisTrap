@@ -23,8 +23,7 @@ public class SceneController : MonoBehaviour
     {
         if (sceneName == "GameScene")
         {
-            GridManager gm = FindAnyObjectByType<GridManager>();
-            if (gm != null && !gm.CanStartDay())
+            if (!CanStartDay())
             {
                 HUDMessage.Instance?.ShowWarning("Hay sillas que no se pueden usar. Revisa el restaurante antes de empezar el día.");
                 return;
@@ -34,6 +33,25 @@ public class SceneController : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.LoadScene(sceneName);
+    }
+
+    private bool CanStartDay()
+    {
+        int totalTables = 0;
+        int totalChairs = 0;
+
+        foreach (GridZone zone in GridZone.ActiveZones)
+        {
+            if (zone.VoxelData == null) continue;
+
+            totalTables += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Table);
+            totalChairs += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Chair);
+
+            foreach (var kvp in GridManager.ValidateAllChairs(zone.VoxelData))
+                if (!kvp.Value) return false;
+        }
+
+        return totalTables > 0 && totalChairs > 0;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -46,20 +64,25 @@ public class SceneController : MonoBehaviour
         {
             MoneyManager.EnsureAndRestore();
 
-            GridManager gridManager = FindAnyObjectByType<GridManager>();
-            Debug.Log($"[SceneController] gridManager encontrado = {gridManager != null}");
+            CameraController cameraController = FindAnyObjectByType<CameraController>();
+            if (cameraController != null && cameraController.ActiveZone == null)
+            {
+                GridZone defaultZone = GridZone.ActiveZones.Find(z => z.ZoneId == ZoneId.Interior);
+                if (defaultZone != null) cameraController.SetActiveZone(defaultZone);
+            }
 
             bool isNewGame = SaveManager.Instance != null && SaveManager.Instance.ConsumePendingNewGame();
             Debug.Log($"[SceneController] isNewGame = {isNewGame}");
 
             if (isNewGame)
             {
-                gridManager?.ClearAll();
-                Debug.Log("[SceneController] ClearAll ejecutado");
+                foreach (GridZone zone in GridZone.ActiveZones)
+                    if (zone.VoxelData != null) GridManager.ClearAll(zone.VoxelData);
+                Debug.Log("[SceneController] ClearAll ejecutado en todas las zonas");
             }
             else if (SaveManager.Instance != null && SaveManager.Instance.ShouldSyncGridsOnLoad())
             {
-                SaveManager.Instance.ApplyGridToScene(gridManager);
+                SaveManager.Instance.ApplyGridToScene();
                 Debug.Log("[SceneController] ApplyGridToScene ejecutado");
             }
 

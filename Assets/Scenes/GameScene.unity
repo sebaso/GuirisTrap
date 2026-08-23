@@ -480,6 +480,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &128084028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 128084031}
+  - component: {fileID: 128084030}
+  - component: {fileID: 128084029}
+  m_Layer: 0
+  m_Name: GZExterior
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &128084029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128084028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b662b3feca641ea4ab3768508b14b024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSceneGridResolver
+  _floor: {fileID: 310903900}
+  _wallNorth: {fileID: 0}
+  _wallEast: {fileID: 0}
+  _wallWest: {fileID: 0}
+--- !u!114 &128084030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128084028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4afe90c95f71aa148af494a9ef6f4a34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GridZone
+  _zoneId: 1
+  _voxelData: {fileID: 11400000, guid: 9305e16512864c24d9346658b21a3c53, type: 2}
+  _registry: {fileID: 1489178169}
+  _resolverOverride: {fileID: 128084029}
+  _projections: []
+  _cameraController: {fileID: 0}
+  _cameraPivots: []
+--- !u!4 &128084031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128084028}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.58662, y: 0.354, z: 4.31679}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &146657625
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,6 +712,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 935569556}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &310903899
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 310903901}
+  - component: {fileID: 310903900}
+  m_Layer: 0
+  m_Name: ExteriorFloorProjection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &310903900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310903899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c23598bf82bd4df4a82d563467fd87a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
+  _voxelData: {fileID: 11400000, guid: 9305e16512864c24d9346658b21a3c53, type: 2}
+  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+--- !u!4 &310903901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310903899}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -4.56, y: -0.069, z: 1.755}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -3287,9 +3401,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridZone
   _zoneId: 0
-  _gridManager: {fileID: 1489178170}
+  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
   _registry: {fileID: 1489178169}
-  _resolverBehaviour: {fileID: 1283730709}
+  _resolverOverride: {fileID: 1283730709}
+  _projections: []
+  _cameraController: {fileID: 0}
+  _cameraPivots: []
 --- !u!4 &1283730711
 Transform:
   m_ObjectHideFlags: 0
@@ -4004,7 +4121,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1489178171}
-  - component: {fileID: 1489178170}
   - component: {fileID: 1489178169}
   - component: {fileID: 1489178168}
   m_Layer: 0
@@ -4026,7 +4142,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9265c03eeaf762f44a3ca36c31901ffa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableGenerator
-  _zone: {fileID: 1283730710}
 --- !u!114 &1489178169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4039,19 +4154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5387396504e8b2346b114f83bf64498c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableInstanceRegistry
---- !u!114 &1489178170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489178167}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2476d3e38a224a49a9275332d4e328a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GridManager
-  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
 --- !u!4 &1489178171
 Transform:
   m_ObjectHideFlags: 0
@@ -6185,6 +6287,7 @@ SceneRoots:
   - {fileID: 1481696743}
   - {fileID: 1489178171}
   - {fileID: 1283730711}
+  - {fileID: 128084031}
   - {fileID: 360223694}
   - {fileID: 935569556}
   - {fileID: 37342308}
@@ -6215,4 +6318,5 @@ SceneRoots:
   - {fileID: 1840258591}
   - {fileID: 352007971}
   - {fileID: 1618466545}
+  - {fileID: 310903901}
   - {fileID: 396118146}

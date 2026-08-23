@@ -3,27 +3,30 @@ using UnityEngine.SceneManagement;
 
 public class PlaceableGenerator : MonoBehaviour
 {
-    [SerializeField] 
-    private GridZone _zone;
-
     public void Generate()
     {
-        if (_zone == null || _zone.GridManager == null || _zone.Resolver == null || _zone.Registry == null) return;
+        foreach (GridZone zone in GridZone.ActiveZones)
+            GenerateForZone(zone);
+    }
 
-        GridManager gridManager = _zone.GridManager;
-        IGridWorldResolver resolver = _zone.Resolver;
-        PlaceableInstanceRegistry registry = _zone.Registry;
+    private void GenerateForZone(GridZone zone)
+    {
+        if (zone == null || zone.VoxelData == null || zone.Resolver == null || zone.Registry == null) return;
+
+        VoxelGridData voxelData = zone.VoxelData;
+        IGridWorldResolver resolver = zone.Resolver;
+        PlaceableInstanceRegistry registry = zone.Registry;
 
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
 
-        foreach (var anchor in gridManager.GetAllAnchors())
+        foreach (var anchor in GridManager.GetAllAnchors(voxelData))
         {
-            PlaceableItemData item = gridManager.GetItemAtAnchor(anchor);
+            PlaceableItemData item = GridManager.GetItemAtAnchor(voxelData, anchor);
             if (item == null || item.prefab == null) continue;
 
-            CameraView view = gridManager.DetermineViewForAnchor(anchor, item);
-            Quaternion rot = gridManager.GetRotationAtAnchor(anchor);
+            CameraView view = GridManager.DetermineViewForAnchor(voxelData, anchor, item);
+            Quaternion rot = GridManager.GetRotationAtAnchor(voxelData, anchor);
 
             if (!resolver.TryGetWorldTransform(view, anchor, out Vector3 basePos, out _))
                 continue;
@@ -39,6 +42,6 @@ public class PlaceableGenerator : MonoBehaviour
         }
 
         if (SceneManager.GetActiveScene().name == "PreparationScene")
-            ChairRefreshUtility.ApplyValidityColorsOnly(gridManager, registry);
+            ChairRefreshUtility.ApplyValidityColorsOnly(voxelData, registry);
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class FloorGridProjection : MonoBehaviour
+public class FloorGridProjection : MonoBehaviour, IVoxelProjection
 {
     [SerializeField] 
     private VoxelGridData _voxelData;

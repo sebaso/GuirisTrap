@@ -7,7 +7,7 @@ public enum WallSide
     West
 }
 
-public class WallGridProjection : MonoBehaviour
+public class WallGridProjection : MonoBehaviour, IVoxelProjection
 {
     [SerializeField] 
     private VoxelGridData _voxelData;

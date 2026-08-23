@@ -17,17 +17,10 @@ public class CameraController : MonoBehaviour
     private Vector3 _velocityPos;
     public System.Action<CameraView> OnViewChanged;
 
-    [Header("Pivots")]
-    [SerializeField] 
-    private Transform _pivotPerspective;
-    [SerializeField] 
-    private Transform _pivotTopDown;
-    [SerializeField] 
-    private Transform _pivotWallNorth;
-    [SerializeField] 
-    private Transform _pivotWallEast;
-    [SerializeField] 
-    private Transform _pivotWallWest;
+    public System.Action<GridZone> OnActiveZoneChanged;
+
+    private GridZone _activeZone;
+    public GridZone ActiveZone => _activeZone;
 
     private Transform _currentTarget;
     private CameraView _currentView = CameraView.Perspective;
@@ -37,14 +30,6 @@ public class CameraController : MonoBehaviour
 
     public bool IsTransitioning { get; private set; }
     public void SetInputLocked(bool locked) => _inputLocked = locked;
-
-    void Start()
-    {
-        _currentTarget = _pivotPerspective;
-        
-        _mainCamera.transform.position = _currentTarget.position;
-        _mainCamera.transform.rotation = _currentTarget.rotation;
-    }
 
     void Update()
     {
@@ -56,44 +41,40 @@ public class CameraController : MonoBehaviour
         IsTransitioning = Vector3.Distance(_mainCamera.transform.position, _currentTarget.position) > 0.05f;
     }
 
+    public void SetActiveZone(GridZone zone)
+    {
+        if (zone == null || zone == _activeZone) return;
+        _activeZone = zone;
+        OnActiveZoneChanged?.Invoke(zone);
+        SetView(CameraView.Perspective);
+    }
+
     public void SetView(CameraView view)
     {
-        if (_inputLocked) return;
+        if (_inputLocked || _activeZone == null) return;
+
+        Transform pivot = _activeZone.GetCameraPivot(view);
+        if (pivot == null) return;
+
         _currentView = view;
-        switch (view)
-        {
-            case CameraView.Perspective: 
-                _currentTarget = _pivotPerspective;
-                break;
-            case CameraView.TopDown:     
-                _currentTarget = _pivotTopDown;
-                break;
-            case CameraView.WallNorth:   
-                _currentTarget = _pivotWallNorth;
-                break;
-            case CameraView.WallEast:    
-                _currentTarget = _pivotWallEast;
-                break;
-            case CameraView.WallWest:    
-                _currentTarget = _pivotWallWest;
-                break;
-            default:                     
-                _currentTarget = _pivotPerspective;
-                break;
-        }
+        _currentTarget = pivot;
         _mainCamera.orthographic = view == CameraView.TopDown;
         OnViewChanged?.Invoke(view);
     }
 
     public void CycleWalls(int direction)
     {
+        if (_activeZone == null) return;
+
         CameraView[] walls = { CameraView.WallEast, CameraView.WallNorth, CameraView.WallWest };
-        int currentIndex = System.Array.IndexOf(walls, _currentView);
+        var owned = System.Array.FindAll(walls, w => _activeZone.OwnsView(w));
+        if (owned.Length == 0) return;
 
+        int currentIndex = System.Array.IndexOf(owned, _currentView);
         if (currentIndex == -1) currentIndex = 0;
-        else currentIndex = (currentIndex + direction + walls.Length) % walls.Length;
+        else currentIndex = (currentIndex + direction + owned.Length) % owned.Length;
 
-        SetView(walls[currentIndex]);
+        SetView(owned[currentIndex]);
     }
 
     public CameraView CurrentView => _currentView;

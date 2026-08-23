@@ -5,8 +5,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     private Inventory _inventory;
     [SerializeField] 
-    private GridZone _zone;
-    [SerializeField] 
     private CameraController _cameraController;
 
     private static GameManager _instance;
@@ -80,17 +78,17 @@ public class GameManager : MonoBehaviour
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
-        if (itemData == null || itemData.prefab == null || _zone == null
-            || _zone.GridManager == null || _zone.Resolver == null || _zone.Registry == null
-            || _cameraController == null)
+        GridZone zone = _cameraController != null ? _cameraController.ActiveZone : null;
+        if (itemData == null || itemData.prefab == null || zone == null
+            || zone.VoxelData == null || zone.Resolver == null || zone.Registry == null)
             return;
 
-        GridManager gridManager = _zone.GridManager;
-        IGridWorldResolver resolver = _zone.Resolver;
-        PlaceableInstanceRegistry registry = _zone.Registry;
+        VoxelGridData voxelData = zone.VoxelData;
+        IGridWorldResolver resolver = zone.Resolver;
+        PlaceableInstanceRegistry registry = zone.Registry;
 
         CameraView view = _cameraController.CurrentView;
-        PlaceableSurface activeSurface = GridProjectionVisibility.SurfaceForView(view);
+        PlaceableSurface activeSurface = GridZone.SurfaceForView(view);
 
         if (!itemData.IsCompatibleWith(activeSurface))
         {
@@ -98,7 +96,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (!gridManager.TryFindFreeCellInLayer(view, itemData, out Vector3Int cell))
+        if (!GridManager.TryFindFreeCellInLayer(voxelData, view, itemData, out Vector3Int cell))
         {
             HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
             return;
@@ -111,7 +109,7 @@ public class GameManager : MonoBehaviour
         }
 
         PlacementAxis axis = GridManager.AxisForView(view);
-        if (!gridManager.PlaceItem(cell.x, cell.y, cell.z, itemData, axis, baseRot))
+        if (!GridManager.PlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, axis, baseRot))
             return;
 
         Vector3 worldPos = basePos + baseRot * itemData.placementOffset;

@@ -1,29 +1,41 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChairRefreshUtility : MonoBehaviour
 {
-    [SerializeField] 
-    private GridZone _zone;
+    private readonly Dictionary<GridZone, System.Action> _handlers = new();
 
     void OnEnable()
     {
-        if (_zone != null && _zone.GridManager != null)
-            _zone.GridManager.OnGridChanged += RefreshChairs;
+        GridZone.OnZoneRegistered += Subscribe;
+        foreach (GridZone zone in GridZone.ActiveZones)
+            Subscribe(zone);
     }
 
     void OnDisable()
     {
-        if (_zone != null && _zone.GridManager != null)
-            _zone.GridManager.OnGridChanged -= RefreshChairs;
+        GridZone.OnZoneRegistered -= Subscribe;
+        foreach (var kvp in _handlers)
+            kvp.Key.OnGridChanged -= kvp.Value;
+        _handlers.Clear();
     }
 
-    private void RefreshChairs()
+    private void Subscribe(GridZone zone)
     {
-        GridManager gridManager = _zone.GridManager;
-        PlaceableInstanceRegistry registry = _zone.Registry;
-        IGridWorldResolver resolver = _zone.Resolver;
+        if (zone == null || _handlers.ContainsKey(zone)) return;
 
-        var validity = gridManager.ValidateAllChairs();
+        System.Action handler = () => RefreshChairs(zone);
+        zone.OnGridChanged += handler;
+        _handlers[zone] = handler;
+    }
+
+    private void RefreshChairs(GridZone zone)
+    {
+        VoxelGridData voxelData = zone.VoxelData;
+        PlaceableInstanceRegistry registry = zone.Registry;
+        IGridWorldResolver resolver = zone.Resolver;
+
+        var validity = GridManager.ValidateAllChairs(voxelData);
 
         foreach (var kvp in validity)
         {
@@ -37,20 +49,20 @@ public class ChairRefreshUtility : MonoBehaviour
 
             if (resolver.TryGetWorldTransform(CameraView.Perspective, anchor, out Vector3 basePos, out Quaternion baseRot))
             {
-                Quaternion chairRot = gridManager.GetChairRotationTowardsTable(anchor, baseRot);
+                Quaternion chairRot = GridManager.GetChairRotationTowardsTable(voxelData, anchor, baseRot);
                 obj.transform.position = basePos + chairRot * item.placementOffset;
                 obj.transform.rotation = chairRot;
 
-                gridManager.SetRotationAtAnchor(anchor, chairRot);
+                GridManager.SetRotationAtAnchor(voxelData, anchor, chairRot);
             }
 
             obj.SetValid(isValid);
         }
     }
 
-    public static void ApplyValidityColorsOnly(GridManager gridManager, PlaceableInstanceRegistry registry)
+    public static void ApplyValidityColorsOnly(VoxelGridData voxelData, PlaceableInstanceRegistry registry)
     {
-        var validity = gridManager.ValidateAllChairs();
+        var validity = GridManager.ValidateAllChairs(voxelData);
         foreach (var kvp in validity)
             registry?.Get(kvp.Key)?.SetValid(kvp.Value);
     }

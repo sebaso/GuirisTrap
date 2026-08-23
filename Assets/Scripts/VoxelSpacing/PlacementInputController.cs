@@ -8,8 +8,6 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     [SerializeField] 
     private Camera _mainCamera;
     [SerializeField] 
-    private GridZone _zone;
-    [SerializeField] 
     private CameraController _cameraController;
 
     private InputSystem_Actions _inputs;
@@ -102,24 +100,25 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
     private void UpdateDrag()
     {
-        GridProjectionVisibility projection = _zone.ProjectionVisibility;
-        GridManager gridManager = _zone.GridManager;
+        GridZone zone = _cameraController.ActiveZone;
+        if (zone == null) return;
+        VoxelGridData voxelData = zone.VoxelData;
 
         CameraView view = _cameraController.CurrentView;
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
 
-        projection.RefreshActive(view);
-        _hasDragTarget = projection.TryGetVoxelUnderRay(view, ray, out _dragTargetVoxel);
+        zone.RefreshActive(view);
+        _hasDragTarget = zone.TryGetVoxelUnderRay(view, ray, out _dragTargetVoxel);
 
         if (!_hasDragTarget) { _dragValid = false; return; }
 
         PlaceableItemData item = _selected.GetItemData();
         PlacementAxis axis = GridManager.AxisForView(view);
-        _dragValid = gridManager.CanPlaceItem(_dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, axis, _selected.AnchorVoxel);
+        _dragValid = GridManager.CanPlaceItem(voxelData, _dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, axis, _selected.AnchorVoxel);
 
-        projection.SetPreview(view, _dragTargetVoxel, _dragValid ? CellVisualState.Empty : CellVisualState.Blocked);
+        zone.SetPreview(view, _dragTargetVoxel, _dragValid ? CellVisualState.Empty : CellVisualState.Blocked);
 
-        if (projection.TryGetWorldTransform(view, _dragTargetVoxel, out Vector3 pos, out Quaternion rot))
+        if (zone.TryGetWorldTransform(view, _dragTargetVoxel, out Vector3 pos, out Quaternion rot))
         {
             _selected.transform.position = pos + rot * item.placementOffset;
             _selected.transform.rotation = rot;
@@ -128,9 +127,10 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
     private void ConfirmOrCancel()
     {
-        GridProjectionVisibility projection = _zone.ProjectionVisibility;
-        GridManager gridManager = _zone.GridManager;
-        PlaceableInstanceRegistry registry = _zone.Registry;
+        GridZone zone = _cameraController.ActiveZone;
+        if (zone == null) return;
+        VoxelGridData voxelData = zone.VoxelData;
+        PlaceableInstanceRegistry registry = zone.Registry;
 
         CameraView view = _cameraController.CurrentView;
         PlaceableItemData item = _selected.GetItemData();
@@ -142,16 +142,16 @@ public class PlacementInputController : MonoBehaviour, IUIActions
             registry.Unregister(oldAnchor);
             registry.Register(_dragTargetVoxel, _selected);
 
-            gridManager.MoveItem(oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
+            GridManager.MoveItem(voxelData, oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
             _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
         }
-        else if (projection.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
+        else if (zone.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
         {
             _selected.transform.position = pos + rot * item.placementOffset;
             _selected.transform.rotation = rot;
         }
 
-        projection.RefreshActive(view);
+        zone.RefreshActive(view);
         _selected.Select(false);
         _selected = null;
         _hasDragTarget = false;
@@ -161,8 +161,10 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
     private void TryPickUpToInventory()
     {
-        GridManager gridManager = _zone.GridManager;
-        PlaceableInstanceRegistry registry = _zone.Registry;
+        GridZone zone = _cameraController.ActiveZone;
+        if (zone == null) return;
+        VoxelGridData voxelData = zone.VoxelData;
+        PlaceableInstanceRegistry registry = zone.Registry;
 
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
@@ -177,14 +179,14 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         Vector3Int anchor = placeable.AnchorVoxel;
         PlacementAxis axis = GridManager.AxisForView(view);
 
-        if (!gridManager.RemoveItemAt(anchor.x, anchor.y, anchor.z, axis)) return;
+        if (!GridManager.RemoveItemAt(voxelData, anchor.x, anchor.y, anchor.z, axis)) return;
 
         Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
         bool added = inv.AddItem(item);
 
         if (!added)
         {
-            gridManager.PlaceItem(anchor.x, anchor.y, anchor.z, item, axis, placeable.transform.rotation);
+            GridManager.PlaceItem(voxelData, anchor.x, anchor.y, anchor.z, item, axis, placeable.transform.rotation);
             HUDMessage.Instance?.ShowWarning("Inventario lleno.");
             return;
         }

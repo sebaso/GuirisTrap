@@ -14,7 +14,7 @@ public class SaveManager : MonoBehaviour
     public int CurrentDay => _data.day;
     public int SavedMoney => _data.money;
     public ItemCountData[] GetOwnedItems() => _data.ownedItems;
-    public CellSaveData3D[] GetGridCells() => _data.gridCells;
+    public ZoneSaveData[] GetZoneSaveData() => _data.zones;
 
     public float Stars
     {
@@ -76,9 +76,19 @@ public class SaveManager : MonoBehaviour
 
     private void SaveGridFromManager()
     {
-        GridManager gridManager = FindAnyObjectByType<GridManager>();
-        if (gridManager != null)
-            _data.gridCells = gridManager.ToSaveData();
+        var zones = new System.Collections.Generic.List<ZoneSaveData>();
+
+        foreach (GridZone zone in GridZone.ActiveZones)
+        {
+            if (zone.VoxelData == null) continue;
+            zones.Add(new ZoneSaveData
+            {
+                zoneId = zone.ZoneId,
+                cells = GridManager.ToSaveData(zone.VoxelData)
+            });
+        }
+
+        _data.zones = zones.ToArray();
     }
 
     private void Load()
@@ -96,15 +106,19 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Aplica los datos de grid ya cargados en memoria (_data.gridCells) sobre
-    /// el GridManager de la escena actual. Se llama desde SceneController tras
-    /// cargar PreparationScene, una única vez por sesión (ShouldSyncGridsOnLoad).
-    /// </summary>
-    public void ApplyGridToScene(GridManager gridManager)
+    public void ApplyGridToScene()
     {
-        if (gridManager == null || _data.gridCells == null || _data.gridCells.Length == 0) return;
-        gridManager.LoadFromSaveData(_data.gridCells, _allItems);
+        if (_data.zones == null) return;
+
+        foreach (GridZone zone in GridZone.ActiveZones)
+        {
+            if (zone.VoxelData == null) continue;
+
+            ZoneSaveData saved = System.Array.Find(_data.zones, z => z.zoneId == zone.ZoneId);
+            if (saved == null || saved.cells == null || saved.cells.Length == 0) continue;
+
+            GridManager.LoadFromSaveData(zone.VoxelData, saved.cells, _allItems);
+        }
     }
 
     [ContextMenu("Delete Save")]
@@ -118,10 +132,6 @@ public class SaveManager : MonoBehaviour
         Debug.Log("[SaveManager] Save eliminado: " + SavePath);
     }
 
-    /// <summary>
-    /// Empieza una partida nueva: borra el save en disco, PlayerPrefs, y limpia
-    /// el VoxelGridData de la escena actual (si hay una cargada).
-    /// </summary>
     public void NewGame()
     {
         if (File.Exists(SavePath)) File.Delete(SavePath);
@@ -164,8 +174,12 @@ public class SaveManager : MonoBehaviour
     {
         _data.ownedItems = OwnedItemsManager.Instance?.ToSaveData();
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
+        int totalCells = 0;
+        if (_data.zones != null)
+            foreach (var z in _data.zones)
+                totalCells += z.cells != null ? z.cells.Length : 0;
         Debug.Log($"[SaveManager] Saved day {_data.day}, money {_data.money}, " +
-                  $"stars {_data.stars:0.##}, celdas {(_data.gridCells != null ? _data.gridCells.Length : 0)} → {SavePath}");
+                  $"stars {_data.stars:0.##}, zonas {(_data.zones != null ? _data.zones.Length : 0)}, celdas {totalCells} → {SavePath}");
     }
 
     [System.Serializable]
@@ -177,8 +191,15 @@ public class SaveManager : MonoBehaviour
         public int lastGradedDay = -1;
         public System.Collections.Generic.List<int> weekGrades = new System.Collections.Generic.List<int>();
 
-        public CellSaveData3D[] gridCells;
+        public ZoneSaveData[] zones;
         public ItemCountData[] ownedItems;
+    }
+
+    [System.Serializable]
+    public class ZoneSaveData
+    {
+        public ZoneId zoneId;
+        public CellSaveData3D[] cells;
     }
 
     [System.Serializable]
