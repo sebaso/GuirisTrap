@@ -1,40 +1,49 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(Renderer))]
 public class FadeEffectComponent : MonoBehaviour
 {
-    [SerializeField] private float _fadeSpeed = 5f;
-    [SerializeField] private float _minAlpha  = 0.15f;
-    [SerializeField] private float _maxAlpha  = 0.4f;
+    private static readonly int AlphaProperty = Shader.PropertyToID("_alpha");
+
+    [SerializeField] 
+    private float _fadeSpeed = 5f;
+    [SerializeField] 
+    private float _minAlpha  = 0.15f;
+    [SerializeField] 
+    private float _maxAlpha  = 0.4f;
+
     private Renderer _renderer;
-    private bool _isOcclusing = false;
+    private MaterialPropertyBlock _propertyBlock;
+    private float _currentAlpha;
+    private bool _isOccluding;
 
     void Awake()
     {
-        _renderer = gameObject.GetComponent<Renderer>();
+        _renderer = GetComponent<Renderer>();
+        _propertyBlock = new MaterialPropertyBlock();
+
+        if (_renderer != null && _renderer.sharedMaterial != null && !_renderer.sharedMaterial.HasProperty(AlphaProperty))
+            Debug.LogWarning($"[FadeEffectComponent] El material de '{name}' no tiene una propiedad float '_alpha'. Este efecto no va a hacer nada visible.", this);
+
+        _currentAlpha = _maxAlpha;
+        ApplyAlpha();
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        float currentAlpha = _renderer.material.GetFloat("_alpha");
-        if(_isOcclusing && currentAlpha > _minAlpha )
-            ApplyFadeOn();
-        else if(!_isOcclusing && currentAlpha < _maxAlpha)
-            ApplyFadeOut();
+        float target = _isOccluding ? _minAlpha : _maxAlpha;
+        if (Mathf.Approximately(_currentAlpha, target)) return;
+
+        _currentAlpha = Mathf.MoveTowards(_currentAlpha, target, _fadeSpeed * Time.deltaTime);
+        ApplyAlpha();
     }
-    public void ApplyFadeOn()
+
+    private void ApplyAlpha()
     {
-        float currentAlpha = _renderer.material.GetFloat("_alpha");
-        currentAlpha -= _fadeSpeed * Time.deltaTime;
-        currentAlpha = Mathf.Clamp01(currentAlpha);
-        _renderer.material.SetFloat("_alpha", currentAlpha);
+        _renderer.GetPropertyBlock(_propertyBlock);
+        _propertyBlock.SetFloat(AlphaProperty, _currentAlpha);
+        _renderer.SetPropertyBlock(_propertyBlock);
     }
-    public void ApplyFadeOut()
-    {
-        float currentAlpha = _renderer.material.GetFloat("_alpha");
-        currentAlpha += _fadeSpeed * Time.deltaTime;
-        currentAlpha = Mathf.Clamp01(currentAlpha);
-        _renderer.material.SetFloat("_alpha", currentAlpha);
-    }
-    public void SetIsOcclusing(bool occlusing){ _isOcclusing = occlusing; }
+
+    public void SetIsOccluding(bool occluding) => _isOccluding = occluding;
 }

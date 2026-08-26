@@ -253,9 +253,6 @@ public class RestaurantManager : MonoBehaviour
             t.Reserve(group);
         }
 
-        // Generate the group's order now that they're committed to a table —
-        // before any member enters WaitingForFood, so the order exists by the
-        // time patience/UI read it.
         group.GenerateOrder();
         Debug.Log($"[RestaurantManager] {group} ordered: {(group.Order != null ? string.Join(", ", group.Order.ConvertAll(r => r != null ? r.dishName : "?")) : "none")}");
 
@@ -269,7 +266,7 @@ public class RestaurantManager : MonoBehaviour
             for (int j = 0; j < points.Count; j++) seatTables.Add(t);
         }
 
-        int usableSeats = Mathf.Min(seatPoints.Count, group.Size);
+        int usableSeats = Mathf.Min(seatPoints.Count, group.Size, group.Members.Count);
 
         if (seatPoints.Count < group.Size)
         {
@@ -277,7 +274,6 @@ public class RestaurantManager : MonoBehaviour
             HUDMessage.Instance?.ShowWarning($"¡Faltan sillas! El grupo necesita {group.Size} asientos.");
         }
 
-        // Remove the group from waiting queue if it was there
         _waitingGroups.Remove(group);
 
         for (int i = 0; i < usableSeats; i++)
@@ -289,7 +285,6 @@ public class RestaurantManager : MonoBehaviour
             }
         }
 
-        // For excess members beyond available seats, keep them in the queue
         if (usableSeats < group.Members.Count)
         {
             ClientGroup overflowGroup = new ClientGroup(group.Members.Count - usableSeats);

@@ -44,7 +44,7 @@ public class InventoryUI : MonoBehaviour
         if (inv == null || _slotsUI == null) return;
 
         PlaceableSurface activeSurface = _cameraController != null
-            ? GridProjectionVisibility.SurfaceForView(_cameraController.CurrentView)
+            ? GridZone.SurfaceForView(_cameraController.CurrentView)
             : PlaceableSurface.Floor;
 
         for (int y = 0; y < inv.Height; y++)
