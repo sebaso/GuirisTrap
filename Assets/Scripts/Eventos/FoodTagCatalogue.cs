@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Tabla receta -> tags. Vive en un asset aparte para no tocar RecipeData.
+// Asignarlo en el campo Tag Catalogue del SpecialClientManager.
 
 [CreateAssetMenu(fileName = "FoodTagCatalogue", menuName = "Clients/Food Tag Catalogue")]
 public class FoodTagCatalogue : ScriptableObject
@@ -17,7 +19,12 @@ public class FoodTagCatalogue : ScriptableObject
 
     private Dictionary<RecipeData, FoodTag> _lookup;
 
-    /// <summary>Tags de esta receta (None si no está en la tabla).</summary>
+    // El caché se reconstruye solo si tocas la tabla en el inspector (incluso
+    // con el juego corriendo) o al recargar el asset. Sin esto, afinar tags en
+    // Play mode no tenía efecto hasta salir y volver a entrar.
+    void OnEnable()   => _lookup = null;
+    void OnValidate() => _lookup = null;
+
     public FoodTag GetTags(RecipeData recipe)
     {
         if (recipe == null) return FoodTag.None;
@@ -36,6 +43,5 @@ public class FoodTagCatalogue : ScriptableObject
         return _lookup.TryGetValue(recipe, out FoodTag t) ? t : FoodTag.None;
     }
 
-    /// <summary>Fuerza a reconstruir la tabla (tras editarla en runtime).</summary>
     public void InvalidateCache() => _lookup = null;
 }

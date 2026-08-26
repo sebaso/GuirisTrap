@@ -782,11 +782,10 @@ MonoBehaviour:
   _rollInterval: 8
   _cacaChancePerRoll: 0.1
   _minDelayBeforeFirst: 30
-  _maxSimultaneas: 3
+  _maxSimultaneas: 2
   _dropZones:
   - {fileID: 14978685}
   - {fileID: 616136891}
-  - {fileID: 0}
   _fallbackRadius: 3
   _targetPlayerChance: 0.0015
   _groundLayers:
@@ -5378,6 +5377,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -175
       objectReference: {fileID: 0}
+    - target: {fileID: 5331515284820746642, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.399
+      objectReference: {fileID: 0}
+    - target: {fileID: 5331515284820746642, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.384
+      objectReference: {fileID: 0}
     - target: {fileID: 5619092629790520018, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -5449,6 +5456,10 @@ PrefabInstance:
     - target: {fileID: 8073014874999968522, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -250
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683025610823579463, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.z
+      value: 0.95
       objectReference: {fileID: 0}
     - target: {fileID: 8787399768214247343, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_AnchorMax.y

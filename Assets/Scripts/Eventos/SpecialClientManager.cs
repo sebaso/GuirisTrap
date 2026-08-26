@@ -3,26 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Orquesta a los clientes especiales (Poseidón, Guirincianos, futuros Karen...).
-///
-/// DISEÑO: todo vive aquí y en SpecialClientTag. De los scripts del equipo solo
-/// se modifica PlayerController (3 bloques: fregona, veto al servir y dos
-/// accesores). Client, ClientGroup, ClientSpawner, Table, Chair, RecipeData,
-/// OrderBubble y TicketRailUI quedan INTACTOS. Los trucos que lo permiten:
-///
-///  - El pedido especial se aplica reescribiendo el contenido de la lista
-///    ClientGroup.Order (que es pública y mutable) después de que el grupo se
-///    siente. Para "¡Sorpréndeme!" se mete una RecipeData maqueta, así el
-///    bocadillo y la comanda lo pintan solos.
-///  - Romper mobiliario = chair.SetCarried(true): las saca del pool igual que
-///    si el jugador las levantara, la mesa se queda con capacidad 0 y el
-///    RestaurantManager deja de asignarla. Reparar = SetCarried(false).
-///  - Los tags de comida viven en un FoodTagCatalogue aparte, no en RecipeData.
-///
-/// SETUP: GameObject vacío "SpecialClientManager" + este componente. Asignar el
-/// ClientSpawner de la escena, el FoodTagCatalogue y el pool de clientes.
-/// </summary>
+// Cerebro de los clientes especiales: spawn por probabilidad, pedidos, veto de
+// ingredientes, rotura y reparación de mobiliario, y diálogos.
+
 public class SpecialClientManager : MonoBehaviour
 {
     public static SpecialClientManager Instance { get; private set; }
@@ -64,6 +47,10 @@ public class SpecialClientManager : MonoBehaviour
     private readonly Dictionary<ClientGroup, bool> _decorVerdict = new();
     // Grupos cuyo fallo ya se está resolviendo (evita dobles resoluciones).
     private readonly HashSet<ClientGroup> _resolving = new();
+    // Grupos a los que ya se les ha aplicado su pedido especial.
+    private readonly HashSet<ClientGroup> _orderedGroups = new();
+    // Grupos cuyo desenlace (propina / pulla de despedida) ya se ha narrado.
+    private readonly HashSet<ClientGroup> _outcomeClaimed = new();
     // Mobiliario roto pendiente de reparar mañana.
     private readonly List<BrokenPiece> _broken = new();
 
@@ -75,6 +62,7 @@ public class SpecialClientManager : MonoBehaviour
     {
         public Transform target;
         public Chair chair;          // null si es la mesa
+        public Table table;          // null si es una silla
         public Quaternion rotation;
         public Vector3 position;
     }
@@ -113,12 +101,8 @@ public class SpecialClientManager : MonoBehaviour
         Spawn(_pool[Random.Range(0, _pool.Length)]);
     }
 
-    // ------------------------------------------------------------------
     //  Spawn (sin tocar ClientSpawner: usa sus campos públicos)
-    // ------------------------------------------------------------------
 
-    /// <summary>Mete un cliente especial por la puerta con el tamaño de grupo
-    /// de su asset. Ignora maxClients: es un evento, no un cliente más.</summary>
     public Client Spawn(SpecialClientData data)
     {
         if (data == null) return null;
@@ -179,15 +163,12 @@ public class SpecialClientManager : MonoBehaviour
         return leader;
     }
 
-    // ------------------------------------------------------------------
     //  Pedido especial (reescribe ClientGroup.Order, sin tocar ClientGroup)
-    // ------------------------------------------------------------------
 
-    /// <summary>Sustituye el pedido aleatorio recién generado por el del cliente
-    /// especial. Lo llama SpecialClientTag al sentarse el líder.</summary>
-    public void ApplySpecialOrder(ClientGroup group, SpecialClientData data)
+    public bool ApplySpecialOrder(ClientGroup group, SpecialClientData data)
     {
-        if (group == null || data == null || group.Order == null) return;
+        if (group == null || data == null || group.Order == null) return false;
+        if (!_orderedGroups.Add(group)) return false; // ya aplicado
 
         RecipeData dish = data.orderMode switch
         {
@@ -195,22 +176,17 @@ public class SpecialClientManager : MonoBehaviour
             OrderMode.Wildcard  => data.surpriseDishPlaceholder,
             _                   => null,
         };
-        if (dish == null) return; // Normal, o falta el asset: pedido aleatorio normal
+        if (dish == null) return true; // Normal, o falta el asset: pedido aleatorio normal
 
         for (int i = 0; i < group.Order.Count; i++)
             group.Order[i] = dish;
 
         Debug.Log($"[SpecialClientManager] Pedido de {data.clientName}: {dish.dishName} x{group.Order.Count}");
+        return true;
     }
 
-    // ------------------------------------------------------------------
     //  Servir: veto de ingredientes y comodín (lo llama PlayerController)
-    // ------------------------------------------------------------------
 
-    /// <summary>Se llama justo ANTES de Table.PlaceFood.
-    /// Devuelve true si el manager se ha quedado el plato (el jugador lo pierde):
-    /// pasa cuando el plato lleva un tag prohibido. Si el pedido es comodín,
-    /// reescribe la comanda con lo que traes para que PlaceFood lo acepte.</summary>
     public bool TryInterceptServe(Table table, Food food)
     {
         if (table == null || food == null) return false;
@@ -236,7 +212,6 @@ public class SpecialClientManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>Tags de una receta según el catálogo (None si no hay catálogo).</summary>
     public FoodTag GetTags(RecipeData recipe)
         => _tagCatalogue != null ? _tagCatalogue.GetTags(recipe) : FoodTag.None;
 
@@ -277,7 +252,6 @@ public class SpecialClientManager : MonoBehaviour
         _resolving.Remove(group);
     }
 
-    /// <summary>Libera la mesa y saca al grupo sin pagar.</summary>
     private void MakeGroupLeaveAngry(ClientGroup group, Table table)
     {
         if (group == null) return;
@@ -292,56 +266,74 @@ public class SpecialClientManager : MonoBehaviour
         }
     }
 
-    // ------------------------------------------------------------------
     //  Romper y reparar mobiliario (sin tocar Table.cs ni Chair.cs)
-    // ------------------------------------------------------------------
 
-    /// <summary>Destroza la mesa y sus sillas. Truco: chair.SetCarried(true) las
-    /// saca del pool igual que si el jugador las levantara, así la mesa se queda
-    /// con capacidad 0 y RestaurantManager deja de asignarla — sin necesidad de
-    /// un estado "rota" dentro de Table/Chair.</summary>
     private void BreakFurniture(SpecialClientData data, Table table)
     {
         if (table == null) return;
 
-        // Las sillas de la mesa: mismo criterio de proximidad que usa el propio
-        // Table.ScanForChairs / PlayerController.RealignNearbyChairs.
-        int chairsBroken = 0;
-        Vector3[] dirs = { table.transform.forward, -table.transform.forward,
-                           table.transform.right,   -table.transform.right };
-
-        var seen = new HashSet<Chair>();
-        foreach (Vector3 dir in dirs)
+        // Las sillas exactas que la mesa tiene registradas. Se piden a la propia
+        // mesa (GetSeatPoints devuelve el SeatTransform de cada silla) en vez de
+        // buscarlas a ojo: así no hay que adivinar distancias ni capas, y
+        // funciona aunque el equipo cambie chairDetectionDistance.
+        var chairs = new HashSet<Chair>();
+        foreach (Transform seat in table.GetSeatPoints())
         {
-            Collider[] hits = Physics.OverlapSphere(table.transform.position + dir * 1.1f, 0.75f);
-            foreach (Collider hit in hits)
+            if (seat == null) continue;
+            Chair c = seat.GetComponentInParent<Chair>();
+            if (c != null) chairs.Add(c);
+        }
+
+        // Respaldo por si la mesa usa asientos autogenerados (sin sillas
+        // registradas): se buscan con los propios parámetros de la mesa.
+        if (chairs.Count == 0)
+        {
+            Vector3[] dirs = { table.transform.forward, -table.transform.forward,
+                               table.transform.right,   -table.transform.right };
+            foreach (Vector3 dir in dirs)
             {
-                Chair chair = hit.GetComponentInParent<Chair>();
-                if (chair == null || !chair.IsPlaced || !seen.Add(chair)) continue;
-
-                _broken.Add(new BrokenPiece
+                Vector3 checkPos = table.transform.position + dir * table.chairDetectionDistance;
+                foreach (Collider hit in Physics.OverlapSphere(checkPos, table.chairDetectionRadius))
                 {
-                    target = chair.transform,
-                    chair = chair,
-                    rotation = chair.transform.localRotation,
-                    position = chair.transform.localPosition,
-                });
-
-                chair.SetCarried(true); // fuera del pool + suelta al ocupante
-                chair.transform.localRotation *= Quaternion.Euler(75f, 0f, 15f);
-                chair.transform.localPosition += new Vector3(0f, -0.05f, 0f);
-                chairsBroken++;
+                    Chair c = hit.GetComponentInParent<Chair>();
+                    if (c != null && c.IsPlaced) chairs.Add(c);
+                }
             }
         }
 
-        // La mesa: solo visual (ya es inservible sin sillas).
+        int chairsBroken = 0;
+        foreach (Chair chair in chairs)
+        {
+            if (chair == null || !chair.IsPlaced) continue;
+
+            _broken.Add(new BrokenPiece
+            {
+                target = chair.transform,
+                chair = chair,
+                table = null,
+                rotation = chair.transform.localRotation,
+                position = chair.transform.localPosition,
+            });
+
+            chair.SetCarried(true); // fuera del pool + suelta al ocupante
+            chair.transform.localRotation *= Quaternion.Euler(75f, 0f, 15f);
+            chair.transform.localPosition += new Vector3(0f, -0.05f, 0f);
+            chairsBroken++;
+        }
+
+        // La mesa también sale del pool. Hace falta explícitamente: si la mesa
+        // tiene autoGenerateSeats, quedarse sin sillas NO la deja a capacidad 0
+        // y el RestaurantManager la seguiría usando.
         _broken.Add(new BrokenPiece
         {
             target = table.transform,
             chair = null,
+            table = table,
             rotation = table.transform.localRotation,
             position = table.transform.localPosition,
         });
+
+        table.SetCarried(true);
         table.transform.localRotation *= Quaternion.Euler(0f, 0f, 70f);
         table.transform.localPosition += new Vector3(0f, -0.08f, 0f);
 
@@ -356,21 +348,21 @@ public class SpecialClientManager : MonoBehaviour
         Debug.Log($"[SpecialClientManager] Mesa {table.tableNumber} destrozada (+{chairsBroken} sillas).");
     }
 
-    /// <summary>Devuelve todo el mobiliario roto a su sitio (al empezar el día).</summary>
     private void RepairAllFurniture()
     {
         foreach (BrokenPiece p in _broken)
         {
-            if (p.target == null) continue;
+            if (p.target == null) continue;   // la escena se recargó: ya no existe
             p.target.localRotation = p.rotation;
             p.target.localPosition = p.position;
-            p.chair?.SetCarried(false); // vuelve al pool; la mesa recupera capacidad
+
+            p.chair?.SetCarried(false);       // vuelve al pool de asientos
+            p.table?.SetCarried(false);       // vuelve al pool de mesas
         }
         if (_broken.Count > 0) Debug.Log($"[SpecialClientManager] Mobiliario reparado ({_broken.Count} piezas).");
         _broken.Clear();
     }
 
-    /// <summary>Llueven regalitos alrededor de la mesa (castigo SpawnMess).</summary>
     private void SpawnMessAround(SpecialClientData data, Table table)
     {
         if (GaviotaEventManager.Instance == null)
@@ -389,11 +381,8 @@ public class SpecialClientManager : MonoBehaviour
         HUDMessage.Instance?.ShowBad($"¡{data.clientName} lo ha dejado todo perdido de regalitos!");
     }
 
-    // ------------------------------------------------------------------
     //  Final de la visita (lo llama SpecialClientTag)
-    // ------------------------------------------------------------------
 
-    /// <summary>Ha comido, pagado y se va contento: propina + despedida.</summary>
     public void OnSpecialSatisfied(Client client, SpecialClientData data)
     {
         if (data == null) return;
@@ -413,8 +402,6 @@ public class SpecialClientManager : MonoBehaviour
         // Gancho futuro: aquí arrancaría la BATALLA DE POSEIDÓN / la Estatua.
     }
 
-    /// <summary>La decoración exigida no estaba: han pagado menos y se van con
-    /// cara de asco (o directamente sin pagar, si el multiplicador es 0).</summary>
     public void OnSpecialUnhappy(Client client, SpecialClientData data)
     {
         if (data == null) return;
@@ -427,12 +414,14 @@ public class SpecialClientManager : MonoBehaviour
         PlayLines(data, data.unhappyLines);
     }
 
-    // ------------------------------------------------------------------
     //  Condición de decoración (Guirincianos: tele + banderines)
-    // ------------------------------------------------------------------
 
-    /// <summary>¿Este grupo se va contento? False solo si es un cliente especial
-    /// con condición de decoración y esta falló.</summary>
+    public bool TryClaimOutcome(ClientGroup group)
+    {
+        if (group == null) return false;
+        return _outcomeClaimed.Add(group);
+    }
+
     public bool GroupIsHappy(ClientGroup group)
     {
         if (group == null) return true;
@@ -440,21 +429,12 @@ public class SpecialClientManager : MonoBehaviour
         return ok;
     }
 
-    /// <summary>
-    /// Lo llama Client.FinishEating para decidir si el cliente cuenta como
-    /// satisfecho o como descontento en el informe del día.
-    ///
-    /// Es estático y tolera que no haya manager en escena (devuelve true), para
-    /// que el hook en Client.cs sea una sola línea y los clientes normales no se
-    /// vean afectados de ninguna manera.
-    /// </summary>
     public static bool ClientLeavesHappy(Client client)
     {
         if (Instance == null || client == null) return true;
         return Instance.GroupIsHappy(client.Group);
     }
 
-    /// <summary>Evalúa (una vez por visita) si la decoración exigida está puesta.</summary>
     public bool EvaluateDecorCondition(ClientGroup group, SpecialClientData data)
     {
         if (data == null || !data.HasDecorCondition) return true;
@@ -467,9 +447,6 @@ public class SpecialClientManager : MonoBehaviour
         return ok;
     }
 
-    /// <summary>¿Están colocados todos los items requeridos? Con
-    /// decorationMaxDistance > 0 exige además que quepan todos dentro de esa
-    /// distancia entre sí (instancias distintas para requisitos repetidos).</summary>
     private bool CheckDecoration(SpecialClientData data)
     {
         var placed = FindObjectsByType<PlaceableObject>(FindObjectsSortMode.None);
@@ -515,9 +492,8 @@ public class SpecialClientManager : MonoBehaviour
         return false;
     }
 
+    //  Diálogo (reutiliza el pipeline de DialogueManager)
 
-
-    /// <summary>Lanza unas líneas de diálogo sin bloquear al que llama.</summary>
     public void PlayLines(SpecialClientData data, string[] lines)
     {
         if (data == null || lines == null || lines.Length == 0) return;
@@ -553,6 +529,7 @@ public class SpecialClientManager : MonoBehaviour
             DialogueReaction.OnDialogueReactionFinish?.Invoke();
     }
 
+    //  Día y limpieza
 
     private void TrySubscribeDay()
     {
@@ -570,10 +547,11 @@ public class SpecialClientManager : MonoBehaviour
         _specialGroups.Clear();
         _decorVerdict.Clear();
         _resolving.Clear();
+        _orderedGroups.Clear();
+        _outcomeClaimed.Clear();
         RepairAllFurniture();
     }
 
-    /// <summary>Suelta los grupos cuyos clientes ya no existen.</summary>
     private void PruneDeadGroups()
     {
         if (_specialGroups.Count == 0) return;
@@ -595,10 +573,10 @@ public class SpecialClientManager : MonoBehaviour
             _specialGroups.Remove(g);
             _decorVerdict.Remove(g);
             _resolving.Remove(g);
+            _orderedGroups.Remove(g);
+            _outcomeClaimed.Remove(g);
         }
     }
-
-    // ------------------------------------------------------------------
 
     private void HandleDebugKey()
     {

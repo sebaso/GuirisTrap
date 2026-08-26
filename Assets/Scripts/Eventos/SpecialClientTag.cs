@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+// Se añade en runtime al cliente especial. Observa Client.CurrentState desde
+// fuera y reacciona, para no meter campos ni hooks dentro de Client.cs.
 
 public class SpecialClientTag : MonoBehaviour
 {
@@ -12,7 +14,6 @@ public class SpecialClientTag : MonoBehaviour
     private bool _orderApplied;
     private bool _verdictScheduled;
 
-    /// <summary>Lo llama SpecialClientManager justo después de instanciar.</summary>
     public void Setup(SpecialClientData data, ClientGroup group)
     {
         Data = data;
@@ -38,18 +39,25 @@ public class SpecialClientTag : MonoBehaviour
 
     private void OnStateChanged(Client.State from, Client.State to)
     {
-        bool isLeader = !_client.IsInGroup || _client.IsGroupLeader;
-
         switch (to)
         {
             case Client.State.WaitingForFood:
                 // Recién sentado: el grupo ya tiene su pedido generado
                 // (RestaurantManager.SeatGroup lo hace antes de que se sienten).
-                if (isLeader && !_orderApplied)
+                //
+                // Lo intenta CUALQUIER miembro, no solo el líder: si la mesa
+                // tiene menos capacidad que el grupo puede que al líder no le
+                // toque silla, y entonces el pedido nunca se aplicaría. El
+                // manager lo hace idempotente y solo devuelve true la primera
+                // vez, que es cuando salta el diálogo de entrada.
+                if (!_orderApplied)
                 {
                     _orderApplied = true;
-                    SpecialClientManager.Instance?.ApplySpecialOrder(_group, Data);
-                    SpecialClientManager.Instance?.PlayLines(Data, Data.entryLines);
+                    bool first = SpecialClientManager.Instance != null
+                              && SpecialClientManager.Instance.ApplySpecialOrder(_group, Data);
+
+                    if (first)
+                        SpecialClientManager.Instance?.PlayLines(Data, Data.entryLines);
                 }
                 break;
 
@@ -64,19 +72,19 @@ public class SpecialClientTag : MonoBehaviour
 
             case Client.State.DoneEating:
                 // Ha terminado y ha pagado (entero si la decoración estaba,
-                // rebajado si no). El líder narra el desenlace.
-                if (isLeader)
+                // rebajado si no). Narra el PRIMERO que llegue, no el líder:
+                // igual que con el pedido, el líder podría no estar sentado.
+                if (SpecialClientManager.Instance != null &&
+                    SpecialClientManager.Instance.TryClaimOutcome(_group))
                 {
-                    bool happy = SpecialClientManager.Instance == null
-                              || SpecialClientManager.Instance.GroupIsHappy(_group);
-
-                    if (happy) SpecialClientManager.Instance?.OnSpecialSatisfied(_client, Data);
-                    else       SpecialClientManager.Instance?.OnSpecialUnhappy(_client, Data);
+                    if (SpecialClientManager.Instance.GroupIsHappy(_group))
+                        SpecialClientManager.Instance.OnSpecialSatisfied(_client, Data);
+                    else
+                        SpecialClientManager.Instance.OnSpecialUnhappy(_client, Data);
                 }
                 break;
         }
     }
-
 
     private IEnumerator DecorVerdictRoutine()
     {
@@ -100,15 +108,17 @@ public class SpecialClientTag : MonoBehaviour
         // Si el multiplicador es 0, ni se quedan: se largan sin pagar.
         if (_client.money <= 0)
         {
-            if (!_client.IsInGroup || _client.IsGroupLeader)
-                SpecialClientManager.Instance?.OnSpecialUnhappy(_client, Data);
+            if (SpecialClientManager.Instance != null &&
+                SpecialClientManager.Instance.TryClaimOutcome(_group))
+                SpecialClientManager.Instance.OnSpecialUnhappy(_client, Data);
+
             _client.LeaveAngrySelf();
         }
-
+        // Si no, siguen comiendo: Client.FinishEating cobrará la cantidad
+        // rebajada y los contará como descontentos, y el diálogo de queja salta
+        // al pasar a DoneEating.
     }
 
-    /// <summary>Sustituye el modelo aleatorio por el del cliente especial en
-    /// cuanto Client.initialize() lo haya creado.</summary>
     private IEnumerator SwapVisualRoutine()
     {
         float timeout = Time.time + 5f;
