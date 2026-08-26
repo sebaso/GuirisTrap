@@ -786,9 +786,16 @@ MonoBehaviour:
   _dropZones:
   - {fileID: 14978685}
   - {fileID: 616136891}
-  - {fileID: 1246139952}
+  - {fileID: 0}
   _fallbackRadius: 3
   _targetPlayerChance: 0.0015
+  _groundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _fallbackGroundY: 0
+  _groundOffset: 0.02
+  _rayStartHeight: 20
+  _rayLength: 60
   _dropHeight: 7
   _fallTime: 0.5
   _cacaPrefab: {fileID: 1997895462055487209, guid: b9131e445f4d35f459e423d2aa707722, type: 3}
@@ -2102,8 +2109,8 @@ Transform:
   m_GameObject: {fileID: 435652581}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0029760809, y: 0.000007981793, z: 0.0026819601, w: 0.999992}
-  m_LocalPosition: {x: -8.11, y: -0.59, z: -27.76}
-  m_LocalScale: {x: 1, y: 1, z: 1.6999}
+  m_LocalPosition: {x: -7.5592, y: -0.59, z: -57.1967}
+  m_LocalScale: {x: 1.021609, y: 1, z: 2.6463983}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 857728238}
@@ -2140,7 +2147,6 @@ Transform:
   m_Children:
   - {fileID: 14978684}
   - {fileID: 616136890}
-  - {fileID: 1246139951}
   m_Father: {fileID: 165905647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &499111171
