@@ -46,6 +46,7 @@ public class InventoryUI : MonoBehaviour
         PlaceableSurface activeSurface = _cameraController != null
             ? GridZone.SurfaceForView(_cameraController.CurrentView)
             : PlaceableSurface.Floor;
+        GridZone activeZone = _cameraController != null ? _cameraController.ActiveZone : null;
 
         for (int y = 0; y < inv.Height; y++)
         {
@@ -55,7 +56,9 @@ public class InventoryUI : MonoBehaviour
                 if (index >= _slotsUI.Length || _slotsUI[index] == null) continue;
 
                 InventorySlot slot = inv.GetSlot(x, y);
-                bool isCompatible = slot?.item == null || slot.item.IsCompatibleWith(activeSurface);
+                bool isCompatible = slot?.item == null
+                    || (slot.item.IsCompatibleWith(activeSurface)
+                        && (activeZone == null || slot.item.CanBeUsedInZone(activeZone.ZoneId)));
 
                 _slotsUI[index].Init(x, y);
                 _slotsUI[index].SetSlot(slot, isCompatible);
