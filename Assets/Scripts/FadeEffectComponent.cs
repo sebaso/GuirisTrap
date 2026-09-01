@@ -16,6 +16,7 @@ public class FadeEffectComponent : MonoBehaviour
     private MaterialPropertyBlock _propertyBlock;
     private float _currentAlpha;
     private bool _isOccluding;
+    private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
 
     void Awake()
     {
@@ -41,7 +42,9 @@ public class FadeEffectComponent : MonoBehaviour
     private void ApplyAlpha()
     {
         _renderer.GetPropertyBlock(_propertyBlock);
-        _propertyBlock.SetFloat(AlphaProperty, _currentAlpha);
+        Color c = _renderer.sharedMaterial.GetColor(BaseColorProperty);
+        c.a = _currentAlpha;
+        _propertyBlock.SetColor(BaseColorProperty, c);
         _renderer.SetPropertyBlock(_propertyBlock);
     }
 

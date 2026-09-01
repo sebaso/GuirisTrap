@@ -6,7 +6,6 @@ public enum PlacementAxis { Floor, WallNorth, WallEastWest }
 public static class GridManager
 {
     private const int MIN_TABLE_DISTANCE = 4;
-
     public static event System.Action<VoxelGridData> OnGridChanged;
 
     public static bool IsInBounds(VoxelGridData voxelData, int x, int y, int z)
@@ -25,12 +24,15 @@ public static class GridManager
     }
 
     private static List<Vector3Int> GetFootprintCells(VoxelGridData voxelData, int x, int y, int z, PlaceableItemData item, PlacementAxis axis)
+        => GetFootprintCellsSwap(voxelData, x, y, z, item, axis == PlacementAxis.WallEastWest);
+
+    private static List<Vector3Int> GetFootprintCellsSwap(VoxelGridData voxelData, int x, int y, int z, PlaceableItemData item, bool swapXZ)
     {
         int sx = Mathf.Max(1, item.size.x);
         int sy = Mathf.Max(1, item.size.y);
         int sz = Mathf.Max(1, item.size.z);
 
-        if (axis == PlacementAxis.WallEastWest)
+        if (swapXZ)
             (sx, sz) = (sz, sx);
 
         int startX = x - (sx - 1) / 2;
@@ -101,6 +103,64 @@ public static class GridManager
         }
         voxelData.SetItem(toAnchor.x, toAnchor.y, toAnchor.z, item);
         voxelData.SetRotation(toAnchor.x, toAnchor.y, toAnchor.z, rotation);
+
+        OnGridChanged?.Invoke(voxelData);
+        return true;
+    }
+
+    private static int NormalizeStep(int step) => ((step % 4) + 4) % 4;
+
+    /// <summary>El giro extra de 90° es "impar" (90 o 270) si cambia si la huella está swapeada o no.</summary>
+    private static bool SwapForStep(PlacementAxis axis, int rotationStep)
+        => (axis == PlacementAxis.WallEastWest) ^ (NormalizeStep(rotationStep) % 2 == 1);
+
+    /// <summary>
+    /// Comprueba si un item puede pasar de su paso de rotación actual (0-3, cada uno 90°) a otro,
+    /// sin mover el ancla. Rechaza si la nueva huella no cabe en el grid o colisiona con otra cosa
+    /// (ignorando las celdas que el propio item ya ocupa en su rotación actual).
+    /// </summary>
+    public static bool CanRotateItem(VoxelGridData voxelData, Vector3Int anchor, PlaceableItemData item, PlacementAxis axis, int currentStep, int newStep)
+    {
+        if (item == null || !item.isRotatable) return false;
+
+        var ignoreCells = GetFootprintCellsSwap(voxelData, anchor.x, anchor.y, anchor.z, item, SwapForStep(axis, currentStep));
+        var newCells = GetFootprintCellsSwap(voxelData, anchor.x, anchor.y, anchor.z, item, SwapForStep(axis, newStep));
+        if (newCells == null) return false;
+
+        foreach (var c in newCells)
+        {
+            if (ignoreCells != null && ignoreCells.Contains(c)) continue;
+            if (voxelData.GetType(c.x, c.y, c.z) != CellType.Empty) return false;
+        }
+
+        return true;
+    }
+    public static bool RotateItem(VoxelGridData voxelData, Vector3Int anchor, PlaceableItemData item, PlacementAxis axis, int currentStep, int newStep, Quaternion baseRotation, out Quaternion newRotation)
+    {
+        newRotation = baseRotation;
+        if (!CanRotateItem(voxelData, anchor, item, axis, currentStep, newStep)) return false;
+
+        var oldCells = GetFootprintCellsSwap(voxelData, anchor.x, anchor.y, anchor.z, item, SwapForStep(axis, currentStep));
+        if (oldCells != null)
+        {
+            foreach (var c in oldCells)
+            {
+                voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
+                voxelData.SetItem(c.x, c.y, c.z, null);
+                voxelData.SetAnchor(c.x, c.y, c.z, default);
+            }
+        }
+
+        var newCells = GetFootprintCellsSwap(voxelData, anchor.x, anchor.y, anchor.z, item, SwapForStep(axis, newStep));
+        foreach (var c in newCells)
+        {
+            voxelData.SetType(c.x, c.y, c.z, CellType.Occupied);
+            voxelData.SetAnchor(c.x, c.y, c.z, anchor);
+        }
+        voxelData.SetItem(anchor.x, anchor.y, anchor.z, item);
+
+        newRotation = baseRotation * Quaternion.Euler(0f, 90f * NormalizeStep(newStep), 0f);
+        voxelData.SetRotation(anchor.x, anchor.y, anchor.z, newRotation);
 
         OnGridChanged?.Invoke(voxelData);
         return true;
