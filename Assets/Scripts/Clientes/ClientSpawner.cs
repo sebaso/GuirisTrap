@@ -54,6 +54,9 @@ public class ClientSpawner : MonoBehaviour
 
     void Update()
     {
+        // sin día activo (noche, wind-down) no se acumula el timer ni se spawnea
+        if (DayManager.Instance == null || !DayManager.Instance.IsDayActive) return;
+
         _timer += Time.deltaTime;
         if (_timer >= spawnInterval)
         {

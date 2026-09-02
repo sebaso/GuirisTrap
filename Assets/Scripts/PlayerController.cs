@@ -220,7 +220,6 @@ public class PlayerController : ControllableMonoBehaviour
         {
             FregonaPickup.Carried?.ReturnToHolder();
             AudioManager.Instance?.PlaySFX("fregona_pickup");
-            HUDMessage.Instance?.ShowGood("Fregona devuelta a su soporte.");
             return;
         }
         // Devolver el extintor a su soporte pulsando E (si lo llevas encima).
@@ -228,7 +227,6 @@ public class PlayerController : ControllableMonoBehaviour
         {
             ExtintorPickup.Carried?.ReturnToHolder();
             AudioManager.Instance?.PlaySFX("extintor_pickup");
-            HUDMessage.Instance?.ShowGood("Extintor devuelto a su soporte.");
             return;
         }
         if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist && bestStorageDist <= bestFoodDist)
@@ -474,11 +472,9 @@ public class PlayerController : ControllableMonoBehaviour
 
     private void TryDropFurniture()
     {
+        // drop inválido: el objeto en mano ya se tiñe de rojo
         if (!_dropValid)
-        {
-            HUDMessage.Instance?.ShowWarning("No puedes ponerlo ahí.");
             return;
-        }
 
         PlaceableItemData item = _heldPlaceable.GetItemData();
 

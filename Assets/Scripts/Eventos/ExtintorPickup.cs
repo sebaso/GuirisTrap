@@ -90,7 +90,6 @@ public class ExtintorPickup : MonoBehaviour
         transform.localRotation = Quaternion.Euler(_carryLocalEuler);
 
         AudioManager.Instance?.PlaySFX("extintor_pickup");
-        HUDMessage.Instance?.ShowGood("¡Extintor en mano! Úsalo en una estación en llamas.");
     }
 
     // ------------------------------------------------------------------

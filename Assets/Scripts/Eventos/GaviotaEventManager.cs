@@ -70,7 +70,7 @@ public class GaviotaEventManager : MonoBehaviour
 
         _activas.RemoveAll(c => c == null); // purgar las que ya murieron
         if (_activas.Count >= _maxSimultaneas) return;
-        if (Random.value > _cacaChancePerRoll) return;
+        if (Random.value > _cacaChancePerRoll * DifficultyManager.EventChanceScale) return;
 
         SoltarCaca();
     }

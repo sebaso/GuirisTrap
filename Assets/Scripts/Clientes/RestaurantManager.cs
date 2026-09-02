@@ -14,6 +14,8 @@ public class RestaurantManager : MonoBehaviour
     public Transform entrancePoint;
     public Vector3 queueDirection = Vector3.back;
     public float queueSpacing = 1.2f;
+    [Tooltip("Distance from the door where the first group waits, so the doorway stays clear.")]
+    public float queueStartDistance = 1.5f;
 
     [Header("Group Queue Settings")]
     [Tooltip("Spacing between different groups in the queue")]
@@ -408,14 +410,16 @@ public class RestaurantManager : MonoBehaviour
 
         Vector3 perpDir = Vector3.Cross(queueDir, Vector3.up).normalized;
 
-        float groupOffset = groupIndex * groupSpacing;
+        // the doorway itself stays clear: the first group waits queueStartDistance out
+        float groupOffset = queueStartDistance + groupIndex * groupSpacing;
         Vector3 groupBasePos = origin + queueDir * groupOffset;
 
         float totalWidth = (groupSize - 1) * memberSpacing;
         float memberOffset = (memberIndex * memberSpacing) - (totalWidth / 2f);
 
         Vector3 candidate = groupBasePos + perpDir * memberOffset;
-        if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+        // small snap radius: a big one can pull the slot across a wall into the dining room
+        if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 0.75f, NavMesh.AllAreas))
             return hit.position;
 
         return candidate;

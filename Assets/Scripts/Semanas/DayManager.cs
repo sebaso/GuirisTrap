@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem;
 
 
 public class DayManager : MonoBehaviour
@@ -7,14 +8,21 @@ public class DayManager : MonoBehaviour
     public static DayManager Instance { get; private set; }
 
     [Header("Day Duration")]
-    [SerializeField] private float _dayDurationSeconds = 120f; 
-    
+    [SerializeField] private float _dayDurationSeconds = 120f;
+
     [Header("Arranque")]
     [SerializeField] private bool _autoStart = true;
     [SerializeField] private float _startDelay = 0.5f;
 
+    [Header("Cierre")]
+    [Tooltip("Tecla para cerrar el día sin esperar a que se vayan todos los clientes.")]
+    [SerializeField] private Key _forceEndDayKey = Key.F10;
+
     private float _timeRemaining;
     private bool _isDayActive;
+
+    /// <summary>Servicio terminado: ya no entran clientes, se espera a que se vayan los que quedan.</summary>
+    public bool IsWindingDown { get; private set; }
 
     /// <summary>Time remaining in the current day (0 to _dayDurationSeconds).</summary>
     public float TimeRemaining => _timeRemaining;
@@ -60,6 +68,13 @@ public class DayManager : MonoBehaviour
 
     void Update()
     {
+        if (IsWindingDown)
+        {
+            if (Client.ActiveCount == 0 || ForceEndPressed())
+                FinishDay();
+            return;
+        }
+
         if (!_isDayActive) return;
 
         _timeRemaining -= Time.deltaTime;
@@ -69,21 +84,51 @@ public class DayManager : MonoBehaviour
             _timeRemaining = 0f;
             _isDayActive = false;
             OnDayProgress?.Invoke(1f);
-            WeekManager.Instance?.OnDayCompleted();
-
-            OnDayEnded?.Invoke();
-            HandleDayEnd();
+            StartWindDown();
             return;
         }
 
         OnDayProgress?.Invoke(DayProgress);
     }
 
+    private void StartWindDown()
+    {
+        IsWindingDown = true;
+        if (Client.ActiveCount > 0)
+            HUDMessage.Instance?.ShowWarning(
+                $"Fin del servicio — esperando a que los clientes terminen ({_forceEndDayKey} para cerrar ya)");
+    }
+
+    // WeekManager.OnDayCompleted debe correr ANTES de OnDayEnded (el StatsPanel
+    // lee el resultado semanal al mostrarse); así lo cierra el día entero,
+    // incluyendo lo que ocurra durante el wind-down.
+    private void FinishDay()
+    {
+        IsWindingDown = false;
+        WeekManager.Instance?.OnDayCompleted();
+
+        OnDayEnded?.Invoke();
+        HandleDayEnd();
+    }
+
+    /// <summary>Cierra el día inmediatamente (tecla de forzado o botón de UI).</summary>
+    public void ForceEndDay()
+    {
+        if (IsWindingDown) FinishDay();
+    }
+
+    [ContextMenu("Forzar fin del día")]
+    private void DebugForceEndDay() => ForceEndDay();
+
+    private bool ForceEndPressed()
+        => Keyboard.current != null && Keyboard.current[_forceEndDayKey].wasPressedThisFrame;
+
     /// <summary>Start (or restart) the day timer.</summary>
     public void StartDay()
     {
         _timeRemaining = _dayDurationSeconds;
         _isDayActive = true;
+        IsWindingDown = false;
         OnDayStarted?.Invoke();
         OnDayProgress?.Invoke(0f);
         Debug.Log($"[DayManager] Day started! Duration: {_dayDurationSeconds}s");

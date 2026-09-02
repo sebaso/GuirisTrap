@@ -89,14 +89,15 @@ public class SpecialClientManager : MonoBehaviour
         if (DayManager.Instance == null || !DayManager.Instance.IsDayActive) return;
         float elapsed = DayManager.Instance.DayDuration - DayManager.Instance.TimeRemaining;
         if (elapsed < _minDelayBeforeFirst) return;
-        if (_spawnedToday >= _maxSpecialsPerDay) return;
+        if (!DifficultyManager.SpecialsAllowed) return;
+        if (_spawnedToday >= _maxSpecialsPerDay + DifficultyManager.ExtraSpecials) return;
         if (_pool == null || _pool.Length == 0) return;
 
         _rollTimer += Time.deltaTime;
         if (_rollTimer < _rollInterval) return;
         _rollTimer = 0f;
 
-        if (Random.value > _chancePerRoll) return;
+        if (Random.value > _chancePerRoll * DifficultyManager.SpecialChanceScale) return;
 
         Spawn(_pool[Random.Range(0, _pool.Length)]);
     }

@@ -92,7 +92,6 @@ public class FregonaPickup : MonoBehaviour
         transform.localRotation = Quaternion.Euler(_carryLocalEuler);
 
         AudioManager.Instance?.PlaySFX("fregona_pickup");
-        HUDMessage.Instance?.ShowGood("¡Fregona en mano! Pasa por encima de las cacas para limpiarlas.");
     }
 
 

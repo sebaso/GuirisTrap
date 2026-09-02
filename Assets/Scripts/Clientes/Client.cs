@@ -9,19 +9,19 @@ public class Client : MonoBehaviour
     public GameObject[] clientModels;
     public enum State
     {
-        WalkingToEntrance,  // Heading from spawn to restaurant entrance
-        Waiting,            // Queued at entrance — no table available yet
-        WalkingToTable,     // Told where to sit, navigating to seat
-        WaitingForFood,     // Seated, patience ticking down
-        Eating,             // Food arrived — eating timer running
-        DoneEating,         // Finished eating, waiting for the rest of the group
-        Leaving,            // Walking to exit, will be destroyed on arrival
-        Angry               // Patience ran out — leaving unhappy
+        WalkingToEntrance,
+        Waiting,
+        WalkingToTable,
+        WaitingForFood,
+        Eating,
+        DoneEating,
+        Leaving,
+        Angry
     }
 
     public State CurrentState { get; private set; } = State.WalkingToEntrance;
     public float maxPatience = 60f;
-    public float maxQueuePatience = 45f; // patience while waiting in the entrance queue for a free table
+    public float maxQueuePatience = 45f;
     public float eatDuration = 8f;
     public int money;
     public int happiness;
@@ -37,18 +37,34 @@ public class Client : MonoBehaviour
     private Transform _seatPoint;
     private Chair _seatChair;
     private Transform _entrancePoint;
+    // NavMeshAgent avoidance: lower value = right of way. Placed clients (queue,
+    // seated) never yield; walkers weave around them instead of shoving them.
+    private const int StationaryAvoidancePriority = 25;
+    private const int WalkingAvoidancePriority = 75;
+
+    // vivos ahora mismo; DayManager.IsWindingDown espera a que llegue a 0.
+    // OnEnable/OnDisable (no OnDestroy) para que los descargues de escena también descuenten.
+    public static int ActiveCount { get; private set; }
+
     private NavMeshAgent _agent;
     private Vector3 _queueSlotPosition;
     private bool Initialized = false;
     private bool _hasStartedWalking = false;
 
-    // reads the group's shared timer
+    private Animator _animator;
+    private Transform _modelPivot;
+
     public float PatienceRatio => _group != null ? _group.PatienceRatio : 0f;
 
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _agent.avoidancePriority = WalkingAvoidancePriority;
     }
+
+    void OnEnable() => ActiveCount++;
+
+    void OnDisable() => ActiveCount--;
 
     private float _timeStateEntered;
     private const float STATE_TIMEOUT = 30f; // Max seconds in any walking state before forcing arrival
@@ -58,9 +74,22 @@ public class Client : MonoBehaviour
         _timeStateEntered = Time.time;
         if (_entrancePoint != null)
         {
-            Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
-            WalkTo(_entrancePoint.position + offset);
+            // hold just outside the doorway instead of on it: the door is on
+            // everyone's path (arrivals, seatings, exits) and must stay clear
+            Vector3 target = _entrancePoint.position;
+            Vector3 outward = OutwardDirection();
+            if (outward.sqrMagnitude > 0.001f)
+                target += outward * Random.Range(1f, 2f);
+            target += new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
+            WalkTo(target);
         }
+    }
+
+    // direction away from the restaurant (toward the spawn side of the queue)
+    private Vector3 OutwardDirection()
+    {
+        var manager = RestaurantManager.Instance;
+        return manager != null ? manager.queueDirection.normalized : Vector3.zero;
     }
 
 
@@ -90,7 +119,6 @@ public class Client : MonoBehaviour
             case State.Waiting:
                 if (HasReachedDestination())
                     Freeze();
-                // leader runs the group's queue timer
                 if (!IsInGroup || IsGroupLeader)
                     TickQueuePatience();
                 break;
@@ -117,22 +145,19 @@ public class Client : MonoBehaviour
                 break;
         }
 
-        // Seated patience ticks while the group is still waiting for food, even
-        // if the leader is already eating. Group-driven so the bar keeps
-        // draining for the remaining unfed diners (and a refill on each plate
-        // tops it back up). Leader runs it once for the whole group.
+        // Seated patience is group-driven: only the leader ticks it, and it keeps
+        // draining while any diner is still waiting for food (plate refills top it up).
         if (IsInGroup && IsGroupLeader && _group.IsWaitingForFood)
         {
             if (_group.TickPatience(Time.deltaTime))
                 GroupLeaveAngry();
         }
+
+        if (_animator != null)
+            _animator.SetFloat(ClientAnimationParams.Speed, _agent.velocity.magnitude);
     }
 
-    /// <summary>
-    /// Called when the client has reached the entrance. Makes this client enter the waiting state
-    /// and notifies RestaurantManager to handle seating/queue logic.
-    /// Public so RestaurantManager can force-arrive other group members during group processing.
-    /// </summary>
+    // public so RestaurantManager can force-arrive other group members during group processing
     public void ArriveAtEntrance()
     {
         Freeze();
@@ -144,9 +169,20 @@ public class Client : MonoBehaviour
         int randomIndex = Random.Range(0, clientModels.Length);
         GameObject selectedModel = Instantiate(clientModels[randomIndex], transform.position, Quaternion.Euler(0, 0, 0));
         selectedModel.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        selectedModel.transform.SetParent(transform);
+
+        // The generated controller animates this transform by path ("ModelPivot"),
+        // keeping clip curves independent of the model offsets applied below.
+        _modelPivot = new GameObject("ModelPivot").transform;
+        _modelPivot.SetParent(transform, false);
+        selectedModel.transform.SetParent(_modelPivot, true);
+
         Initialized = true;
         selectedModel.transform.position = selectedModel.transform.position + new Vector3(0, -0.5f, 0);
+
+        // prefer a rigged model's own Animator; fall back to the placeholder on this root
+        _animator = selectedModel.GetComponentInChildren<Animator>();
+        if (_animator == null) _animator = GetComponent<Animator>();
+        _animator?.SetInteger(ClientAnimationParams.State, (int)CurrentState);
     }
 
     public void EnterWaitQueue(Vector3 slotPosition)
@@ -167,7 +203,6 @@ public class Client : MonoBehaviour
 
     public void AssignTable(Table table, Transform seatPoint)
     {
-        // drop old claim, claim the new chair so others/the player see it's taken
         if (_seatChair != null && _seatChair.Occupant == this) _seatChair.Occupant = null;
 
         _assignedTable = table;
@@ -192,13 +227,11 @@ public class Client : MonoBehaviour
             transform.LookAt(lookPos);
         }
 
-        // leader (re)starts the shared meal timer
         if (!IsInGroup || IsGroupLeader) _group?.StartPatience(maxPatience);
         SetState(State.WaitingForFood);
         Debug.Log($"[Client] Seated at {_seatPoint.name}. Patience: {maxPatience}s. Group: {(IsInGroup ? Group.ToString() : "Solo")}");
     }
 
-    // seat gone mid-walk: take another at the same table, else leave
     private void OnSeatLost()
     {
         Transform newSeat = _assignedTable != null ? _assignedTable.GetFreeSeatPoint() : null;
@@ -215,9 +248,6 @@ public class Client : MonoBehaviour
         }
     }
 
-    // seated patience is now ticked group-driven in Update() (see IsWaitingForFood
-    // branch), so it keeps draining even if the leader is already eating.
-
     private void TickQueuePatience()
     {
         if (_group == null) return;
@@ -225,7 +255,6 @@ public class Client : MonoBehaviour
             RestaurantManager.Instance?.AbandonGroup(Group);
     }
 
-    // patience out: free the table once, everyone leaves angry
     private void GroupLeaveAngry()
     {
         _assignedTable?.FreeTable(Group);
@@ -246,13 +275,11 @@ public class Client : MonoBehaviour
         WalkToExit();
     }
 
-    // release seat claim on exit so the chair frees up
     private void ReleaseSeat()
     {
         if (_seatChair != null && _seatChair.Occupant == this) _seatChair.Occupant = null;
     }
 
-    // gave up queueing; no table to free
     public void LeaveQueue()
     {
         happiness -= 10;
@@ -278,26 +305,20 @@ public class Client : MonoBehaviour
         FinishEating();
     }
 
-    /// <summary>Called when a diner finishes eating. Pays up and waits in
-    /// DoneEating for the rest of the group; the group leaves together once
-    /// everyone is done (handled by ClientGroup.OnMemberFinishedEating).</summary>
     private void FinishEating()
     {
-        // The group may have left angry (patience ran out) while this diner was
-        // still in the EatCoroutine delay; in that case bail out — the angry
-        // path already handled payment/leaving.
+        // The group may have left angry while this diner was still in the eating
+        // delay; that path already handled payment and leaving.
         if (CurrentState == State.Angry || CurrentState == State.Leaving) return;
 
         happiness += 10;
 
-        // Usar el dinero asignado al cliente (aleatorio en spawn) en vez de hardcode
         int payment = money > 0 ? money : 20;
         MoneyManager.Instance?.Earn(payment);
         Debug.Log($"[Client] Finished eating. Paid {payment}€ (money field: {money}). (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
-        // Clientes especiales que no han quedado contentos 
-        //  pagan igual, pero cuentan como descontentos.
-        // Para un cliente normal esto siempre devuelve true.
+        // Los especiales pagan igual pero cuentan como descontentos;
+        // para un cliente normal esto siempre devuelve true.
         bool leavesHappy = SpecialClientManager.ClientLeavesHappy(this);
 
         if (leavesHappy) DayReport.Instance?.RegisterSatisfiedClient();
@@ -309,8 +330,7 @@ public class Client : MonoBehaviour
         SetState(State.DoneEating);
         _group?.OnMemberFinishedEating(this);
 
-        // Solo diners (no group) leave immediately; group members wait for the
-        // last diner, which triggers StartLeaving on everyone via the group.
+        // Solo diners leave immediately; group members wait for the last diner.
         if (!IsInGroup)
             StartLeaving();
     }
@@ -320,7 +340,6 @@ public class Client : MonoBehaviour
         happiness -= 10;
         Debug.Log($"[Client] Patience ran out! Leaving WITHOUT paying {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
 
-        // Registrar en el resumen del día (cliente enfadado, no paga)
         DayReport.Instance?.RegisterAngryClient();
 
         // Solo el líder o un cliente individual libera la mesa
@@ -349,6 +368,12 @@ public class Client : MonoBehaviour
     private void WalkToExit()
     {
         Vector3 exitPos = _entrancePoint != null ? _entrancePoint.position : transform.position + Vector3.back * 10f;
+
+        // walk past the doorway before despawning so leavers don't plow through the queue
+        Vector3 outward = OutwardDirection();
+        if (_entrancePoint != null && outward.sqrMagnitude > 0.001f)
+            exitPos += outward * 1.5f;
+
         WalkTo(exitPos);
     }
 
@@ -408,7 +433,16 @@ public class Client : MonoBehaviour
     {
         CurrentState = newState;
         _timeStateEntered = Time.time;
+        if (_agent != null)
+            _agent.avoidancePriority = IsStationaryState(newState)
+                ? StationaryAvoidancePriority
+                : WalkingAvoidancePriority;
+        if (_animator != null)
+            _animator.SetInteger(ClientAnimationParams.State, (int)newState);
     }
+
+    private static bool IsStationaryState(State s) =>
+        s == State.Waiting || s == State.WaitingForFood || s == State.Eating || s == State.DoneEating;
 
     void OnDestroy()
     {
@@ -418,4 +452,14 @@ public class Client : MonoBehaviour
             _assignedTable.FreeTable(Group);
         }
     }
+}
+
+/// <summary>
+/// Names must match the ClientAnimator controller parameters
+/// (Assets/Animations/Clients) or the animator link breaks.
+/// </summary>
+public static class ClientAnimationParams
+{
+    public const string Speed = "Speed";
+    public const string State = "State";
 }

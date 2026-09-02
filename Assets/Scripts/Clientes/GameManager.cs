@@ -91,22 +91,13 @@ public class GameManager : MonoBehaviour
         PlaceableSurface activeSurface = GridZone.SurfaceForView(view);
 
         if (!itemData.IsCompatibleWith(activeSurface))
-        {
-            HUDMessage.Instance?.ShowWarning("Este objeto no se puede colocar aquí.");
             return;
-        }
 
         if (!itemData.CanBeUsedInZone(zone.ZoneId))
-        {
-            HUDMessage.Instance?.ShowWarning("Este objeto no se puede colocar en esta zona.");
             return;
-        }
 
         if (!GridManager.TryFindFreeCellInLayer(voxelData, view, itemData, out Vector3Int cell))
-        {
-            HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
             return;
-        }
 
         if (!resolver.TryGetWorldTransform(view, cell, out Vector3 basePos, out Quaternion baseRot))
         {

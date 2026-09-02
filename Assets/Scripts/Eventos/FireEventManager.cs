@@ -48,7 +48,7 @@ public class FireEventManager : MonoBehaviour
         _rollTimer = 0f;
 
         if (_burning.Count >= _maxSimultaneousFires) return;
-        if (Random.value > _fireChancePerRoll) return;
+        if (Random.value > _fireChancePerRoll * DifficultyManager.EventChanceScale) return;
 
         IgniteRandomStation();
     }

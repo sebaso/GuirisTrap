@@ -245,10 +245,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
             return;
 
         if (!GridManager.RotateItem(voxelData, anchor, item, axis, currentStep, newStep, baseRot, out Quaternion newRotation))
-        {
-            HUDMessage.Instance?.ShowWarning("No cabe girado así.");
             return;
-        }
 
         _selected.SetRotationStep(newStep);
         _selected.transform.position = basePos + newRotation * item.placementOffset;
