@@ -5,10 +5,14 @@ using static InputSystem_Actions;
 
 public class PlacementInputController : MonoBehaviour, IUIActions
 {
+    private const float DRAG_THRESHOLD_PIXELS = 12f;
+
     [SerializeField] 
     private Camera _mainCamera;
     [SerializeField] 
     private CameraController _cameraController;
+    [SerializeField]
+    private RotateBillboardUI _rotateBillboard;
 
     private InputSystem_Actions _inputs;
 
@@ -18,6 +22,11 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private bool _hasDragTarget;
     private Vector2 _pointerPos;
     private bool _pointerOverUI;
+
+    private bool _isPressed;
+    private bool _wasPressedLastFrame;
+    private bool _isDraggingMove;
+    private Vector2 _pressStartPos;
 
     void Awake()
     {
@@ -34,28 +43,35 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         _pointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
         if (_cameraController != null && _cameraController.IsTransitioning) return;
-        if (_selected != null) UpdateDrag();
+
+        bool isPressedNow = _inputs.UI.Click.IsPressed();
+
+        if (isPressedNow && !_wasPressedLastFrame)
+            HandlePressStarted();
+        else if (!isPressedNow && _wasPressedLastFrame)
+            HandlePressReleased();
+
+        _wasPressedLastFrame = isPressedNow;
+
+
+        if (_selected != null && _isPressed && !_isDraggingMove)
+        {
+            if (Vector2.Distance(_pointerPos, _pressStartPos) >= DRAG_THRESHOLD_PIXELS)
+            {
+                _isDraggingMove = true;
+                _rotateBillboard?.Hide();
+            }
+        }
+
+        if (_selected != null && _isDraggingMove) UpdateDrag();
     }
 
-    // ── UI Actions ───────────────────────────────────────────────────────
+    // ── UI Actions ──
 
     public void OnPoint(InputAction.CallbackContext context)
         => _pointerPos = context.ReadValue<Vector2>();
 
-    public void OnClick(InputAction.CallbackContext context)
-    {
-        if (!context.performed) return;
-
-        if (_selected == null)
-        {
-            if (_pointerOverUI) return;
-            TrySelect();
-        }
-        else
-        {
-            ConfirmOrCancel();
-        }
-    }
+    public void OnClick(InputAction.CallbackContext context) { }
 
     public void OnRightClick(InputAction.CallbackContext context)
     {
@@ -77,25 +93,72 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
     private static bool IsFloorView(CameraView view) => view == CameraView.Perspective || view == CameraView.TopDown;
 
-    private void TrySelect()
+    // ── Selección / tap / arrastre ──
+
+    private PlaceableObject RaycastForPlaceable()
     {
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+        if (!Physics.Raycast(ray, out RaycastHit hit)) return null;
+        return hit.transform.GetComponentInParent<PlaceableObject>();
+    }
 
-        PlaceableObject placeable = hit.transform.GetComponentInParent<PlaceableObject>();
-        if (placeable == null) return;
-
+    private bool IsSelectable(PlaceableObject placeable)
+    {
         CameraView current = _cameraController.CurrentView;
         bool sameView = placeable.PlacedView == current;
         bool bothFloor = IsFloorView(placeable.PlacedView) && IsFloorView(current);
+        return sameView || bothFloor;
+    }
 
-        if (!sameView && !bothFloor) return;
-
-        _selected = placeable;
+    private void SelectObject(PlaceableObject obj)
+    {
+        _selected = obj;
         _selected.Select(true);
         _hasDragTarget = false;
-
         _cameraController.SetInputLocked(true);
+    }
+
+    private void Deselect(bool unlockCamera)
+    {
+        if (_selected == null) return;
+        _selected.Select(false);
+        _selected = null;
+        _hasDragTarget = false;
+        _isDraggingMove = false;
+        _rotateBillboard?.Hide();
+        if (unlockCamera) _cameraController.SetInputLocked(false);
+    }
+
+    private void HandlePressStarted()
+    {
+        if (_pointerOverUI) return;
+
+        PlaceableObject hit = RaycastForPlaceable();
+
+        if (_selected != null && hit != _selected)
+            Deselect(unlockCamera: hit == null);
+
+        if (_selected == null)
+        {
+            if (hit == null || !IsSelectable(hit)) return;
+            SelectObject(hit);
+        }
+
+        _pressStartPos = _pointerPos;
+        _isDraggingMove = false;
+        _isPressed = true;
+    }
+
+    private void HandlePressReleased()
+    {
+        bool wasPressed = _isPressed;
+        _isPressed = false;
+        if (!wasPressed || _selected == null) return;
+
+        if (_isDraggingMove)
+            ConfirmOrCancel();
+        else
+            _rotateBillboard?.Show(_selected.transform);
     }
 
     private void UpdateDrag()
@@ -152,12 +215,47 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         }
 
         zone.RefreshActive(view);
-        _selected.Select(false);
-        _selected = null;
-        _hasDragTarget = false;
-
-        _cameraController.SetInputLocked(false);
+        Deselect(unlockCamera: true);
     }
+
+    // ── Rotación ──
+
+    public void RotateSelectedCW() => TryRotate(+1);
+    public void RotateSelectedCCW() => TryRotate(-1);
+
+    private void TryRotate(int direction)
+    {
+        if (_selected == null) return;
+
+        PlaceableItemData item = _selected.GetItemData();
+        if (item == null || !item.isRotatable) return;
+
+        GridZone zone = _cameraController.ActiveZone;
+        if (zone == null) return;
+
+        VoxelGridData voxelData = zone.VoxelData;
+        CameraView view = _selected.PlacedView;
+        PlacementAxis axis = GridManager.AxisForView(view);
+        Vector3Int anchor = _selected.AnchorVoxel;
+
+        int currentStep = _selected.RotationStep;
+        int newStep = currentStep + direction;
+
+        if (!zone.TryGetWorldTransform(view, anchor, out Vector3 basePos, out Quaternion baseRot))
+            return;
+
+        if (!GridManager.RotateItem(voxelData, anchor, item, axis, currentStep, newStep, baseRot, out Quaternion newRotation))
+        {
+            HUDMessage.Instance?.ShowWarning("No cabe girado así.");
+            return;
+        }
+
+        _selected.SetRotationStep(newStep);
+        _selected.transform.position = basePos + newRotation * item.placementOffset;
+        _selected.transform.rotation = newRotation;
+    }
+
+    // ── Recoger al inventario ──
 
     private void TryPickUpToInventory()
     {

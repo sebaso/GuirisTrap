@@ -143,7 +143,7 @@ public class Client : MonoBehaviour
     {
         int randomIndex = Random.Range(0, clientModels.Length);
         GameObject selectedModel = Instantiate(clientModels[randomIndex], transform.position, Quaternion.Euler(0, 0, 0));
-        selectedModel.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+        selectedModel.transform.localRotation = Quaternion.Euler(0, 0, 0);
         selectedModel.transform.SetParent(transform);
         Initialized = true;
         selectedModel.transform.position = selectedModel.transform.position + new Vector3(0, -0.5f, 0);

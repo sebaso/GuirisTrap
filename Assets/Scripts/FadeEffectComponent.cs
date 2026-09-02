@@ -22,8 +22,14 @@ public class FadeEffectComponent : MonoBehaviour
         _renderer = GetComponent<Renderer>();
         _propertyBlock = new MaterialPropertyBlock();
 
-        if (_renderer != null && _renderer.sharedMaterial != null && !_renderer.sharedMaterial.HasProperty(AlphaProperty))
-            Debug.LogWarning($"[FadeEffectComponent] El material de '{name}' no tiene una propiedad float '_alpha'. Este efecto no va a hacer nada visible.", this);
+        if (_renderer != null)
+        {
+            foreach (Material mat in _renderer.sharedMaterials)
+            {
+                if (mat != null && !mat.HasProperty(AlphaProperty))
+                    Debug.LogWarning($"[FadeEffectComponent] El material '{mat.name}' de '{name}' no tiene una propiedad float '_alpha'. Este efecto no va a hacer nada visible en ese slot.", this);
+            }
+        }
 
         _currentAlpha = _maxAlpha;
         ApplyAlpha();
@@ -40,9 +46,13 @@ public class FadeEffectComponent : MonoBehaviour
 
     private void ApplyAlpha()
     {
-        _renderer.GetPropertyBlock(_propertyBlock);
-        _propertyBlock.SetFloat(AlphaProperty, _currentAlpha);
-        _renderer.SetPropertyBlock(_propertyBlock);
+        int count = _renderer.sharedMaterials.Length;
+        for (int i = 0; i < count; i++)
+        {
+            _renderer.GetPropertyBlock(_propertyBlock, i);
+            _propertyBlock.SetFloat(AlphaProperty, _currentAlpha);
+            _renderer.SetPropertyBlock(_propertyBlock, i);
+        }
     }
 
     public void SetIsOccluding(bool occluding) => _isOccluding = occluding;

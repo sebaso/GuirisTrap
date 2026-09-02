@@ -20,6 +20,7 @@ public class PlaceableObject : MonoBehaviour
     private bool _isValid = true;
     private Vector3Int _anchorVoxel;
     private CameraView _placedView;
+    private int _rotationStep;
 
     public bool OnMoved => _isMoved;
     public int CurrentCellX => _actualCellX;
@@ -31,6 +32,8 @@ public class PlaceableObject : MonoBehaviour
     public bool IsValid => _isValid;
     public Vector3Int AnchorVoxel => _anchorVoxel;
     public CameraView PlacedView => _placedView;
+    public int RotationStep => _rotationStep;
+    public void SetRotationStep(int step) => _rotationStep = ((step % 4) + 4) % 4;
 
     void Start()
     {
@@ -68,6 +71,7 @@ public class PlaceableObject : MonoBehaviour
         _lastCellX = anchor.x;
         _lastCellY = anchor.z;
         _isMoved = false;
+        _rotationStep = 0;
     }
 
     public void RestartCell()

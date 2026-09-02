@@ -96,6 +96,12 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (!itemData.CanBeUsedInZone(zone.ZoneId))
+        {
+            HUDMessage.Instance?.ShowWarning("Este objeto no se puede colocar en esta zona.");
+            return;
+        }
+
         if (!GridManager.TryFindFreeCellInLayer(voxelData, view, itemData, out Vector3Int cell))
         {
             HUDMessage.Instance?.ShowWarning("No hay espacio para colocar el objeto aquí.");
