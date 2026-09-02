@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97b676b73c672d48b1f8cd08d249948, type: 3}
+  m_Name: IngredientCatalogue
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientCatalogue
+  allRecipes:
+  - {fileID: 11400000, guid: 9da9259798d3e9f4aaff1509aec07c25, type: 2}
+  - {fileID: 11400000, guid: 7c1bd3a9d7b529340a14e1be8892c838, type: 2}
+  - {fileID: 11400000, guid: 3e469991aa243ea4087f243f5d69e765, type: 2}
+  - {fileID: 11400000, guid: bdf20f80906055d40be7dedea8c99d2e, type: 2}
+  - {fileID: 11400000, guid: 4f5eb043cd924f34aab0c33578fe8283, type: 2}
+  - {fileID: 11400000, guid: 91d5bd16ae0d74e4692d0e749116eff9, type: 2}
+  - {fileID: 11400000, guid: 6ceab1fdcf45a5b4eaa95eb41c4179ed, type: 2}
+  - {fileID: 11400000, guid: 97fea3d64ea439a448fb4a2810746f26, type: 2}
+  - {fileID: 11400000, guid: 73d128e3f6fa3bd4aab6db29b6936372, type: 2}
+  - {fileID: 11400000, guid: 45cb19499a97fad48bc303939647f875, type: 2}
+  - {fileID: 11400000, guid: b9b74e86a9284fd468bc2655f951091c, type: 2}
+  - {fileID: 11400000, guid: 303bb4d7627b1d8438c2e2724f50b9c0, type: 2}
+  - {fileID: 11400000, guid: 59df63ca897645f4cb5018ba0b0eb2f8, type: 2}
+  startingStockPerRecipe: 5
+  packs:
+  - displayName: "PACK SART\xC9N"
+    type: 0
+    unitsPerRecipe: 10
+    price: 120
+    firstOneFree: 1
+    emergencyUnitPrice: 25
+    icon: {fileID: 21300000, guid: b5606cc38dd84474a85d77e69cb1334e, type: 3}
+  - displayName: PACK HORNO
+    type: 1
+    unitsPerRecipe: 10
+    price: 110
+    firstOneFree: 1
+    emergencyUnitPrice: 20
+    icon: {fileID: 21300000, guid: e5ecbda40b298864bbf41f6f51ab97ef, type: 3}
+  - displayName: PACK DESPENSA
+    type: 2
+    unitsPerRecipe: 10
+    price: 100
+    firstOneFree: 1
+    emergencyUnitPrice: 15
+    icon: {fileID: 21300000, guid: 227336109353d314ba68f90dc83ea590, type: 3}
+  - displayName: PACK MORTERO
+    type: 3
+    unitsPerRecipe: 10
+    price: 90
+    firstOneFree: 1
+    emergencyUnitPrice: 10
+    icon: {fileID: 21300000, guid: 08c10437aba998f4799e6bcd0330d869, type: 3}

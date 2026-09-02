@@ -60,6 +60,25 @@ public static OwnedItemsManager Instance { get; private set; }
         Debug.Log($"[OwnedItemsManager] AddItem: {itemName} ahora x{_ownedItems[itemName]}");
     }
 
+    // Añade varias unidades de golpe (packs de ingredientes).
+    public void AddItem(string itemName, int amount)
+    {
+        if (amount <= 0) return;
+        if (_ownedItems.ContainsKey(itemName))
+            _ownedItems[itemName] += amount;
+        else
+            _ownedItems[itemName] = amount;
+    }
+
+    // Gasta unidades si las hay. Devuelve false y no toca nada si no llegan.
+    public bool TrySpendItem(string itemName, int amount = 1)
+    {
+        if (amount <= 0) return true;
+        if (!_ownedItems.TryGetValue(itemName, out int have) || have < amount) return false;
+        _ownedItems[itemName] = have - amount;
+        return true;
+    }
+
     public int GetCount(string itemName)
     {
         return _ownedItems.TryGetValue(itemName, out int count) ? count : 0;

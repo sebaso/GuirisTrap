@@ -84,7 +84,19 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
     void UpdatePopupUI()
     {
         RecipeData current = recipes[selectedIndex];
-        recipeNameText.text = $"{current.dishName}\n(Ir a: {GetDestinationName(current.type)})";
+
+        // Stock en su propia línea, justo debajo del nombre del plato.
+        // Si el sistema de ingredientes no está montado, esa línea no aparece.
+        string stockLine = "";
+        int stock = IngredientStockManager.GetStock(current);
+        if (stock >= 0)   // -1 = esta receta no lleva control de stock
+        {
+            stockLine = stock > 0
+                ? $"x{stock}\n"
+                : $"<color=#FF6B6B>SIN STOCK \u00B7 {IngredientStockManager.EmergencyPrice(current)}\u20AC urgencia</color>\n";
+        }
+
+        recipeNameText.text = $"{current.dishName}\n{stockLine}(Ir a: {GetDestinationName(current.type)})";
     }
 
     /// <summary>Traduce el tipo de minijuego al nombre de la estación a la que hay que ir.</summary>
@@ -103,6 +115,16 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
     void ConfirmSelection()
     {
         RecipeData chosenRecipe = recipes[selectedIndex];
+
+        // El electrodoméstico comprueba que tienes con qué cocinarlo. Si no
+        // queda stock hace una compra de urgencia (más cara); si tampoco hay
+        // dinero, no te llevas el ingrediente.
+        if (!IngredientStockManager.TryTakeIngredient(chosenRecipe))
+        {
+            UpdatePopupUI();
+            return;
+        }
+
         string destino = GetDestinationName(chosenRecipe.type);
         Debug.Log($"<color=cyan>RECETA ELEGIDA: {chosenRecipe.dishName}. VE A: {destino}</color>");
         playerRef.SetCurrentIngredients(chosenRecipe);
