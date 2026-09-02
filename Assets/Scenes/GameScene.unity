@@ -736,6 +736,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &140249656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514225538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 0.4
 --- !u!1 &146657625
 GameObject:
   m_ObjectHideFlags: 0
@@ -3505,6 +3520,21 @@ Transform:
   - {fileID: 1120835075}
   m_Father: {fileID: 435652586}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &870473175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514225540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 0.4
 --- !u!1 &935569554
 GameObject:
   m_ObjectHideFlags: 0
@@ -5027,9 +5057,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 197769ba0c4e0234db0cc72d55268043, type: 2}
     - target: {fileID: -445317001961422754, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e72aa6d6160063b41ae6e99276889f37, type: 2}
+    - target: {fileID: -445317001961422754, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
-      objectReference: {fileID: 2100000, guid: d655e9bf29e371943bd65ee124e610bc, type: 2}
+      objectReference: {fileID: 2100000, guid: db09f72cafac5c54588438ef2203864d, type: 2}
+    - target: {fileID: -445317001961422754, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f7cd8ebc30ba1d04d8699dd8d8f95e60, type: 2}
     - target: {fileID: 919132149155446097, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: m_Name
       value: Chiringuito-separado
@@ -5037,15 +5075,15 @@ PrefabInstance:
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: cc1b95f57a1d39242bead9f769304915, type: 2}
+      objectReference: {fileID: 2100000, guid: e72aa6d6160063b41ae6e99276889f37, type: 2}
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
-      objectReference: {fileID: 2100000, guid: 6fe5c6cc52637374192825b93eecd5ae, type: 2}
+      objectReference: {fileID: 2100000, guid: f7cd8ebc30ba1d04d8699dd8d8f95e60, type: 2}
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
       value: 
-      objectReference: {fileID: 2100000, guid: 54121bca291b68e43ab1b36b9715c839, type: 2}
+      objectReference: {fileID: 2100000, guid: db09f72cafac5c54588438ef2203864d, type: 2}
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
       value: 
@@ -5053,27 +5091,51 @@ PrefabInstance:
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
       value: 
-      objectReference: {fileID: 2100000, guid: ef9faaf929b27f449b65006cef2dbcfa, type: 2}
+      objectReference: {fileID: 2100000, guid: a6d8820f2cc044947bd4dbaddb86ae12, type: 2}
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[5]'
       value: 
-      objectReference: {fileID: 2100000, guid: 593b77fb45e3b6744864fa26f6b673c1, type: 2}
+      objectReference: {fileID: 2100000, guid: c9393d4523583624b92039106e0c1c6f, type: 2}
     - target: {fileID: 2757028036678145923, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[6]'
       value: 
-      objectReference: {fileID: 2100000, guid: 334b1b958c46d124d88120d087162438, type: 2}
+      objectReference: {fileID: 2100000, guid: 7b7f486ace3864944894191dfe77efb8, type: 2}
     - target: {fileID: 5370891859327150830, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6203245979463066663, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e72aa6d6160063b41ae6e99276889f37, type: 2}
+    - target: {fileID: 6203245979463066663, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
-      objectReference: {fileID: 2100000, guid: d655e9bf29e371943bd65ee124e610bc, type: 2}
+      objectReference: {fileID: 2100000, guid: db09f72cafac5c54588438ef2203864d, type: 2}
+    - target: {fileID: 6203245979463066663, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f7cd8ebc30ba1d04d8699dd8d8f95e60, type: 2}
+    - target: {fileID: 8002086827545500172, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8002086827545500172, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e72aa6d6160063b41ae6e99276889f37, type: 2}
+    - target: {fileID: 8002086827545500172, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7b7f486ace3864944894191dfe77efb8, type: 2}
+    - target: {fileID: 8002086827545500172, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f7cd8ebc30ba1d04d8699dd8d8f95e60, type: 2}
     - target: {fileID: 8002086827545500172, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
       value: 
-      objectReference: {fileID: 2100000, guid: d655e9bf29e371943bd65ee124e610bc, type: 2}
+      objectReference: {fileID: 2100000, guid: db09f72cafac5c54588438ef2203864d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 6592401360930831907, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
@@ -5091,6 +5153,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5370891859327150830, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       insertIndex: -1
       addedObject: {fileID: 619319065}
+    - targetCorrespondingSourceObject: {fileID: 5370891859327150830, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870473175}
     - targetCorrespondingSourceObject: {fileID: -3123169721844100020, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1514225547}
@@ -5106,12 +5171,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -3123169721844100020, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1514225543}
+    - targetCorrespondingSourceObject: {fileID: -3123169721844100020, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1514225548}
     - targetCorrespondingSourceObject: {fileID: -8331577666234942115, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1514225542}
+    - targetCorrespondingSourceObject: {fileID: -8331577666234942115, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 140249656}
     - targetCorrespondingSourceObject: {fileID: -6620058937071122238, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1514225541}
+    - targetCorrespondingSourceObject: {fileID: -6620058937071122238, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2000790443}
   m_SourcePrefab: {fileID: 100100000, guid: 8b63256a3e3d0db46929ef53172e7e86, type: 3}
 --- !u!1 &1514225537 stripped
 GameObject:
@@ -5280,6 +5354,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.025772255, y: 0.0008190967, z: 0.033068895}
   m_Center: {x: 0.032176528, y: -0.0685677, z: 0.015446718}
+--- !u!114 &1514225548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514225539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 0.4
 --- !u!1 &1525155055
 GameObject:
   m_ObjectHideFlags: 0
@@ -6132,6 +6221,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2000790443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514225537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 0.4
 --- !u!1001 &2018270707
 PrefabInstance:
   m_ObjectHideFlags: 0
