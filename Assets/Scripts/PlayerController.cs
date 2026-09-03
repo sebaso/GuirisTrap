@@ -532,24 +532,31 @@ public class PlayerController : ControllableMonoBehaviour
             _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
 
         Vector3 targetWorld = transform.position + _lastFacing * dropDistance;
-        targetWorld.y = transform.position.y; // suelo plano; ajusta si tu sala tiene desniveles
+        targetWorld.y = transform.position.y;
 
-        bool withinRoom = _floorProjection != null && _floorProjection.TryGetVoxelAtWorldPos(targetWorld, out _);
+        Vector3Int voxel = default;
+        bool withinRoom = _floorProjection != null && _floorProjection.TryGetVoxelAtWorldPos(targetWorld, out voxel);
 
-        bool overlapsFurniture = Physics.CheckSphere(targetWorld, dropCheckRadius, _furnitureObstacleMask);
+        Vector3 snappedWorld = targetWorld;
+        if (withinRoom && _floorProjection.TryGetWorldTransform(voxel, out Vector3 cellCenter, out _))
+        {
+            snappedWorld = cellCenter;
+        }
+
+        bool overlapsFurniture = Physics.CheckSphere(snappedWorld, dropCheckRadius, _furnitureObstacleMask);
 
         _dropValid = withinRoom && !overlapsFurniture;
-        _dropTargetPos = targetWorld;
+        _dropTargetPos = snappedWorld;
         _dropTargetRot = Quaternion.LookRotation(_lastFacing, Vector3.up);
 
         if (_ghost != null)
         {
-            _ghost.transform.position = targetWorld;
+            _ghost.transform.position = snappedWorld;
             _ghost.transform.rotation = _dropTargetRot;
             TintGhost(_dropValid ? GhostOk : GhostBad);
         }
     }
-
+    
     private void OnDestroy()
     {
         if (_ghost != null) Destroy(_ghost);
