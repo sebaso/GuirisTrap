@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class InventorySlotUI : MonoBehaviour
 {
-    [SerializeField] private Image _icon;
-    [SerializeField] private TMP_Text _quantityText;
-    [SerializeField] private Button _button;
+    [SerializeField] 
+    private Image _icon;
+    [SerializeField] 
+    private TMP_Text _quantityText;
+    [SerializeField] 
+    private Button _button;
 
     private int _posX;
     private int _posY;
@@ -15,6 +19,7 @@ public class InventorySlotUI : MonoBehaviour
     private const float ENABLED_ALPHA  = 1f;
 
     private PlaceableItemData _currentItem;
+    private bool _isCompatible;
 
     public void Init(int x, int y)
     {
@@ -24,6 +29,8 @@ public class InventorySlotUI : MonoBehaviour
 
     public void SetSlot(InventorySlot slot, bool isCompatible)
     {
+        _isCompatible = isCompatible;
+
         if (slot == null)
         {
             gameObject.SetActive(false);
@@ -48,8 +55,20 @@ public class InventorySlotUI : MonoBehaviour
         if (_quantityText != null)
             _quantityText.text = slot.quantity > 1 ? slot.quantity.ToString() : "";
     }
+
     public void OnClick()
     {
         GameManager.Instance.Place(_posX, _posY);
+    }
+
+    public void HandlePointerDown()
+    {
+        if (_currentItem == null || !_isCompatible) return;
+        PlacementInputController.Instance?.BeginInventoryPress(_currentItem, _posX, _posY);
+    }
+
+    public void HandlePointerUp()
+    {
+        PlacementInputController.Instance?.EndInventoryPress();
     }
 }
