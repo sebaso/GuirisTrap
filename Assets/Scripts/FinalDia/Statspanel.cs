@@ -89,10 +89,6 @@ public class StatsPanel : MonoBehaviour
     {
         ShowRoot(true);
         Populate();
-
-        Time.timeScale = 0f;
-        InputManager.Instance?.EnterPause();
-
         AudioManager.Instance?.PlayStatsMusic();
         AudioManager.Instance?.PlaySFX("day_end");
     }
@@ -215,20 +211,8 @@ public class StatsPanel : MonoBehaviour
     /// <summary>
     /// Botón "Siguiente día"
     /// </summary>
-    void OnDestroy()
-    {
-        if (Time.timeScale == 0f)
-        {
-            Time.timeScale = 1f;
-            InputManager.Instance?.ExitPause();
-        }
-    }
-
     public void OnNextDayButton()
     {
-        Time.timeScale = 1f;
-        InputManager.Instance?.ExitPause();
-
         AudioManager.Instance?.PlaySFX("next_day");
         AudioManager.Instance?.StopMusic(); 
 
