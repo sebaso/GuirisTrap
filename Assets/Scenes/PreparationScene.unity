@@ -151,11 +151,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 77702219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1660, y: -516.3}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -396}
   m_SizeDelta: {x: 470, y: 300}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &15677714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -939.8307, y: 0, z: 290.3041, w: 176.20721}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -521,6 +521,7 @@ GameObject:
   - component: {fileID: 44567363}
   - component: {fileID: 44567362}
   - component: {fileID: 44567361}
+  - component: {fileID: 44567364}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -590,19 +591,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 44567362}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1683368023}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &44567362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,6 +630,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 44567359}
   m_CullTransparentMesh: 1
+--- !u!114 &44567364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44567359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1683368023}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1683368023}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &58490225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,7 +1054,6 @@ GameObject:
   - component: {fileID: 77702219}
   - component: {fileID: 77702222}
   - component: {fileID: 77702221}
-  - component: {fileID: 77702223}
   m_Layer: 5
   m_Name: mobilaryShopMenu
   m_TagString: Untagged
@@ -1041,11 +1074,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 15677713}
-  - {fileID: 861723515539420227}
-  - {fileID: 994677766}
-  - {fileID: 1603049051}
-  - {fileID: 543162828}
-  - {fileID: 1867008356}
+  - {fileID: 879890972}
   m_Father: {fileID: 925087971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1091,30 +1120,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 77702218}
   m_CullTransparentMesh: 1
---- !u!114 &77702223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 77702218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_StartCorner: 0
-  m_StartAxis: 1
-  m_CellSize: {x: 470, y: 300}
-  m_Spacing: {x: 50, y: 263.7}
-  m_Constraint: 2
-  m_ConstraintCount: 3
 --- !u!1 &78982764
 GameObject:
   m_ObjectHideFlags: 0
@@ -1919,6 +1924,7 @@ GameObject:
   - component: {fileID: 165706500}
   - component: {fileID: 165706499}
   - component: {fileID: 165706498}
+  - component: {fileID: 165706501}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1988,19 +1994,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 165706499}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1675939070}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &165706499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2039,6 +2033,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165706496}
   m_CullTransparentMesh: 1
+--- !u!114 &165706501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165706496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1675939070}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1675939070}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1001 &193421999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2870,6 +2909,7 @@ GameObject:
   - component: {fileID: 262632772}
   - component: {fileID: 262632771}
   - component: {fileID: 262632770}
+  - component: {fileID: 262632773}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -2939,19 +2979,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 262632771}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 306783172}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &262632771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2990,6 +3018,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 262632768}
   m_CullTransparentMesh: 1
+--- !u!114 &262632773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262632768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 306783172}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 306783172}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &279546583
 GameObject:
   m_ObjectHideFlags: 0
@@ -3002,6 +3075,7 @@ GameObject:
   - component: {fileID: 279546587}
   - component: {fileID: 279546586}
   - component: {fileID: 279546585}
+  - component: {fileID: 279546588}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -3071,19 +3145,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 279546586}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 684703588}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &279546586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3122,6 +3184,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 279546583}
   m_CullTransparentMesh: 1
+--- !u!114 &279546588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279546583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 684703588}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 684703588}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &302693659
 GameObject:
   m_ObjectHideFlags: 0
@@ -4730,6 +4837,7 @@ GameObject:
   - component: {fileID: 438732837}
   - component: {fileID: 438732836}
   - component: {fileID: 438732835}
+  - component: {fileID: 438732838}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -4799,19 +4907,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 438732836}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2123090756}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &438732836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4850,6 +4946,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438732833}
   m_CullTransparentMesh: 1
+--- !u!114 &438732838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438732833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2123090756}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2123090756}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &468562763
 GameObject:
   m_ObjectHideFlags: 0
@@ -5451,19 +5592,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_SizeDelta.x
@@ -5471,7 +5612,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 407.371
+      value: 407.37097
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5503,11 +5644,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1920
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1541.5073
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5521,6 +5662,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 235
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822402642701715936, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -157.08301
+      objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -5533,9 +5698,58 @@ PrefabInstance:
       propertyPath: m_fontAsset
       value: 
       objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 4389481890377217619, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 235
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222897971394246164, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -535.89954
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 235
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320038658559085851, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -504.16602
       objectReference: {fileID: 0}
     - target: {fileID: 8910075691184273101, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_text
@@ -5547,6 +5761,7 @@ PrefabInstance:
       propertyPath: m_fontAsset
       value: 
       objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 8910075691184273101, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 1
@@ -5555,6 +5770,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 500685484}
     - targetCorrespondingSourceObject: {fileID: 908542345182750664, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 500685482}
@@ -5880,7 +6098,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 77702219}
+    m_TransformParent: {fileID: 879890972}
     m_Modifications:
     - target: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_Name
@@ -5940,23 +6158,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2180
+      value: 335
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1080
+      value: -331.85
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -6129,6 +6347,7 @@ GameObject:
   - component: {fileID: 543207775}
   - component: {fileID: 543207774}
   - component: {fileID: 543207773}
+  - component: {fileID: 543207776}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -6198,19 +6417,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 543207774}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1282007681}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &543207774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6249,6 +6456,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 543207771}
   m_CullTransparentMesh: 1
+--- !u!114 &543207776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543207771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1282007681}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1282007681}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &578764363
 GameObject:
   m_ObjectHideFlags: 0
@@ -6260,7 +6512,6 @@ GameObject:
   - component: {fileID: 578764367}
   - component: {fileID: 578764366}
   - component: {fileID: 578764365}
-  - component: {fileID: 578764364}
   m_Layer: 5
   m_Name: DecorationShopMenu
   m_TagString: Untagged
@@ -6268,32 +6519,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &578764364
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578764363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &578764365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6776,6 +7001,7 @@ GameObject:
   - component: {fileID: 600829431}
   - component: {fileID: 600829430}
   - component: {fileID: 600829429}
+  - component: {fileID: 600829432}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -6845,19 +7071,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 600829430}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 791208446}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &600829430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6896,6 +7110,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600829427}
   m_CullTransparentMesh: 1
+--- !u!114 &600829432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600829427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 791208446}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 791208446}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &624128214
 GameObject:
   m_ObjectHideFlags: 0
@@ -7871,6 +8130,7 @@ GameObject:
   - component: {fileID: 719909683}
   - component: {fileID: 719909682}
   - component: {fileID: 719909681}
+  - component: {fileID: 719909684}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -7940,19 +8200,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 719909682}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1806024890}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &719909682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7991,6 +8239,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 719909679}
   m_CullTransparentMesh: 1
+--- !u!114 &719909684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719909679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1806024890}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1806024890}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &720105186
 GameObject:
   m_ObjectHideFlags: 0
@@ -8003,6 +8296,7 @@ GameObject:
   - component: {fileID: 720105190}
   - component: {fileID: 720105189}
   - component: {fileID: 720105188}
+  - component: {fileID: 720105191}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -8072,19 +8366,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 720105189}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1686565390}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &720105189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8123,6 +8405,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720105186}
   m_CullTransparentMesh: 1
+--- !u!114 &720105191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 720105186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1686565390}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1686565390}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &722421781
 GameObject:
   m_ObjectHideFlags: 0
@@ -8462,9 +8789,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1920, y: -461.50726}
-  m_SizeDelta: {x: 580.7, y: 93.4}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1920, y: -414.80725}
+  m_SizeDelta: {x: 580.69995, y: 93.4}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &758780590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8488,6 +8815,7 @@ MonoBehaviour:
   m_text: "Tienda de decoraci\xF3n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 132e6e11d6e23444dafa4ee1f5a87433, type: 2}
+  m_sharedMaterial: {fileID: 8160439647187222085, guid: 132e6e11d6e23444dafa4ee1f5a87433, type: 2}
   m_sharedMaterial: {fileID: 8160439647187222085, guid: 132e6e11d6e23444dafa4ee1f5a87433, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -8551,7 +8879,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -66.35123, w: 0}
+  m_margin: {x: 0, y: 0, z: -167.61093, w: -48.32721}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 1
@@ -9878,6 +10206,7 @@ GameObject:
   - component: {fileID: 867309487}
   - component: {fileID: 867309486}
   - component: {fileID: 867309485}
+  - component: {fileID: 867309488}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -9947,19 +10276,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 867309486}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1089242721}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &867309486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9998,6 +10315,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 867309483}
   m_CullTransparentMesh: 1
+--- !u!114 &867309488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867309483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1089242721}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1089242721}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &874238385
 GameObject:
   m_ObjectHideFlags: 0
@@ -10158,6 +10520,7 @@ GameObject:
   - component: {fileID: 914305726}
   - component: {fileID: 914305725}
   - component: {fileID: 914305724}
+  - component: {fileID: 914305727}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -10227,19 +10590,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 914305725}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1795813861}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &914305725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10278,6 +10629,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 914305722}
   m_CullTransparentMesh: 1
+--- !u!114 &914305727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914305722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1795813861}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1795813861}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &916454535
 GameObject:
   m_ObjectHideFlags: 0
@@ -10748,7 +11144,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &925087969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10981,6 +11377,7 @@ GameObject:
   - component: {fileID: 954280279}
   - component: {fileID: 954280278}
   - component: {fileID: 954280277}
+  - component: {fileID: 954280280}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -11050,19 +11447,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 954280278}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1360910128}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &954280278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11101,6 +11486,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 954280275}
   m_CullTransparentMesh: 1
+--- !u!114 &954280280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954280275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1360910128}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1360910128}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &965725191
 GameObject:
   m_ObjectHideFlags: 0
@@ -11644,7 +12074,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 77702219}
+    m_TransformParent: {fileID: 879890972}
     m_Modifications:
     - target: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_Name
@@ -11704,23 +12134,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1660
+      value: -235
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1643.7
+      value: -331.85
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -12137,6 +12567,7 @@ GameObject:
   - component: {fileID: 1011705420}
   - component: {fileID: 1011705419}
   - component: {fileID: 1011705418}
+  - component: {fileID: 1011705421}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -12206,19 +12637,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1011705419}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1775759866}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1011705419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12257,6 +12676,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011705416}
   m_CullTransparentMesh: 1
+--- !u!114 &1011705421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011705416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1775759866}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1775759866}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1016396067
 GameObject:
   m_ObjectHideFlags: 0
@@ -12536,6 +13000,7 @@ GameObject:
   - component: {fileID: 1041348741}
   - component: {fileID: 1041348740}
   - component: {fileID: 1041348739}
+  - component: {fileID: 1041348742}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -12605,19 +13070,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1041348740}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 502124349}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1041348740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12656,6 +13109,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1041348737}
   m_CullTransparentMesh: 1
+--- !u!114 &1041348742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041348737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 502124349}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 502124349}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!43 &1042938328
 Mesh:
   m_ObjectHideFlags: 0
@@ -13354,6 +13852,7 @@ GameObject:
   - component: {fileID: 1086489737}
   - component: {fileID: 1086489736}
   - component: {fileID: 1086489735}
+  - component: {fileID: 1086489738}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -13423,19 +13922,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1086489736}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1931964073}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1086489736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13474,6 +13961,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1086489733}
   m_CullTransparentMesh: 1
+--- !u!114 &1086489738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086489733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1931964073}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1931964073}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1089242719
 GameObject:
   m_ObjectHideFlags: 0
@@ -15730,6 +16262,7 @@ GameObject:
   - component: {fileID: 1292531563}
   - component: {fileID: 1292531562}
   - component: {fileID: 1292531561}
+  - component: {fileID: 1292531564}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -15799,19 +16332,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1292531562}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 331937204}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1292531562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15850,6 +16371,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1292531559}
   m_CullTransparentMesh: 1
+--- !u!114 &1292531564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292531559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 331937204}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 331937204}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1295705655
 GameObject:
   m_ObjectHideFlags: 0
@@ -16816,6 +17382,7 @@ GameObject:
   - component: {fileID: 1352070885}
   - component: {fileID: 1352070884}
   - component: {fileID: 1352070883}
+  - component: {fileID: 1352070886}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -16885,19 +17452,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1352070884}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1548437926}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1352070884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16936,6 +17491,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1352070881}
   m_CullTransparentMesh: 1
+--- !u!114 &1352070886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352070881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1548437926}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1548437926}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1360910126
 GameObject:
   m_ObjectHideFlags: 0
@@ -17680,6 +18280,7 @@ GameObject:
   - component: {fileID: 1442571470}
   - component: {fileID: 1442571469}
   - component: {fileID: 1442571468}
+  - component: {fileID: 1442571471}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -17749,19 +18350,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1442571469}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1038888498}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1442571469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17800,6 +18389,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442571466}
   m_CullTransparentMesh: 1
+--- !u!114 &1442571471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442571466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1038888498}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1038888498}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1446095638
 GameObject:
   m_ObjectHideFlags: 0
@@ -17986,6 +18620,7 @@ MonoBehaviour:
   _mainCamera: {fileID: 1224248945}
   _cameraController: {fileID: 833304417}
   _rotateBillboard: {fileID: 1002051132}
+  _inventoryPanel: {fileID: 919002954}
 --- !u!114 &1447126355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20025,6 +20660,7 @@ GameObject:
   - component: {fileID: 1574055961}
   - component: {fileID: 1574055960}
   - component: {fileID: 1574055959}
+  - component: {fileID: 1574055962}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -20094,19 +20730,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1574055960}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2008423295}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1574055960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20145,6 +20769,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1574055957}
   m_CullTransparentMesh: 1
+--- !u!114 &1574055962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574055957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2008423295}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2008423295}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1583700217
 GameObject:
   m_ObjectHideFlags: 0
@@ -20539,7 +21208,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 77702219}
+    m_TransformParent: {fileID: 879890972}
     m_Modifications:
     - target: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_Name
@@ -20599,23 +21268,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2180
+      value: 335
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -516.3
+      value: 231.85
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -21245,6 +21914,7 @@ GameObject:
   - component: {fileID: 1682110530}
   - component: {fileID: 1682110529}
   - component: {fileID: 1682110528}
+  - component: {fileID: 1682110531}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -21314,19 +21984,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1682110529}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2009511179}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1682110529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21365,6 +22023,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1682110526}
   m_CullTransparentMesh: 1
+--- !u!114 &1682110531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682110526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2009511179}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2009511179}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1683368021
 GameObject:
   m_ObjectHideFlags: 0
@@ -21485,6 +22188,7 @@ GameObject:
   - component: {fileID: 1688071117}
   - component: {fileID: 1688071116}
   - component: {fileID: 1688071115}
+  - component: {fileID: 1688071118}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -21554,19 +22258,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1688071116}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1923373483}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1688071116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21605,6 +22297,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1688071113}
   m_CullTransparentMesh: 1
+--- !u!114 &1688071118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688071113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1923373483}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1923373483}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1711539817
 GameObject:
   m_ObjectHideFlags: 0
@@ -22919,6 +23656,7 @@ GameObject:
   - component: {fileID: 1777967179}
   - component: {fileID: 1777967178}
   - component: {fileID: 1777967177}
+  - component: {fileID: 1777967180}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -22988,19 +23726,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1777967178}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 25438923}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1777967178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23039,6 +23765,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1777967175}
   m_CullTransparentMesh: 1
+--- !u!114 &1777967180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777967175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 25438923}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 25438923}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1795813859
 GameObject:
   m_ObjectHideFlags: 0
@@ -23886,6 +24657,7 @@ GameObject:
   - component: {fileID: 1875225875}
   - component: {fileID: 1875225874}
   - component: {fileID: 1875225873}
+  - component: {fileID: 1875225876}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -23955,19 +24727,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1875225874}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 639880025}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1875225874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24006,6 +24766,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1875225871}
   m_CullTransparentMesh: 1
+--- !u!114 &1875225876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1875225871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 639880025}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 639880025}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1001 &1879537219
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25652,6 +26457,7 @@ GameObject:
   - component: {fileID: 1977083244}
   - component: {fileID: 1977083243}
   - component: {fileID: 1977083242}
+  - component: {fileID: 1977083245}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -25721,19 +26527,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1977083243}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1301501077}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1977083243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25772,6 +26566,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1977083240}
   m_CullTransparentMesh: 1
+--- !u!114 &1977083245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1977083240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1301501077}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1301501077}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2003782437
 GameObject:
   m_ObjectHideFlags: 0
@@ -25784,6 +26623,7 @@ GameObject:
   - component: {fileID: 2003782441}
   - component: {fileID: 2003782440}
   - component: {fileID: 2003782439}
+  - component: {fileID: 2003782442}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -25853,19 +26693,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2003782440}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 84899468}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2003782440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25904,6 +26732,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2003782437}
   m_CullTransparentMesh: 1
+--- !u!114 &2003782442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003782437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 84899468}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 84899468}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2004022448
 GameObject:
   m_ObjectHideFlags: 0
@@ -26396,6 +27269,7 @@ GameObject:
   - component: {fileID: 2009654992}
   - component: {fileID: 2009654991}
   - component: {fileID: 2009654990}
+  - component: {fileID: 2009654993}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -26465,19 +27339,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2009654991}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1845150334}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2009654991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26516,6 +27378,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2009654988}
   m_CullTransparentMesh: 1
+--- !u!114 &2009654993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009654988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1845150334}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1845150334}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2013340615
 GameObject:
   m_ObjectHideFlags: 0
@@ -26990,6 +27897,7 @@ GameObject:
   - component: {fileID: 2053238524}
   - component: {fileID: 2053238523}
   - component: {fileID: 2053238522}
+  - component: {fileID: 2053238525}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -27059,19 +27967,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2053238523}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2136408793}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2053238523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27110,6 +28006,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2053238520}
   m_CullTransparentMesh: 1
+--- !u!114 &2053238525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053238520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2136408793}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 2136408793}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2054385163
 GameObject:
   m_ObjectHideFlags: 0
@@ -27579,6 +28520,7 @@ GameObject:
   - component: {fileID: 2122214223}
   - component: {fileID: 2122214222}
   - component: {fileID: 2122214221}
+  - component: {fileID: 2122214224}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -27648,19 +28590,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2122214222}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1775129889}
-        m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2122214222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27699,6 +28629,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2122214219}
   m_CullTransparentMesh: 1
+--- !u!114 &2122214224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122214219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1775129889}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerDown
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1775129889}
+          m_TargetAssemblyTypeName: InventorySlotUI, Assembly-CSharp
+          m_MethodName: HandlePointerUp
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &2123090754
 GameObject:
   m_ObjectHideFlags: 0
@@ -27888,7 +28863,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 77702219}
+    m_TransformParent: {fileID: 879890972}
     m_Modifications:
     - target: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_Name
@@ -27948,23 +28923,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1660
+      value: -235
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1080
+      value: 231.85
       objectReference: {fileID: 0}
     - target: {fileID: 1799936327875210804, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

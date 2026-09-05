@@ -72,7 +72,6 @@ public class SceneController : MonoBehaviour
             }
 
             bool isNewGame = SaveManager.Instance != null && SaveManager.Instance.ConsumePendingNewGame();
-            Debug.Log($"[SceneController] isNewGame = {isNewGame}");
 
             if (isNewGame)
             {
@@ -83,7 +82,7 @@ public class SceneController : MonoBehaviour
             else if (SaveManager.Instance != null && SaveManager.Instance.ShouldSyncGridsOnLoad())
             {
                 SaveManager.Instance.ApplyGridToScene();
-                Debug.Log("[SceneController] ApplyGridToScene ejecutado");
+                SaveManager.Instance.ApplyInventoryToScene(); 
             }
 
             PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();

@@ -27,9 +27,19 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private bool _wasPressedLastFrame;
     private bool _isDraggingMove;
     private Vector2 _pressStartPos;
+    public static PlacementInputController Instance { get; private set; }
 
+    private bool _isDragFromInventory;
+    private int _inventorySourceX, _inventorySourceY;
+    private bool _inventoryPressPending;
+    private PlaceableItemData _pendingItem;
+    private int _pendingSourceX, _pendingSourceY;
+    private Vector2 _inventoryPressStartPos;
+    [SerializeField] 
+    private GameObject _inventoryPanel;
     void Awake()
     {
+        Instance = this;
         _inputs = new InputSystem_Actions();
         _inputs.UI.AddCallbacks(this);
     }
@@ -53,6 +63,14 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         _wasPressedLastFrame = isPressedNow;
 
+        if (_inventoryPressPending)
+        {
+            if (Vector2.Distance(_pointerPos, _inventoryPressStartPos) >= DRAG_THRESHOLD_PIXELS)
+            {
+                _inventoryPressPending = false;
+                DragFromInventory(_pendingItem, _pendingSourceX, _pendingSourceY);
+            }
+        }
 
         if (_selected != null && _isPressed && !_isDraggingMove)
         {
@@ -191,7 +209,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private void ConfirmOrCancel()
     {
         GridZone zone = _cameraController.ActiveZone;
-        if (zone == null) return;
+        if (zone == null) { CancelDrag(); return; }
         VoxelGridData voxelData = zone.VoxelData;
         PlaceableInstanceRegistry registry = zone.Registry;
 
@@ -201,20 +219,59 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         if (_hasDragTarget && _dragValid)
         {
-            Vector3Int oldAnchor = _selected.AnchorVoxel;
-            registry.Unregister(oldAnchor);
-            registry.Register(_dragTargetVoxel, _selected);
+            if (_isDragFromInventory)
+            {
+                _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
+                registry.Register(_dragTargetVoxel, _selected);
 
-            GridManager.MoveItem(voxelData, oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
-            _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
+                GridManager.PlaceItem(voxelData, _dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, axis, _selected.transform.rotation);
+
+                Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
+                inv.RemoveItem(_inventorySourceX, _inventorySourceY);
+            }
+            else
+            {
+                Vector3Int oldAnchor = _selected.AnchorVoxel;
+                registry.Unregister(oldAnchor);
+                registry.Register(_dragTargetVoxel, _selected);
+
+                GridManager.MoveItem(voxelData, oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
+                _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
+            }
         }
-        else if (zone.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
+        else
+        {
+            CancelDrag();
+            return;
+        }
+
+        zone.RefreshActive(view);
+        Deselect(unlockCamera: true);
+        _inventoryPanel?.SetActive(true);
+        _isDragFromInventory = false;
+    }
+
+    private void CancelDrag()
+    {
+        if (_isDragFromInventory)
+        {
+            Destroy(_selected.gameObject);
+            Deselect(unlockCamera: true);
+            _inventoryPanel?.SetActive(true); 
+            _isDragFromInventory = false;
+            return;
+        }
+
+        GridZone zone = _cameraController.ActiveZone;
+        CameraView view = _cameraController.CurrentView;
+        PlaceableItemData item = _selected.GetItemData();
+
+        if (zone != null && zone.TryGetWorldTransform(view, _selected.AnchorVoxel, out Vector3 pos, out Quaternion rot))
         {
             _selected.transform.position = pos + rot * item.placementOffset;
             _selected.transform.rotation = rot;
         }
-
-        zone.RefreshActive(view);
+        zone?.RefreshActive(view);
         Deselect(unlockCamera: true);
     }
 
@@ -288,5 +345,52 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         registry.Unregister(anchor);
         Destroy(placeable.gameObject);
+    }
+    public void DragFromInventory(PlaceableItemData item, int sourceX, int sourceY)
+    {
+        if (_selected != null) return;
+
+        GridZone zone = _cameraController.ActiveZone;
+        if (zone == null || item.prefab == null) return;
+
+        CameraView view = _cameraController.CurrentView;
+        PlaceableSurface activeSurface = GridZone.SurfaceForView(view);
+        if (!item.IsCompatibleWith(activeSurface)) return;
+        if (!item.CanBeUsedInZone(zone.ZoneId)) return;
+
+        Transform folder = GameObject.Find("PlaceableItems")?.transform;
+        if (folder == null) folder = new GameObject("PlaceableItems").transform;
+
+        Vector3 spawnPos = _mainCamera.ScreenPointToRay(_pointerPos).GetPoint(5f); 
+        GameObject obj = Instantiate(item.prefab, spawnPos, Quaternion.identity, folder);
+        PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
+        placeable.Init(item);
+
+        _isDragFromInventory = true;
+        _inventorySourceX = sourceX;
+        _inventorySourceY = sourceY;
+        _inventoryPanel?.SetActive(false);
+
+        SelectObject(placeable);
+        _isDraggingMove = true;
+        _isPressed = true;
+        _pressStartPos = _pointerPos;
+    }
+    public void BeginInventoryPress(PlaceableItemData item, int sourceX, int sourceY)
+    {
+        if (_selected != null) return;
+        _inventoryPressPending = true;
+        _pendingItem = item;
+        _pendingSourceX = sourceX;
+        _pendingSourceY = sourceY;
+        _inventoryPressStartPos = _pointerPos;
+    }
+
+    public void EndInventoryPress()
+    {
+        if (!_inventoryPressPending) return;
+        _inventoryPressPending = false;
+
+        GameManager.Instance.Place(_pendingSourceX, _pendingSourceY);
     }
 }
