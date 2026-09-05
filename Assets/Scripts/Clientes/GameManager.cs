@@ -38,6 +38,17 @@ public class GameManager : MonoBehaviour
         if (itemData == null)
             return;
 
+        if (itemData.maxStack > 0 && OwnedItemsManager.Instance != null)
+        {
+            int owned = OwnedItemsManager.Instance.GetCount(itemData.name);
+            if (owned >= itemData.maxStack)
+            {
+                HUDMessage.Instance?.ShowWarning(
+                    $"Ya tienes el máximo de este objeto ({itemData.maxStack}).");
+                return;
+            }
+        }
+
         if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(itemData.cost))
         {
             Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {itemData.prefab.name} (coste: {itemData.cost}€)");

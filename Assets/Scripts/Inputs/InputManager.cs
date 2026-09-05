@@ -40,6 +40,8 @@ public class InputManager : MonoBehaviour, IPlayerActions
         _minigameControllable = FindAnyObjectByType<MinigameControllable>();
 
         _current = _playerControllable;
+        IsPaused = false;
+        _beforePause = null;
     }
     private void OnDestroy()
 {
@@ -122,4 +124,30 @@ public void EnterMinigame(IMinigameControllable minigame)
     public void OnSprint(InputAction.CallbackContext context)   { }
 
     public void OnPause(InputAction.CallbackContext context)    {}
+
+
+    private ControllableMonoBehaviour _beforePause;
+    public bool IsPaused { get; private set; }
+
+    public void EnterPause()
+    {
+        if (IsPaused) return;
+        IsPaused = true;
+
+        _beforePause = _current;
+        _current = null;
+        (_playerControllable as PlayerController)?.LockMovement();
+    }
+
+    public void ExitPause()
+    {
+        if (!IsPaused) return;
+        IsPaused = false;
+
+        _current = _beforePause;
+        _beforePause = null;
+
+        if (_current == _playerControllable)
+            (_playerControllable as PlayerController)?.UnlockMovement();
+    }
 }
