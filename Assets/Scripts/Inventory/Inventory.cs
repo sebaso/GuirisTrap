@@ -107,6 +107,7 @@ public class Inventory : MonoBehaviour
         //Si no puedo, el inventario está lleno
         return false;
     }
+    
     public InventorySlot GetSlot(int x, int y)
     {
         if (_inventory == null) Init();
@@ -114,6 +115,7 @@ public class Inventory : MonoBehaviour
             return null;
         return _inventory[x,y];
     }
+
     public bool RemoveItem(int x, int y)
     {
         if (_inventory == null) Init();
@@ -132,5 +134,52 @@ public class Inventory : MonoBehaviour
         }
         NotifyChanged();
         return true;
+    }
+
+    public SaveManager.InventorySlotSaveData[] ToSaveData()
+    {
+        if (_inventory == null) Init();
+        var list = new System.Collections.Generic.List<SaveManager.InventorySlotSaveData>();
+
+        for (int y = 0; y < _height; y++)
+            for (int x = 0; x < _width; x++)
+            {
+                var slot = _inventory[x, y];
+                if (slot == null || slot.item == null) continue;
+
+                list.Add(new SaveManager.InventorySlotSaveData
+                {
+                    x = x,
+                    y = y,
+                    itemName = slot.item.name,
+                    quantity = slot.quantity
+                });
+            }
+        return list.ToArray();
+    }
+
+    public void LoadFromSaveData(SaveManager.InventorySlotSaveData[] data, PlaceableItemData[] allItems)
+    {
+        Init();
+        _inventory = new InventorySlot[_width, _height];
+
+        if (data != null)
+        {
+            foreach (var entry in data)
+            {
+                if (entry.x < 0 || entry.x >= _width || entry.y < 0 || entry.y >= _height) continue;
+
+                PlaceableItemData item = System.Array.Find(allItems, i => i.name == entry.itemName);
+                if (item == null) continue;
+
+                _inventory[entry.x, entry.y] = new InventorySlot
+                {
+                    item = item,
+                    quantity = entry.quantity,
+                    maxStack = item.maxStack
+                };
+            }
+        }
+        NotifyChanged();
     }
 }

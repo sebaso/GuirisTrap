@@ -70,11 +70,17 @@ public class SaveManager : MonoBehaviour
     public void ForceSave()
     {
         _data.money = MoneyManager.Instance != null ? MoneyManager.Instance.CurrentMoney : _data.money;
-        SaveGridFromManager();
+        SaveGrid();
+        SaveInventory();
         WriteFile();
     }
 
-    private void SaveGridFromManager()
+    private void SaveInventory()
+    {
+        Inventory inv = Inventory.Instance;
+        if (inv != null) _data.inventory = inv.ToSaveData();
+    }
+    private void SaveGrid()
     {
         var zones = new System.Collections.Generic.List<ZoneSaveData>();
 
@@ -120,7 +126,14 @@ public class SaveManager : MonoBehaviour
             GridManager.LoadFromSaveData(zone.VoxelData, saved.cells, _allItems);
         }
     }
-
+    
+    public void ApplyInventoryToScene()
+    {
+        if (_data.inventory == null) return;
+        Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
+        inv.LoadFromSaveData(_data.inventory, _allItems);
+    }
+    
     [ContextMenu("Delete Save")]
     public void DeleteSave()
     {
@@ -193,6 +206,7 @@ public class SaveManager : MonoBehaviour
 
         public ZoneSaveData[] zones;
         public ItemCountData[] ownedItems;
+        public InventorySlotSaveData[] inventory;
     }
 
     [System.Serializable]
@@ -218,5 +232,13 @@ public class SaveManager : MonoBehaviour
     {
         public string itemName;
         public int count;
+    }
+
+    [System.Serializable]
+    public class InventorySlotSaveData
+    {
+        public int x, y;
+        public string itemName;
+        public int quantity;
     }
 }
