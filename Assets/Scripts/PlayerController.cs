@@ -5,6 +5,8 @@ public class PlayerController : ControllableMonoBehaviour
     [Header("Movement")]
     public float speed    = 5f;
     public float maxSpeed = 10f;
+    public float acceleration = 20f; // m/s² hasta speed
+    public float deceleration = 30f; // m/s² al soltar el input
     private Rigidbody rb;
     private Vector3 movementDirection;
 
@@ -64,11 +66,13 @@ public class PlayerController : ControllableMonoBehaviour
         }
         else
         {
-            rb.linearVelocity = new Vector3(
-                -movementDirection.x * speed,
-                rb.linearVelocity.y,
-                -movementDirection.z * speed
-            );
+            // La horizontal se acerca a la objetivo de forma gradual (nada de
+            // fijarla de golpe); la vertical la lleva la gravedad (rampas, caídas).
+            Vector3 target  = new Vector3(-movementDirection.x * speed, 0f, -movementDirection.z * speed);
+            Vector3 current = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            float rate = movementDirection.sqrMagnitude > 0.01f ? acceleration : deceleration;
+            Vector3 next = Vector3.MoveTowards(current, target, rate * Time.fixedDeltaTime);
+            rb.linearVelocity = new Vector3(next.x, rb.linearVelocity.y, next.z);
         }
 
         // facing = actual travel dir, so carried items drop in front, not on the player
