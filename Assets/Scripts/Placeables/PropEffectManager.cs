@@ -10,7 +10,6 @@ public class PropEffectManager : MonoBehaviour
 
     [Header("Ritmo")]
     [SerializeField] private float _recountInterval = 2f;
-
     [SerializeField] private float _clientScanInterval = 0.25f;
 
     /// <summary>Bonus actual de paciencia. 0.2 = +20%.</summary>
@@ -20,13 +19,11 @@ public class PropEffectManager : MonoBehaviour
     public float TipBonus { get; private set; }
 
     [Header("Aviso al jugador")]
-    [SerializeField] private bool _announceChanges = true;
+    [SerializeField] private bool _announceOnDayStart = true;
 
     private float _recountTimer;
     private float _scanTimer;
-    private bool _firstCountDone;
-    private float _lastAnnouncedPatience = -1f;
-    private float _lastAnnouncedTip = -1f;
+    private bool _subscribedDay;
 
     void Awake()
     {
@@ -36,10 +33,34 @@ public class PropEffectManager : MonoBehaviour
 
     void OnDestroy()
     {
+        if (_subscribedDay && DayManager.Instance != null)
+            DayManager.Instance.OnDayStarted -= AnnounceBonuses;
+
         if (Instance == this) Instance = null;
     }
 
-    void Start() => Recount();
+    void Start()
+    {
+        Recount();
+        TrySubscribeDay();
+    }
+
+    private void TrySubscribeDay()
+    {
+        if (_subscribedDay || DayManager.Instance == null) return;
+        DayManager.Instance.OnDayStarted += AnnounceBonuses;
+        _subscribedDay = true;
+    }
+
+    private void AnnounceBonuses()
+    {
+        if (!_announceOnDayStart) return;
+
+        Recount();
+        if (PatienceBonus <= 0f && TipBonus <= 0f) return;
+
+        HUDMessage.Instance?.ShowGood($"Tu decoración: {BonusSummary()}");
+    }
 
     void Update()
     {
@@ -49,6 +70,8 @@ public class PropEffectManager : MonoBehaviour
             _recountTimer = 0f;
             Recount();
         }
+
+        TrySubscribeDay();
 
         _scanTimer += Time.deltaTime;
         if (_scanTimer >= _clientScanInterval)
@@ -74,7 +97,7 @@ public class PropEffectManager : MonoBehaviour
             if (p == null) continue;
 
             PlaceableItemData data = p.GetItemData();
-            if (data == null) continue; 
+            if (data == null) continue; // colocado a mano en la escena: no cuenta
 
             counts.TryGetValue(data, out int n);
             counts[data] = n + 1;
@@ -94,35 +117,6 @@ public class PropEffectManager : MonoBehaviour
 
         PatienceBonus = Mathf.Min(PatienceBonus, _catalogue.maxPatienceBonus);
         TipBonus      = Mathf.Min(TipBonus, _catalogue.maxTipBonus);
-
-        AnnounceIfChanged();
-    }
-
-    private void AnnounceIfChanged()
-    {
-        if (!_announceChanges) return;
-
-        if (!_firstCountDone)
-        {
-            _firstCountDone = true;
-            _lastAnnouncedPatience = PatienceBonus;
-            _lastAnnouncedTip = TipBonus;
-            return;
-        }
-
-        bool changed = !Mathf.Approximately(PatienceBonus, _lastAnnouncedPatience)
-                    || !Mathf.Approximately(TipBonus, _lastAnnouncedTip);
-        if (!changed) return;
-
-        bool better = PatienceBonus > _lastAnnouncedPatience || TipBonus > _lastAnnouncedTip;
-
-        _lastAnnouncedPatience = PatienceBonus;
-        _lastAnnouncedTip = TipBonus;
-
-        string msg = BonusSummary();
-
-        if (better) HUDMessage.Instance?.ShowGood($"Tu decoración: {msg}");
-        else        HUDMessage.Instance?.ShowWarning($"Has perdido decoración: {msg}");
     }
 
     /// <summary>Los bonus actuales en texto, para el HUD o para el informe.</summary>
@@ -172,4 +166,6 @@ public class PropEffectManager : MonoBehaviour
         Debug.Log($"[PropEffectManager] Paciencia +{PatienceBonus:P0} · Propina +{TipBonus:P0}");
     }
 }
+
+
 public class PropBonusTag : MonoBehaviour { }
