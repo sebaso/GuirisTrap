@@ -50,8 +50,6 @@ public class StatsPanel : MonoBehaviour
 
         if (_panelRoot == gameObject)
         {
-            //Debug.LogError("[StatsPanel] _panelRoot es el MISMO objeto que tiene el script. " +
-                           //"Debe ser un objeto hijo distinto. Ocultando solo los hijos para no autodesactivarme.");
             SetChildrenActive(false);
         }
         else
@@ -124,9 +122,6 @@ public class StatsPanel : MonoBehaviour
 
         if (_dayNumberText != null && SaveManager.Instance != null)
         {
-            // CurrentDay cuenta días COMPLETADOS (se incrementa al pulsar "Siguiente
-            // día"). El día que acaba de jugarse aún no se ha incrementado, así que
-            // es CurrentDay + 1 (el primer día es el 1, no el 0).
             int playingDay = SaveManager.Instance.CurrentDay + 1;
             _dayNumberText.text = $"DÍA {playingDay} · {WeekManager.GetDayName(playingDay)}";
         }
@@ -219,10 +214,6 @@ public class StatsPanel : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            // Ojo: aquí dentro no solo hay UI. DayReport cuelga de este mismo
-            // objeto y es quien lleva la cuenta de todo el día; si se apaga con
-            // el panel, su Awake no corre, DayReport.Instance se queda en null y
-            // el informe sale vacío.
             if (child.GetComponent<DayReport>() != null) continue;
 
             child.gameObject.SetActive(visible);
