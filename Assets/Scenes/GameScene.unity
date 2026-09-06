@@ -8472,7 +8472,7 @@ MonoBehaviour:
   _catalogue: {fileID: 11400000, guid: 60200eb3560bcc2458a341d11052bc99, type: 2}
   _recountInterval: 5
   _clientScanInterval: 0.25
-  _announceChanges: 1
+  _announceOnDayStart: 1
 --- !u!1 &2126285138
 GameObject:
   m_ObjectHideFlags: 0
@@ -9258,6 +9258,10 @@ PrefabInstance:
     - target: {fileID: 5151120692631989312, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
       propertyPath: m_LocalPosition.y
       value: 2.982
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479783439864967366, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
+      propertyPath: m_Constraints
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

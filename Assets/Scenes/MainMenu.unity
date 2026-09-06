@@ -653,6 +653,7 @@ MonoBehaviour:
     weekGrades: 
     zones: []
     ownedItems: []
+    inventory: []
 --- !u!114 &945883625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -665,7 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c237b998294dbf428a7813f740540f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoneyManager
-  _initialMoney: 1000
+  _initialMoney: 200
 --- !u!4 &945883626
 Transform:
   m_ObjectHideFlags: 0
