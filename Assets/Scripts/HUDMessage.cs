@@ -3,19 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-/// <summary>
-/// Simple HUD message system. Shows one message at a time with a fade-in/fade-out
-/// animation. Extra messages are queued and shown in order.
-///
-/// USO:
-///   HUDMessage.Instance.Show("¡Clientes se han ido enfadados!");
-///   HUDMessage.Instance.Show("Has servido el plato equivocado");
-///
-/// MONTAJE:
-///   1. Crea un TMP_Text hijo de tu Canvas de juego.
-///   2. Ponle el script HUDMessage al mismo GameObject.
-///   3. Arrastra el TMP_Text al campo _messageText.
-/// </summary>
+
 public class HUDMessage : MonoBehaviour
 {
     public static HUDMessage Instance { get; private set; }
@@ -58,6 +46,12 @@ public class HUDMessage : MonoBehaviour
 
         if (_messageText != null)
             _messageText.text = "";
+    }
+
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     // ── Métodos públicos ───────────────────────────────────────────
