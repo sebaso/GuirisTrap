@@ -247,7 +247,8 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         zone.RefreshActive(view);
         Deselect(unlockCamera: true);
-        _inventoryPanel?.SetActive(true);
+        if (_isDragFromInventory) 
+            _inventoryPanel?.SetActive(true);
         _isDragFromInventory = false;
     }
 
