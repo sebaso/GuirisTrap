@@ -245,10 +245,9 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
             }
         }
 
-        // 2) Especias congeladas: bloquean el tiro.
         foreach (EspeciaUI especia in especias)
         {
-            if (!especia.IsCongelada) continue;
+            if (!especia.IsCongelada || especia.IsDesvanecida) continue;
             if (balaRect.Overlaps(GetWorldRect(especia.Rect))) return true;
         }
 
@@ -301,7 +300,7 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
             if (!contacto)
             {
                 foreach (EspeciaUI otra in especias)
-                    if (otra != e && otra.IsCongelada &&
+                    if (otra != e && otra.IsCongelada && !otra.IsDesvanecida &&
                         re.Overlaps(GetWorldRect(otra.Rect))) { contacto = true; break; }
             }
 

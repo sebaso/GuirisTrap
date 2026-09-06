@@ -17,6 +17,11 @@ public class EspeciaUI : MonoBehaviour
     public float freezePopScale = 1.3f;
     public float freezePopTime = 0.18f;
 
+    [Header("Desvanecer tras congelar")]
+    public float vanishDelay = 2f;
+    [Tooltip("Lo que tarda en desvanecerse una vez le toca irse.")]
+    public float vanishFadeTime = 0.35f;
+
     [HideInInspector] public float speed = 100f; // asignado por EspeciasMinigame
 
     private RectTransform _rect;
@@ -27,9 +32,15 @@ public class EspeciaUI : MonoBehaviour
     private int  _wpIndex   = 0;  // waypoint actual
     private int  _dir       = 1;  // 1 = avanzar, -1 = retroceder
     private bool _congelada = false;
+    private bool _desvanecida = false;
     private Coroutine _popCo;
+    private Coroutine _vanishCo;
 
     public bool IsCongelada => _congelada;
+
+    /// <summary>Ya se ha ido: ni bloquea balas ni hace rebotar a nadie.</summary>
+    public bool IsDesvanecida => _desvanecida;
+
     public RectTransform Rect => _rect;
 
     void Awake()
@@ -87,6 +98,37 @@ public class EspeciaUI : MonoBehaviour
         if (_popCo != null) StopCoroutine(_popCo);
         if (isActiveAndEnabled && _rect != null)
             _popCo = StartCoroutine(FreezePopRoutine());
+
+        if (_vanishCo != null) StopCoroutine(_vanishCo);
+        if (isActiveAndEnabled)
+            _vanishCo = StartCoroutine(VanishRoutine());
+    }
+
+    private IEnumerator VanishRoutine()
+    {
+        if (vanishDelay > 0f) yield return new WaitForSeconds(vanishDelay);
+
+        _desvanecida = true;
+
+        Color from = _graphic != null ? _graphic.color : Color.white;
+        float t = 0f;
+
+        while (t < vanishFadeTime && _graphic != null)
+        {
+            t += Time.deltaTime;
+            Color c = from;
+            c.a = Mathf.Lerp(from.a, 0f, t / vanishFadeTime);
+            _graphic.color = c;
+            yield return null;
+        }
+
+        if (_graphic != null)
+        {
+            Color c = from; c.a = 0f;
+            _graphic.color = c;
+        }
+
+        _vanishCo = null;
     }
 
     private IEnumerator FreezePopRoutine()
@@ -129,9 +171,11 @@ public class EspeciaUI : MonoBehaviour
     {
         if (_rect == null) _rect = GetComponent<RectTransform>();
 
-        if (_popCo != null) { StopCoroutine(_popCo); _popCo = null; }
+        if (_popCo != null)   { StopCoroutine(_popCo);   _popCo = null; }
+        if (_vanishCo != null) { StopCoroutine(_vanishCo); _vanishCo = null; }
 
-        _congelada = false;
+        _congelada   = false;
+        _desvanecida = false;
         _dir       = 1;
         _wpIndex   = 0;
 
