@@ -29,6 +29,11 @@ public class ClientSpawner : MonoBehaviour
 
     void Start()
     {
+        // El DifficultyManager no vive en escenas y si nadie lo crea antes del
+        // primer spawn, el día arranca con los pesos por defecto del prefab
+        // (grupos de 2-4 el día 1). Forzarlo aquí los aplica a tiempo.
+        DifficultyManager.GetOrCreate().RefreshAndApply();
+
         _timer = spawnInterval;
 
         if (RestaurantManager.Instance != null && entrancePoint != null)

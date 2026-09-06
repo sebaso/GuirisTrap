@@ -140,6 +140,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         _selectedIndex   = 0;
         _currentNav      = Vector2.zero;
         _navCooldown     = 0f;
+        player?.PlayAction("Cocinar");
         InputManager.Instance.EnterMinigame(this);
         minigamePanel.SetActive(true);
         RefreshUI();
