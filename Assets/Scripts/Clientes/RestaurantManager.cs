@@ -90,8 +90,9 @@ public class RestaurantManager : MonoBehaviour
         {
             _placedTables.Add(table);
             Debug.Log($"[RestaurantManager] Table {table.tableNumber} placed. Total placed tables: {_placedTables.Count}");
-            TryFlushWaitingGroups();
         }
+        // flush also on chair-count changes: ScanForChairs calls this for already-placed tables
+        TryFlushWaitingGroups();
     }
 
     public void TableStored(Table table)
