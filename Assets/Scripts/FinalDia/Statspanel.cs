@@ -38,6 +38,14 @@ public class StatsPanel : MonoBehaviour
 
     private void Awake()
     {
+        DayReport dr = GetComponentInChildren<DayReport>(true);
+        if (dr != null && !dr.gameObject.activeInHierarchy)
+        {
+            Debug.LogError($"[StatsPanel] '{dr.name}' está dentro de un objeto DESACTIVADO " +
+                           "('" + dr.transform.parent?.name + "'). Sácalo fuera del panel o " +
+                           "actívalo, o el informe del día saldrá vacío.", dr.gameObject);
+        }
+
         if (_panelRoot == null) return;
 
         if (_panelRoot == gameObject)
@@ -89,8 +97,25 @@ public class StatsPanel : MonoBehaviour
     {
         ShowRoot(true);
         Populate();
+
+        // Congelar como en el menú de pausa: no debes poder moverte ni
+        // interactuar mientras lees el resumen del día.
+        Time.timeScale = 0f;
+        InputManager.Instance?.EnterPause();
+
         AudioManager.Instance?.PlayStatsMusic();
         AudioManager.Instance?.PlaySFX("day_end");
+    }
+
+    private void OnDestroy()
+    {
+        // Si la escena se descarga con el panel abierto, la siguiente arrancaría
+        // congelada.
+        if (Time.timeScale == 0f)
+        {
+            Time.timeScale = 1f;
+            InputManager.Instance?.ExitPause();
+        }
     }
 
     private void Populate()
@@ -193,7 +218,15 @@ public class StatsPanel : MonoBehaviour
     private void SetChildrenActive(bool visible)
     {
         foreach (Transform child in transform)
+        {
+            // Ojo: aquí dentro no solo hay UI. DayReport cuelga de este mismo
+            // objeto y es quien lleva la cuenta de todo el día; si se apaga con
+            // el panel, su Awake no corre, DayReport.Instance se queda en null y
+            // el informe sale vacío.
+            if (child.GetComponent<DayReport>() != null) continue;
+
             child.gameObject.SetActive(visible);
+        }
     }
 
     private Color GetGradeColor(char grade)
@@ -213,6 +246,10 @@ public class StatsPanel : MonoBehaviour
     /// </summary>
     public void OnNextDayButton()
     {
+        // Descongelar ANTES de cambiar de escena, o la siguiente carga parada.
+        Time.timeScale = 1f;
+        InputManager.Instance?.ExitPause();
+
         AudioManager.Instance?.PlaySFX("next_day");
         AudioManager.Instance?.StopMusic(); 
 
