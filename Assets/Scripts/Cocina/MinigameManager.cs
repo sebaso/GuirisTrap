@@ -25,21 +25,25 @@ public class MinigameManager : MonoBehaviour
             case MinigameType.Nevera:
                 if (!Check(fridgeGame, recipe.type)) return;
                 fridgeGame.StartMinigame(recipe, player);
+                player?.PlayAction("Recoger");
                 break;
 
             case MinigameType.Congelador:
                 if (!Check(freezerGame, recipe.type)) return;
                 freezerGame.StartMinigame(recipe, player);
+                player?.PlayAction("Recoger");
                 break;
 
             case MinigameType.Despensa:
                 if (!Check(pantryGame, recipe.type)) return;
                 pantryGame.StartMinigame(recipe, player);
+                player?.PlayAction("Cortar");
                 break;
 
             case MinigameType.Especias:
                 if (!Check(especiasGame, recipe.type)) return;
                 especiasGame.StartMinigame(recipe, player);
+                player?.PlayAction("Recoger");
                 break;
 
             default:

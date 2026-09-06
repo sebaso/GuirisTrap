@@ -27,6 +27,16 @@ public class Client : MonoBehaviour
     public int happiness;
     public int nationality;
 
+    [Header("Postura sentado")]
+    [Tooltip("Un offset por modelo de clientModels (mismo orden): offset local del " +
+             "ModelPivot al sentarse, para asentar cada modelo en la silla. " +
+             "Se restaura a cero al levantarse.")]
+    public Vector3[] seatOffsets;
+    [Tooltip("Segundos que dura Levantarse antes de empezar a andar hacia la salida.")]
+    [SerializeField] private float _standUpSeconds = 1.0f;
+    [Tooltip("Segundos de Enfadado sentado antes de levantarse.")]
+    [SerializeField] private float _angryBeatSeconds = 1.2f;
+
 
     private ClientGroup _group;
     public ClientGroup Group => _group;
@@ -53,6 +63,7 @@ public class Client : MonoBehaviour
 
     private Animator _animator;
     private Transform _modelPivot;
+    private Vector3 _activeSeatOffset = Vector3.zero;
 
     public float PatienceRatio => _group != null ? _group.PatienceRatio : 0f;
 
@@ -170,6 +181,10 @@ public class Client : MonoBehaviour
         GameObject selectedModel = Instantiate(clientModels[randomIndex], transform.position, Quaternion.Euler(0, 0, 0));
         selectedModel.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
+        _activeSeatOffset = seatOffsets != null && randomIndex < seatOffsets.Length
+            ? seatOffsets[randomIndex]
+            : Vector3.zero;
+
         // The generated controller animates this transform by path ("ModelPivot"),
         // keeping clip curves independent of the model offsets applied below.
         _modelPivot = new GameObject("ModelPivot").transform;
@@ -219,6 +234,7 @@ public class Client : MonoBehaviour
     {
         Freeze();
         transform.position = _seatPoint.position;
+        _modelPivot.localPosition = _activeSeatOffset;
 
         if (_assignedTable != null)
         {
@@ -271,8 +287,14 @@ public class Client : MonoBehaviour
         ReleaseSeat();
         DayReport.Instance?.RegisterAngryClient();
         HUDMessage.Instance?.ShowBad("¡Cliente se fue enfadado sin pagar!");
-        SetState(State.Angry);
-        WalkToExit();
+
+        if (IsSeated())
+            StartCoroutine(StandUpAndLeave(_angryBeatSeconds));
+        else
+        {
+            SetState(State.Angry);
+            WalkToExit();
+        }
     }
 
     private void ReleaseSeat()
@@ -351,9 +373,15 @@ public class Client : MonoBehaviour
             _assignedTable?.FreeTable(Group);
         }
 
-        SetState(State.Angry);
         AudioManager.Instance?.PlaySFX("client_angry");
-        WalkToExit();
+
+        if (IsSeated())
+            StartCoroutine(StandUpAndLeave(_angryBeatSeconds));
+        else
+        {
+            SetState(State.Angry);
+            WalkToExit();
+        }
     }
 
     public void StartLeaving()
@@ -364,7 +392,33 @@ public class Client : MonoBehaviour
             _assignedTable?.FreeTable(Group);
         }
 
+        if (IsSeated())
+            StartCoroutine(StandUpAndLeave(0f));
+        else
+        {
+            SetState(State.Leaving);
+            WalkToExit();
+        }
+    }
+
+    private bool IsSeated()
+        => CurrentState == State.WaitingForFood || CurrentState == State.Eating || CurrentState == State.DoneEating;
+
+    // Levantarse (y el beat de rabia si lo hay) en el sitio; el agente solo
+    // arranca al final para que el cliente no se deslice mientras se levanta.
+    private IEnumerator StandUpAndLeave(float angryBeat)
+    {
+        Freeze();
+        _modelPivot.localPosition = Vector3.zero;
+
+        if (angryBeat > 0f)
+        {
+            SetState(State.Angry);
+            yield return new WaitForSeconds(angryBeat);
+        }
+
         SetState(State.Leaving);
+        yield return new WaitForSeconds(_standUpSeconds);
         WalkToExit();
     }
 
