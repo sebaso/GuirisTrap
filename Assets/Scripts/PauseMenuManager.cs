@@ -132,12 +132,17 @@ public class PauseMenuManager : MonoBehaviour
         IsPaused = false;
         InputManager.Instance?.ExitPause();
 
+        // checkpoint: lo ganado en el día sobrevive a salir al menú
+        SaveManager.Instance?.ForceSave();
+
         SceneManager.LoadScene(_mainMenuScene);
     }
 
     public void QuitGame()
     {
         Time.timeScale = 1f;
+
+        SaveManager.Instance?.ForceSave();
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

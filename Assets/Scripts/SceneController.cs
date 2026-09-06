@@ -90,6 +90,10 @@ public class SceneController : MonoBehaviour
         }
         if (scene.name == "GameScene")
         {
+            // El AudioManager persiste entre escenas: en GameScene la música la
+            // llevan las AmbientZones, así que cortamos el tema anterior.
+            AudioManager.Instance?.StopMusic();
+
             PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();
             generator?.Generate();
         }

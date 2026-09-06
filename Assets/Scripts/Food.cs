@@ -40,6 +40,7 @@ public class Food : MonoBehaviour
 
     private void SetCollidersEnabled(bool enabled)
     {
+        if (colliders == null) return;
         foreach (Collider c in colliders)
             if (c != null) c.enabled = enabled;
     }
@@ -71,7 +72,8 @@ public class Food : MonoBehaviour
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
 
-        rb.isKinematic = true;
+        // rb puede ser null si Awake no corrió (herramientas de editor)
+        if (rb != null) rb.isKinematic = true;
         SetCollidersEnabled(false);
     }
 

@@ -9,15 +9,15 @@ public class DifficultyManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float _starsWeight = 0.4f;
 
     [Tooltip("Día en el que el factor de días llega a 1.")]
-    [SerializeField] private float _daySaturatesAt = 30f;
+    [SerializeField] private float _daySaturatesAt = 60f;
 
     [Header("Clientes: intervalo de spawn (s)")]
     [SerializeField] private float _spawnIntervalStart = 14f;
-    [SerializeField] private float _spawnIntervalEnd = 7f;
+    [SerializeField] private float _spawnIntervalEnd = 10f;
 
     [Header("Clientes: máximo simultáneo")]
     [SerializeField] private int _maxClientsStart = 6;
-    [SerializeField] private int _maxClientsEnd = 14;
+    [SerializeField] private int _maxClientsEnd = 12;
 
     [Header("Clientes: pesos tamaños grupo [1,2,3,4]")]
     [SerializeField] private float[] _groupWeightsStart = { 20f, 45f, 25f, 10f };
@@ -41,14 +41,17 @@ public class DifficultyManager : MonoBehaviour
 
     private ClientSpawner _spawner;
     private bool _subscribedDay;
+    private DifficultyParams _params;
+    private DifficultySnapshot _snapshot;
+    private bool _hasSnapshot;
 
-    public float Difficulty01 { get; private set; }
+    public float Difficulty01 => Snapshot().difficulty01;
 
-    public float SpawnInterval => Mathf.Lerp(_spawnIntervalStart, _spawnIntervalEnd, Difficulty01);
-    public int MaxClients => Mathf.RoundToInt(Mathf.Lerp(_maxClientsStart, _maxClientsEnd, Difficulty01));
-    public float EventMultiplier => Mathf.Lerp(_eventChanceStart, _eventChanceEnd, Difficulty01);
-    public float SpecialMultiplier => Mathf.Lerp(_specialChanceStart, _specialChanceEnd, Difficulty01);
-    public int ExtraSpecialsPerDay => Mathf.RoundToInt(_extraSpecialsPerDayEnd * Difficulty01);
+    public float SpawnInterval => Snapshot().spawnInterval;
+    public int MaxClients => Snapshot().maxClients;
+    public float EventMultiplier => Snapshot().eventMultiplier;
+    public float SpecialMultiplier => Snapshot().specialMultiplier;
+    public int ExtraSpecialsPerDay => Snapshot().extraSpecialsPerDay;
     public bool SpecialsUnlocked
     {
         get
@@ -90,6 +93,41 @@ public class DifficultyManager : MonoBehaviour
             Debug.LogWarning("[DifficultyManager] _groupSizeUnlockDays debe tener 4 valores. Uso los por defecto.");
             _groupSizeUnlockDays = new int[] { 1, 2, 4, 6 };
         }
+
+        _params = BuildParams();
+    }
+
+    private DifficultyParams BuildParams() => new DifficultyParams
+    {
+        dayWeight = _dayWeight,
+        starsWeight = _starsWeight,
+        daySaturatesAt = _daySaturatesAt,
+        spawnIntervalStart = _spawnIntervalStart,
+        spawnIntervalEnd = _spawnIntervalEnd,
+        maxClientsStart = _maxClientsStart,
+        maxClientsEnd = _maxClientsEnd,
+        groupWeightsStart = _groupWeightsStart,
+        groupWeightsEnd = _groupWeightsEnd,
+        groupSizeUnlockDays = _groupSizeUnlockDays,
+        eventChanceStart = _eventChanceStart,
+        eventChanceEnd = _eventChanceEnd,
+        specialChanceStart = _specialChanceStart,
+        specialChanceEnd = _specialChanceEnd,
+        extraSpecialsPerDayEnd = _extraSpecialsPerDayEnd,
+        minPlayingDayForSpecials = _minPlayingDayForSpecials,
+    };
+
+    private DifficultySnapshot Snapshot()
+    {
+        if (!_hasSnapshot)
+        {
+            if (_params == null) _params = BuildParams();
+            int day = SaveManager.Instance != null ? SaveManager.Instance.CurrentDay : 0;
+            float stars = SaveManager.Instance != null ? SaveManager.Instance.Stars : 0f;
+            _snapshot = DifficultyCurve.Evaluate(_params, day, stars);
+            _hasSnapshot = true;
+        }
+        return _snapshot;
     }
 
     private void Start()
@@ -120,67 +158,30 @@ public class DifficultyManager : MonoBehaviour
     }
 
     [ContextMenu("Recalcular y aplicar dificultad")]
-    private void RefreshAndApply()
+    public void RefreshAndApply()
     {
+        _params = BuildParams();
         int day = SaveManager.Instance != null ? SaveManager.Instance.CurrentDay : 0;
         float stars = SaveManager.Instance != null ? SaveManager.Instance.Stars : 0f;
-
-        float dayT = _daySaturatesAt <= 0f ? 1f : Mathf.Clamp01(day / _daySaturatesAt);
-        float starsT = Mathf.Clamp01(stars / 5f);
-        Difficulty01 = Mathf.Clamp01(dayT * _dayWeight + starsT * _starsWeight);
+        _snapshot = DifficultyCurve.Evaluate(_params, day, stars);
+        _hasSnapshot = true;
 
         if (_spawner == null) _spawner = FindFirstObjectByType<ClientSpawner>();
         if (_spawner != null)
         {
-            _spawner.spawnInterval = SpawnInterval;
-            _spawner.maxClients = MaxClients;
-            float[] weights = LerpWeights();
-            ApplyGroupUnlocks(weights);
-            _spawner.groupSizeWeights = weights;
+            _spawner.spawnInterval = _snapshot.spawnInterval;
+            _spawner.maxClients = _snapshot.maxClients;
+            _spawner.groupSizeWeights = _snapshot.groupWeights;
         }
 
-        Debug.Log($"[DifficultyManager] Día {day} ({stars:0.##}★) → dificultad {Difficulty01:0.00}: " +
+        Debug.Log($"[DifficultyManager] Día {day} ({stars:0.##}★) → dificultad {_snapshot.difficulty01:0.00}: " +
                   $"spawn cada {SpawnInterval:0.#}s, máx {MaxClients} clientes, grupos hasta {MaxUnlockedGroupSize()}, " +
                   $"eventos x{EventMultiplier:0.##}, especiales x{SpecialMultiplier:0.##} (+{ExtraSpecialsPerDay}).");
-    }
-
-    // pone a 0 el peso de los tamaños aún no desbloqueados según el día jugado
-    private void ApplyGroupUnlocks(float[] weights)
-    {
-        int playingDay = (SaveManager.Instance != null ? SaveManager.Instance.CurrentDay : 0) + 1;
-        int firstAvailable = -1;
-
-        for (int i = 0; i < weights.Length; i++)
-        {
-            int unlockDay = Mathf.Max(1, _groupSizeUnlockDays[i]);
-            if (playingDay < unlockDay)
-                weights[i] = 0f;
-            else if (firstAvailable < 0)
-                firstAvailable = i;
-        }
-
-        // el calendario no puede dejar al spawner sin tamaños posibles
-        if (firstAvailable < 0)
-            weights[0] = 1f;
-        else if (weights[firstAvailable] <= 0f)
-            weights[firstAvailable] = 1f;
     }
 
     public int MaxUnlockedGroupSize()
     {
         int playingDay = (SaveManager.Instance != null ? SaveManager.Instance.CurrentDay : 0) + 1;
-        int max = 1;
-        for (int i = 0; i < _groupSizeUnlockDays.Length; i++)
-            if (playingDay >= Mathf.Max(1, _groupSizeUnlockDays[i]))
-                max = i + 1;
-        return max;
-    }
-
-    private float[] LerpWeights()
-    {
-        var w = new float[4];
-        for (int i = 0; i < 4; i++)
-            w[i] = Mathf.Lerp(_groupWeightsStart[i], _groupWeightsEnd[i], Difficulty01);
-        return w;
+        return DifficultyCurve.MaxUnlockedGroupSize(playingDay, _groupSizeUnlockDays);
     }
 }

@@ -95,7 +95,8 @@ public class DayManager : MonoBehaviour
         OnDayProgress?.Invoke(DayProgress);
     }
 
-    private void StartWindDown()
+    // internal: los tests lo usan para llegar al cierre sin esperar el timer
+    internal void StartWindDown()
     {
         IsWindingDown = true;
         if (Client.ActiveCount > 0)

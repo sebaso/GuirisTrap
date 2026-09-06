@@ -20,7 +20,7 @@ public class Client : MonoBehaviour
     }
 
     public State CurrentState { get; private set; } = State.WalkingToEntrance;
-    public float maxPatience = 60f;
+    public float maxPatience = 90f;
     public float maxQueuePatience = 45f;
     public float eatDuration = 8f;
     public int money;
@@ -295,8 +295,11 @@ public class Client : MonoBehaviour
 
         SetState(State.Eating);
         AudioManager.Instance?.PlaySFX("client_eating");
-        Debug.Log($"[Client] Food received! Eating... (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
-        StartCoroutine(EatCoroutine());
+        // En edit mode no hay player loop que avance la corrutina: terminar al instante.
+        if (Application.isPlaying)
+            StartCoroutine(EatCoroutine());
+        else
+            FinishEating();
     }
 
     private IEnumerator EatCoroutine()
@@ -379,7 +382,7 @@ public class Client : MonoBehaviour
 
     private void WalkTo(Vector3 destination)
     {
-        if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
+        if (_agent != null && _agent.isActiveAndEnabled && _agent.isOnNavMesh)
         {
             _agent.isStopped = false;
             _agent.SetDestination(destination);
@@ -389,12 +392,12 @@ public class Client : MonoBehaviour
 
     private void Freeze()
     {
-        if (_agent.isActiveAndEnabled && _agent.isOnNavMesh)
+        if (_agent != null && _agent.isActiveAndEnabled && _agent.isOnNavMesh)
         {
             _agent.ResetPath();
             _agent.isStopped = true;
         }
-        _agent.velocity = Vector3.zero;
+        if (_agent != null) _agent.velocity = Vector3.zero;
         _hasStartedWalking = false;
     }
 
@@ -433,6 +436,7 @@ public class Client : MonoBehaviour
     {
         CurrentState = newState;
         _timeStateEntered = Time.time;
+        // _agent puede ser null si Awake no corrió (herramientas de editor)
         if (_agent != null)
             _agent.avoidancePriority = IsStationaryState(newState)
                 ? StationaryAvoidancePriority
