@@ -28,6 +28,14 @@ public class PlayerController : ControllableMonoBehaviour
     public float promptPopupSpeed = 12f; // Velocidad del escalado suave
     private bool isNearInteractable = false;
     private Vector3 originalPromptScale;
+    [Header("Animation")]
+    [Tooltip("Ajuste si el modelo mira hacia otro lado al andar (grados).")]
+    [SerializeField] private float _modelYawOffset = 0f;
+    [SerializeField] private float _turnSpeed = 12f;
+    [Tooltip("Segundos clavado en el sitio al servir, para que el gesto se vea.")]
+    [SerializeField] private float _serveFreezeSeconds = 0.6f;
+    private Animator _animator;
+    private float _freezeTimer;
     [Header("Furniture Carry — Colocación")]
     [SerializeField] 
     private FloorGridProjection _floorProjection;
@@ -41,6 +49,7 @@ public class PlayerController : ControllableMonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        _animator = GetComponentInChildren<Animator>();
 
         if (holdPoint == null)
         {
@@ -59,9 +68,12 @@ public class PlayerController : ControllableMonoBehaviour
 
     void FixedUpdate()
     {
-        if (_movementLocked)
+        if (_freezeTimer > 0f)
+            _freezeTimer = Mathf.Max(0f, _freezeTimer - Time.fixedDeltaTime);
+
+        if (_movementLocked || _freezeTimer > 0f)
         {
-            // Frena en seco durante el minijuego (conserva gravedad en Y).
+            // Frena en seco durante el minijuego o el gesto de servir (conserva gravedad en Y).
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         }
         else
@@ -79,6 +91,8 @@ public class PlayerController : ControllableMonoBehaviour
         Vector3 horiz = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (horiz.sqrMagnitude > 0.01f) _lastFacing = horiz.normalized;
 
+        UpdateAnimation(horiz);
+
         if (interactPrompt != null)
     {
         Vector3 targetScale = isNearInteractable ? originalPromptScale : Vector3.zero;
@@ -91,6 +105,34 @@ public class PlayerController : ControllableMonoBehaviour
 
         if (_heldPlaceable != null) UpdateCarryPreview();
     }
+
+    // ── Animation ─────────────────────────────────────────────────────────
+
+    private void UpdateAnimation(Vector3 horizVelocity)
+    {
+        if (_animator == null) return;
+
+        // El blend tree espera 0=parado, 1=andar, 2=correr; solo hay una
+        // velocidad de movimiento, así que la aceleración recorre 0→2.
+        _animator.SetFloat(ClientAnimationParams.Speed,
+            Mathf.Clamp01(horizVelocity.magnitude / speed) * 2f);
+
+        if (horizVelocity.sqrMagnitude > 0.1f)
+        {
+            Quaternion target = Quaternion.LookRotation(horizVelocity.normalized)
+                              * Quaternion.Euler(0f, _modelYawOffset, 0f);
+            _animator.transform.rotation = Quaternion.Slerp(
+                _animator.transform.rotation, target, Time.fixedDeltaTime * _turnSpeed);
+        }
+    }
+
+    /// <summary>Dispara un trigger del Animator del jugador
+    /// (Recoger, Servir, Barrer, Cortar, Cocinar).</summary>
+    public void PlayAction(string trigger) => _animator?.SetTrigger(trigger);
+
+    /// <summary>Mantiene el estado de portar bandeja: con true el Animator pasa
+    /// al estado Carry (loop de 05_BANDEJA) en vez de volver a Locomotion.</summary>
+    public void SetCarrying(bool carrying) => _animator?.SetBool("Carrying", carrying);
 
     // ── ControllableMonoBehaviour ─────────────────────────────────────────
 
@@ -217,6 +259,7 @@ public class PlayerController : ControllableMonoBehaviour
         // Limpiar una caca de gaviota con la fregona.
         if (bestCaca != null && bestCacaDist <= bestStorageDist && bestCacaDist <= bestEspetoDist && bestCacaDist <= bestStationDist && bestCacaDist <= bestFoodDist && bestCacaDist <= bestFregSopDist)
         {
+            PlayAction("Barrer");
             bestCaca.LimpiarConFregona(); return;
         }
         // Devolver la fregona a su soporte.
@@ -262,6 +305,7 @@ public class PlayerController : ControllableMonoBehaviour
         if (heldFood == null) return;
         Destroy(heldFood.gameObject);
         heldFood = null;
+        SetCarrying(false);
     }
 
     // ── Pickup System ─────────────────────────────────────────────────────
@@ -288,11 +332,11 @@ public class PlayerController : ControllableMonoBehaviour
             if (f != null && !f.IsBeingHeld && !f.IsServed && dist < bestFoodDist) { bestFood = f; bestFoodDist = dist; }
         }
 
-        if (bestFood != null) { PickUpFood(bestFood); return true; }
+        if (bestFood != null) { PickUpFood(bestFood); PlayAction("Recoger"); SetCarrying(true); return true; }
         if (bestKitchen != null)
         {
             Food newFood = bestKitchen.GetFood();
-            if (newFood != null) { PickUpFood(newFood); return true; }
+            if (newFood != null) { PickUpFood(newFood); SetCarrying(true); return true; }
         }
         return false;
     }
@@ -325,6 +369,7 @@ public class PlayerController : ControllableMonoBehaviour
         // against a group's order by reference (never by foodName string).
         food.recipe = source != null ? source : RecipeCatalogue.Instance?.FindByPrefab(foodPrefab);
         PickUpFood(food);
+        SetCarrying(true);
         return food;
     }
 
@@ -356,6 +401,9 @@ public class PlayerController : ControllableMonoBehaviour
                 if (table.PlaceFood(heldFood))
                 {
                     heldFood = null;
+                    SetCarrying(false);
+                    PlayAction("Servir");
+                    _freezeTimer = _serveFreezeSeconds;
                     Debug.Log("Placed food on table");
                 }
                 return;
@@ -370,6 +418,7 @@ public class PlayerController : ControllableMonoBehaviour
         if (heldFood == null) return;
         heldFood.Drop();
         heldFood = null;
+        SetCarrying(false);
     }
 
     // ── Furniture Carry ───────────────────────────────────────────────────
@@ -434,6 +483,7 @@ public class PlayerController : ControllableMonoBehaviour
         }
 
         _heldPlaceable = best;
+        PlayAction("Recoger");
 
         Collider c = best.GetComponent<Collider>();
         if (c != null) c.enabled = false;
