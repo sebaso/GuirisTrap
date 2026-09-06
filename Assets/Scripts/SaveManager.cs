@@ -108,6 +108,9 @@ public class SaveManager : MonoBehaviour
         catch
         {
             Debug.LogWarning("[SaveManager] Failed to read save file, starting fresh.");
+            // fuera: con HasSaveFile como guardia de restauración, un fichero
+            // corrupto reportaría saldo/día vacíos en vez de partida nueva.
+            if (File.Exists(SavePath)) File.Delete(SavePath);
             _data = new SaveData();
         }
     }

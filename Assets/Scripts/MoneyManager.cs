@@ -104,13 +104,13 @@ public class MoneyManager : MonoBehaviour
     /// juego) al saldo vivo del MoneyManager. Es el paso de "lectura" del
     /// traspaso gameplay → escena de planificación.
     ///
-    /// Solo sobrescribe si hay una partida guardada válida (día &gt; 0); en caso
-    /// contrario se mantiene el saldo inicial.
+    /// Solo sobrescribe si hay partida guardada en disco; sin fichero (partida
+    /// nueva) se mantiene el saldo inicial.
     /// </summary>
     public void RestoreFromSave()
     {
         if (SaveManager.Instance == null) return;
-        if (SaveManager.Instance.CurrentDay <= 0) return;
+        if (!SaveManager.Instance.HasSaveFile) return;
 
         // SetMoney avisa a la UI con el delta real. Usamos OnMoneyChanged sin
         // delta para no disparar popups de "+0€" cuando el saldo no cambia.
