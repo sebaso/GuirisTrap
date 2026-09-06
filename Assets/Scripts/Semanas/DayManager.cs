@@ -16,7 +16,9 @@ public class DayManager : MonoBehaviour
 
     [Header("Cierre")]
     [Tooltip("Tecla para cerrar el día sin esperar a que se vayan todos los clientes.")]
-    [SerializeField] private Key _forceEndDayKey = Key.F10;
+    // End en vez de una F-key: los escritorios (KDE abre el menú con F10) y los
+    // portátiles (F-keys con Fn) se comen las teclas de función.
+    [SerializeField] private Key _forceEndDayKey = Key.End;
 
     private float _timeRemaining;
     private bool _isDayActive;
@@ -66,6 +68,12 @@ public class DayManager : MonoBehaviour
     }
     void Start()
     {
+        // Un timeScale 0 arrastrado de la sesión anterior (p.ej. salir de play
+        // con el panel de stats abierto, que pone timeScale a 0) congelaba el
+        // Invoke de StartDay —que va en tiempo ESCALADO— y el spawner: el día
+        // no arrancaba nunca. GameScene carga siempre con el tiempo en marcha.
+        Time.timeScale = 1f;
+
         if (_autoStart)
             Invoke(nameof(StartDay), _startDelay);
     }
@@ -110,7 +118,17 @@ public class DayManager : MonoBehaviour
     private void FinishDay()
     {
         IsWindingDown = false;
-        WeekManager.Instance?.OnDayCompleted();
+
+        // Si el cierre del día explota, el día queda pegado para siempre
+        // (IsWindingDown ya es false): el panel tiene que salir SIEMPRE.
+        try
+        {
+            WeekManager.Instance?.OnDayCompleted();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[DayManager] OnDayCompleted falló, se cierra el día igualmente: {e}");
+        }
 
         OnDayEnded?.Invoke();
         HandleDayEnd();
@@ -122,8 +140,15 @@ public class DayManager : MonoBehaviour
         if (IsWindingDown) FinishDay();
     }
 
-    [ContextMenu("Forzar fin del día")]
-    private void DebugForceEndDay() => ForceEndDay();
+    [ContextMenu("DEBUG: Terminar el día ya")]
+    private void DebugEndDayNow()
+    {
+        // Fin instantáneo desde cualquier punto del día: corta el timer y
+        // lanza el cierre (stats + panel) sin esperar al wind-down.
+        _timeRemaining = 0f;
+        _isDayActive = false;
+        FinishDay();
+    }
 
     private bool ForceEndPressed()
         => Keyboard.current != null && Keyboard.current[_forceEndDayKey].wasPressedThisFrame;

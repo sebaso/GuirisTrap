@@ -151,7 +151,9 @@ public class Client : MonoBehaviour
 
             case State.Leaving:
             case State.Angry:
-                if (HasReachedDestination())
+                // HasTimedOut evita clientes atascados que bloquean el wind-down
+                // (p.ej. agente fuera del navmesh: WalkTo no-op y nunca llegan).
+                if (HasReachedDestination() || HasTimedOut())
                     Destroy(gameObject);
                 break;
         }
@@ -234,7 +236,7 @@ public class Client : MonoBehaviour
     {
         Freeze();
         transform.position = _seatPoint.position;
-        _modelPivot.localPosition = _activeSeatOffset;
+        if (_modelPivot != null) _modelPivot.localPosition = _activeSeatOffset;
 
         if (_assignedTable != null)
         {
@@ -409,7 +411,7 @@ public class Client : MonoBehaviour
     private IEnumerator StandUpAndLeave(float angryBeat)
     {
         Freeze();
-        _modelPivot.localPosition = Vector3.zero;
+        if (_modelPivot != null) _modelPivot.localPosition = Vector3.zero;
 
         if (angryBeat > 0f)
         {

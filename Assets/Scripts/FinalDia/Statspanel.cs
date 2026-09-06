@@ -27,6 +27,10 @@ public class StatsPanel : MonoBehaviour
     [Header("Botón siguiente día")]
     [SerializeField] private Button _nextDayButton;
 
+    [Header("Demo")]
+    [Tooltip("Último día jugable: al completarlo se muestra la pantalla final en vez de volver a preparación.")]
+    [SerializeField] private int _demoLastDay = 7;
+
     [Header("Colores de la nota")]
     [SerializeField] private Color _gradeAColor = new Color(0.20f, 0.80f, 0.20f);
     [SerializeField] private Color _gradeBColor = new Color(0.50f, 0.80f, 0.20f);
@@ -242,14 +246,51 @@ public class StatsPanel : MonoBehaviour
         InputManager.Instance?.ExitPause();
 
         AudioManager.Instance?.PlaySFX("next_day");
-        AudioManager.Instance?.StopMusic(); 
+        AudioManager.Instance?.StopMusic();
 
         if (SaveManager.Instance != null)
+        {
             SaveManager.Instance.IncrementDayAndSave();
+
+            // Demo de una semana: completado el último día, pantalla final
+            // en vez de volver a preparación.
+            if (SaveManager.Instance.CurrentDay >= _demoLastDay)
+            {
+                ShowRoot(false);
+                GameOverScreen.Show();
+                return;
+            }
+        }
 
         if (SceneController.Instance != null)
             SceneController.Instance.ChangeScene("PreparationScene");
         else
             Debug.LogError("[StatsPanel] SceneController no encontrado.");
+    }
+
+    [ContextMenu("DEBUG: Terminar la semana y ver el final de la demo")]
+    private void DebugEndWeekAndShowGameOver()
+    {
+        if (SaveManager.Instance == null)
+        {
+            Debug.LogError("[StatsPanel] No hay SaveManager; no se puede cerrar la semana.");
+            return;
+        }
+
+        // Cierra días hasta el último de la demo: cada cierre registra la nota
+        // y las stats del día (WeekManager) y avanza CurrentDay. El día en curso
+        // se cierra con lo que lleva; los saltados quedan a cero.
+        while (SaveManager.Instance.CurrentDay < _demoLastDay)
+        {
+            WeekManager.Instance?.OnDayCompleted();
+            SaveManager.Instance.IncrementDayAndSave();
+            DayReport.Instance?.ResetCounters();
+        }
+
+        // Congela lo que quede de día detrás del overlay; el botón del final
+        // devuelve al menú y reactiva el tiempo.
+        Time.timeScale = 0f;
+        ShowRoot(false);
+        GameOverScreen.Show();
     }
 }

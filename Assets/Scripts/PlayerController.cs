@@ -34,6 +34,9 @@ public class PlayerController : ControllableMonoBehaviour
     [SerializeField] private float _turnSpeed = 12f;
     [Tooltip("Segundos clavado en el sitio al servir, para que el gesto se vea.")]
     [SerializeField] private float _serveFreezeSeconds = 0.6f;
+    [Tooltip("Bandeja en la mano del personaje (pivote en la mano, colócala a mano): " +
+             "solo se ve mientras el jugador lleva comida.")]
+    [SerializeField] private GameObject _trayVisual;
     private Animator _animator;
     private float _freezeTimer;
     [Header("Furniture Carry — Colocación")]
@@ -50,6 +53,7 @@ public class PlayerController : ControllableMonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         _animator = GetComponentInChildren<Animator>();
+        _trayVisual?.SetActive(false);
 
         if (holdPoint == null)
         {
@@ -132,7 +136,12 @@ public class PlayerController : ControllableMonoBehaviour
 
     /// <summary>Mantiene el estado de portar bandeja: con true el Animator pasa
     /// al estado Carry (loop de 05_BANDEJA) en vez de volver a Locomotion.</summary>
-    public void SetCarrying(bool carrying) => _animator?.SetBool("Carrying", carrying);
+    public void SetCarrying(bool carrying)
+    {
+        _animator?.SetBool("Carrying", carrying);
+        if (_trayVisual != null && _trayVisual.activeSelf != carrying)
+            _trayVisual.SetActive(carrying);
+    }
 
     // ── ControllableMonoBehaviour ─────────────────────────────────────────
 

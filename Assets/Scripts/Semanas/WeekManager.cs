@@ -73,6 +73,24 @@ public class WeekManager : MonoBehaviour
         else
             grades.Add(score);
 
+        // Estadísticas acumuladas de la demo: misma regla de sustitución que
+        // las notas si el día se re-jugó sin pasar al siguiente. Debe leerse
+        // ANTES de sobreescribir LastGradedDay justo abajo.
+        var dayStats = SaveManager.Instance.WeekDayStats;
+        var dayStat = new SaveManager.DayStatData
+        {
+            day       = playingDay,
+            dishes    = DayReport.Instance.DishesServed,
+            satisfied = DayReport.Instance.ClientsSatisfied,
+            angry     = DayReport.Instance.ClientsAngry,
+            earned    = DayReport.Instance.MoneyEarned,
+            score     = score,
+        };
+        if (SaveManager.Instance.LastGradedDay == playingDay && dayStats.Count > 0)
+            dayStats[dayStats.Count - 1] = dayStat;
+        else
+            dayStats.Add(dayStat);
+
         SaveManager.Instance.LastGradedDay = playingDay;
 
         Debug.Log($"[WeekManager] Día {playingDay} ({GetDayName(playingDay)}) → nota {ScoreToGrade(score)}. " +

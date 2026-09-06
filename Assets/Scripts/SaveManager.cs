@@ -32,6 +32,17 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    // Estadísticas por día acumuladas de la demo (no se limpiaron al cerrar semana).
+    public System.Collections.Generic.List<DayStatData> WeekDayStats
+    {
+        get
+        {
+            if (_data.weekDayStats == null)
+                _data.weekDayStats = new System.Collections.Generic.List<DayStatData>();
+            return _data.weekDayStats;
+        }
+    }
+
     public int LastGradedDay
     {
         get => _data.lastGradedDay;
@@ -198,6 +209,19 @@ public class SaveManager : MonoBehaviour
                   $"stars {_data.stars:0.##}, zonas {(_data.zones != null ? _data.zones.Length : 0)}, celdas {totalCells} → {SavePath}");
     }
 
+    /// <summary>Estadísticas de un día jugado, acumuladas para la demo.
+    /// score es la nota 0-5 (A=5). Persiste en el save.</summary>
+    [System.Serializable]
+    public class DayStatData
+    {
+        public int day;
+        public int dishes;
+        public int satisfied;
+        public int angry;
+        public int earned;
+        public int score;
+    }
+
     [System.Serializable]
     public class SaveData
     {
@@ -206,6 +230,7 @@ public class SaveManager : MonoBehaviour
         public float stars;
         public int lastGradedDay = -1;
         public System.Collections.Generic.List<int> weekGrades = new System.Collections.Generic.List<int>();
+        public System.Collections.Generic.List<DayStatData> weekDayStats = new System.Collections.Generic.List<DayStatData>();
 
         public ZoneSaveData[] zones;
         public ItemCountData[] ownedItems;
