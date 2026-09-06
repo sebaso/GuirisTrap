@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         }
 
         PlacementAxis axis = GridManager.AxisForView(view);
-        if (!GridManager.PlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, axis, baseRot))
+        if (!GridManager.CanPlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, axis))
             return;
 
         Vector3 worldPos = basePos + baseRot * itemData.placementOffset;
@@ -131,6 +131,9 @@ public class GameManager : MonoBehaviour
         placeable.InstancePlaceableObjectCreated(cell, view);
 
         registry.Register(cell, placeable);
+
+        GridManager.PlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, axis, baseRot);
+
         inv.RemoveItem(posX, posY);
     }
 }
