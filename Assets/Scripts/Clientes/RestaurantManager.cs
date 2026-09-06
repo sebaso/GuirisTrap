@@ -37,6 +37,10 @@ public class RestaurantManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
     void Start()
     {
         SyncPlacedTables();

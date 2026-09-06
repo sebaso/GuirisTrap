@@ -60,6 +60,10 @@ public class DayManager : MonoBehaviour
 
 
 
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
     void Start()
     {
         if (_autoStart)

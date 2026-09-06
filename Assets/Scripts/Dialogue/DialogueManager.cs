@@ -31,6 +31,10 @@ public class DialogueManager : MonoBehaviour
         _dialoguePanel.SetActive(false);
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
     void OnEnable()
     {
         DialogueReaction.OnDialogueReactionStart += ShowDialogue;
