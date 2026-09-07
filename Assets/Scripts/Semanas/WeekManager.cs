@@ -80,10 +80,11 @@ public class WeekManager : MonoBehaviour
 
         if (grades.Count >= DaysPerWeek)
             CloseWeek(playingDay);
-    }
+     }
 
     private void CloseWeek(int playingDay)
     {
+        Debug.Log("Se cierra la semana");
         List<int> grades = SaveManager.Instance.WeekGrades;
 
         float sum = 0f;

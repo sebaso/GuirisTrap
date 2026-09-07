@@ -7,6 +7,7 @@ public class StatsPanel : MonoBehaviour
 {
     [Header("Panel raíz")]
     [SerializeField] private GameObject _panelRoot;
+    [SerializeField] private GameObject _dailyStatsPanel;
 
     [Header("Textos")]
     [SerializeField] private TMP_Text _dayNumberText;
@@ -37,6 +38,8 @@ public class StatsPanel : MonoBehaviour
 
     [Header("Botón siguiente día")]
     [SerializeField] private Button _nextDayButton;
+    [SerializeField] private TMP_Text _nextDayButtonLabel;
+    private bool _awaitingWeekSummaryTap = false;
 
     [Header("Colores de la nota")]
     [SerializeField] private Color _gradeAColor = new Color(0.20f, 0.80f, 0.20f);
@@ -72,9 +75,6 @@ public class StatsPanel : MonoBehaviour
     private void OnEnable()
     {
         TrySubscribe();
-
-        if (_nextDayButton != null)
-            _nextDayButton.onClick.AddListener(OnNextDayButton);
     }
 
     private void OnDisable()
@@ -83,8 +83,7 @@ public class StatsPanel : MonoBehaviour
             DayManager.Instance.OnDayEnded -= ShowPanel;
         _subscribed = false;
 
-        if (_nextDayButton != null)
-            _nextDayButton.onClick.RemoveListener(OnNextDayButton);
+        _nextDayButton?.onClick.RemoveAllListeners();
     }
 
     private void Update()
@@ -129,6 +128,8 @@ public class StatsPanel : MonoBehaviour
 
     private void Populate()
     {
+        _dailyStatsPanel?.SetActive(true);
+
         DayReport report = DayReport.Instance;
 
         if (_dayNumberText != null && SaveManager.Instance != null)
@@ -171,22 +172,42 @@ public class StatsPanel : MonoBehaviour
         if (_balanceText != null && MoneyManager.Instance != null)
             _balanceText.text = $"{MoneyManager.Instance.CurrentMoney}€";
 
+        bool weekJustEnded = WeekManager.Instance != null && WeekManager.Instance.WeekJustEnded;
+
         PopulateWeekSection();
+        SetupNextDayButton();
     }
 
-    /// <summary>
-    /// Rellena la sección de fin de semana. Solo se muestra si el día que
-    /// acaba de terminar cerró una semana (WeekManager.WeekJustEnded).
-    /// Todos los campos son opcionales: si no están asignados, no pasa nada.
-    /// </summary>
+    private void SetupNextDayButton()
+    {
+        if (_nextDayButton == null) return;
+
+        _nextDayButton.onClick.RemoveAllListeners();
+
+        bool weekJustEnded = WeekManager.Instance != null && WeekManager.Instance.WeekJustEnded;
+
+        if (weekJustEnded)
+        {
+            _awaitingWeekSummaryTap = true;
+            if (_nextDayButtonLabel != null) _nextDayButtonLabel.text = "Resumen Semanal";
+            _nextDayButton.onClick.AddListener(OnViewWeekSummaryButton);
+        }
+        else
+        {
+            _awaitingWeekSummaryTap = false;
+            if (_nextDayButtonLabel != null) _nextDayButtonLabel.text = "Siguiente Día";
+            _nextDayButton.onClick.AddListener(OnNextDayButton);
+        }
+    }
     private void PopulateWeekSection()
     {
         if (_weekResultRoot == null) return;
 
         WeekManager week = WeekManager.Instance;
-        bool show = week != null && week.WeekJustEnded;
-        _weekResultRoot.SetActive(show);
-        if (!show) return;
+        bool weekJustEnded = week != null && week.WeekJustEnded;
+
+        _weekResultRoot.SetActive(false);
+        if (!weekJustEnded) return;
 
         WeekResult r = week.LastResult;
 
@@ -209,6 +230,17 @@ public class StatsPanel : MonoBehaviour
             _weekBonusText.text = r.moneyBonus > 0 ? $"BONUS: +{r.moneyBonus}€" : string.Empty;
     }
 
+    private void OnViewWeekSummaryButton()
+    {
+        _awaitingWeekSummaryTap = false;
+        if (_dailyStatsPanel != null) _dailyStatsPanel.SetActive(false); // ← nuevo
+        _weekResultRoot.SetActive(true);
+        if (_nextDayButtonLabel != null) _nextDayButtonLabel.text = "SIGUIENTE SEMANA";
+
+        _nextDayButton.onClick.RemoveAllListeners();
+        _nextDayButton.onClick.AddListener(OnNextDayButton);
+    }
+    
     // Muestra/oculta el panel sin desactivar nunca el objeto que tiene el script.
     private void ShowRoot(bool visible)
     {
