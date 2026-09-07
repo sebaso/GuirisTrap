@@ -15,14 +15,25 @@ public class StatsPanel : MonoBehaviour
     [SerializeField] private TMP_Text _moneySpentText;
     [SerializeField] private TMP_Text _netMoneyText;
     [SerializeField] private TMP_Text _clientsSatisfiedText;
-    [SerializeField] private TMP_Text _gradeText;
     [SerializeField] private TMP_Text _balanceText;
+
+    [Header("Nota del día")]
+    [SerializeField] private Image _gradeImage;
 
     [Header("Resumen semanal")]
     [SerializeField] private GameObject _weekResultRoot;
     [SerializeField] private TMP_Text _weekAverageText;
+    [SerializeField] private Image _weekAverageGradeImage;
     [SerializeField] private TMP_Text _weekStarsText;
     [SerializeField] private TMP_Text _weekBonusText;
+
+    [Header("Sprites de nota (A-F)")]
+    [SerializeField] private Sprite _gradeASprite;
+    [SerializeField] private Sprite _gradeBSprite;
+    [SerializeField] private Sprite _gradeCSprite;
+    [SerializeField] private Sprite _gradeDSprite;
+    [SerializeField] private Sprite _gradeESprite;
+    [SerializeField] private Sprite _gradeFSprite;
 
     [Header("Botón siguiente día")]
     [SerializeField] private Button _nextDayButton;
@@ -146,11 +157,10 @@ public class StatsPanel : MonoBehaviour
             if (_clientsSatisfiedText != null)
                 _clientsSatisfiedText.text = $"{report.ClientsSatisfied}/{report.TotalClients}";
 
-            if (_gradeText != null)
+            if (_gradeImage != null)
             {
                 char grade = report.GetGrade();
-                _gradeText.text  = grade.ToString();
-                _gradeText.color = GetGradeColor(grade);
+                _gradeImage.sprite = GetGradeSprite(grade);
             }
         }
         else
@@ -181,10 +191,10 @@ public class StatsPanel : MonoBehaviour
         WeekResult r = week.LastResult;
 
         if (_weekAverageText != null)
-        {
-            _weekAverageText.text  = $"FIN DE SEMANA {r.weekNumber} · MEDIA: {r.averageGrade}";
-            _weekAverageText.color = GetGradeColor(r.averageGrade);
-        }
+            _weekAverageText.text = $"FIN DE SEMANA {r.weekNumber}";
+
+        if (_weekAverageGradeImage != null)
+            _weekAverageGradeImage.sprite = GetGradeSprite(r.averageGrade);
 
         if (_weekStarsText != null)
         {
@@ -220,15 +230,16 @@ public class StatsPanel : MonoBehaviour
         }
     }
 
-    private Color GetGradeColor(char grade)
+    private Sprite GetGradeSprite(char grade)
     {
         switch (grade)
         {
-            case 'A': return _gradeAColor;
-            case 'B': return _gradeBColor;
-            case 'C': return _gradeCColor;
-            case 'D': return _gradeDColor;
-            default:  return _gradeFColor; // E y F en rojo
+            case 'A': return _gradeASprite;
+            case 'B': return _gradeBSprite;
+            case 'C': return _gradeCSprite;
+            case 'D': return _gradeDSprite;
+            case 'E': return _gradeESprite;
+            default:  return _gradeFSprite;
         }
     }
 
