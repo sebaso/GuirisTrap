@@ -609,17 +609,19 @@ public class PlayerController : ControllableMonoBehaviour
         bool overlapsFurniture = Physics.CheckSphere(snappedWorld, dropCheckRadius, _furnitureObstacleMask);
 
         _dropValid = withinRoom && !overlapsFurniture;
-        _dropTargetPos = snappedWorld;
         _dropTargetRot = Quaternion.LookRotation(_lastFacing, Vector3.up);
+
+        PlaceableItemData item = _heldPlaceable.GetItemData();
+        Vector3 offset = item != null ? _dropTargetRot * item.placementOffset : Vector3.zero;
+        _dropTargetPos = snappedWorld + offset;
 
         if (_ghost != null)
         {
-            _ghost.transform.position = snappedWorld;
+            _ghost.transform.position = _dropTargetPos;
             _ghost.transform.rotation = _dropTargetRot;
             TintGhost(_dropValid ? GhostOk : GhostBad);
         }
     }
-    
     private void OnDestroy()
     {
         if (_ghost != null) Destroy(_ghost);
