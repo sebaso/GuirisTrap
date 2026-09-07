@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// World-space "order bubble" floating above a table, showing what the seated
@@ -89,7 +89,7 @@ public class OrderBubble : MonoBehaviour
         textRt.offsetMin = new Vector2(14f, 10f);   // left, bottom padding in px
         textRt.offsetMax = new Vector2(-14f, -10f); // right, top padding in px
         orderText = textGo.GetComponent<TextMeshProUGUI>();
-        orderText.enableWordWrapping = true;
+        orderText.textWrappingMode = TextWrappingModes.Normal;
         orderText.alignment = TextAlignmentOptions.Center;
         orderText.fontSize = 28f;
         orderText.richText = true;

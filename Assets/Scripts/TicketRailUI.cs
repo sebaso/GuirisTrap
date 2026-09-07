@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Screen-space panel listing every active order (one ticket per seated group
@@ -131,7 +131,7 @@ public class TicketRailUI : MonoBehaviour
             child.transform.SetParent(root.transform, false);
             var rt = (RectTransform)child.transform;
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
-            rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);
+            rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);reload window
             text = child.GetComponent<TextMeshProUGUI>();
             // Explicit font size + auto-sizing OFF so the text asset's default
             // atlas size doesn't clamp it to something tiny.
