@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using TMPEffects.Components;
 using UnityEngine.UI;
 
 public class DespensaMinigame : MonoBehaviour, IMinigameControllable
@@ -12,8 +11,6 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
     private TMP_Text timerText;
     [SerializeField]
     private TMP_Text mashText;
-    [SerializeField]
-    private TMPAnimator mashAnimator;
     private float _progress = 0f;
 
     [Header("Settings")]
@@ -66,14 +63,13 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         currentClicks = 0;
         _progress = 0f;
 
-        if (mashAnimator) mashAnimator.ResetTime();
         if (mashText) mashText.transform.localScale = Vector3.one;
         if (timerText) timerText.color = Color.white;
 
         // Empezar con la cuenta atrás, NO jugando todavía. Da margen al jugador
         // para entender el minijuego antes de que corra el tiempo (feedback del profe).
-        isPlaying          = false;
-        isCountingDown     = true;
+        isPlaying = false;
+        isCountingDown = true;
         countdownRemaining = countdownSeconds;
     }
 
@@ -113,7 +109,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
             {
                 if (countdownRemaining > 0f)
                 {
-                    timerText.text  = Mathf.CeilToInt(countdownRemaining).ToString();
+                    timerText.text = Mathf.CeilToInt(countdownRemaining).ToString();
                     timerText.color = Color.white;
                 }
                 else
@@ -125,7 +121,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
             if (countdownRemaining <= 0f)
             {
                 isCountingDown = false;
-                isPlaying      = true; // ahora sí empieza a contar el tiempo
+                isPlaying = true; // ahora sí empieza a contar el tiempo
             }
             return;
         }
@@ -186,7 +182,7 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
         }
     }
 
-    //  IMinigameControllable
+    // IMinigameControllable
 
     public void OnNavigate(Vector2 direction) { }
     public void OnCancel() { }
