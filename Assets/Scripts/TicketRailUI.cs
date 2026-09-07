@@ -131,7 +131,7 @@ public class TicketRailUI : MonoBehaviour
             child.transform.SetParent(root.transform, false);
             var rt = (RectTransform)child.transform;
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
-            rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);reload window
+            rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);
             text = child.GetComponent<TextMeshProUGUI>();
             // Explicit font size + auto-sizing OFF so the text asset's default
             // atlas size doesn't clamp it to something tiny.
