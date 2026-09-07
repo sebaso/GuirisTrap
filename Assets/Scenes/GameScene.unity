@@ -7427,7 +7427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639e5b48b4c8e784fb8d75b088cbd6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  _dayDurationSeconds: 120
+  _dayDurationSeconds: 30
   _autoStart: 1
   _startDelay: 0.5
   _forceEndDayKey: 103
@@ -11430,6 +11430,10 @@ PrefabInstance:
       propertyPath: _gradeESprite
       value: 
       objectReference: {fileID: 21300000, guid: 32be26a5f7707274db609600c4c62cb7, type: 3}
+    - target: {fileID: 4709935318894406624, guid: 5cf078bd363866d4e96922711882452d, type: 3}
+      propertyPath: _gradeFSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6ff1222a88e57484d9714a94ad5fd65a, type: 3}
     - target: {fileID: 4709935318894406624, guid: 5cf078bd363866d4e96922711882452d, type: 3}
       propertyPath: _weekAverageGradeImage
       value: 
