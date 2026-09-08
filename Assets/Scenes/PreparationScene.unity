@@ -538,6 +538,17 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &54564484 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1387831893302610240, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 1569285795}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &58490225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3658,6 +3669,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 324406129}
   m_CullTransparentMesh: 1
+--- !u!114 &328588048 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1387831893302610240, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 1420377437}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &330387193
 GameObject:
   m_ObjectHideFlags: 0
@@ -6928,13 +6950,17 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1861931219}
+      objectReference: {fileID: 1087896477}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -6944,8 +6970,16 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBuyClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: OnButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopItemUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -6954,7 +6988,11 @@ PrefabInstance:
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
@@ -7019,6 +7057,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1087896475}
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1087896477}
     - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 543162834}
@@ -8179,6 +8220,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 626119644}
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 626119646}
     - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 626119643}
@@ -8310,6 +8354,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 626119640}
   m_CullTransparentMesh: 1
+--- !u!114 &626119646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626119640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64c7f12564ea9c46887b3743a0d2a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemUI
+  _itemData: {fileID: 11400000, guid: 3cca875970521f54b9662cf507bbb03e, type: 2}
+  _icon: {fileID: 1964392557}
+  _priceText: {fileID: 1634723210}
+  _button: {fileID: 626119638}
 --- !u!1 &631084601
 GameObject:
   m_ObjectHideFlags: 0
@@ -15084,6 +15144,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &1043371785 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1387831893302610240, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 543162827}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1056230925
 GameObject:
   m_ObjectHideFlags: 0
@@ -15938,6 +16009,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1087896474}
   m_CullTransparentMesh: 1
+--- !u!114 &1087896477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087896474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64c7f12564ea9c46887b3743a0d2a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemUI
+  _itemData: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
+  _icon: {fileID: 1043371785}
+  _priceText: {fileID: 989694172}
+  _button: {fileID: 197858041}
 --- !u!1 &1089242719
 GameObject:
   m_ObjectHideFlags: 0
@@ -20437,6 +20524,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1420377447}
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1420377449}
     - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1420377446}
@@ -20568,6 +20658,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420377443}
   m_CullTransparentMesh: 1
+--- !u!114 &1420377449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420377443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64c7f12564ea9c46887b3743a0d2a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemUI
+  _itemData: {fileID: 11400000, guid: 52d6b1ed32b673d4fbc1d009068858c8, type: 2}
+  _icon: {fileID: 328588048}
+  _priceText: {fileID: 523175938}
+  _button: {fileID: 1420377441}
 --- !u!1 &1431808777
 GameObject:
   m_ObjectHideFlags: 0
@@ -23482,13 +23588,17 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1861931219}
+      objectReference: {fileID: 1569285807}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -23498,8 +23608,16 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBuyClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: OnButtonClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ShopItemUI, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -23508,7 +23626,11 @@ PrefabInstance:
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
+      objectReference: {fileID: 0}
+    - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3602017299848703377, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
@@ -23573,6 +23695,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1569285805}
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1569285807}
     - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1569285804}
@@ -23704,6 +23829,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1569285801}
   m_CullTransparentMesh: 1
+--- !u!114 &1569285807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569285801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64c7f12564ea9c46887b3743a0d2a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemUI
+  _itemData: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
+  _icon: {fileID: 54564484}
+  _priceText: {fileID: 507022164}
+  _button: {fileID: 1569285799}
 --- !u!1 &1574055957
 GameObject:
   m_ObjectHideFlags: 0
@@ -28818,6 +28959,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1911275961 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1387831893302610240, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 1999296437}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1920746819
 GameObject:
   m_ObjectHideFlags: 0
@@ -29888,6 +30040,17 @@ Transform:
   - {fileID: 1746069238}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1964392557 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1387831893302610240, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+  m_PrefabInstance: {fileID: 626119634}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1977083240
 GameObject:
   m_ObjectHideFlags: 0
@@ -30422,6 +30585,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1999296447}
+    - targetCorrespondingSourceObject: {fileID: 457950637628873168, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1999296449}
     - targetCorrespondingSourceObject: {fileID: 4063780293417195891, guid: f55bb370f86ad30439f3cccf3f51a376, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1999296446}
@@ -30553,6 +30719,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1999296443}
   m_CullTransparentMesh: 1
+--- !u!114 &1999296449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999296443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64c7f12564ea9c46887b3743a0d2a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemUI
+  _itemData: {fileID: 11400000, guid: bcb7ab6e0b3966b4fbb0eb980d80786c, type: 2}
+  _icon: {fileID: 1911275961}
+  _priceText: {fileID: 920461174}
+  _button: {fileID: 1999296441}
 --- !u!1 &2003782437
 GameObject:
   m_ObjectHideFlags: 0
