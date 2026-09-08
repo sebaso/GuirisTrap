@@ -36,7 +36,9 @@ public class VoxelGridData : ScriptableObject
 
     public PlaceableItemData GetItem(int x, int y, int z) => _cells[Index(x, y, z)].item;
     public void SetItem(int x, int y, int z, PlaceableItemData item) => _cells[Index(x, y, z)].item = item;
-
+    
+    public int GetTierIndex(int x, int y, int z) => _cells[Index(x, y, z)].tierIndex;
+    public void SetTierIndex(int x, int y, int z, int tier) => _cells[Index(x, y, z)].tierIndex = tier;
     public Vector3Int GetAnchor(int x, int y, int z) => _cells[Index(x, y, z)].anchor;
     public void SetAnchor(int x, int y, int z, Vector3Int anchor) => _cells[Index(x, y, z)].anchor = anchor;
     public bool GetIsEntrance(int x, int y, int z) => _cells[Index(x, y, z)].isEntrance;

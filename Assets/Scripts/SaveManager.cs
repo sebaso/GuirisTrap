@@ -14,6 +14,7 @@ public class SaveManager : MonoBehaviour
     public int CurrentDay => _data.day;
     public int SavedMoney => _data.money;
     public ItemCountData[] GetOwnedItems() => _data.ownedItems;
+    public UpgradeStateData[] GetUpgradeState() => _data.upgrades;
     public ZoneSaveData[] GetZoneSaveData() => _data.zones;
 
     public float Stars
@@ -104,12 +105,12 @@ public class SaveManager : MonoBehaviour
         {
             _data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
             OwnedItemsManager.Instance?.LoadFromSave(_data.ownedItems);
+            UpgradeManager.Instance?.LoadFromSave(_data.upgrades);
         }
         catch
         {
             Debug.LogWarning("[SaveManager] Failed to read save file, starting fresh.");
-            // fuera: con HasSaveFile como guardia de restauración, un fichero
-            // corrupto reportaría saldo/día vacíos en vez de partida nueva.
+
             if (File.Exists(SavePath)) File.Delete(SavePath);
             _data = new SaveData();
         }
@@ -145,6 +146,7 @@ public class SaveManager : MonoBehaviour
         _data = new SaveData();
         PlayerPrefs.DeleteAll();
         OwnedItemsManager.Instance?.LoadFromSave(null);
+        UpgradeManager.Instance?.LoadFromSave(null); 
         Debug.Log("[SaveManager] Save eliminado: " + SavePath);
     }
 
@@ -155,7 +157,8 @@ public class SaveManager : MonoBehaviour
 
         _data = new SaveData();
         OwnedItemsManager.Instance?.LoadFromSave(null);
-
+        UpgradeManager.Instance?.LoadFromSave(null); 
+        
         Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
         inv.Clear();
 
@@ -189,6 +192,7 @@ public class SaveManager : MonoBehaviour
     private void WriteFile()
     {
         _data.ownedItems = OwnedItemsManager.Instance?.ToSaveData();
+        _data.upgrades = UpgradeManager.Instance?.ToSaveData(); 
         File.WriteAllText(SavePath, JsonUtility.ToJson(_data, true));
         int totalCells = 0;
         if (_data.zones != null)
@@ -210,6 +214,7 @@ public class SaveManager : MonoBehaviour
         public ZoneSaveData[] zones;
         public ItemCountData[] ownedItems;
         public InventorySlotSaveData[] inventory;
+        public UpgradeStateData[] upgrades; 
     }
 
     [System.Serializable]
@@ -225,6 +230,7 @@ public class SaveManager : MonoBehaviour
         public int x, y, z;
         public CellType type;
         public string itemName;
+        public int tierIndex;
         public int anchorX, anchorY, anchorZ;
         public bool isEntrance;
         public Quaternion rotation;
@@ -242,6 +248,13 @@ public class SaveManager : MonoBehaviour
     {
         public int x, y;
         public string itemName;
+        public int tierIndex;
         public int quantity;
+    }
+    [System.Serializable]
+    public class UpgradeStateData
+    {
+        public string itemName;
+        public int tierIndex;
     }
 }

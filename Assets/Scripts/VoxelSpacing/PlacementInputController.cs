@@ -28,13 +28,17 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private bool _isDraggingMove;
     private Vector2 _pressStartPos;
     public static PlacementInputController Instance { get; private set; }
-
-    private bool _isDragFromInventory;
-    private int _inventorySourceX, _inventorySourceY;
+    
     private bool _inventoryPressPending;
     private PlaceableItemData _pendingItem;
+    private int _pendingTierIndex;
     private int _pendingSourceX, _pendingSourceY;
     private Vector2 _inventoryPressStartPos;
+
+    private bool _isDragFromInventory;
+    private int _dragFromInventoryTier;
+    private int _inventorySourceX, _inventorySourceY;
+
     [SerializeField] 
     private GameObject _inventoryPanel;
     void Awake()
@@ -68,7 +72,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
             if (Vector2.Distance(_pointerPos, _inventoryPressStartPos) >= DRAG_THRESHOLD_PIXELS)
             {
                 _inventoryPressPending = false;
-                DragFromInventory(_pendingItem, _pendingSourceX, _pendingSourceY);
+                DragFromInventory(_pendingItem, _pendingTierIndex, _pendingSourceX, _pendingSourceY);
             }
         }
 
@@ -224,7 +228,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
                 _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
                 registry.Register(_dragTargetVoxel, _selected);
 
-                GridManager.PlaceItem(voxelData, _dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, axis, _selected.transform.rotation);
+                GridManager.PlaceItem(voxelData, _dragTargetVoxel.x, _dragTargetVoxel.y, _dragTargetVoxel.z, item, _dragFromInventoryTier, axis, _selected.transform.rotation);
 
                 Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
                 inv.RemoveItem(_inventorySourceX, _inventorySourceY);
@@ -234,8 +238,10 @@ public class PlacementInputController : MonoBehaviour, IUIActions
                 Vector3Int oldAnchor = _selected.AnchorVoxel;
                 registry.Unregister(oldAnchor);
                 registry.Register(_dragTargetVoxel, _selected);
+                
+                int tierIndex = GridManager.GetTierAtAnchor(voxelData, oldAnchor);
 
-                GridManager.MoveItem(voxelData, oldAnchor, _dragTargetVoxel, item, axis, _selected.transform.rotation);
+                GridManager.MoveItem(voxelData, oldAnchor, _dragTargetVoxel, item, tierIndex, axis, _selected.transform.rotation);
                 _selected.InstancePlaceableObjectCreated(_dragTargetVoxel, view);
             }
         }
@@ -298,11 +304,12 @@ public class PlacementInputController : MonoBehaviour, IUIActions
 
         int currentStep = _selected.RotationStep;
         int newStep = currentStep + direction;
+        int tierIndex = GridManager.GetTierAtAnchor(voxelData, anchor);
 
         if (!zone.TryGetWorldTransform(view, anchor, out Vector3 basePos, out Quaternion baseRot))
             return;
 
-        if (!GridManager.RotateItem(voxelData, anchor, item, axis, currentStep, newStep, baseRot, out Quaternion newRotation))
+        if (!GridManager.RotateItem(voxelData, anchor, item, tierIndex, axis, currentStep, newStep, baseRot, out Quaternion newRotation))
             return;
 
         _selected.SetRotationStep(newStep);
@@ -331,15 +338,16 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         PlaceableItemData item = placeable.GetItemData();
         Vector3Int anchor = placeable.AnchorVoxel;
         PlacementAxis axis = GridManager.AxisForView(view);
+        int tierIndex = GridManager.GetTierAtAnchor(voxelData, anchor);
 
         if (!GridManager.RemoveItemAt(voxelData, anchor.x, anchor.y, anchor.z, axis)) return;
 
         Inventory inv = Inventory.Instance != null ? Inventory.Instance : Inventory.EnsureExists();
-        bool added = inv.AddItem(item);
+        bool added = inv.AddItem(item, tierIndex);
 
         if (!added)
         {
-            GridManager.PlaceItem(voxelData, anchor.x, anchor.y, anchor.z, item, axis, placeable.transform.rotation);
+            GridManager.PlaceItem(voxelData, anchor.x, anchor.y, anchor.z, item, tierIndex, axis, placeable.transform.rotation);
             HUDMessage.Instance?.ShowWarning("Inventario lleno.");
             return;
         }
@@ -347,12 +355,14 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         registry.Unregister(anchor);
         Destroy(placeable.gameObject);
     }
-    public void DragFromInventory(PlaceableItemData item, int sourceX, int sourceY)
+
+    public void DragFromInventory(PlaceableItemData item, int tierIndex, int sourceX, int sourceY)
     {
         if (_selected != null) return;
 
         GridZone zone = _cameraController.ActiveZone;
-        if (zone == null || item.prefab == null) return;
+        PlaceableTierData tier = item != null ? item.GetTier(tierIndex) : null;
+        if (zone == null || tier == null || tier.prefab == null) return;
 
         CameraView view = _cameraController.CurrentView;
         PlaceableSurface activeSurface = GridZone.SurfaceForView(view);
@@ -363,11 +373,12 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
 
         Vector3 spawnPos = _mainCamera.ScreenPointToRay(_pointerPos).GetPoint(5f); 
-        GameObject obj = Instantiate(item.prefab, spawnPos, Quaternion.identity, folder);
+        GameObject obj = Instantiate(tier.prefab, spawnPos, Quaternion.identity, folder);
         PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
         placeable.Init(item);
 
         _isDragFromInventory = true;
+        _dragFromInventoryTier = tierIndex;
         _inventorySourceX = sourceX;
         _inventorySourceY = sourceY;
         _inventoryPanel?.SetActive(false);
@@ -377,11 +388,13 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         _isPressed = true;
         _pressStartPos = _pointerPos;
     }
-    public void BeginInventoryPress(PlaceableItemData item, int sourceX, int sourceY)
+
+    public void BeginInventoryPress(PlaceableItemData item, int tierIndex, int sourceX, int sourceY)
     {
         if (_selected != null) return;
         _inventoryPressPending = true;
         _pendingItem = item;
+        _pendingTierIndex = tierIndex;
         _pendingSourceX = sourceX;
         _pendingSourceY = sourceY;
         _inventoryPressStartPos = _pointerPos;

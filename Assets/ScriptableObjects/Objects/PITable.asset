@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf4743290dc90b849b1277f266cdc967, type: 3}
   m_Name: PITable
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableItemData
-  prefab: {fileID: 4810302218073276568, guid: 6e727a69144f10843bf9c99778b044d2, type: 3}
-  icon: {fileID: 21300000, guid: 2364b68df349ef042b5d416feecfca97, type: 3}
+  _tiers:
+  - prefab: {fileID: 4810302218073276568, guid: 6e727a69144f10843bf9c99778b044d2, type: 3}
+    icon: {fileID: 21300000, guid: 2364b68df349ef042b5d416feecfca97, type: 3}
+    cost: 25
+  - prefab: {fileID: 4810302218073276568, guid: 2de553578b451c64b9b6429da2d28b05, type: 3}
+    icon: {fileID: 21300000, guid: b53e5ce5a6f355c4dad94e287c6fbafb, type: 3}
+    cost: 50
   category: 0
   surface: 0
-  cost: 75
   maxStack: 24
   ocuppied: 0
   size: {x: 1, y: 1, z: 1}

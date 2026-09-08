@@ -78,7 +78,7 @@ public static class GridManager
         return true;
     }
 
-    public static bool MoveItem(VoxelGridData voxelData, Vector3Int fromAnchor, Vector3Int toAnchor, PlaceableItemData item, PlacementAxis axis, Quaternion rotation)
+    public static bool MoveItem(VoxelGridData voxelData, Vector3Int fromAnchor, Vector3Int toAnchor, PlaceableItemData item, int tierIndex, PlacementAxis axis, Quaternion rotation)
     {
         if (item == null) return false;
         if (!CanPlaceItem(voxelData, toAnchor.x, toAnchor.y, toAnchor.z, item, axis, fromAnchor)) return false;
@@ -90,6 +90,7 @@ public static class GridManager
             {
                 voxelData.SetType(c.x, c.y, c.z, CellType.Empty);
                 voxelData.SetItem(c.x, c.y, c.z, null);
+                voxelData.SetTierIndex(c.x, c.y, c.z, 0);
                 voxelData.SetAnchor(c.x, c.y, c.z, default);
                 voxelData.SetRotation(c.x, c.y, c.z, Quaternion.identity);
             }
@@ -102,6 +103,7 @@ public static class GridManager
             voxelData.SetAnchor(c.x, c.y, c.z, toAnchor);
         }
         voxelData.SetItem(toAnchor.x, toAnchor.y, toAnchor.z, item);
+        voxelData.SetTierIndex(toAnchor.x, toAnchor.y, toAnchor.z, tierIndex);
         voxelData.SetRotation(toAnchor.x, toAnchor.y, toAnchor.z, rotation);
 
         OnGridChanged?.Invoke(voxelData);
@@ -135,7 +137,8 @@ public static class GridManager
 
         return true;
     }
-    public static bool RotateItem(VoxelGridData voxelData, Vector3Int anchor, PlaceableItemData item, PlacementAxis axis, int currentStep, int newStep, Quaternion baseRotation, out Quaternion newRotation)
+
+    public static bool RotateItem(VoxelGridData voxelData, Vector3Int anchor, PlaceableItemData item, int tierIndex, PlacementAxis axis, int currentStep, int newStep, Quaternion baseRotation, out Quaternion newRotation)
     {
         newRotation = baseRotation;
         if (!CanRotateItem(voxelData, anchor, item, axis, currentStep, newStep)) return false;
@@ -158,6 +161,7 @@ public static class GridManager
             voxelData.SetAnchor(c.x, c.y, c.z, anchor);
         }
         voxelData.SetItem(anchor.x, anchor.y, anchor.z, item);
+        voxelData.SetTierIndex(anchor.x, anchor.y, anchor.z, tierIndex);
 
         newRotation = baseRotation * Quaternion.Euler(0f, 90f * NormalizeStep(newStep), 0f);
         voxelData.SetRotation(anchor.x, anchor.y, anchor.z, newRotation);
@@ -166,7 +170,7 @@ public static class GridManager
         return true;
     }
 
-    public static bool PlaceItem(VoxelGridData voxelData, int x, int y, int z, PlaceableItemData item, PlacementAxis axis, Quaternion rotation)
+    public static bool PlaceItem(VoxelGridData voxelData, int x, int y, int z, PlaceableItemData item, int tierIndex, PlacementAxis axis, Quaternion rotation)
     {
         if (!CanPlaceItem(voxelData, x, y, z, item, axis)) return false;
 
@@ -180,10 +184,12 @@ public static class GridManager
         }
 
         voxelData.SetItem(x, y, z, item);
+        voxelData.SetTierIndex(x, y, z, tierIndex);
         voxelData.SetRotation(x, y, z, rotation);
         OnGridChanged?.Invoke(voxelData);
         return true;
     }
+
 
     public static bool TryGetItemAt(VoxelGridData voxelData, int x, int y, int z, out PlaceableItemData item, out Vector3Int anchor)
     {
@@ -490,6 +496,7 @@ public static class GridManager
                         x = x, y = y, z = z,
                         type = cell.type,
                         itemName = cell.item != null ? cell.item.name : "",
+                        tierIndex = cell.tierIndex,
                         anchorX = cell.anchor.x, anchorY = cell.anchor.y, anchorZ = cell.anchor.z,
                         isEntrance = cell.isEntrance,
                         rotation = cell.rotation
@@ -515,6 +522,7 @@ public static class GridManager
                 ? null
                 : System.Array.Find(allItems, i => i.name == c.itemName);
             voxelData.SetItem(c.x, c.y, c.z, item);
+            voxelData.SetTierIndex(c.x, c.y, c.z, c.tierIndex);
         }
 
         OnGridChanged?.Invoke(voxelData);
@@ -536,6 +544,7 @@ public static class GridManager
     }
 
     public static PlaceableItemData GetItemAtAnchor(VoxelGridData voxelData, Vector3Int anchor) => voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+    public static int GetTierAtAnchor(VoxelGridData voxelData, Vector3Int anchor) => voxelData.GetTierIndex(anchor.x, anchor.y, anchor.z);
     public static Quaternion GetRotationAtAnchor(VoxelGridData voxelData, Vector3Int anchor) => voxelData.GetRotation(anchor.x, anchor.y, anchor.z);
     public static void SetRotationAtAnchor(VoxelGridData voxelData, Vector3Int anchor, Quaternion rotation)
     {

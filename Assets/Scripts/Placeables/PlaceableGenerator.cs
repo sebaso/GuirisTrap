@@ -23,7 +23,11 @@ public class PlaceableGenerator : MonoBehaviour
         foreach (var anchor in GridManager.GetAllAnchors(voxelData))
         {
             PlaceableItemData item = GridManager.GetItemAtAnchor(voxelData, anchor);
-            if (item == null || item.prefab == null) continue;
+            if (item == null) continue;
+
+            int tierIndex = GridManager.GetTierAtAnchor(voxelData, anchor);
+            PlaceableTierData tier = item.GetTier(tierIndex);
+            if (tier == null || tier.prefab == null) continue;
 
             CameraView view = GridManager.DetermineViewForAnchor(voxelData, anchor, item);
             Quaternion rot = GridManager.GetRotationAtAnchor(voxelData, anchor);
@@ -33,14 +37,14 @@ public class PlaceableGenerator : MonoBehaviour
 
             Vector3 worldPos = basePos + rot * item.placementOffset;
 
-            GameObject obj = Instantiate(item.prefab, worldPos, rot, folder);
+            GameObject obj = Instantiate(tier.prefab, worldPos, rot, folder);
             PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
             placeable.Init(item);
             placeable.InstancePlaceableObjectCreated(anchor, view);
 
             registry.Register(anchor, placeable);
         }
-
+        
         if (SceneManager.GetActiveScene().name == "PreparationScene")
             ChairRefreshUtility.ApplyValidityColorsOnly(voxelData, registry);
     }

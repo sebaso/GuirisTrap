@@ -496,9 +496,14 @@ public class PlayerController : ControllableMonoBehaviour
 
     private GameObject CreateGhost(PlaceableItemData item, Vector3 initialPos, Quaternion initialRot)
     {
-        if (item == null || item.prefab == null) return null;
+        PlaceableTierData tier = item != null ? item.GetTier(0) : null;
+        if (tier == null || tier.prefab == null)
+        {
+            Debug.LogError($"[PlaceableItemData] '{name}' no tiene ningún tier configurado en _tiers.", this);
+            return null;
+        } 
 
-        GameObject g = Instantiate(item.prefab, initialPos, initialRot);
+        GameObject g = Instantiate(tier.prefab, initialPos, initialRot);
         foreach (var mb in g.GetComponentsInChildren<MonoBehaviour>()) mb.enabled = false;
         foreach (var col in g.GetComponentsInChildren<Collider>()) col.enabled = false;
 
