@@ -40,6 +40,9 @@ public class AmbientZone : MonoBehaviour
         _area = GetComponent<BoxCollider>();
         // El trigger es inerte: nadie escucha sus eventos, solo define el área.
         _area.isTrigger = true;
+        // Ni que intercepte raycasts: los triggers se pegan igual, y si la zona
+        // cubre el restaurante se comería los clics de colocación de muebles.
+        gameObject.layer = 2; // Ignore Raycast
 
         _source.loop = true;
         _source.playOnAwake = false;

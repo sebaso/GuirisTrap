@@ -116,7 +116,9 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private PlaceableObject RaycastForPlaceable()
     {
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return null;
+        // Ignora triggers: las zonas de sonido ambiente cubren el restaurante
+        // entero y si no, se comerían el clic antes de llegar al mueble.
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore)) return null;
         return hit.transform.GetComponentInParent<PlaceableObject>();
     }
 
@@ -320,7 +322,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         PlaceableInstanceRegistry registry = zone.Registry;
 
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore)) return;
 
         PlaceableObject placeable = hit.transform.GetComponentInParent<PlaceableObject>();
         if (placeable == null) return;
