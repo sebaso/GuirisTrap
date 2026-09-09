@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using static InputSystem_Actions;
 
-public class EditorMenu : MonoBehaviour, IPlayerActions
+public class PauseMenuInputs : MonoBehaviour, IPlayerActions
 {
     [SerializeField]
     private GameObject _pausePanel;

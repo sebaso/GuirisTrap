@@ -3958,6 +3958,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.00095488335, y: 0.07779331, z: 0.03249928}
   m_Center: {x: -0.043203376, y: -0.029927965, z: 0.015731497}
+--- !u!1 &629823762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 629823763}
+  m_Layer: 0
+  m_Name: HoldPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &629823763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629823762}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2695705968274138828}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &630935081
 GameObject:
   m_ObjectHideFlags: 0
@@ -10316,6 +10347,57 @@ MonoBehaviour:
   _fadeInDuration: 0.25
   _displayDuration: 2.5
   _fadeOutDuration: 0.75
+  _popDuration: 0.3
+  _popCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.4
+      value: 1.18
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.75
+      value: 0.94
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _slideSmoothing: 14
+  _messageWidth: 640
+  _padding: 14
+  _spacing: 8
+  _fontSize: 26
+  _backgroundColor: {r: 0, g: 0, b: 0, a: 0.55}
+  _alphaStepPerDepth: 0.45
+  _maxVisibleMessages: 4
   _defaultColor: {r: 1, g: 1, b: 1, a: 1}
   _goodColor: {r: 0, g: 1, b: 0, a: 1}
   _badColor: {r: 1, g: 0, b: 0, a: 1}
@@ -11534,12 +11616,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7872604082277419112, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 629823763}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
 --- !u!4 &2695705968274138827 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 838855539326600840, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
+  m_PrefabInstance: {fileID: 2695705968274138826}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2695705968274138828 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7872604082277419112, guid: 87fdaec8142b54a4f967309b71758987, type: 3}
   m_PrefabInstance: {fileID: 2695705968274138826}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &2754823671207279284
