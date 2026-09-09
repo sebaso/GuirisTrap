@@ -59,9 +59,10 @@ public class StatsPanel : MonoBehaviour
         DayReport dr = GetComponentInChildren<DayReport>(true);
         if (dr != null && !dr.gameObject.activeInHierarchy)
         {
+            string parentName = dr.transform.parent != null ? dr.transform.parent.name : "<raíz>";
             Debug.LogError($"[StatsPanel] '{dr.name}' está dentro de un objeto DESACTIVADO " +
-                           "('" + dr.transform.parent != null ? dr.transform.parent.name : null + "'). Sácalo fuera del panel o " +
-                           "actívalo, o el informe del día saldrá vacío.", dr.gameObject);
+                           $"('{parentName}'). Sácalo fuera del panel o actívalo, o el informe " +
+                           "del día saldrá vacío.", dr.gameObject);
         }
 
         if (_panelRoot == null) return;
@@ -141,6 +142,8 @@ public class StatsPanel : MonoBehaviour
             _dailyStatsPanel.SetActive(true);
 
         DayReport report = DayReport.Instance;
+        if (report == null)
+            report = FindFirstObjectByType<DayReport>(FindObjectsInactive.Include);
 
         if (_dayNumberText != null && SaveManager.Instance != null)
         {
@@ -176,7 +179,14 @@ public class StatsPanel : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[StatsPanel] No hay DayReport.");
+            // Sin informe no hay datos del día: escribe ceros para que nunca
+            // se vean los textos de la escena (que son etiquetas) como valores.
+            Debug.LogWarning("[StatsPanel] No hay DayReport; el informe saldrá a cero.", this);
+            if (_dishesServedText != null)     _dishesServedText.text = "0";
+            if (_moneyEarnedText != null)      _moneyEarnedText.text = "+0€";
+            if (_moneySpentText != null)       _moneySpentText.text = "-0€";
+            if (_netMoneyText != null)         _netMoneyText.text = "+0€";
+            if (_clientsSatisfiedText != null) _clientsSatisfiedText.text = "0/0";
         }
 
         if (_balanceText != null && MoneyManager.Instance != null)
