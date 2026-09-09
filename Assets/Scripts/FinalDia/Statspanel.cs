@@ -1,6 +1,6 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 
 public class StatsPanel : MonoBehaviour
@@ -46,11 +46,11 @@ public class StatsPanel : MonoBehaviour
     [SerializeField] private int _demoLastDay = 7;
 
     [Header("Colores de la nota")]
-    [SerializeField] private Color _gradeAColor = new Color(0.20f, 0.80f, 0.20f);
-    [SerializeField] private Color _gradeBColor = new Color(0.50f, 0.80f, 0.20f);
-    [SerializeField] private Color _gradeCColor = new Color(0.90f, 0.80f, 0.20f);
-    [SerializeField] private Color _gradeDColor = new Color(0.90f, 0.50f, 0.20f);
-    [SerializeField] private Color _gradeFColor = new Color(0.80f, 0.20f, 0.20f);
+    [SerializeField] private Color _gradeAColor = new(0.20f, 0.80f, 0.20f);
+    [SerializeField] private Color _gradeBColor = new(0.50f, 0.80f, 0.20f);
+    [SerializeField] private Color _gradeCColor = new(0.90f, 0.80f, 0.20f);
+    [SerializeField] private Color _gradeDColor = new(0.90f, 0.50f, 0.20f);
+    [SerializeField] private Color _gradeFColor = new(0.80f, 0.20f, 0.20f);
 
     private bool _subscribed = false;
 
@@ -60,7 +60,7 @@ public class StatsPanel : MonoBehaviour
         if (dr != null && !dr.gameObject.activeInHierarchy)
         {
             Debug.LogError($"[StatsPanel] '{dr.name}' está dentro de un objeto DESACTIVADO " +
-                           "('" + dr.transform.parent?.name + "'). Sácalo fuera del panel o " +
+                           "('" + dr.transform.parent != null ? dr.transform.parent.name : null + "'). Sácalo fuera del panel o " +
                            "actívalo, o el informe del día saldrá vacío.", dr.gameObject);
         }
 
@@ -87,7 +87,8 @@ public class StatsPanel : MonoBehaviour
             DayManager.Instance.OnDayEnded -= ShowPanel;
         _subscribed = false;
 
-        _nextDayButton?.onClick.RemoveAllListeners();
+        if (_nextDayButton != null)
+            _nextDayButton.onClick.RemoveAllListeners();
     }
 
     private void Update()
@@ -113,10 +114,13 @@ public class StatsPanel : MonoBehaviour
         // Congelar como en el menú de pausa: no debes poder moverte ni
         // interactuar mientras lees el resumen del día.
         Time.timeScale = 0f;
-        InputManager.Instance?.EnterPause();
+        if (InputManager.Instance != null)
+            InputManager.Instance.EnterPause();
 
-        AudioManager.Instance?.PlayStatsMusic();
-        AudioManager.Instance?.PlaySFX("day_end");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayStatsMusic();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("day_end");
     }
 
     private void OnDestroy()
@@ -126,13 +130,15 @@ public class StatsPanel : MonoBehaviour
         if (Time.timeScale == 0f)
         {
             Time.timeScale = 1f;
-            InputManager.Instance?.ExitPause();
+            if (InputManager.Instance != null)
+                InputManager.Instance.ExitPause();
         }
     }
 
     private void Populate()
     {
-        _dailyStatsPanel?.SetActive(true);
+        if (_dailyStatsPanel != null)
+            _dailyStatsPanel.SetActive(true);
 
         DayReport report = DayReport.Instance;
 
@@ -175,8 +181,7 @@ public class StatsPanel : MonoBehaviour
 
         if (_balanceText != null && MoneyManager.Instance != null)
             _balanceText.text = $"{MoneyManager.Instance.CurrentMoney}€";
-
-        bool weekJustEnded = WeekManager.Instance != null && WeekManager.Instance.WeekJustEnded;
+        _ = WeekManager.Instance != null && WeekManager.Instance.WeekJustEnded;
 
         PopulateWeekSection();
         SetupNextDayButton();
@@ -244,14 +249,14 @@ public class StatsPanel : MonoBehaviour
         _nextDayButton.onClick.RemoveAllListeners();
         _nextDayButton.onClick.AddListener(OnNextDayButton);
     }
-    
+
     // Muestra/oculta el panel sin desactivar nunca el objeto que tiene el script.
     private void ShowRoot(bool visible)
     {
         if (_panelRoot == null) return;
 
         if (_panelRoot == gameObject)
-            SetChildrenActive(visible);  
+            SetChildrenActive(visible);
         else
             _panelRoot.SetActive(visible);
     }
@@ -268,15 +273,15 @@ public class StatsPanel : MonoBehaviour
 
     private Sprite GetGradeSprite(char grade)
     {
-        switch (grade)
+        return grade switch
         {
-            case 'A': return _gradeASprite;
-            case 'B': return _gradeBSprite;
-            case 'C': return _gradeCSprite;
-            case 'D': return _gradeDSprite;
-            case 'E': return _gradeESprite;
-            default:  return _gradeFSprite;
-        }
+            'A' => _gradeASprite,
+            'B' => _gradeBSprite,
+            'C' => _gradeCSprite,
+            'D' => _gradeDSprite,
+            'E' => _gradeESprite,
+            _ => _gradeFSprite,
+        };
     }
 
     /// <summary>
@@ -286,10 +291,13 @@ public class StatsPanel : MonoBehaviour
     {
         // Descongelar ANTES de cambiar de escena, o la siguiente carga parada.
         Time.timeScale = 1f;
-        InputManager.Instance?.ExitPause();
+        if (InputManager.Instance != null)
+            InputManager.Instance.ExitPause();
 
-        AudioManager.Instance?.PlaySFX("next_day");
-        AudioManager.Instance?.StopMusic();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("next_day");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopMusic();
 
         if (SaveManager.Instance != null)
         {
@@ -325,9 +333,11 @@ public class StatsPanel : MonoBehaviour
         // se cierra con lo que lleva; los saltados quedan a cero.
         while (SaveManager.Instance.CurrentDay < _demoLastDay)
         {
-            WeekManager.Instance?.OnDayCompleted();
+            if (WeekManager.Instance != null)
+                WeekManager.Instance.OnDayCompleted();
             SaveManager.Instance.IncrementDayAndSave();
-            DayReport.Instance?.ResetCounters();
+            if (DayReport.Instance != null)
+                DayReport.Instance.ResetCounters();
         }
 
         // Congela lo que quede de día detrás del overlay; el botón del final

@@ -108,7 +108,7 @@ public class SpecialClientManager : MonoBehaviour
     {
         if (data == null) return null;
 
-        if (_spawner == null) _spawner = FindFirstObjectByType<ClientSpawner>();
+        if (_spawner == null) _spawner = FindAnyObjectByType<ClientSpawner>();
         if (_spawner == null || _spawner.clientPrefab == null)
         {
             Debug.LogWarning("[SpecialClientManager] No hay ClientSpawner (o le falta clientPrefab).");
@@ -116,7 +116,7 @@ public class SpecialClientManager : MonoBehaviour
         }
 
         int size = Mathf.Clamp(data.groupSize, 1, 4);
-        ClientGroup group = new ClientGroup(size);
+        ClientGroup group = new(size);
         Vector3 basePos = _spawner.spawnPoint != null ? _spawner.spawnPoint.position : transform.position;
         Client leader = null;
 
@@ -128,8 +128,7 @@ public class SpecialClientManager : MonoBehaviour
                 Random.Range(-_spawner.groupMemberSpawnOffset, _spawner.groupMemberSpawnOffset));
 
             GameObject obj = Instantiate(_spawner.clientPrefab, basePos + offset, Quaternion.identity);
-            Client client = obj.GetComponent<Client>();
-            if (client == null) { Destroy(obj); continue; }
+            if (!obj.TryGetComponent<Client>(out var client)) { Destroy(obj); continue; }
 
             obj.name = $"Client_{data.clientName}_{i + 1}";
 
@@ -158,7 +157,8 @@ public class SpecialClientManager : MonoBehaviour
         _spawnedToday++;
 
         if (!string.IsNullOrEmpty(data.arrivalAnnouncement))
-            HUDMessage.Instance?.ShowWarning(ResolveText(data, data.arrivalAnnouncement));
+            if (HUDMessage.Instance != null)
+                HUDMessage.Instance.ShowWarning(ResolveText(data, data.arrivalAnnouncement));
 
         Debug.Log($"[SpecialClientManager] ¡{data.clientName} x{group.Members.Count} ha llegado!");
         return leader;
@@ -174,8 +174,8 @@ public class SpecialClientManager : MonoBehaviour
         RecipeData dish = data.orderMode switch
         {
             OrderMode.FixedDish => data.fixedDish,
-            OrderMode.Wildcard  => data.surpriseDishPlaceholder,
-            _                   => null,
+            OrderMode.Wildcard => data.surpriseDishPlaceholder,
+            _ => null,
         };
         if (dish == null) return true; // Normal, o falta el asset: pedido aleatorio normal
 
@@ -223,7 +223,8 @@ public class SpecialClientManager : MonoBehaviour
 
         if (food != null) Destroy(food.gameObject);
 
-        AudioManager.Instance?.PlaySFX("client_angry");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("client_angry");
         Debug.Log($"[SpecialClientManager] ¡{data.clientName} ha recibido un plato prohibido!");
 
         StartCoroutine(FailSequence(data, table, group));
@@ -257,7 +258,8 @@ public class SpecialClientManager : MonoBehaviour
     {
         if (group == null) return;
 
-        table?.FreeTable(group);
+        if (table != null)
+            table.FreeTable(group);
 
         foreach (Client m in group.Members.ToArray())
         {
@@ -340,11 +342,15 @@ public class SpecialClientManager : MonoBehaviour
 
         int cost = _repairCostPerTable + chairsBroken * _repairCostPerChair;
         if (MoneyManager.Instance != null && MoneyManager.Instance.TrySpend(cost))
-            DayReport.Instance?.RegisterSpending(cost);
+        {
+            if (DayReport.Instance != null)
+                DayReport.Instance.RegisterSpending(cost);
+        }
         else
             Debug.LogWarning($"[SpecialClientManager] Sin dinero para la reparación ({cost}€). TODO deuda.");
 
-        HUDMessage.Instance?.ShowBad(
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowBad(
             $"¡{data.clientName} ha destrozado la mesa {table.tableNumber}! (-{cost}€ de reparación)");
         Debug.Log($"[SpecialClientManager] Mesa {table.tableNumber} destrozada (+{chairsBroken} sillas).");
     }
@@ -354,11 +360,11 @@ public class SpecialClientManager : MonoBehaviour
         foreach (BrokenPiece p in _broken)
         {
             if (p.target == null) continue;   // la escena se recargó: ya no existe
-            p.target.localRotation = p.rotation;
-            p.target.localPosition = p.position;
-
-            p.chair?.SetCarried(false);       // vuelve al pool de asientos
-            p.table?.SetCarried(false);       // vuelve al pool de mesas
+            p.target.SetLocalPositionAndRotation(p.position, p.rotation);
+            if (p.chair != null)
+                p.chair.SetCarried(false);       // vuelve al pool de asientos
+            if (p.table != null)
+                p.table.SetCarried(false);       // vuelve al pool de mesas
         }
         if (_broken.Count > 0) Debug.Log($"[SpecialClientManager] Mobiliario reparado ({_broken.Count} piezas).");
         _broken.Clear();
@@ -379,7 +385,8 @@ public class SpecialClientManager : MonoBehaviour
             GaviotaEventManager.Instance.SoltarCacaEn(center + new Vector3(r.x, 0f, r.y));
         }
 
-        HUDMessage.Instance?.ShowBad($"¡{data.clientName} lo ha dejado todo perdido de regalitos!");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowBad($"¡{data.clientName} lo ha dejado todo perdido de regalitos!");
     }
 
     //  Final de la visita (lo llama SpecialClientTag)
@@ -389,14 +396,18 @@ public class SpecialClientManager : MonoBehaviour
         if (data == null) return;
 
         int payment = client != null ? client.money : 0;
-        HUDMessage.Instance?.ShowGood($"¡{data.clientName} está satisfecho! +{payment}€");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowGood($"¡{data.clientName} está satisfecho! +{payment}€");
 
         // Propina de hincha (Guirincianos con tele + banderines).
         if (data.HasDecorCondition && data.tipIfDecorMet > 0)
         {
-            MoneyManager.Instance?.Earn(data.tipIfDecorMet);
-            DayReport.Instance?.RegisterEarnings(data.tipIfDecorMet);
-            HUDMessage.Instance?.ShowGood($"¡Propina extra de hincha! +{data.tipIfDecorMet}€");
+            if (MoneyManager.Instance != null)
+                MoneyManager.Instance.Earn(data.tipIfDecorMet);
+            if (DayReport.Instance != null)
+                DayReport.Instance.RegisterEarnings(data.tipIfDecorMet);
+            if (HUDMessage.Instance != null)
+                HUDMessage.Instance.ShowGood($"¡Propina extra de hincha! +{data.tipIfDecorMet}€");
         }
 
         PlayLines(data, data.successLines);
@@ -408,7 +419,8 @@ public class SpecialClientManager : MonoBehaviour
         if (data == null) return;
 
         int paid = client != null ? client.money : 0;
-        HUDMessage.Instance?.ShowBad(paid > 0
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowBad(paid > 0
             ? $"A {data.clientName} no les ha convencido: solo dejan {paid}€ por cabeza."
             : $"A {data.clientName} no les ha convencido tu comida...");
 
@@ -450,7 +462,7 @@ public class SpecialClientManager : MonoBehaviour
 
     private bool CheckDecoration(SpecialClientData data)
     {
-        var placed = FindObjectsByType<PlaceableObject>(FindObjectsSortMode.None);
+        var placed = FindObjectsByType<PlaceableObject>();
         var candidates = new List<List<Transform>>();
 
         foreach (PlaceableItemData req in data.requiredDecoration)

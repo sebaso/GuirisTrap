@@ -1,6 +1,7 @@
 using UnityEngine;
 
 
+[RequireComponent(typeof(Rigidbody))]
 public class FregonaPickup : MonoBehaviour
 {
     /// <summary>La fregona que el jugador lleva ahora mismo (null si ninguna).</summary>
@@ -10,8 +11,8 @@ public class FregonaPickup : MonoBehaviour
     public static bool IsPlayerCarrying => Carried != null;
 
     [Header("Al llevarla (enganchada al jugador)")]
-    [SerializeField] private Vector3 _carryLocalOffset = new Vector3(-0.35f, 1.0f, 0.3f);
-    [SerializeField] private Vector3 _carryLocalEuler  = new Vector3(0f, 0f, 25f);
+    [SerializeField] private Vector3 _carryLocalOffset = new(-0.35f, 1.0f, 0.3f);
+    [SerializeField] private Vector3 _carryLocalEuler = new(0f, 0f, 25f);
 
     [Header("Vuelta al soporte")]
     [Tooltip("Duración de la animación de regreso al soporte.")]
@@ -24,9 +25,9 @@ public class FregonaPickup : MonoBehaviour
     private Transform _restAnchor;
 
     // Pose EN REPOSO respecto al anclaje, capturada tal como se autoró.
-    private Vector3    _restLocalPos   = Vector3.zero;
-    private Quaternion _restLocalRot   = Quaternion.identity;
-    private Vector3    _restLocalScale = Vector3.one;
+    private Vector3 _restLocalPos = Vector3.zero;
+    private Quaternion _restLocalRot = Quaternion.identity;
+    private Vector3 _restLocalScale = Vector3.one;
 
     private Collider[] _colliders;
 
@@ -38,7 +39,7 @@ public class FregonaPickup : MonoBehaviour
         if (rb != null && !rb.isKinematic)
         {
             rb.isKinematic = true;
-            rb.useGravity  = false;
+            rb.useGravity = false;
         }
     }
 
@@ -50,14 +51,14 @@ public class FregonaPickup : MonoBehaviour
     /// <summary>Lo llama FregonaSoporte al inicializarse: registra dónde descansa y su pose exacta.</summary>
     public void AttachToHolder(FregonaSoporte holder, Transform restAnchor)
     {
-        _holder     = holder;
+        _holder = holder;
         _restAnchor = restAnchor;
 
         if (transform.parent != restAnchor)
             transform.SetParent(restAnchor, worldPositionStays: true);
 
-        _restLocalPos   = transform.localPosition;
-        _restLocalRot   = transform.localRotation;
+        _restLocalPos = transform.localPosition;
+        _restLocalRot = transform.localRotation;
         _restLocalScale = transform.localScale;
     }
 
@@ -75,23 +76,22 @@ public class FregonaPickup : MonoBehaviour
         {
             Debug.LogWarning("[FregonaPickup] Cogida sin soporte registrado. " +
                              "¿Falta el componente FregonaSoporte en el mueble? Capturando pose actual como hogar.");
-            _restAnchor     = transform.parent;
-            _restLocalPos   = transform.localPosition;
-            _restLocalRot   = transform.localRotation;
+            _restAnchor = transform.parent;
+            _restLocalPos = transform.localPosition;
+            _restLocalRot = transform.localRotation;
             _restLocalScale = transform.localScale;
         }
 
         IsCarried = true;
-        Carried   = this;
+        Carried = this;
 
         SetCollidersEnabled(false);
 
         // worldPositionStays: TRUE conserva el tamaño de mundo (anti-Pokéball).
         transform.SetParent(player.transform, worldPositionStays: true);
-        transform.localPosition = _carryLocalOffset;
-        transform.localRotation = Quaternion.Euler(_carryLocalEuler);
-
-        AudioManager.Instance?.PlaySFX("fregona_pickup");
+        transform.SetLocalPositionAndRotation(_carryLocalOffset, Quaternion.Euler(_carryLocalEuler));
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("fregona_pickup");
     }
 
 
@@ -108,7 +108,7 @@ public class FregonaPickup : MonoBehaviour
             {
                 Debug.LogWarning("[FregonaPickup] Anclaje perdido: adoptando el soporte más cercano " +
                                  $"('{nearest.name}'). Revisa que AttachToHolder se esté llamando.");
-                _restAnchor   = nearest.RestAnchor;
+                _restAnchor = nearest.RestAnchor;
                 _restLocalPos = Vector3.zero;
                 _restLocalRot = Quaternion.identity;
             }
@@ -130,9 +130,8 @@ public class FregonaPickup : MonoBehaviour
 
     private System.Collections.IEnumerator ReturnRoutine()
     {
-        Vector3    startPos   = transform.position;
-        Quaternion startRot   = transform.rotation;
-        Vector3    startScale = transform.localScale;
+        transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+        Vector3 startScale = transform.localScale;
         float t = 0f;
 
         SetCollidersEnabled(false);
@@ -142,25 +141,23 @@ public class FregonaPickup : MonoBehaviour
             t += Time.deltaTime;
             float k = Mathf.SmoothStep(0f, 1f, t / _returnLerpTime);
 
-            Vector3    targetPos = _restAnchor.TransformPoint(_restLocalPos);
+            Vector3 targetPos = _restAnchor.TransformPoint(_restLocalPos);
             Quaternion targetRot = _restAnchor.rotation * _restLocalRot;
 
-            transform.position   = Vector3.Lerp(startPos, targetPos, k);
-            transform.rotation   = Quaternion.Slerp(startRot, targetRot, k);
+            transform.SetPositionAndRotation(Vector3.Lerp(startPos, targetPos, k), Quaternion.Slerp(startRot, targetRot, k));
             transform.localScale = Vector3.Lerp(startScale, _restLocalScale, k);
             yield return null;
         }
 
-        transform.localPosition = _restLocalPos;
-        transform.localRotation = _restLocalRot;
-        transform.localScale    = _restLocalScale;
+        transform.SetLocalPositionAndRotation(_restLocalPos, _restLocalRot);
+        transform.localScale = _restLocalScale;
 
         SetCollidersEnabled(true);
     }
 
     private FregonaSoporte FindNearestSoporte()
     {
-        FregonaSoporte[] all = FindObjectsByType<FregonaSoporte>(FindObjectsSortMode.None);
+        FregonaSoporte[] all = FindObjectsByType<FregonaSoporte>();
         FregonaSoporte best = null;
         float bestDist = float.MaxValue;
 

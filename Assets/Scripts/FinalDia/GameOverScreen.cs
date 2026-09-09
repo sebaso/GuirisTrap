@@ -10,7 +10,7 @@ public class GameOverScreen : MonoBehaviour
 {
     public static void Show()
     {
-        if (FindFirstObjectByType<GameOverScreen>() != null) return;
+        if (FindAnyObjectByType<GameOverScreen>() != null) return;
         new GameObject("GameOverScreen").AddComponent<GameOverScreen>();
     }
 
@@ -57,15 +57,15 @@ public class GameOverScreen : MonoBehaviour
         if (stats == null || stats.Count == 0)
             return "Sin datos de la semana.";
 
-        int dishes    = stats.Sum(s => s.dishes);
+        int dishes = stats.Sum(s => s.dishes);
         int satisfied = stats.Sum(s => s.satisfied);
-        int angry     = stats.Sum(s => s.angry);
-        int earned    = stats.Sum(s => s.earned);
-        int total     = satisfied + angry;
+        int angry = stats.Sum(s => s.angry);
+        int earned = stats.Sum(s => s.earned);
+        int total = satisfied + angry;
         float satisfaction = total > 0 ? satisfied * 100f / total : 0f;
         float avgScore = stats.Average(s => (float)s.score);
-        char avgGrade  = WeekManager.ScoreToGrade(Mathf.FloorToInt(avgScore + 0.5f));
-        float stars    = SaveManager.Instance.Stars;
+        char avgGrade = WeekManager.ScoreToGrade(Mathf.FloorToInt(avgScore + 0.5f));
+        float stars = SaveManager.Instance.Stars;
 
         return $"Días jugados: {stats.Count}\n" +
                $"Platos servidos: {dishes}\n" +

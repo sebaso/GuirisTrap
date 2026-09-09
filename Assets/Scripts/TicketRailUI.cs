@@ -5,15 +5,9 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Screen-space panel listing every active order (one ticket per seated group
-/// still waiting for food). Sits under the scene's main Canvas as a sibling of
-/// CashUI / HUDMessage. Polls <see cref="RestaurantManager.GetWaitingForFoodGroups"/>
-/// each frame and keeps its ticket list in sync — simple and fine for a dozen
-/// tables.
-///
-/// Each ticket shows "Mesa {n}" + the ordered dishes, tinted green→yellow→red
-/// by the group's patience ratio. If <see cref="ticketEntryPrefab"/> is null a
-/// minimal entry is built in code so the panel works before you author a prefab.
+/// still waiting for food).
 /// </summary>
+[RequireComponent(typeof(CanvasGroup))]
 public class TicketRailUI : MonoBehaviour
 {
     [Tooltip("Container with a VerticalLayoutGroup (+ ContentSizeFitter). Tickets are added here.")]
@@ -44,7 +38,6 @@ public class TicketRailUI : MonoBehaviour
 
     void Awake()
     {
-        // Starts hidden; Update() fades it in as soon as an order lands.
         _canvasGroup = GetComponent<CanvasGroup>();
         if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
         _alpha = 0f;
@@ -61,12 +54,10 @@ public class TicketRailUI : MonoBehaviour
             ? RestaurantManager.Instance.GetWaitingForFoodGroups()
             : new List<ClientGroup>();
 
-        // Index active groups by id.
         var activeIds = new HashSet<int>();
         foreach (var g in active)
             if (g != null) activeIds.Add(g.GroupID);
 
-        // Remove tickets for groups no longer waiting.
         var toRemove = new List<int>();
         foreach (var kv in _entries)
             if (!activeIds.Contains(kv.Key))
@@ -76,8 +67,6 @@ public class TicketRailUI : MonoBehaviour
             if (_entries[id].root != null) Destroy(_entries[id].root);
             _entries.Remove(id);
         }
-
-        // Add / refresh tickets.
         foreach (var g in active)
         {
             if (g == null) continue;
@@ -120,9 +109,6 @@ public class TicketRailUI : MonoBehaviour
             root.transform.SetParent(ticketContainer, false);
             background = root.GetComponent<Image>();
             background.color = _ok;
-
-            // Give the entry a real minimum size; otherwise the layout group
-            // shrinks it to the (tiny) preferred size of an empty TMP_Text.
             var le = root.GetComponent<LayoutElement>();
             le.minHeight = 60f;
             le.preferredHeight = 60f;
@@ -133,8 +119,6 @@ public class TicketRailUI : MonoBehaviour
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
             rt.offsetMin = new Vector2(10, 6); rt.offsetMax = new Vector2(-10, -6);
             text = child.GetComponent<TextMeshProUGUI>();
-            // Explicit font size + auto-sizing OFF so the text asset's default
-            // atlas size doesn't clamp it to something tiny.
             text.enableAutoSizing = false;
             text.fontSize = 28f;
             text.richText = true;
@@ -178,9 +162,7 @@ public class TicketRailUI : MonoBehaviour
 
     private int FirstTableNumberOf(ClientGroup g)
     {
-        // The rail doesn't hold a table ref; scan placed tables once (at ticket
-        // creation) to label the ticket. Not called per frame.
-        foreach (var t in GameObject.FindObjectsByType<Table>(FindObjectsSortMode.None))
+        foreach (var t in GameObject.FindObjectsByType<Table>())
         {
             if (t != null && t.OccupyingGroup == g) return t.tableNumber;
         }

@@ -8,7 +8,7 @@ public class RestaurantManager : MonoBehaviour
 
     [Header("Tables")]
     public List<Table> _tables = new();
-    private List<Table> _placedTables = new();
+    private readonly List<Table> _placedTables = new();
     [Header("Entrance Queue")]
     [Tooltip("Set automatically by ClientSpawner, or assign manually for scenes without a spawner.")]
     public Transform entrancePoint;
@@ -23,7 +23,7 @@ public class RestaurantManager : MonoBehaviour
     [Tooltip("Spacing between members within a group")]
     public float memberSpacing = 0.8f;
 
-    private List<ClientGroup> _waitingGroups = new();
+    private readonly List<ClientGroup> _waitingGroups = new();
 
     void Awake()
     {
@@ -156,11 +156,6 @@ public class RestaurantManager : MonoBehaviour
         }
     }
 
-    public void OnClientSpawned(Client client)
-    {
-        //basura legacy
-    }
-
     private void EnqueueGroup(ClientGroup group)
     {
         int groupIndex = _waitingGroups.Count;
@@ -177,7 +172,8 @@ public class RestaurantManager : MonoBehaviour
         }
 
         Debug.Log($"[RestaurantManager] No table for {group}. Queued at position {groupIndex}. Total waiting groups: {_waitingGroups.Count}");
-        HUDMessage.Instance?.ShowWarning($"¡No hay mesa para el grupo de {group.Size}! En cola...");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowWarning($"¡No hay mesa para el grupo de {group.Size}! En cola...");
     }
 
     // table moved: re-evaluate blocks so waiting groups can use new combos
@@ -189,10 +185,12 @@ public class RestaurantManager : MonoBehaviour
         if (group == null || !_waitingGroups.Remove(group)) return;
 
         foreach (var member in group.Members)
-            member?.LeaveQueue();
+            if (member != null)
+                member.LeaveQueue();
 
         Debug.Log($"[RestaurantManager] {group} left without being seated (queue patience ran out).");
-        HUDMessage.Instance?.ShowBad("¡Clientes se fueron por esperar demasiado!");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowBad("¡Clientes se fueron por esperar demasiado!");
         RepositionWaitingGroups();
     }
 
@@ -263,8 +261,8 @@ public class RestaurantManager : MonoBehaviour
         group.GenerateOrder();
         Debug.Log($"[RestaurantManager] {group} ordered: {(group.Order != null ? string.Join(", ", group.Order.ConvertAll(r => r != null ? r.dishName : "?")) : "none")}");
 
-        List<Transform> seatPoints = new List<Transform>();
-        List<Table> seatTables = new List<Table>();
+        List<Transform> seatPoints = new();
+        List<Table> seatTables = new();
 
         foreach (var t in block.Tables)
         {
@@ -278,7 +276,8 @@ public class RestaurantManager : MonoBehaviour
         if (seatPoints.Count < group.Size)
         {
             Debug.LogWarning($"[RestaurantManager] Block has only {seatPoints.Count} seats but group needs {group.Size}! Using {usableSeats} seats.");
-            HUDMessage.Instance?.ShowWarning($"¡Faltan sillas! El grupo necesita {group.Size} asientos.");
+            if (HUDMessage.Instance != null)
+                HUDMessage.Instance.ShowWarning($"¡Faltan sillas! El grupo necesita {group.Size} asientos.");
         }
 
         _waitingGroups.Remove(group);
@@ -294,7 +293,7 @@ public class RestaurantManager : MonoBehaviour
 
         if (usableSeats < group.Members.Count)
         {
-            ClientGroup overflowGroup = new ClientGroup(group.Members.Count - usableSeats);
+            ClientGroup overflowGroup = new(group.Members.Count - usableSeats);
             for (int i = usableSeats; i < group.Members.Count; i++)
             {
                 overflowGroup.AddMember(group.Members[i]);
@@ -308,15 +307,15 @@ public class RestaurantManager : MonoBehaviour
 
     private List<TableBlock> GetTableBlocks()
     {
-        List<TableBlock> blocks = new List<TableBlock>();
-        HashSet<Table> visited = new HashSet<Table>();
+        List<TableBlock> blocks = new();
+        HashSet<Table> visited = new();
 
         foreach (var table in _placedTables)
         {
             if (table == null || !table.IsPlaced || visited.Contains(table)) continue;
 
-            TableBlock block = new TableBlock();
-            Queue<Table> queue = new Queue<Table>();
+            TableBlock block = new();
+            Queue<Table> queue = new();
             queue.Enqueue(table);
             visited.Add(table);
 
@@ -347,7 +346,8 @@ public class RestaurantManager : MonoBehaviour
         if (_placedTables.Count == 0)
         {
             Debug.LogWarning("[RestaurantManager] No tables have been placed in the restaurant yet!");
-            HUDMessage.Instance?.ShowWarning("¡No hay mesas en el restaurante! Añade algunas en preparación.");
+            if (HUDMessage.Instance != null)
+                HUDMessage.Instance.ShowWarning("¡No hay mesas en el restaurante! Añade algunas en preparación.");
             return null;
         }
         List<TableBlock> blocks = GetTableBlocks();

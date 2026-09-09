@@ -166,7 +166,7 @@ public class DifficultyManager : MonoBehaviour
         _snapshot = DifficultyCurve.Evaluate(_params, day, stars);
         _hasSnapshot = true;
 
-        if (_spawner == null) _spawner = FindFirstObjectByType<ClientSpawner>();
+        if (_spawner == null) _spawner = FindAnyObjectByType<ClientSpawner>();
         if (_spawner != null)
         {
             _spawner.spawnInterval = _snapshot.spawnInterval;

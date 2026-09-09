@@ -18,7 +18,7 @@ public class FireEventManager : MonoBehaviour
 
     [Header("Visual del fuego")]
     [SerializeField] private GameObject _fireVfxPrefab;
-    [SerializeField] private Vector3 _fireVfxOffset = new Vector3(0f, 1.2f, 0f);
+    [SerializeField] private Vector3 _fireVfxOffset = new(0f, 1.2f, 0f);
 
     /// <summary>Estación ardiendo → instancia de su VFX de fuego.</summary>
     private readonly Dictionary<CookingStation, GameObject> _burning = new();
@@ -80,8 +80,10 @@ public class FireEventManager : MonoBehaviour
         GameObject vfx = CreateFireVfx(station.transform);
         _burning.Add(station, vfx);
 
-        AudioManager.Instance?.PlaySFX("fire_start");
-        HUDMessage.Instance?.ShowWarning($"¡FUEGO en la estación de {station.stationType}!");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("fire_start");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowWarning($"¡FUEGO en la estación de {station.stationType}!");
         Debug.Log($"[FireEventManager] ¡Incendio en {station.name} ({station.stationType})!");
     }
 
@@ -102,7 +104,7 @@ public class FireEventManager : MonoBehaviour
 
     private void IgniteRandomStation()
     {
-        CookingStation[] all = FindObjectsByType<CookingStation>(FindObjectsSortMode.None);
+        CookingStation[] all = FindObjectsByType<CookingStation>();
 
         // Candidatas: estaciones que no estén ya ardiendo.
         List<CookingStation> candidates = new();
@@ -152,15 +154,14 @@ public class FireEventManager : MonoBehaviour
             vfx.transform.localPosition = _fireVfxOffset;
             vfx.transform.localScale = Vector3.one * 0.6f;
 
-            Renderer r = vfx.GetComponent<Renderer>();
-            if (r != null) r.material.color = new Color(1f, 0.45f, 0.05f);
+            if (vfx.TryGetComponent<Renderer>(out var r)) r.material.color = new Color(1f, 0.45f, 0.05f);
         }
 
         // Luz naranja parpadeante en ambos casos: vende el fuego aunque el
         // VFX quede tapado por un mueble.
         Light light = vfx.AddComponent<Light>();
-        light.color     = new Color(1f, 0.5f, 0.1f);
-        light.range     = 4f;
+        light.color = new Color(1f, 0.5f, 0.1f);
+        light.range = 4f;
         light.intensity = 2.5f;
         vfx.AddComponent<FireLightFlicker>();
 
@@ -176,11 +177,12 @@ public class FireEventManager : MonoBehaviour
 /// Lo añade FireEventManager al placeholder; si el VFX definitivo trae su
 /// propia luz, puede reutilizarse añadiéndolo al prefab.
 /// </summary>
+[RequireComponent(typeof(Light))]
 public class FireLightFlicker : MonoBehaviour
 {
     [SerializeField] private float _baseIntensity = 2.5f;
     [SerializeField] private float _flickerAmount = 1.0f;
-    [SerializeField] private float _flickerSpeed  = 6f;
+    [SerializeField] private float _flickerSpeed = 6f;
 
     private Light _light;
     private float _seed;
@@ -188,7 +190,7 @@ public class FireLightFlicker : MonoBehaviour
     void Awake()
     {
         _light = GetComponent<Light>();
-        _seed  = Random.Range(0f, 100f);
+        _seed = Random.Range(0f, 100f);
         if (_light != null) _baseIntensity = _light.intensity;
     }
 

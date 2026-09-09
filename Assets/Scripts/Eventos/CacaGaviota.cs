@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 /// <summary>
 /// cae del cielo, se queda en el suelo un rato y se seca sola. Si la pisas ANTES de que se seque, tu movimiento se
@@ -11,6 +11,7 @@ using System.Collections;
 /// </summary>
 public class CacaGaviota : MonoBehaviour
 {
+    private static readonly WaitForSeconds _waitForSeconds0_08 = new(0.08f);
     [Header("Vida")]
     [SerializeField] private float _dryTimeSeconds = 20f;
     [SerializeField] private float _fadeOutTime = 1f;
@@ -34,14 +35,14 @@ public class CacaGaviota : MonoBehaviour
     [Tooltip("Radio alrededor del punto de aterrizaje en el que, si estás con un plato, lo pierdes.")]
     [SerializeField] private float _directHitRadius = 0.9f;
 
-    private bool _landed   = false; // no interactúa hasta aterrizar
+    private bool _landed = false; // no interactúa hasta aterrizar
     private bool _finished = false; // ya pisada/limpiada/secada
 
 
     /// <summary>Anima la caída del regalito hasta groundPos y activa la caca al aterrizar.</summary>
     public void IniciarCaida(Vector3 groundPos, float dropHeight, float fallTime)
     {
-        SetCollidersEnabled(false); 
+        SetCollidersEnabled(false);
         transform.position = groundPos + Vector3.up * dropHeight;
         StartCoroutine(CaidaRoutine(groundPos, fallTime));
     }
@@ -55,13 +56,14 @@ public class CacaGaviota : MonoBehaviour
         {
             t += Time.deltaTime;
             float k = Mathf.Clamp01(t / fallTime);
-            k = k * k; // acelera al caer (gravedad de mentira)
+            k *= k; // acelera al caer (gravedad de mentira)
             transform.position = Vector3.Lerp(start, groundPos, k);
             yield return null;
         }
 
         transform.position = groundPos;
-        AudioManager.Instance?.PlaySFX("caca_splat");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("caca_splat");
 
 
         Collider[] hits = Physics.OverlapSphere(groundPos, _directHitRadius);
@@ -75,8 +77,10 @@ public class CacaGaviota : MonoBehaviour
                 pc.LoseHeldFood();
                 _finished = true;
 
-                AudioManager.Instance?.PlaySFX("caca_pisada");
-                HUDMessage.Instance?.ShowBad("¡Una gaviota se ha estrellado contra tu plato! Adiós, comida.");
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX("caca_pisada");
+                if (HUDMessage.Instance != null)
+                    HUDMessage.Instance.ShowBad("¡Una gaviota se ha estrellado contra tu plato! Adiós, comida.");
 
                 Desaparecer(0.15f); // la caca se va con el plato, no deja mancha
                 yield break;
@@ -87,7 +91,7 @@ public class CacaGaviota : MonoBehaviour
         // Mini squash de aterrizaje.
         Vector3 baseScale = transform.localScale;
         transform.localScale = new Vector3(baseScale.x * 1.3f, baseScale.y * 0.6f, baseScale.z * 1.3f);
-        yield return new WaitForSeconds(0.08f);
+        yield return _waitForSeconds0_08;
         transform.localScale = baseScale;
 
         _landed = true;
@@ -136,8 +140,10 @@ public class CacaGaviota : MonoBehaviour
         MovimientoErratico.Aplicar(player, _erraticDuration,
                                    _fastMultiplier, _slowMultiplier, _switchInterval);
 
-        AudioManager.Instance?.PlaySFX("caca_pisada");
-        HUDMessage.Instance?.ShowBad("¡Has pisado una caca de gaviota! ¡PUAJ!");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("caca_pisada");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowBad("¡Has pisado una caca de gaviota! ¡PUAJ!");
 
         Desaparecer(0.2f); // se te queda pegada en la suela, claro
     }
@@ -148,7 +154,8 @@ public class CacaGaviota : MonoBehaviour
         if (!_landed || _finished) return;
         _finished = true;
 
-        AudioManager.Instance?.PlaySFX("fregona_limpiar");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("fregona_limpiar");
         Desaparecer(_mopCleanTime);
     }
 
@@ -186,7 +193,7 @@ public class MovimientoErratico : MonoBehaviour
     private float _originalSpeed;
     private float _timeLeft;
     private float _switchTimer;
-    private bool  _fastPhase;
+    private bool _fastPhase;
     private float _fastMul, _slowMul, _switchInterval;
 
     public static void Aplicar(PlayerController player, float duration,
@@ -194,18 +201,17 @@ public class MovimientoErratico : MonoBehaviour
     {
         if (player == null) return;
 
-        MovimientoErratico e = player.GetComponent<MovimientoErratico>();
-        if (e == null)
+        if (!player.TryGetComponent<MovimientoErratico>(out var e))
         {
             e = player.gameObject.AddComponent<MovimientoErratico>();
-            e._player        = player;
+            e._player = player;
             e._originalSpeed = player.speed; // capturar SOLO la primera vez
         }
 
-        e._fastMul        = fastMul;
-        e._slowMul        = slowMul;
+        e._fastMul = fastMul;
+        e._slowMul = slowMul;
         e._switchInterval = switchInterval;
-        e._timeLeft       = duration; // repisar refresca, no acumula
+        e._timeLeft = duration; // repisar refresca, no acumula
     }
 
     void Update()
@@ -220,8 +226,8 @@ public class MovimientoErratico : MonoBehaviour
         _switchTimer -= Time.deltaTime;
         if (_switchTimer <= 0f)
         {
-            _fastPhase    = !_fastPhase;
-            _switchTimer  = _switchInterval;
+            _fastPhase = !_fastPhase;
+            _switchTimer = _switchInterval;
             _player.speed = _originalSpeed * (_fastPhase ? _fastMul : _slowMul);
         }
     }

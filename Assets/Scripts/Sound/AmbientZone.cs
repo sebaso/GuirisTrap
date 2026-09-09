@@ -37,18 +37,18 @@ public class AmbientZone : MonoBehaviour
     void Awake()
     {
         _source = GetComponent<AudioSource>();
-        _area   = GetComponent<BoxCollider>();
+        _area = GetComponent<BoxCollider>();
         // El trigger es inerte: nadie escucha sus eventos, solo define el área.
         _area.isTrigger = true;
 
-        _source.loop         = true;
-        _source.playOnAwake  = false;
+        _source.loop = true;
+        _source.playOnAwake = false;
         _source.spatialBlend = spatialBlend;
-        _source.volume       = 0f;
+        _source.volume = 0f;
         if (_source.clip != null) _source.Play();
 
         int n = layers != null ? layers.Length : 0;
-        _layerNextRoll      = new float[n];
+        _layerNextRoll = new float[n];
         _layerCooldownUntil = new float[n];
         // Desfase inicial: zonas con capas iguales no tiran los dados a la vez.
         for (int i = 0; i < n; i++)
@@ -59,7 +59,7 @@ public class AmbientZone : MonoBehaviour
     {
         if (_player == null)
         {
-            PlayerController pc = FindFirstObjectByType<PlayerController>();
+            PlayerController pc = FindAnyObjectByType<PlayerController>();
             if (pc == null) return;
             _player = pc.transform;
         }

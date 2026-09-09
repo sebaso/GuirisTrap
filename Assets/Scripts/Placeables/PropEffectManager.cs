@@ -92,7 +92,7 @@ public class PropEffectManager : MonoBehaviour
         // Cuántas unidades hay colocadas de cada item.
         var counts = new Dictionary<PlaceableItemData, int>();
 
-        foreach (PlaceableObject p in FindObjectsByType<PlaceableObject>(FindObjectsSortMode.None))
+        foreach (PlaceableObject p in FindObjectsByType<PlaceableObject>())
         {
             if (p == null) continue;
 
@@ -112,11 +112,11 @@ public class PropEffectManager : MonoBehaviour
             if (e.maxUnitsCounted > 0) units = Mathf.Min(units, e.maxUnitsCounted);
 
             PatienceBonus += e.patiencePerUnit * units;
-            TipBonus      += e.tipPerUnit * units;
+            TipBonus += e.tipPerUnit * units;
         }
 
         PatienceBonus = Mathf.Min(PatienceBonus, _catalogue.maxPatienceBonus);
-        TipBonus      = Mathf.Min(TipBonus, _catalogue.maxTipBonus);
+        TipBonus = Mathf.Min(TipBonus, _catalogue.maxTipBonus);
     }
 
     /// <summary>Los bonus actuales en texto, para el HUD o para el informe.</summary>
@@ -125,7 +125,7 @@ public class PropEffectManager : MonoBehaviour
         if (PatienceBonus <= 0f && TipBonus <= 0f) return "sin bonus";
 
         var parts = new List<string>();
-        if (TipBonus > 0f)      parts.Add($"+{TipBonus:P0} propina");
+        if (TipBonus > 0f) parts.Add($"+{TipBonus:P0} propina");
         if (PatienceBonus > 0f) parts.Add($"+{PatienceBonus:P0} paciencia");
         return string.Join(" · ", parts);
     }
@@ -135,7 +135,7 @@ public class PropEffectManager : MonoBehaviour
     {
         if (PatienceBonus <= 0f && TipBonus <= 0f) return;
 
-        foreach (Client c in FindObjectsByType<Client>(FindObjectsSortMode.None))
+        foreach (Client c in FindObjectsByType<Client>())
         {
             if (c == null || c.GetComponent<PropBonusTag>() != null) continue;
 
@@ -150,7 +150,7 @@ public class PropEffectManager : MonoBehaviour
 
             if (PatienceBonus > 0f)
             {
-                c.maxPatience      *= 1f + PatienceBonus;
+                c.maxPatience *= 1f + PatienceBonus;
                 c.maxQueuePatience *= 1f + PatienceBonus;
             }
 

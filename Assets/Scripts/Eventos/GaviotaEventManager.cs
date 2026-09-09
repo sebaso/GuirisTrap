@@ -92,8 +92,10 @@ public class GaviotaEventManager : MonoBehaviour
 
         SoltarCacaEn(point);
 
-        AudioManager.Instance?.PlaySFX("gaviota_graznido");
-        HUDMessage.Instance?.ShowWarning("¡Una gaviota ha soltado un regalito!");
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX("gaviota_graznido");
+        if (HUDMessage.Instance != null)
+            HUDMessage.Instance.ShowWarning("¡Una gaviota ha soltado un regalito!");
         Debug.Log("[GaviotaEventManager] Regalito entrante.");
     }
 
@@ -128,7 +130,7 @@ public class GaviotaEventManager : MonoBehaviour
 
     private bool TryGetPlayer(out PlayerController pc)
     {
-        if (_player == null) _player = FindFirstObjectByType<PlayerController>();
+        if (_player == null) _player = FindAnyObjectByType<PlayerController>();
         pc = _player;
         return pc != null;
     }
@@ -141,8 +143,7 @@ public class GaviotaEventManager : MonoBehaviour
             ? Instantiate(_cacaPrefab)
             : CreatePlaceholder();
 
-        CacaGaviota caca = go.GetComponent<CacaGaviota>();
-        if (caca == null) caca = go.AddComponent<CacaGaviota>();
+        if (!go.TryGetComponent<CacaGaviota>(out var caca)) caca = go.AddComponent<CacaGaviota>();
 
         caca.IniciarCaida(point, _dropHeight, _fallTime);
         _activas.Add(caca);
@@ -167,7 +168,7 @@ public class GaviotaEventManager : MonoBehaviour
             point = transform.position + new Vector3(r.x, 0f, r.y);
         }
 
-        return point; 
+        return point;
     }
 
     private GameObject CreatePlaceholder()
@@ -176,11 +177,9 @@ public class GaviotaEventManager : MonoBehaviour
         go.name = "CacaGaviota (placeholder)";
         go.transform.localScale = new Vector3(0.5f, 0.12f, 0.5f);
 
-        Renderer r = go.GetComponent<Renderer>();
-        if (r != null) r.material.color = new Color(0.95f, 0.94f, 0.86f);
+        if (go.TryGetComponent<Renderer>(out var r)) r.material.color = new Color(0.95f, 0.94f, 0.86f);
 
-        SphereCollider col = go.GetComponent<SphereCollider>();
-        if (col != null) { col.isTrigger = true; col.radius = 1.2f; }
+        if (go.TryGetComponent<SphereCollider>(out var col)) { col.isTrigger = true; col.radius = 1.2f; }
 
         return go;
     }
