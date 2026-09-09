@@ -79,9 +79,11 @@ public class GameOverScreen : MonoBehaviour
     private void BackToMenu()
     {
         // Checkpoint final para que "Continuar" muestre la partida completa.
-        SaveManager.Instance?.ForceSave();
+        if (SaveManager.Instance != null)
+            SaveManager.Instance.ForceSave();
         Time.timeScale = 1f;
-        SceneController.Instance?.ChangeScene("MainMenu");
+        if (SceneController.Instance != null)
+            SceneController.Instance.ChangeScene("MainMenu");
     }
 
     // ── construcción de UI ────────────────────────────────────────────────
