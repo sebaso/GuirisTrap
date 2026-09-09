@@ -23,6 +23,12 @@ public class SaveManager : MonoBehaviour
         set => _data.stars = Mathf.Clamp(value, 0f, 5f);
     }
 
+    public int ChiringuitoTier
+    {
+        get => _data.chiringuitoTier;
+        set => _data.chiringuitoTier = value;
+    }
+    
     public System.Collections.Generic.List<int> WeekGrades
     {
         get
@@ -208,13 +214,14 @@ public class SaveManager : MonoBehaviour
         public int day;
         public int money;
         public float stars;
+        public int chiringuitoTier;
         public int lastGradedDay = -1;
         public System.Collections.Generic.List<int> weekGrades = new System.Collections.Generic.List<int>();
 
         public ZoneSaveData[] zones;
         public ItemCountData[] ownedItems;
         public InventorySlotSaveData[] inventory;
-        public UpgradeStateData[] upgrades; 
+        public UpgradeStateData[] upgrades;
     }
 
     [System.Serializable]
