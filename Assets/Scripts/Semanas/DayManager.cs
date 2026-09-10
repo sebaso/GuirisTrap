@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using UnityEngine.InputSystem;
 
 
 public class DayManager : MonoBehaviour
@@ -14,11 +13,11 @@ public class DayManager : MonoBehaviour
     [SerializeField] private bool _autoStart = true;
     [SerializeField] private float _startDelay = 0.5f;
 
-    [Header("Cierre")]
-    [Tooltip("Tecla para cerrar el día sin esperar a que se vayan todos los clientes.")]
-    // End en vez de una F-key: los escritorios (KDE abre el menú con F10) y los
-    // portátiles (F-keys con Fn) se comen las teclas de función.
-    [SerializeField] private Key _forceEndDayKey = Key.End;
+    // Fin del día: cuando el timer llega a cero se entra en wind-down (ya no
+    // entran clientes). El jugador cierra entonces la PUERTA DE ENTRADA
+    // (PuertaFinDia, pulsando E junto a ella) para expulsar a los clientes que
+    // queden y mostrar la pantalla de fin de día; si prefiere esperar, el día
+    // se cierra solo cuando todos se van.
 
     private float _timeRemaining;
     private bool _isDayActive;
@@ -37,6 +36,9 @@ public class DayManager : MonoBehaviour
 
     /// <summary>Whether the day is currently running.</summary>
     public bool IsDayActive => _isDayActive;
+
+    /// <summary>La puerta de entrada está cerrada (interacción con PuertaFinDia).</summary>
+    public bool IsDoorClosed { get; private set; }
 
     /// <summary>Fired every frame with the normalized progress (0→1).</summary>
     public event Action<float> OnDayProgress;
@@ -82,7 +84,7 @@ public class DayManager : MonoBehaviour
     {
         if (IsWindingDown)
         {
-            if (Client.ActiveCount == 0 || ForceEndPressed())
+            if (Client.ActiveCount == 0)
                 FinishDay();
             return;
         }
@@ -109,7 +111,7 @@ public class DayManager : MonoBehaviour
         IsWindingDown = true;
         if (Client.ActiveCount > 0)
             HUDMessage.Instance?.ShowWarning(
-                $"Fin del servicio — esperando a que los clientes terminen ({_forceEndDayKey} para cerrar ya)");
+                "Fin del servicio — ¡cierra la puerta! (acércate a la puerta y pulsa E)");
     }
 
     // WeekManager.OnDayCompleted debe correr ANTES de OnDayEnded (el StatsPanel
@@ -118,6 +120,10 @@ public class DayManager : MonoBehaviour
     private void FinishDay()
     {
         IsWindingDown = false;
+        // Día cerrado del todo: el timer no debe seguir corriendo ni relanzar el
+        // wind-down detrás del panel de resultados (importante si el cierre se pide
+        // con el día aún activo).
+        _isDayActive = false;
 
         // Si el cierre del día explota, el día queda pegado para siempre
         // (IsWindingDown ya es false): el panel tiene que salir SIEMPRE.
@@ -134,11 +140,28 @@ public class DayManager : MonoBehaviour
         HandleDayEnd();
     }
 
-    /// <summary>Cierra el día inmediatamente (tecla de forzado o botón de UI).</summary>
-    public void ForceEndDay()
+    /// <summary>Cierra la puerta de entrada, expulsa a los clientes que queden y
+    /// muestra la pantalla de fin de día. La llama PuertaFinDia cuando termina
+    /// su animación de cierre (la puerta se ve cerrarse ANTES de llegar aquí).</summary>
+    public void CloseEntranceDoor()
     {
-        if (IsWindingDown) FinishDay();
+        if (IsDoorClosed) return;
+        IsDoorClosed = true;
+
+        HUDMessage.Instance?.ShowWarning("¡Cierras la puerta! Los clientes son expulsados");
+
+        // Expulsar a los clientes: los de la cola salen sin penalizar.
+        if (RestaurantManager.Instance != null)
+            RestaurantManager.Instance.KickAllClients();
+        else
+            Client.KickAll();
+
+        // Y se cierra el día (stats + panel de fin de día).
+        FinishDay();
     }
+
+    /// <summary>Cierra el día inmediatamente cerrando la puerta de entrada.</summary>
+    public void ForceEndDay() => CloseEntranceDoor();
 
     [ContextMenu("DEBUG: Terminar el día ya")]
     private void DebugEndDayNow()
@@ -150,15 +173,13 @@ public class DayManager : MonoBehaviour
         FinishDay();
     }
 
-    private bool ForceEndPressed()
-        => Keyboard.current != null && Keyboard.current[_forceEndDayKey].wasPressedThisFrame;
-
     /// <summary>Start (or restart) the day timer.</summary>
     public void StartDay()
     {
         _timeRemaining = _dayDurationSeconds;
         _isDayActive = true;
         IsWindingDown = false;
+        IsDoorClosed = false;
         OnDayStarted?.Invoke();
         OnDayProgress?.Invoke(0f);
         Debug.Log($"[DayManager] Day started! Duration: {_dayDurationSeconds}s");

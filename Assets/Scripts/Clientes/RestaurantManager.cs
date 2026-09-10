@@ -214,6 +214,23 @@ public class RestaurantManager : MonoBehaviour
         }
     }
 
+    /// <summary>Expulsa a todos los clientes al cerrar la puerta de entrada:
+    /// despeja la cola de espera sin penalización y hace salir a los que queden
+    /// sentados, de camino a la mesa o paseando por el local.</summary>
+    public void KickAllClients()
+    {
+        for (int i = _waitingGroups.Count - 1; i >= 0; i--)
+        {
+            ClientGroup group = _waitingGroups[i];
+            _waitingGroups.RemoveAt(i);
+            foreach (var member in group.Members)
+                if (member != null)
+                    member.KickOut();
+        }
+
+        Client.KickAll();
+    }
+
     /// <summary>Every group currently seated and still waiting for at least one
     /// plate. De-duplicated (a group can span multiple tables). Used by the
     /// ticket rail UI to list active orders.</summary>

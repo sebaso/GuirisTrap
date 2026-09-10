@@ -56,6 +56,9 @@ public class Client : MonoBehaviour
     // OnEnable/OnDisable (no OnDestroy) para que los descargues de escena también descuenten.
     public static int ActiveCount { get; private set; }
 
+    // Todos los clientes vivos, para poder expulsarlos al cerrar la puerta de entrada.
+    public static readonly List<Client> All = new();
+
     private NavMeshAgent _agent;
     private Vector3 _queueSlotPosition;
     private bool Initialized = false;
@@ -73,9 +76,17 @@ public class Client : MonoBehaviour
         _agent.avoidancePriority = WalkingAvoidancePriority;
     }
 
-    void OnEnable() => ActiveCount++;
+    void OnEnable()
+    {
+        if (!All.Contains(this)) All.Add(this);
+        ActiveCount++;
+    }
 
-    void OnDisable() => ActiveCount--;
+    void OnDisable()
+    {
+        All.Remove(this);
+        ActiveCount--;
+    }
 
     private float _timeStateEntered;
     private const float STATE_TIMEOUT = 30f; // Max seconds in any walking state before forcing arrival
@@ -401,6 +412,23 @@ public class Client : MonoBehaviour
             SetState(State.Leaving);
             WalkToExit();
         }
+    }
+
+    /// <summary>Expulsado por el cierre de la puerta de entrada: sale de inmediato sin
+    /// pagar y sin contabilizarse como satisfecho ni como enfadado.</summary>
+    public void KickOut()
+    {
+        if (CurrentState == State.Leaving || CurrentState == State.Angry) return;
+        StartLeaving();
+    }
+
+    /// <summary>Expulsa a todos los clientes vivos (cierre de la puerta de entrada).</summary>
+    public static void KickAll()
+    {
+        List<Client> clients = new(All);
+        foreach (var client in clients)
+            if (client != null)
+                client.KickOut();
     }
 
     private bool IsSeated()

@@ -176,6 +176,14 @@ public class PlayerController : ControllableMonoBehaviour
         // 0. Si lleva una mesa/silla, intentar soltarla.
         if (_heldPlaceable != null) { TryDropFurniture(); return; }
 
+        // 0b. Puerta de entrada: al terminar el servicio (wind-down), cerrarla
+        //     expulsa a los clientes que queden y pasa a la pantalla de fin de día.
+        if (_nearbyDoor != null && _nearbyDoor.CanInteract)
+        {
+            _nearbyDoor.TryClose();
+            return;
+        }
+
         // 1. Buscar el interactable MÁS CERCANO (no el primero que devuelva la
         //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
@@ -645,6 +653,11 @@ public class PlayerController : ControllableMonoBehaviour
     {
     isNearInteractable = near;
     }
+
+    // Puerta de entrada (PuertaFinDia): la propia puerta se registra cuando el
+    // jugador entra en su trigger; solo responde al fin del día.
+    private PuertaFinDia _nearbyDoor;
+    public void SetNearbyDoor(PuertaFinDia door) => _nearbyDoor = door;
 
     public void ResetInput() { }
 

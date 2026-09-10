@@ -143,7 +143,7 @@ public class StatsPanel : MonoBehaviour
 
         DayReport report = DayReport.Instance;
         if (report == null)
-            report = FindFirstObjectByType<DayReport>(FindObjectsInactive.Include);
+            report = FindAnyObjectByType<DayReport>(FindObjectsInactive.Include);
 
         if (_dayNumberText != null && SaveManager.Instance != null)
         {
@@ -182,10 +182,10 @@ public class StatsPanel : MonoBehaviour
             // Sin informe no hay datos del día: escribe ceros para que nunca
             // se vean los textos de la escena (que son etiquetas) como valores.
             Debug.LogWarning("[StatsPanel] No hay DayReport; el informe saldrá a cero.", this);
-            if (_dishesServedText != null)     _dishesServedText.text = "0";
-            if (_moneyEarnedText != null)      _moneyEarnedText.text = "+0€";
-            if (_moneySpentText != null)       _moneySpentText.text = "-0€";
-            if (_netMoneyText != null)         _netMoneyText.text = "+0€";
+            if (_dishesServedText != null) _dishesServedText.text = "0";
+            if (_moneyEarnedText != null) _moneyEarnedText.text = "+0€";
+            if (_moneySpentText != null) _moneySpentText.text = "-0€";
+            if (_netMoneyText != null) _netMoneyText.text = "+0€";
             if (_clientsSatisfiedText != null) _clientsSatisfiedText.text = "0/0";
         }
 
