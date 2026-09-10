@@ -12,7 +12,7 @@ public class ExtintorPickup : MonoBehaviour
     [Header("Al llevarlo (enganchado al jugador)")]
     [Tooltip("Posición local respecto al jugador. Por defecto, en la mano/delante.")]
     [SerializeField] private Vector3 _carryLocalOffset = new Vector3(0.35f, 1.1f, 0.35f);
-    [SerializeField] private Vector3 _carryLocalEuler  = new Vector3(0f, 0f, -20f);
+    [SerializeField] private Vector3 _carryLocalEuler = new Vector3(0f, 0f, -20f);
 
     [Header("Vuelta al soporte")]
     [Tooltip("Duración de la animación de regreso al soporte.")]
@@ -24,9 +24,9 @@ public class ExtintorPickup : MonoBehaviour
     private ExtintorSoporte _holder;
     private Transform _restAnchor;
 
-    private Vector3    _restLocalPos   = Vector3.zero;
-    private Quaternion _restLocalRot   = Quaternion.identity;
-    private Vector3    _restLocalScale = Vector3.one;
+    private Vector3 _restLocalPos = Vector3.zero;
+    private Quaternion _restLocalRot = Quaternion.identity;
+    private Vector3 _restLocalScale = Vector3.one;
 
     private Collider[] _colliders;
 
@@ -37,7 +37,7 @@ public class ExtintorPickup : MonoBehaviour
         if (rb != null && !rb.isKinematic)
         {
             rb.isKinematic = true;
-            rb.useGravity  = false;
+            rb.useGravity = false;
             //Debug.Log("[ExtintorPickup] Rigidbody detectado: puesto en kinematic.");
         }
     }
@@ -50,7 +50,7 @@ public class ExtintorPickup : MonoBehaviour
 
     public void AttachToHolder(ExtintorSoporte holder, Transform restAnchor)
     {
-        _holder     = holder;
+        _holder = holder;
         _restAnchor = restAnchor;
 
         // Reparentar al anclaje si no lo estaba ya (sin mover nada en mundo),
@@ -58,8 +58,8 @@ public class ExtintorPickup : MonoBehaviour
         if (transform.parent != restAnchor)
             transform.SetParent(restAnchor, worldPositionStays: true);
 
-        _restLocalPos   = transform.localPosition;
-        _restLocalRot   = transform.localRotation;
+        _restLocalPos = transform.localPosition;
+        _restLocalRot = transform.localRotation;
         _restLocalScale = transform.localScale;
     }
 
@@ -75,16 +75,16 @@ public class ExtintorPickup : MonoBehaviour
         {
 
             Debug.Log("[ExtintorPickup] Cogido sin soporte registrado.");
-            _restAnchor     = transform.parent;
-            _restLocalPos   = transform.localPosition;
-            _restLocalRot   = transform.localRotation;
+            _restAnchor = transform.parent;
+            _restLocalPos = transform.localPosition;
+            _restLocalRot = transform.localRotation;
             _restLocalScale = transform.localScale;
         }
 
         IsCarried = true;
-        Carried   = this;
+        Carried = this;
 
-        SetCollidersEnabled(false); 
+        SetCollidersEnabled(false);
         transform.SetParent(player.transform, worldPositionStays: true);
         transform.localPosition = _carryLocalOffset;
         transform.localRotation = Quaternion.Euler(_carryLocalEuler);
@@ -118,8 +118,8 @@ public class ExtintorPickup : MonoBehaviour
                                  $"('{nearest.name}'). Revisa que AttachToHolder se esté llamando.");
                 _restAnchor = nearest.RestAnchor;
                 // Pose de reposo desconocida respecto a este anclaje: usar su origen.
-                _restLocalPos   = Vector3.zero;
-                _restLocalRot   = Quaternion.identity;
+                _restLocalPos = Vector3.zero;
+                _restLocalRot = Quaternion.identity;
                 // _restLocalScale se conserva (la escala de reposo sigue valiendo).
             }
             else
@@ -140,9 +140,9 @@ public class ExtintorPickup : MonoBehaviour
 
     private System.Collections.IEnumerator ReturnRoutine()
     {
-        Vector3    startPos   = transform.position;
-        Quaternion startRot   = transform.rotation;
-        Vector3    startScale = transform.localScale;
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+        Vector3 startScale = transform.localScale;
         float t = 0f;
 
         // Colliders desactivados durante el vuelo para que no se pueda recoger a medio camino.
@@ -153,25 +153,23 @@ public class ExtintorPickup : MonoBehaviour
             t += Time.deltaTime;
             float k = Mathf.SmoothStep(0f, 1f, t / _returnLerpTime);
 
-            Vector3    targetPos = _restAnchor.TransformPoint(_restLocalPos);
+            Vector3 targetPos = _restAnchor.TransformPoint(_restLocalPos);
             Quaternion targetRot = _restAnchor.rotation * _restLocalRot;
 
-            transform.position   = Vector3.Lerp(startPos, targetPos, k);
-            transform.rotation   = Quaternion.Slerp(startRot, targetRot, k);
+            transform.SetPositionAndRotation(Vector3.Lerp(startPos, targetPos, k), Quaternion.Slerp(startRot, targetRot, k));
             transform.localScale = Vector3.Lerp(startScale, _restLocalScale, k);
             yield return null;
         }
 
-        transform.localPosition = _restLocalPos;
-        transform.localRotation = _restLocalRot;
-        transform.localScale    = _restLocalScale;
+        transform.SetLocalPositionAndRotation(_restLocalPos, _restLocalRot);
+        transform.localScale = _restLocalScale;
 
         SetCollidersEnabled(true); // ya se puede volver a coger
     }
 
     private ExtintorSoporte FindNearestSoporte()
     {
-        ExtintorSoporte[] all = FindObjectsByType<ExtintorSoporte>(FindObjectsSortMode.None);
+        ExtintorSoporte[] all = FindObjectsByType<ExtintorSoporte>();
         ExtintorSoporte best = null;
         float bestDist = float.MaxValue;
 
