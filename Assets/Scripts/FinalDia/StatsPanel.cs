@@ -143,7 +143,7 @@ public class StatsPanel : MonoBehaviour
 
         DayReport report = DayReport.Instance;
         if (report == null)
-            report = FindAnyObjectByType<DayReport>(FindObjectsInactive.Include);
+            report = FindAnyObjectByType<DayReport>();
 
         if (_dayNumberText != null && SaveManager.Instance != null)
         {
