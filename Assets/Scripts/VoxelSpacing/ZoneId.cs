@@ -1,5 +1,6 @@
 public enum ZoneId
 {
     Interior,
-    Terraza
+    Terraza,
+    Playa
 }
