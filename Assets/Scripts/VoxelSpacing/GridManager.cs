@@ -343,7 +343,7 @@ public static class GridManager
         return baseRotation * Quaternion.Euler(0f, angle, 0f);
     }
 
-    public static void ClearAll(VoxelGridData voxelData)
+    public static void ClearOccupied(VoxelGridData voxelData)
     {
         if (voxelData == null) return;
 
@@ -351,14 +351,18 @@ public static class GridManager
             for (int y = 0; y < voxelData.height; y++)
                 for (int x = 0; x < voxelData.width; x++)
                 {
+                    if (voxelData.GetType(x, y, z) != CellType.Occupied) continue;
+
                     voxelData.SetType(x, y, z, CellType.Empty);
                     voxelData.SetItem(x, y, z, null);
                     voxelData.SetAnchor(x, y, z, default);
+                    voxelData.SetTierIndex(x, y, z, 0);
+                    voxelData.SetRotation(x, y, z, Quaternion.identity);
                 }
 
         OnGridChanged?.Invoke(voxelData);
     }
-
+    
     public static bool HasAdjacentTable(VoxelGridData voxelData, Vector3Int cell)
     {
         return IsTableAt(voxelData, cell + new Vector3Int(1, 0, 0))
@@ -526,6 +530,27 @@ public static class GridManager
         }
 
         OnGridChanged?.Invoke(voxelData);
+    }
+
+    public static void MigrateGridData(VoxelGridData source, VoxelGridData destination)
+    {
+        if (source == null || destination == null) return;
+
+        foreach (var anchor in GetAllAnchors(source))
+        {
+            PlaceableItemData item = GetItemAtAnchor(source, anchor);
+            if (item == null) continue;
+
+            int tierIndex = GetTierAtAnchor(source, anchor);
+            Quaternion rotation = GetRotationAtAnchor(source, anchor);
+            CameraView view = DetermineViewForAnchor(source, anchor, item);
+            PlacementAxis axis = AxisForView(view);
+
+            if (!IsInBounds(destination, anchor.x, anchor.y, anchor.z)) continue;
+
+            if (!PlaceItem(destination, anchor.x, anchor.y, anchor.z, item, tierIndex, axis, rotation))
+                Debug.LogWarning($"[GridManager] No se pudo migrar '{item.name}' en {anchor} al grid nuevo.");
+        }
     }
 
     public static List<Vector3Int> GetAllAnchors(VoxelGridData voxelData)

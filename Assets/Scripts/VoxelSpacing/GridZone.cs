@@ -58,7 +58,7 @@ public class GridZone : MonoBehaviour, IGridWorldResolver
         GridManager.OnGridChanged -= HandleGridDataChanged;
         if (_cameraController != null) _cameraController.OnViewChanged -= HandleViewChanged;
     }
-
+    
     void Start()
     {
         foreach (var projection in DistinctProjections())

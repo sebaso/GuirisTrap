@@ -10,4 +10,7 @@ public class ChiringuitoTierData
 
     [Tooltip("Botones de cámara (UI) que se muestran a partir de este tier.")]
     public List<GameObject> cameraViewButtons = new();
+
+    [Tooltip("Grids del tier.")]
+    public List<VoxelGridData> tierVoxelsGridData;
 }

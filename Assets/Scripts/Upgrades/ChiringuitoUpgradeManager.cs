@@ -41,7 +41,32 @@ public class ChiringuitoUpgradeManager : MonoBehaviour
         foreach (var b in allButtons)
             b.SetActive(_tiers[tierIndex].cameraViewButtons.Contains(b));
 
+        int previousTier = tierIndex - 1;
+        if (notify && previousTier >= 0)
+        {
+            var prevGrids = _tiers[previousTier].tierVoxelsGridData;
+            var newGrids  = _tiers[tierIndex].tierVoxelsGridData;
+
+            if (prevGrids != null && newGrids != null)
+            {
+                int count = Mathf.Min(prevGrids.Count, newGrids.Count);
+                for (int i = 0; i < count; i++)
+                {
+                    if (prevGrids[i] != null && newGrids[i] != null)
+                        GridManager.MigrateGridData(prevGrids[i], newGrids[i]);
+                }
+            }
+        }
+
         if (notify) OnVenueUpgraded?.Invoke(tierIndex);
+    }
+
+    public IEnumerable<VoxelGridData> GetAllTierGridData()
+    {
+        foreach (var tier in _tiers)
+            if (tier.tierVoxelsGridData != null)
+                foreach (var grid in tier.tierVoxelsGridData)
+                    if (grid != null) yield return grid;
     }
 
     [ContextMenu("Debug: Mejorar chiringuito")]

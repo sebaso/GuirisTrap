@@ -75,9 +75,16 @@ public class SceneController : MonoBehaviour
 
             if (isNewGame)
             {
-                foreach (GridZone zone in GridZone.ActiveZones)
-                    if (zone.VoxelData != null) GridManager.ClearAll(zone.VoxelData);
-                Debug.Log("[SceneController] ClearAll ejecutado en todas las zonas");
+                var upgradeManager = FindAnyObjectByType<ChiringuitoUpgradeManager>();
+                if (upgradeManager != null)
+                {
+                    foreach (var grid in upgradeManager.GetAllTierGridData())
+                        GridManager.ClearOccupied(grid);
+                }
+                else
+                {
+                    Debug.LogWarning("[SceneController] No se encontró ChiringuitoUpgradeManager en la escena, no se pudo limpiar el grid.");
+                }
             }
             else if (SaveManager.Instance != null && SaveManager.Instance.ShouldSyncGridsOnLoad())
             {
