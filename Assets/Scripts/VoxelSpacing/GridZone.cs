@@ -112,14 +112,25 @@ public class GridZone : MonoBehaviour, IGridWorldResolver
         }
     }
 
-    public bool TryGetWorldTransform(CameraView view, Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    private IVoxelProjection GetFloorProjection()
     {
-        pos = default;
-        rot = Quaternion.identity;
-        var projection = GetProjection(view);
-        return projection != null && projection.TryGetWorldTransform(voxel, out pos, out rot);
+        var p = GetProjection(CameraView.Perspective);
+        return p ?? GetProjection(CameraView.TopDown);
     }
 
+    public bool TryGetVoxelAtWorldPos(Vector3 worldPos, out Vector3Int voxel)
+    {
+        voxel = default;
+        return GetFloorProjection() is FloorGridProjection floor && floor.TryGetVoxelAtWorldPos(worldPos, out voxel);
+    }
+
+    public bool TryGetFloorWorldTransform(Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    {
+        pos = default; rot = Quaternion.identity;
+        var floor = GetFloorProjection();
+        return floor != null && floor.TryGetWorldTransform(voxel, out pos, out rot);
+    }
+    
     public bool TryGetVoxelUnderRay(CameraView view, Ray ray, out Vector3Int voxel)
     {
         voxel = default;
@@ -131,4 +142,12 @@ public class GridZone : MonoBehaviour, IGridWorldResolver
 
     public void SetPreview(CameraView view, Vector3Int voxel, CellVisualState state)
         => GetProjection(view)?.SetCellVisual(voxel, state);
+
+    public bool TryGetWorldTransform(CameraView view, Vector3Int voxel, out Vector3 pos, out Quaternion rot)
+    {
+        pos = default;
+        rot = Quaternion.identity;
+        var projection = GetProjection(view);
+        return projection != null && projection.TryGetWorldTransform(voxel, out pos, out rot);
+    }
 }

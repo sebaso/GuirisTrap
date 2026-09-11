@@ -38,8 +38,6 @@ public class PlayerController : ControllableMonoBehaviour
     private float _freezeTimer;
     [Header("Furniture Carry — Colocación")]
     [SerializeField] 
-    private FloorGridProjection _floorProjection;
-    [SerializeField] 
     private LayerMask _furnitureObstacleMask;
     public float dropDistance = 1.2f;
     public float dropCheckRadius = 0.45f;
@@ -585,7 +583,7 @@ public class PlayerController : ControllableMonoBehaviour
         }
     }
 
-    private void UpdateCarryPreview()
+   private void UpdateCarryPreview()
     {
         _heldPlaceable.transform.localPosition = Vector3.Lerp(
             _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
@@ -593,11 +591,25 @@ public class PlayerController : ControllableMonoBehaviour
         Vector3 targetWorld = transform.position + _lastFacing * dropDistance;
         targetWorld.y = transform.position.y;
 
+        PlaceableItemData item = _heldPlaceable.GetItemData();
+
+        bool withinRoom = false;
         Vector3Int voxel = default;
-        bool withinRoom = _floorProjection != null && _floorProjection.TryGetVoxelAtWorldPos(targetWorld, out voxel);
+        GridZone matchedZone = null;
+
+        foreach (GridZone zone in GridZone.ActiveZones)
+        {
+            if (item != null && !item.CanBeUsedInZone(zone.ZoneId)) continue;
+            if (zone.TryGetVoxelAtWorldPos(targetWorld, out voxel))
+            {
+                withinRoom = true;
+                matchedZone = zone;
+                break;
+            }
+        }
 
         Vector3 snappedWorld = targetWorld;
-        if (withinRoom && _floorProjection.TryGetWorldTransform(voxel, out Vector3 cellCenter, out _))
+        if (withinRoom && matchedZone.TryGetFloorWorldTransform(voxel, out Vector3 cellCenter, out _))
         {
             snappedWorld = cellCenter;
         }
@@ -607,7 +619,6 @@ public class PlayerController : ControllableMonoBehaviour
         _dropValid = withinRoom && !overlapsFurniture;
         _dropTargetRot = Quaternion.LookRotation(_lastFacing, Vector3.up);
 
-        PlaceableItemData item = _heldPlaceable.GetItemData();
         Vector3 offset = item != null ? _dropTargetRot * item.placementOffset : Vector3.zero;
         _dropTargetPos = snappedWorld + offset;
 
@@ -618,6 +629,7 @@ public class PlayerController : ControllableMonoBehaviour
             TintGhost(_dropValid ? GhostOk : GhostBad);
         }
     }
+
     private void OnDestroy()
     {
         if (_ghost != null) Destroy(_ghost);

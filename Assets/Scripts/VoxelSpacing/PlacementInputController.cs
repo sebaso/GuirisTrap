@@ -13,7 +13,8 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private CameraController _cameraController;
     [SerializeField]
     private RotateBillboardUI _rotateBillboard;
-
+    [SerializeField] 
+    private LayerMask _placementRaycastMask;
     private InputSystem_Actions _inputs;
 
     private PlaceableObject _selected;
@@ -120,7 +121,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
     private PlaceableObject RaycastForPlaceable()
     {
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return null;
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _placementRaycastMask)) return null;
         return hit.transform.GetComponentInParent<PlaceableObject>();
     }
 
@@ -327,7 +328,7 @@ public class PlacementInputController : MonoBehaviour, IUIActions
         PlaceableInstanceRegistry registry = zone.Registry;
 
         Ray ray = _mainCamera.ScreenPointToRay(_pointerPos);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, _placementRaycastMask)) return;
 
         PlaceableObject placeable = hit.transform.GetComponentInParent<PlaceableObject>();
         if (placeable == null) return;

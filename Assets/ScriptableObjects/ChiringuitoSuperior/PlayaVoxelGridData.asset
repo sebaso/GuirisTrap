@@ -62,7 +62,7 @@ MonoBehaviour:
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    isEntrance: 0
+    isEntrance: 1
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
@@ -196,18 +196,18 @@ MonoBehaviour:
     anchor: {x: 0, y: 0, z: 0}
     isEntrance: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
+  - type: 2
+    item: {fileID: 11400000, guid: 269913217f0f7ed439ef67c8f9eeb234, type: 2}
     tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
+    anchor: {x: 3, y: 0, z: 1}
     isEntrance: 0
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
+    rotation: {x: 0, y: 1, z: 0, w: 0}
+  - type: 2
+    item: {fileID: 11400000, guid: 595ad3cb95f1c3b43b1bb001cc2bba07, type: 2}
     tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
+    anchor: {x: 4, y: 0, z: 1}
     isEntrance: 0
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0

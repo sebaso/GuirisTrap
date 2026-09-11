@@ -9,7 +9,7 @@ public class PlaceableGenerator : MonoBehaviour
             GenerateForZone(zone);
     }
 
-    private void GenerateForZone(GridZone zone)
+    public void GenerateForZone(GridZone zone)
     {
         if (zone == null || zone.VoxelData == null || zone.Resolver == null || zone.Registry == null) return;
 

@@ -370,6 +370,7 @@ Transform:
   - {fileID: 1276874094}
   - {fileID: 392482144}
   - {fileID: 1262220453}
+  - {fileID: 208476499}
   m_Father: {fileID: 1090142002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &16500756
@@ -1244,7 +1245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _cellPrefab: {fileID: 0}
   _side: 0
 --- !u!4 &106787007
 Transform:
@@ -1477,7 +1478,9 @@ MonoBehaviour:
   _voxelData: {fileID: 11400000, guid: 9305e16512864c24d9346658b21a3c53, type: 2}
   _registry: {fileID: 1489178169}
   _resolverOverride: {fileID: 128084029}
-  _projections: []
+  _projections:
+  - view: 0
+    _projectionBehaviour: {fileID: 310903900}
   _cameraController: {fileID: 0}
   _cameraPivots: []
 --- !u!4 &128084031
@@ -1511,7 +1514,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!95 &132338768
 Animator:
   serializedVersion: 7
@@ -2580,6 +2583,119 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207295696}
   m_Mesh: {fileID: -8259417878425161692, guid: 79bf717cbf6bda84fbc4ea81b0a2b223, type: 3}
+--- !u!1 &208476498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 208476499}
+  - component: {fileID: 208476502}
+  - component: {fileID: 208476501}
+  - component: {fileID: 208476500}
+  m_Layer: 0
+  m_Name: Plane (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &208476499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208476498}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15.57, y: -0.72, z: -3.39}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 16500755}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &208476500
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208476498}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &208476501
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208476498}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &208476502
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208476498}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &213062827
 GameObject:
   m_ObjectHideFlags: 0
@@ -2609,7 +2725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c18ca5cf809c94da3a6e9f3e14ced3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
-  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _voxelData: {fileID: 11400000, guid: 9d4969e58feeb1b4cacf6b295ad50129, type: 2}
   _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
   _side: 2
 --- !u!4 &213062829
@@ -3627,7 +3743,9 @@ MonoBehaviour:
   _resolverOverride: {fileID: 292514791}
   _projections: []
   _cameraController: {fileID: 0}
-  _cameraPivots: []
+  _cameraPivots:
+  - view: 0
+    pivot: {fileID: 987502101}
 --- !u!1 &294454280
 GameObject:
   m_ObjectHideFlags: 0
@@ -3741,7 +3859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
   _voxelData: {fileID: 11400000, guid: 9305e16512864c24d9346658b21a3c53, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _cellPrefab: {fileID: 0}
 --- !u!4 &310903901
 Transform:
   m_ObjectHideFlags: 0
@@ -4154,7 +4272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _cellPrefab: {fileID: 0}
   _side: 2
 --- !u!4 &352007971
 Transform:
@@ -6795,8 +6913,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23598bf82bd4df4a82d563467fd87a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
-  _voxelData: {fileID: 11400000, guid: e50172e09848ff44a8b5071afbc14a0f, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _voxelData: {fileID: 11400000, guid: 4efe37ca0541da942bded8f7f7027e3e, type: 2}
+  _cellPrefab: {fileID: 0}
 --- !u!4 &566242340
 Transform:
   m_ObjectHideFlags: 0
@@ -8566,7 +8684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c18ca5cf809c94da3a6e9f3e14ced3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
-  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _voxelData: {fileID: 11400000, guid: 9d4969e58feeb1b4cacf6b295ad50129, type: 2}
   _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
   _side: 1
 --- !u!4 &732886837
@@ -10515,7 +10633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23598bf82bd4df4a82d563467fd87a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
-  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _voxelData: {fileID: 11400000, guid: 9d4969e58feeb1b4cacf6b295ad50129, type: 2}
   _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
 --- !u!4 &987502101
 Transform:
@@ -13542,7 +13660,9 @@ MonoBehaviour:
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
   _registry: {fileID: 1489178169}
   _resolverOverride: {fileID: 1283730709}
-  _projections: []
+  _projections:
+  - view: 0
+    _projectionBehaviour: {fileID: 1840258590}
   _cameraController: {fileID: 0}
   _cameraPivots: []
 --- !u!4 &1283730711
@@ -13997,7 +14117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c23598bf82bd4df4a82d563467fd87a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
-  _voxelData: {fileID: 11400000, guid: 9305e16512864c24d9346658b21a3c53, type: 2}
+  _voxelData: {fileID: 11400000, guid: b0e9cbba21cc10d4f97bcd666d940ba8, type: 2}
   _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
 --- !u!4 &1323738815
 Transform:
@@ -14187,7 +14307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c18ca5cf809c94da3a6e9f3e14ced3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
-  _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
+  _voxelData: {fileID: 11400000, guid: 9d4969e58feeb1b4cacf6b295ad50129, type: 2}
   _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
   _side: 0
 --- !u!4 &1342603191
@@ -15568,6 +15688,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9d4969e58feeb1b4cacf6b295ad50129, type: 2}
     - {fileID: 11400000, guid: b0e9cbba21cc10d4f97bcd666d940ba8, type: 2}
     - {fileID: 11400000, guid: 4efe37ca0541da942bded8f7f7027e3e, type: 2}
+  _cameraController: {fileID: 0}
 --- !u!1 &1489178167
 GameObject:
   m_ObjectHideFlags: 0
@@ -16409,7 +16530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGridProjection
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _cellPrefab: {fileID: 0}
   _side: 1
 --- !u!4 &1618466545
 Transform:
@@ -16493,7 +16614,9 @@ MonoBehaviour:
   _resolverOverride: {fileID: 1626925144}
   _projections: []
   _cameraController: {fileID: 0}
-  _cameraPivots: []
+  _cameraPivots:
+  - view: 0
+    pivot: {fileID: 1323738815}
 --- !u!1 &1627568691
 GameObject:
   m_ObjectHideFlags: 0
@@ -16510,7 +16633,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1627568692
 Transform:
   m_ObjectHideFlags: 0
@@ -18493,7 +18616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGridProjection
   _voxelData: {fileID: 11400000, guid: ae219f860bcb5bb429e8200595d12510, type: 2}
-  _cellPrefab: {fileID: 1046263518668975393, guid: 2801c79c41097a6428618016f2e10f07, type: 3}
+  _cellPrefab: {fileID: 0}
 --- !u!4 &1840258591
 Transform:
   m_ObjectHideFlags: 0
@@ -21583,7 +21706,9 @@ MonoBehaviour:
   - view: 0
     _projectionBehaviour: {fileID: 566242339}
   _cameraController: {fileID: 0}
-  _cameraPivots: []
+  _cameraPivots:
+  - view: 0
+    pivot: {fileID: 566242340}
 --- !u!1 &2113089796
 GameObject:
   m_ObjectHideFlags: 0

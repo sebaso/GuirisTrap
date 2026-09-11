@@ -7,9 +7,12 @@ public class ChiringuitoUpgradeManager : MonoBehaviour
     public static event System.Action<int> OnVenueUpgraded;
 
     [SerializeField] private List<ChiringuitoTierData> _tiers = new();
+
+    [SerializeField] 
+    private CameraController _cameraController;
     private int _currentTier = 0;
 
-    void Start()
+    void Awake()
     {
         _currentTier = SaveManager.Instance != null ? SaveManager.Instance.ChiringuitoTier : 0;
         ApplyTier(_currentTier, notify: false);
@@ -24,8 +27,38 @@ public class ChiringuitoUpgradeManager : MonoBehaviour
             return false;
         }
 
+        ChiringuitoTierData oldTier = _tiers[_currentTier];
+        ChiringuitoTierData newTier = _tiers[next];
+
+        var oldZones = oldTier.tierRoot != null ? oldTier.tierRoot.GetComponentsInChildren<GridZone>(true) : new GridZone[0];
+        var newZones = newTier.tierRoot != null ? newTier.tierRoot.GetComponentsInChildren<GridZone>(true) : new GridZone[0];
+
+        var pairs = new List<(GridZone oldZone, GridZone newZone)>();
+        foreach (var oldZone in oldZones)
+        {
+            GridZone newZone = System.Array.Find(newZones, z => z.ZoneId == oldZone.ZoneId);
+            if (newZone == null) continue;
+            GridManager.MigrateGridData(oldZone.VoxelData, newZone.VoxelData);
+            pairs.Add((oldZone, newZone));
+        }
+
+        foreach (var pair in pairs)
+            foreach (var placeable in pair.oldZone.Registry.All())
+                if (placeable != null) Destroy(placeable.gameObject);
+
         _currentTier = next;
         ApplyTier(_currentTier, notify: true);
+
+        if (_cameraController != null)
+        {
+            ZoneId currentZoneId = _cameraController.ActiveZone != null ? _cameraController.ActiveZone.ZoneId : ZoneId.Interior;
+            GridZone matchingZone = System.Array.Find(newZones, z => z.ZoneId == currentZoneId);
+            if (matchingZone != null) _cameraController.SetActiveZone(matchingZone);
+        }
+
+        PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();
+        foreach (var pair in pairs)
+            generator?.GenerateForZone(pair.newZone);
 
         if (SaveManager.Instance != null) SaveManager.Instance.ChiringuitoTier = _currentTier;
         return true;
@@ -67,6 +100,16 @@ public class ChiringuitoUpgradeManager : MonoBehaviour
             if (tier.tierVoxelsGridData != null)
                 foreach (var grid in tier.tierVoxelsGridData)
                     if (grid != null) yield return grid;
+    }
+
+    public GridZone GetDefaultZone(ZoneId zoneId)
+    {
+        if (_currentTier < 0 || _currentTier >= _tiers.Count) return null;
+        GameObject root = _tiers[_currentTier].tierRoot;
+        if (root == null) return null;
+
+        var zones = root.GetComponentsInChildren<GridZone>(true);
+        return System.Array.Find(zones, z => z.ZoneId == zoneId);
     }
 
     [ContextMenu("Debug: Mejorar chiringuito")]
