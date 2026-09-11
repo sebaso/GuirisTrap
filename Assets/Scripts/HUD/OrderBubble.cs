@@ -119,17 +119,20 @@ public class OrderBubble : MonoBehaviour
     private string FormatOrder(ClientGroup g)
     {
         // Group duplicate dishes: "Paella x2" reads better than two lines.
-        var counts = new Dictionary<string, int>();
+        var counts = new Dictionary<RecipeData, int>();
         foreach (var r in g.Order)
         {
             if (r == null) continue;
-            string name = r.dishName;
-            counts[name] = counts.TryGetValue(name, out int c) ? c + 1 : 1;
+            counts[r] = counts.TryGetValue(r, out int c) ? c + 1 : 1;
         }
 
+        // Cada plato con la estación donde se cocina al lado.
         var lines = new List<string>(counts.Count);
         foreach (var kv in counts)
-            lines.Add(kv.Value > 1 ? $"{kv.Key} x{kv.Value}" : kv.Key);
+        {
+            string linea = RecipeStations.DishWithStation(kv.Key);
+            lines.Add(kv.Value > 1 ? $"{linea} x{kv.Value}" : linea);
+        }
 
         return $"Mesa {_table.tableNumber}\n{string.Join("\n", lines)}";
     }
