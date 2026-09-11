@@ -141,22 +141,26 @@ public class TicketRailUI : MonoBehaviour
 
     private string FormatTicket(ClientGroup g, int tableNumber)
     {
-        // Collapse duplicate dishes: "Paella x2".
-        var counts = new Dictionary<string, int>();
+        // Se agrupan los repetidos ("Paella x2") y cada plato lleva al lado la
+        // estación donde se cocina, para no tener que ir adivinando.
+        var counts = new Dictionary<RecipeData, int>();
         if (g.Order != null)
         {
             foreach (var rec in g.Order)
             {
                 if (rec == null) continue;
-                counts[rec.dishName] = counts.TryGetValue(rec.dishName, out int c) ? c + 1 : 1;
+                counts[rec] = counts.TryGetValue(rec, out int c) ? c + 1 : 1;
             }
         }
 
         var parts = new List<string>(counts.Count);
         foreach (var kv in counts)
-            parts.Add(kv.Value > 1 ? $"{kv.Key} x{kv.Value}" : kv.Key);
+        {
+            string linea = RecipeStations.DishWithStation(kv.Key);
+            parts.Add(kv.Value > 1 ? $"{linea} x{kv.Value}" : linea);
+        }
 
-        string dishes = parts.Count > 0 ? string.Join(", ", parts) : "?";
+        string dishes = parts.Count > 0 ? string.Join("\n", parts) : "?";
         return $"<b>Mesa {tableNumber}</b>  ({g.PlatesServed}/{g.PlatesNeeded})\n{dishes}";
     }
 

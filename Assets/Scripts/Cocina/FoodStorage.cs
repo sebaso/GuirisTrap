@@ -96,21 +96,17 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
                 : $"<color=#FF6B6B>SIN STOCK \u00B7 {IngredientStockManager.EmergencyPrice(current)}\u20AC urgencia</color>\n";
         }
 
-        recipeNameText.text = $"{current.dishName}\n{stockLine}(Ir a: {GetDestinationName(current.type)})";
-    }
+        // Si algún cliente está esperando justo este plato, se resalta con el
+        // color de su estación (el mismo de la comanda y de las flechas), para
+        // que no haya que ir comparando la lista con la comanda a ojo.
+        string nombre = current.dishName;
+        if (OrderGuide.IsWanted(current))
+            nombre = $"<color={RecipeStations.ColorHex(current.type)}>{current.dishName}  \u25C4 LO PIDEN</color>";
 
-    /// <summary>Traduce el tipo de minijuego al nombre de la estación a la que hay que ir.</summary>
-    string GetDestinationName(MinigameType type)
-    {
-        return type switch
-        {
-            MinigameType.Nevera     => "la SARTÉN",
-            MinigameType.Congelador => "el HORNO",
-            MinigameType.Despensa   => "la TABLA DE CORTAR",
-            MinigameType.Especias   => "el MORTERO",
-            _                       => "???"
-        };
+        recipeNameText.text = $"{nombre}\n{stockLine}(Ir a: {GetDestinationName(current.type)})";
     }
+    
+    string GetDestinationName(MinigameType type) => RecipeStations.LongName(type);
 
     void ConfirmSelection()
     {

@@ -150,7 +150,15 @@ public class DespensaMinigame : MonoBehaviour, IMinigameControllable
 
     void AddProgress()
     {
-        if (!isPlaying) return; // ignorar pulsaciones durante la cuenta atrás
+        if (isCountingDown)
+        {
+            isCountingDown = false;
+            countdownRemaining = 0f;
+            isPlaying = true;
+            if (timerText) timerText.text = "¡YA!";
+        }
+
+        if (!isPlaying) return;
 
         currentClicks++;
         _progress = currentClicks / requiredClicks;

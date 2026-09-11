@@ -91,7 +91,7 @@ public class DayManager : MonoBehaviour
 
         if (!_isDayActive) return;
 
-        _timeRemaining -= Time.deltaTime;
+        _timeRemaining -= Time.deltaTime * TimeRate;
 
         if (_timeRemaining <= 0f)
         {
@@ -174,8 +174,14 @@ public class DayManager : MonoBehaviour
     }
 
     /// <summary>Start (or restart) the day timer.</summary>
+    public static float TimeRate { get; private set; } = 1f;
+
+    public static void SetTimeRate(float rate) => TimeRate = Mathf.Clamp(rate, 0.05f, 1f);
+    public static void ResetTimeRate() => TimeRate = 1f;
+
     public void StartDay()
     {
+        ResetTimeRate(); // por si un minijuego se quedó a medias el día anterior
         _timeRemaining = _dayDurationSeconds;
         _isDayActive = true;
         IsWindingDown = false;
