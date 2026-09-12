@@ -11,9 +11,9 @@ public class WeekManager : MonoBehaviour
     [Header("Estrellas por media semanal")]
     [SerializeField] private float _deltaMediaA = 0.5f;
     [SerializeField] private float _deltaMediaB = 0.5f;
-    [SerializeField] private float _deltaMediaC = 0.25f;
+    [SerializeField] private float _deltaMediaC = 0.5f;
     [SerializeField] private float _deltaMediaD = 0f;
-    [SerializeField] private float _deltaMediaE = -0.25f;
+    [SerializeField] private float _deltaMediaE = -0.5f;
     [SerializeField] private float _deltaMediaF = -0.5f;
 
     [Header("Bonus de dinero por media de A")]

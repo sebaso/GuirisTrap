@@ -25,8 +25,22 @@ public class StatsPanel : MonoBehaviour
     [SerializeField] private GameObject _weekResultRoot;
     [SerializeField] private TMP_Text _weekAverageText;
     [SerializeField] private Image _weekAverageGradeImage;
-    [SerializeField] private TMP_Text _weekStarsText;
     [SerializeField] private TMP_Text _weekBonusText;
+    [System.Serializable]
+    public class StarColorSprites
+    {
+        public Sprite empty;
+        public Sprite half;
+        public Sprite full;
+    }
+
+    [Header("Estrellas (sprites)")]
+    [SerializeField] private Image[] _starImages;
+    [SerializeField] private StarColorSprites _goldStars;
+    [SerializeField] private StarColorSprites _greenStars;
+    [SerializeField] private StarColorSprites _redStars;
+    [SerializeField] private Sprite _halfGoldGreenSprite;
+    [SerializeField] private Sprite _halfGoldRedSprite;
 
     [Header("Sprites de nota (A-F)")]
     [SerializeField] private Sprite _gradeASprite;
@@ -39,7 +53,10 @@ public class StatsPanel : MonoBehaviour
     [Header("Botón siguiente día")]
     [SerializeField] private Button _nextDayButton;
     [SerializeField] private TMP_Text _nextDayButtonLabel;
+    [SerializeField] private RectTransform _nextDayButtonRect;
     private bool _awaitingWeekSummaryTap = false;
+    private Vector3 _nextDayButtonDefaultPos;
+    private static readonly Vector3 WeekSummaryButtonPos = new Vector3(382f, -468f, 0f);
 
     [Header("Colores de la nota")]
     [SerializeField] private Color _gradeAColor = new Color(0.20f, 0.80f, 0.20f);
@@ -52,6 +69,9 @@ public class StatsPanel : MonoBehaviour
 
     private void Awake()
     {
+        if (_nextDayButtonRect != null)
+            _nextDayButtonDefaultPos = _nextDayButtonRect.anchoredPosition3D;
+
         DayReport dr = GetComponentInChildren<DayReport>(true);
         if (dr != null && !dr.gameObject.activeInHierarchy)
         {
@@ -129,6 +149,8 @@ public class StatsPanel : MonoBehaviour
     private void Populate()
     {
         _dailyStatsPanel?.SetActive(true);
+        if (_nextDayButtonRect != null) 
+            _nextDayButtonRect.anchoredPosition3D = _nextDayButtonDefaultPos;
 
         DayReport report = DayReport.Instance;
 
@@ -199,6 +221,7 @@ public class StatsPanel : MonoBehaviour
             _nextDayButton.onClick.AddListener(OnNextDayButton);
         }
     }
+
     private void PopulateWeekSection()
     {
         if (_weekResultRoot == null) return;
@@ -217,25 +240,48 @@ public class StatsPanel : MonoBehaviour
         if (_weekAverageGradeImage != null)
             _weekAverageGradeImage.sprite = GetGradeSprite(r.averageGrade);
 
-        if (_weekStarsText != null)
-        {
-            float delta = r.StarsDelta;
-            string deltaTxt = delta > 0f ? $" (+{delta:0.##})"
-                            : delta < 0f ? $" ({delta:0.##})"
-                            : " (=)";
-            _weekStarsText.text = $"Estrellas {r.starsBefore:0.##} → {r.starsAfter:0.##}{deltaTxt}";
-        }
+        SetStars(r.starsBefore, r.starsAfter);
 
         if (_weekBonusText != null)
             _weekBonusText.text = r.moneyBonus > 0 ? $"BONUS: +{r.moneyBonus}€" : string.Empty;
     }
 
+    private void SetStars(float starsBefore, float starsAfter)
+    {
+        if (_starImages == null) return;
+
+        for (int i = 0; i < _starImages.Length; i++)
+        {
+            if (_starImages[i] == null) continue;
+
+            float localBefore = Mathf.Clamp(starsBefore - i, 0f, 1f);
+            float localAfter  = Mathf.Clamp(starsAfter - i, 0f, 1f);
+
+            _starImages[i].sprite = GetStarSprite(localBefore, localAfter);
+        }
+    }
+
+    private Sprite GetStarSprite(float localBefore, float localAfter)
+    {
+        if (localBefore == 0.5f && localAfter == 1f) return _halfGoldGreenSprite;
+        if (localBefore == 1f && localAfter == 0.5f) return _halfGoldRedSprite;
+
+        StarColorSprites set = localAfter > localBefore ? _greenStars
+                            : localAfter < localBefore ? _redStars
+                            : _goldStars;
+
+        if (localAfter >= 1f) return set.full;
+        if (localAfter >= 0.5f) return set.half;
+        return set.empty;
+    }
+
     private void OnViewWeekSummaryButton()
     {
         _awaitingWeekSummaryTap = false;
-        if (_dailyStatsPanel != null) _dailyStatsPanel.SetActive(false); // ← nuevo
+        if (_dailyStatsPanel != null) _dailyStatsPanel.SetActive(false);
         _weekResultRoot.SetActive(true);
         if (_nextDayButtonLabel != null) _nextDayButtonLabel.text = "SIGUIENTE SEMANA";
+        if (_nextDayButtonRect != null) _nextDayButtonRect.anchoredPosition3D = WeekSummaryButtonPos; // ← nuevo
 
         _nextDayButton.onClick.RemoveAllListeners();
         _nextDayButton.onClick.AddListener(OnNextDayButton);
