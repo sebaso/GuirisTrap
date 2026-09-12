@@ -20,6 +20,18 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     public float balaSpeed = 700f;
     public int maxBalasEnVuelo = 1;
     public float fireCooldown = 0.12f;
+
+    [Header("Explicación de inicio")]
+    public GameObject explicacionPanel;
+    public TMP_Text explicacionCountdownText;
+    public float explicacionSegundos = 4f;
+
+    [Header("Ritmo del día")]
+    [Range(0.05f, 1f)]
+    public float ritmoDelDia = 0.4f;
+
+    [Header("Dificultad")]
+    public int balasExtra = 2;
     public float muzzleOffset = 40f;
     public float maxSweepStep = 20f;
 
@@ -30,8 +42,8 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     public GameObject[] layoutsImposible;
 
     [Header("Velocidad base de Especias")]
-    public float baseEspeciaSpeed   = 80f;
-    public float speedPerDifficulty = 30f;
+    public float baseEspeciaSpeed   = 55f;
+    public float speedPerDifficulty = 18f;
 
     [Header("UI - Panel")]
     public GameObject minigamePanel;
@@ -39,6 +51,8 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
     public TMP_Text   instruccionText;
 
     private bool               _isPlaying = false;
+    private bool               _enExplicacion = false;
+    private float              _explicacionRestante;
     private PlayerController   _player;
     private EspeciasRecipeData _currentRecipe;
     private int   _balasRestantes;
@@ -75,6 +89,21 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 
     void Update()
     {
+        if (_enExplicacion)
+        {
+            _explicacionRestante -= Time.unscaledDeltaTime;
+
+            if (explicacionCountdownText != null)
+            {
+                explicacionCountdownText.text = _explicacionRestante > 0f
+                    ? Mathf.CeilToInt(_explicacionRestante).ToString()
+                    : "¡YA!";
+            }
+
+            if (_explicacionRestante <= 0f) EmpezarDeVerdad();
+            return;
+        }
+
         if (!_isPlaying) return;
         if (_fireCooldownLeft > 0f) _fireCooldownLeft -= Time.deltaTime;
 
@@ -125,7 +154,7 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 
         _totalEspecias      = _layoutActivo.GetEspecias().Length;
         _especiasCongeladas = 0;
-        _balasRestantes     = _currentRecipe.balas;
+        _balasRestantes     = _currentRecipe.balas + Mathf.Max(0, balasExtra);
         _especiaEnContacto  = new bool[_totalEspecias];
         _navInput           = Vector2.zero;
         _cucharaVel         = 0f;
@@ -136,8 +165,31 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         cucharaRect.gameObject.SetActive(true);
         cucharaRect.anchoredPosition = Vector2.zero;
 
-        _isPlaying = true;
+        // En vez de empezar de golpe, se da un momento para leer y mirar el
+        // tablero. El día también se frena aquí, no al empezar a disparar.
+        DayManager.SetTimeRate(ritmoDelDia);
+
+        if (explicacionPanel != null && explicacionSegundos > 0f)
+        {
+            _enExplicacion = true;
+            _explicacionRestante = explicacionSegundos;
+            explicacionPanel.SetActive(true);
+            _isPlaying = false;
+        }
+        else
+        {
+            EmpezarDeVerdad();
+        }
+
         RefreshUI();
+    }
+
+    /// <summary>Cierra la explicación y arranca el juego de verdad.</summary>
+    private void EmpezarDeVerdad()
+    {
+        _enExplicacion = false;
+        if (explicacionPanel != null) explicacionPanel.SetActive(false);
+        _isPlaying = true;
     }
 
     // ------------------------------------------------------------------
@@ -322,6 +374,11 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         if (!_isPlaying) return;
         _isPlaying = false;
 
+        // Devolver el reloj del día a su ritmo normal.
+        _enExplicacion = false;
+        if (explicacionPanel != null) explicacionPanel.SetActive(false);
+        DayManager.ResetTimeRate();
+
         CancelInvoke(nameof(CheckFallo));
         DestroyAllBalas();
         if (_layoutActivo != null) _layoutActivo.gameObject.SetActive(false);
@@ -361,7 +418,11 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
 
     //  IMinigameControllable 
 
-    public void OnInteract()              => Shoot();
+    public void OnInteract()
+    {
+        if (_enExplicacion) { EmpezarDeVerdad(); return; }
+        Shoot();
+    }
     public void OnSubmit()                => Shoot();
     public void OnCancel()                { }
     public void OnNavigate(Vector2 dir)   => _navInput = dir;
