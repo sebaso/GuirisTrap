@@ -63,8 +63,13 @@ public class AmbientZone : MonoBehaviour
         if (_player == null)
         {
             PlayerController pc = FindAnyObjectByType<PlayerController>();
-            if (pc == null) return;
-            _player = pc.transform;
+            if (pc != null)
+                _player = pc.transform;
+            // Escenas sin jugador (Preparación): la cámara es quien "oye" las zonas.
+            else if (Camera.main != null)
+                _player = Camera.main.transform;
+            else
+                return;
         }
 
         // 0 dentro del área; 1 en fadeDistance más allá del borde.
