@@ -8,4 +8,5 @@ public class PlaceableInstanceRegistry : MonoBehaviour
     public void Register(Vector3Int anchor, PlaceableObject obj) => _instances[anchor] = obj;
     public void Unregister(Vector3Int anchor) => _instances.Remove(anchor);
     public PlaceableObject Get(Vector3Int anchor) => _instances.TryGetValue(anchor, out var o) ? o : null;
+    public IEnumerable<PlaceableObject> All() => _instances.Values;
 }

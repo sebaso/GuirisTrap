@@ -67,7 +67,7 @@ public class Inventory : MonoBehaviour
         OnAnyInventoryChanged?.Invoke();
     }
 
-    public bool AddItem(PlaceableItemData item)
+    public bool AddItem(PlaceableItemData item, int tierIndex)
     {
         if (_inventory == null) Init();
         if (_inventory == null) return false;
@@ -78,7 +78,7 @@ public class Inventory : MonoBehaviour
             {
                 var slot = _inventory[x, y];
 
-                if (slot != null && slot.CanStack(item))
+                if (slot != null && slot.CanStack(item, tierIndex))
                 {
                     slot.AddItem();
                     NotifyChanged();
@@ -96,6 +96,7 @@ public class Inventory : MonoBehaviour
                     _inventory[x, y] = new InventorySlot
                     {
                         item = item,
+                        tierIndex = tierIndex,
                         quantity = 1,
                         maxStack = item.maxStack
                     };
