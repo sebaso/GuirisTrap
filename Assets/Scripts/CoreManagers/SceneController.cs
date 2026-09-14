@@ -25,7 +25,8 @@ public class SceneController : MonoBehaviour
         {
             if (!CanStartDay())
             {
-                HUDMessage.Instance?.ShowWarning("Hay sillas que no se pueden usar. Revisa el restaurante antes de empezar el día.");
+                if (HUDMessage.Instance != null)
+                    HUDMessage.Instance.ShowWarning("Hay sillas que no se pueden usar. Revisa el restaurante antes de empezar el día.");
                 return;
             }
             SaveManager.Instance?.ForceSave();
@@ -62,6 +63,10 @@ public class SceneController : MonoBehaviour
 
         if (scene.name == "PreparationScene")
         {
+            // Igual que en GameScene: el AudioManager persiste entre escenas y sin
+            // esto la música del menú seguiría sonando en la preparación.
+            AudioManager.Instance?.StopMusic();
+
             MoneyManager.EnsureAndRestore();
 
             CameraController cameraController = FindAnyObjectByType<CameraController>();
@@ -92,7 +97,7 @@ public class SceneController : MonoBehaviour
             else if (SaveManager.Instance != null && SaveManager.Instance.ShouldSyncGridsOnLoad())
             {
                 SaveManager.Instance.ApplyGridToScene();
-                SaveManager.Instance.ApplyInventoryToScene(); 
+                SaveManager.Instance.ApplyInventoryToScene();
             }
 
             PlaceableGenerator generator = FindAnyObjectByType<PlaceableGenerator>();

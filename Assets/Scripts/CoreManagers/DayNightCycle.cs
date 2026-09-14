@@ -90,6 +90,24 @@ public class DayNightCycle : MonoBehaviour
     [Tooltip("0 = cada frame. >0 limita cuántas veces por segundo se recalcula la luz.")]
     [SerializeField] private float _updatesPerSecond = 0f;
 
+    [Header("Modo showcase (marketing)")]
+    [Tooltip("Segundos que tarda el ciclo en recorrer la ventana completa del día " +
+             "con el showcase activado. Ignora la duración real del día.")]
+    [SerializeField, Min(0.1f)] private float _showcaseDurationSeconds = 10f;
+    [Tooltip("Si está activo, el barrido se repite en bucle (útil para capturar GIFs). " +
+             "Si no, el ciclo se queda al llegar al final del día.")]
+    [SerializeField] private bool _showcaseLoop = true;
+
+    /// <summary>
+    /// Modo showcase: barrido rápido del ciclo para grabar material de marketing.
+    /// Se activa desde el menú de editor "Tools/Modo showcase (ciclo dia/noche)";
+    /// en builds nadie lo toca, así que no tiene ningún efecto.
+    /// </summary>
+    public static bool ShowcaseMode { get; set; }
+
+    private float _showcaseTime;
+    private bool _showcasePrev;
+
     private float _independentTime;
     private float[] _nightLightBaseIntensity;
     private float _nextUpdateTime;
@@ -140,7 +158,9 @@ public class DayNightCycle : MonoBehaviour
 
     void Update()
     {
-        if (_updatesPerSecond > 0f)
+        // El showcase va por encima del throttle: el barrido debe verse suave
+        // aunque alguien haya limitado las actualizaciones por segundo.
+        if (!ShowcaseMode && _updatesPerSecond > 0f)
         {
             if (Time.unscaledTime < _nextUpdateTime) return;
             _nextUpdateTime = Time.unscaledTime + 1f / _updatesPerSecond;
@@ -153,6 +173,26 @@ public class DayNightCycle : MonoBehaviour
 
     private float CurrentProgress()
     {
+        // Borde del toggle: al activar el showcase el barrido empieza de mañana.
+        if (_showcasePrev != ShowcaseMode)
+        {
+            _showcasePrev = ShowcaseMode;
+            _showcaseTime = 0f;
+        }
+
+        // Modo showcase: recorre la ventana del día entera en _showcaseDurationSeconds,
+        // IGNORANDO el timer real (DayManager o independiente) y el desfase. Usa tiempo
+        // sin escalar a propósito: el barrido sigue aunque el juego esté pausado
+        // (p.ej. panel de fin de día), que es justo cuando se graba.
+        if (ShowcaseMode)
+        {
+            _showcaseTime += Time.unscaledDeltaTime;
+            float duracion = Mathf.Max(0.1f, _showcaseDurationSeconds);
+            if (_showcaseLoop) _showcaseTime %= duracion;
+            return Mathf.Lerp(_cycleStart, _cycleEnd > _cycleStart ? _cycleEnd : 1f,
+                              Mathf.Clamp01(_showcaseTime / duracion));
+        }
+
         float t;
 
         if (_timeSource == TimeSource.DayManager && DayManager.Instance != null)
