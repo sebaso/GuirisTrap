@@ -28,8 +28,9 @@ public static class DayNightShowcaseMenu
         Menu.SetChecked(MenuPath, value);
 
         Debug.Log(value
-            ? "[DayNightCycle] Modo showcase ACTIVADO: el ciclo recorre el día completo " +
-              "en bucle. Entra en Play y graba la Game View (solo afecta a la iluminación)."
+            ? "[DayNightCycle] Modo showcase ACTIVADO: el ciclo recorre el día y la noche " +
+              "completos en bucle (la costura se funde a negro). Entra en Play y graba la " +
+              "Game View (solo afecta a la iluminación)."
             : "[DayNightCycle] Modo showcase desactivado: el ciclo vuelve a seguir el día real.");
     }
 
