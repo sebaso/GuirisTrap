@@ -15,6 +15,11 @@ public class InputManager : MonoBehaviour, IPlayerActions
     private InputSystem_Actions _inputs;
     private ControllableMonoBehaviour _current;
 
+    // Tras un minijuego de machacar E, las pulsaciones residuales del jugador
+    // no deben reabrir menús ni lanzar otra interacción al salir.
+    private float _interactBlockedUntil;
+    private const float PostMinigameInteractCooldown = 0.5f;
+
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -42,6 +47,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
         _current = _playerControllable;
         IsPaused = false;
         _beforePause = null;
+        _interactBlockedUntil = 0f; // el bloqueo de E era del minijuego anterior
     }
     private void OnDestroy()
 {
@@ -70,6 +76,7 @@ public void EnterMinigame(IMinigameControllable minigame)
     {
         _minigameControllable.ClearActive();
         _current = _playerControllable;
+        _interactBlockedUntil = Time.time + PostMinigameInteractCooldown;
 
         (_playerControllable as PlayerController)?.UnlockMovement();
     }
@@ -103,6 +110,7 @@ public void EnterMinigame(IMinigameControllable minigame)
 
     public void OnInteract(InputAction.CallbackContext context)
     {
+        if (Time.time < _interactBlockedUntil) return;
         if (context.performed)      _current?.OnInteractDown();
         else if (context.canceled)  _current?.OnInteractUp();
     }

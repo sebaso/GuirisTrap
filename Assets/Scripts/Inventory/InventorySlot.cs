@@ -3,11 +3,13 @@ using UnityEngine;
 public class InventorySlot
 {
     public PlaceableItemData item;
+    public int tierIndex;
     public int quantity;
     public int maxStack;
-    public bool CanStack(PlaceableItemData newItem)
+
+    public bool CanStack(PlaceableItemData newItem, int newTierIndex)
     {
-        if( item!= null && newItem != null && item == newItem && quantity < maxStack)
+        if (item != null && newItem != null && item == newItem && tierIndex == newTierIndex && quantity < maxStack)
             return true;
         return false;
     }

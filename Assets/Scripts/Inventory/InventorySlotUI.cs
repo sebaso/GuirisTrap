@@ -19,6 +19,7 @@ public class InventorySlotUI : MonoBehaviour
     private const float ENABLED_ALPHA  = 1f;
 
     private PlaceableItemData _currentItem;
+    private int _currentTierIndex;
     private bool _isCompatible;
 
     public void Init(int x, int y)
@@ -27,7 +28,7 @@ public class InventorySlotUI : MonoBehaviour
         _posY = y;
     }
 
-    public void SetSlot(InventorySlot slot, bool isCompatible)
+   public void SetSlot(InventorySlot slot, bool isCompatible)
     {
         _isCompatible = isCompatible;
 
@@ -40,10 +41,13 @@ public class InventorySlotUI : MonoBehaviour
 
         gameObject.SetActive(true);
         _currentItem = slot.item;
+        _currentTierIndex = slot.tierIndex;
+
+        PlaceableTierData tier = slot.item != null ? slot.item.GetTier(slot.tierIndex) : null;
 
         if (_icon != null)
         {
-            _icon.sprite = slot.item != null ? slot.item.icon : null;
+            _icon.sprite = tier != null ? tier.icon : null;
             Color c = _icon.color;
             c.a = isCompatible ? ENABLED_ALPHA : DISABLED_ALPHA;
             _icon.color = c;
@@ -64,7 +68,7 @@ public class InventorySlotUI : MonoBehaviour
     public void HandlePointerDown()
     {
         if (_currentItem == null || !_isCompatible) return;
-        PlacementInputController.Instance?.BeginInventoryPress(_currentItem, _posX, _posY);
+        PlacementInputController.Instance?.BeginInventoryPress(_currentItem, _currentTierIndex, _posX, _posY);
     }
 
     public void HandlePointerUp()

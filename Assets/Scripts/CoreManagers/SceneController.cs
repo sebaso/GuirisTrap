@@ -67,17 +67,27 @@ public class SceneController : MonoBehaviour
             CameraController cameraController = FindAnyObjectByType<CameraController>();
             if (cameraController != null && cameraController.ActiveZone == null)
             {
-                GridZone defaultZone = GridZone.ActiveZones.Find(z => z.ZoneId == ZoneId.Interior);
+                ChiringuitoUpgradeManager chiringuito = FindAnyObjectByType<ChiringuitoUpgradeManager>();
+                GridZone defaultZone = chiringuito != null
+                    ? chiringuito.GetDefaultZone(ZoneId.Interior)
+                    : GridZone.ActiveZones.Find(z => z.ZoneId == ZoneId.Interior);
+
                 if (defaultZone != null) cameraController.SetActiveZone(defaultZone);
             }
-
             bool isNewGame = SaveManager.Instance != null && SaveManager.Instance.ConsumePendingNewGame();
 
             if (isNewGame)
             {
-                foreach (GridZone zone in GridZone.ActiveZones)
-                    if (zone.VoxelData != null) GridManager.ClearAll(zone.VoxelData);
-                Debug.Log("[SceneController] ClearAll ejecutado en todas las zonas");
+                var upgradeManager = FindAnyObjectByType<ChiringuitoUpgradeManager>();
+                if (upgradeManager != null)
+                {
+                    foreach (var grid in upgradeManager.GetAllTierGridData())
+                        GridManager.ClearOccupied(grid);
+                }
+                else
+                {
+                    Debug.LogWarning("[SceneController] No se encontró ChiringuitoUpgradeManager en la escena, no se pudo limpiar el grid.");
+                }
             }
             else if (SaveManager.Instance != null && SaveManager.Instance.ShouldSyncGridsOnLoad())
             {

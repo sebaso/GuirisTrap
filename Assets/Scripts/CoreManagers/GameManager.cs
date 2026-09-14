@@ -35,8 +35,11 @@ public class GameManager : MonoBehaviour
 
     public void Buy(PlaceableItemData itemData)
     {
-        if (itemData == null)
-            return;
+        if (itemData == null) return;
+
+        int tierIndex = ResolveActiveTierIndex(itemData);
+        PlaceableTierData tier = itemData.GetTier(tierIndex);
+        if (tier == null || tier.prefab == null) return;
 
         if (itemData.maxStack > 0 && OwnedItemsManager.Instance != null)
         {
@@ -49,10 +52,10 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(itemData.cost))
+        if (MoneyManager.Instance != null && !MoneyManager.Instance.TrySpend(tier.cost))
         {
-            Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {itemData.prefab.name} (coste: {itemData.cost}€)");
-            HUDMessage.Instance?.ShowBad($"No tienes suficiente dinero: {itemData.cost}€");
+            Debug.Log($"[GameManager] No tienes suficiente dinero para comprar: {tier.prefab.name} (coste: {tier.cost}€)");
+            HUDMessage.Instance?.ShowBad($"No tienes suficiente dinero: {tier.cost}€");
             return;
         }
 
@@ -60,21 +63,21 @@ public class GameManager : MonoBehaviour
         if (inv == null)
         {
             Debug.LogError("[GameManager] No Inventory encontrado.");
-            MoneyManager.Instance?.AddMoney(itemData.cost);
+            MoneyManager.Instance?.AddMoney(tier.cost);
             return;
         }
 
-        bool added = inv.AddItem(itemData);
+        bool added = inv.AddItem(itemData, tierIndex);
         if (added)
         {
-            Debug.Log($"[GameManager] Has comprado: {itemData.prefab.name} por {itemData.cost}€");
+            Debug.Log($"[GameManager] Has comprado: {tier.prefab.name} por {tier.cost}€");
             OwnedItemsManager.Instance?.AddItem(itemData.name);
             TutorialEvents.OnItemBought?.Invoke(itemData);
-            HUDMessage.Instance?.ShowGood($"¡Comprado! {itemData.prefab.name} por {itemData.cost}€");
+            HUDMessage.Instance?.ShowGood($"¡Comprado! {tier.prefab.name} por {tier.cost}€");
         }
         else
         {
-            MoneyManager.Instance?.AddMoney(itemData.cost);
+            MoneyManager.Instance?.AddMoney(tier.cost);
             Debug.Log("[GameManager] No has podido comprar el item, inventario lleno. Dinero devuelto.");
             HUDMessage.Instance?.ShowWarning("Inventario lleno. Dinero devuelto.");
         }
@@ -89,8 +92,10 @@ public class GameManager : MonoBehaviour
         if (slot == null) return;
 
         PlaceableItemData itemData = slot.item;
+        PlaceableTierData tier = itemData != null ? itemData.GetTier(slot.tierIndex) : null;
+
         GridZone zone = _cameraController != null ? _cameraController.ActiveZone : null;
-        if (itemData == null || itemData.prefab == null || zone == null
+        if (itemData == null || tier == null || tier.prefab == null || zone == null
             || zone.VoxelData == null || zone.Resolver == null || zone.Registry == null)
             return;
 
@@ -125,15 +130,16 @@ public class GameManager : MonoBehaviour
         Transform folder = GameObject.Find("PlaceableItems")?.transform;
         if (folder == null) folder = new GameObject("PlaceableItems").transform;
 
-        GameObject obj = Instantiate(itemData.prefab, worldPos, baseRot, folder);
+        GameObject obj = Instantiate(tier.prefab, worldPos, baseRot, folder);
         PlaceableObject placeable = obj.GetComponent<PlaceableObject>();
         placeable.Init(itemData);
         placeable.InstancePlaceableObjectCreated(cell, view);
 
         registry.Register(cell, placeable);
 
-        GridManager.PlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, axis, baseRot);
+        GridManager.PlaceItem(voxelData, cell.x, cell.y, cell.z, itemData, slot.tierIndex, axis, baseRot);
 
         inv.RemoveItem(posX, posY);
     }
+    private int ResolveActiveTierIndex(PlaceableItemData item) => UpgradeManager.Instance != null ? UpgradeManager.Instance.GetTierIndex(item) : 0;
 }
