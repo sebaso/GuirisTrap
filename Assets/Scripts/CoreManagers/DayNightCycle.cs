@@ -37,7 +37,7 @@ public class DayNightCycle : MonoBehaviour
     // exposición vale EXACTAMENTE -SeamFadeEv (la curva se anula), así que la
     // costura no tiene ningún salto de exposición. EV casi plano: el restaurante
     // quiere iluminación interior potente también de noche.
-    private const float SeamFadeFraction = 0.20f;
+    private const float SeamFadeFraction = 0.32f;
     private const float SeamFadeEv = 0.3f;
     // Cuántos grados se hunde el sol bajo el mar durante la noche del showcase.
     private const float NightDiveDegrees = 15f;
@@ -597,31 +597,34 @@ public class DayNightCycle : MonoBehaviour
         (0.92f, new Color(1.00f, 0.48f, 0.26f)),  // atardecer
         (1.00f, new Color(0.30f, 0.36f, 0.60f))); // noche
 
+    // Noche con clave final clara (no negro azulado): el wrap t=1 → t=0 y el
+    // "amanecer" del juego dependen de que noche y alba tengan valores casi
+    // iguales; si la noche es negra, la transición se ve como un salto.
     private static Gradient DefaultAmbientSky() => GradientN(
         (0.00f, new Color(0.26f, 0.27f, 0.30f)),
         (0.50f, new Color(0.52f, 0.58f, 0.66f)),
-        (1.00f, new Color(0.08f, 0.10f, 0.18f)));
+        (1.00f, new Color(0.20f, 0.23f, 0.32f)));
 
     private static Gradient DefaultAmbientEquator() => GradientN(
         (0.00f, new Color(0.16f, 0.17f, 0.19f)),
         (0.50f, new Color(0.33f, 0.36f, 0.40f)),
-        (1.00f, new Color(0.05f, 0.06f, 0.11f)));
+        (1.00f, new Color(0.14f, 0.16f, 0.24f)));
 
     private static Gradient DefaultAmbientGround() => GradientN(
         (0.00f, new Color(0.07f, 0.07f, 0.06f)),
         (0.50f, new Color(0.14f, 0.13f, 0.11f)),
-        (1.00f, new Color(0.02f, 0.02f, 0.04f)));
+        (1.00f, new Color(0.09f, 0.10f, 0.15f)));
 
     private static AnimationCurve DefaultAmbientIntensity() => Smooth(
-        new Keyframe(0.00f, 0.55f),
+        new Keyframe(0.00f, 0.42f),
         new Keyframe(0.35f, 1.00f),
         new Keyframe(0.70f, 0.85f),
-        new Keyframe(1.00f, 0.30f));
+        new Keyframe(1.00f, 0.45f));
 
     private static Gradient DefaultFogColor() => GradientN(
         (0.00f, new Color(0.55f, 0.55f, 0.55f)),
         (0.50f, new Color(0.70f, 0.74f, 0.80f)),
-        (1.00f, new Color(0.06f, 0.07f, 0.12f)));
+        (1.00f, new Color(0.32f, 0.35f, 0.44f)));
 
     private static AnimationCurve DefaultFogDensity() => Smooth(
         new Keyframe(0.00f, 0.010f),

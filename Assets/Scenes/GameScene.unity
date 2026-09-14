@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 775e11577c73afd3f887e0c59b7f2542, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -6932,7 +6932,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0.26, g: 0.27, b: 0.3, a: 1}
     key1: {r: 0.52, g: 0.58, b: 0.66, a: 1}
-    key2: {r: 0.08, g: 0.1, b: 0.18, a: 1}
+    key2: {r: 0.2, g: 0.23, b: 0.32, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -6947,8 +6947,8 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 32768
-    atime2: 65535
+    atime1: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
@@ -6957,12 +6957,12 @@ MonoBehaviour:
     m_Mode: 0
     m_ColorSpace: -1
     m_NumColorKeys: 3
-    m_NumAlphaKeys: 3
+    m_NumAlphaKeys: 2
   _ambientEquator:
     serializedVersion: 2
     key0: {r: 0.16, g: 0.17, b: 0.19, a: 1}
     key1: {r: 0.33, g: 0.36, b: 0.4, a: 1}
-    key2: {r: 0.05, g: 0.06, b: 0.11, a: 1}
+    key2: {r: 0.14, g: 0.16, b: 0.24, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -6977,8 +6977,8 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 32768
-    atime2: 65535
+    atime1: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
@@ -6987,12 +6987,12 @@ MonoBehaviour:
     m_Mode: 0
     m_ColorSpace: -1
     m_NumColorKeys: 3
-    m_NumAlphaKeys: 3
+    m_NumAlphaKeys: 2
   _ambientGround:
     serializedVersion: 2
     key0: {r: 0.07, g: 0.07, b: 0.06, a: 1}
     key1: {r: 0.14, g: 0.13, b: 0.11, a: 1}
-    key2: {r: 0.02, g: 0.02, b: 0.04, a: 1}
+    key2: {r: 0.09, g: 0.1, b: 0.15, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -7007,8 +7007,8 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 32768
-    atime2: 65535
+    atime1: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
@@ -7017,15 +7017,15 @@ MonoBehaviour:
     m_Mode: 0
     m_ColorSpace: -1
     m_NumColorKeys: 3
-    m_NumAlphaKeys: 3
+    m_NumAlphaKeys: 2
   _ambientIntensity:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.55
-      inSlope: 1.2857143
-      outSlope: 1.2857143
+      value: 0.42
+      inSlope: 1.657143
+      outSlope: 1.657143
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -7033,8 +7033,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.35
       value: 1
-      inSlope: 0.42857146
-      outSlope: 0.42857146
+      inSlope: 0.6142858
+      outSlope: 0.6142858
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -7042,17 +7042,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.7
       value: 0.85
-      inSlope: -1.1309524
-      outSlope: -1.1309524
+      inSlope: -0.88095236
+      outSlope: -0.88095236
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.3
-      inSlope: -1.8333333
-      outSlope: -1.8333333
+      value: 0.45
+      inSlope: -1.3333334
+      outSlope: -1.3333334
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -7065,7 +7065,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0.55, g: 0.55, b: 0.55, a: 1}
     key1: {r: 0.7, g: 0.74, b: 0.8, a: 1}
-    key2: {r: 0.06, g: 0.07, b: 0.12, a: 1}
+    key2: {r: 0.32, g: 0.35, b: 0.44, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -7080,8 +7080,8 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 32768
-    atime2: 65535
+    atime1: 65535
+    atime2: 0
     atime3: 0
     atime4: 0
     atime5: 0
@@ -7090,7 +7090,7 @@ MonoBehaviour:
     m_Mode: 0
     m_ColorSpace: -1
     m_NumColorKeys: 3
-    m_NumAlphaKeys: 3
+    m_NumAlphaKeys: 2
   _fogDensity:
     serializedVersion: 2
     m_Curve:
