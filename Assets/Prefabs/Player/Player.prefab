@@ -225,10 +225,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c9b53d44fbfba4e9610304af2f011a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 11
-  maxSpeed: 11
-  acceleration: 90
+  speed: 9
+  maxSpeed: 9
+  acceleration: 60
   deceleration: 30
+  isCarryingFurniture: 0
+  carryingSpeedPenalty: 0.5
   holdPoint: {fileID: 1295456371686148081}
   interactionRange: 2
   currentRecipe: {fileID: 0}
@@ -239,7 +241,6 @@ MonoBehaviour:
   _turnSpeed: 12
   _serveFreezeSeconds: 2
   _trayVisual: {fileID: 7352912676443378386}
-  _floorProjection: {fileID: 0}
   _furnitureObstacleMask:
     serializedVersion: 2
     m_Bits: 320
