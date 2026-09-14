@@ -3,13 +3,14 @@ using UnityEngine;
 public class PlayerController : ControllableMonoBehaviour
 {
     [Header("Movement")]
-    public float speed    = 5f;
+    public float speed = 5f;
     public float maxSpeed = 10f;
     public float acceleration = 20f; // m/s² hasta speed
     public float deceleration = 30f; // m/s² al soltar el input
     private Rigidbody rb;
     private Vector3 movementDirection;
-
+    public bool isCarryingFurniture = false;
+    public float carryingSpeedPenalty = 0.5f; // 50% de reducción de velocidad al llevar mueble
     // Cuando es true, el jugador está en un minijuego y no debe moverse.
     private bool _movementLocked = false;
 
@@ -40,7 +41,7 @@ public class PlayerController : ControllableMonoBehaviour
     private Animator _animator;
     private float _freezeTimer;
     [Header("Furniture Carry — Colocación")]
-    [SerializeField] 
+    [SerializeField]
     private LayerMask _furnitureObstacleMask;
     public float dropDistance = 1.2f;
     public float dropCheckRadius = 0.45f;
@@ -63,8 +64,8 @@ public class PlayerController : ControllableMonoBehaviour
 
         if (interactPrompt != null)
         {
-        originalPromptScale = interactPrompt.transform.localScale;
-        interactPrompt.transform.localScale = Vector3.zero; 
+            originalPromptScale = interactPrompt.transform.localScale;
+            interactPrompt.transform.localScale = Vector3.zero;
         }
     }
 
@@ -78,11 +79,19 @@ public class PlayerController : ControllableMonoBehaviour
             // Frena en seco durante el minijuego o el gesto de servir (conserva gravedad en Y).
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
         }
+        else if (isCarryingFurniture)
+        {
+            Vector3 target = new Vector3(-movementDirection.x * speed * carryingSpeedPenalty, 0f, -movementDirection.z * speed * carryingSpeedPenalty);
+            Vector3 current = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            float rate = movementDirection.sqrMagnitude > 0.01f ? acceleration * carryingSpeedPenalty : deceleration * carryingSpeedPenalty;
+            Vector3 next = Vector3.MoveTowards(current, target, rate * Time.fixedDeltaTime);
+            rb.linearVelocity = new Vector3(next.x, rb.linearVelocity.y, next.z);
+        }
         else
         {
             // La horizontal se acerca a la objetivo de forma gradual (nada de
             // fijarla de golpe); la vertical la lleva la gravedad (rampas, caídas).
-            Vector3 target  = new Vector3(-movementDirection.x * speed, 0f, -movementDirection.z * speed);
+            Vector3 target = new Vector3(-movementDirection.x * speed, 0f, -movementDirection.z * speed);
             Vector3 current = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             float rate = movementDirection.sqrMagnitude > 0.01f ? acceleration : deceleration;
             Vector3 next = Vector3.MoveTowards(current, target, rate * Time.fixedDeltaTime);
@@ -96,14 +105,14 @@ public class PlayerController : ControllableMonoBehaviour
         UpdateAnimation(horiz);
 
         if (interactPrompt != null)
-    {
-        Vector3 targetScale = isNearInteractable ? originalPromptScale : Vector3.zero;
-        interactPrompt.transform.localScale = Vector3.Lerp(
-            interactPrompt.transform.localScale,
-            targetScale,
-            Time.deltaTime * promptPopupSpeed
-        );
-    }
+        {
+            Vector3 targetScale = isNearInteractable ? originalPromptScale : Vector3.zero;
+            interactPrompt.transform.localScale = Vector3.Lerp(
+                interactPrompt.transform.localScale,
+                targetScale,
+                Time.deltaTime * promptPopupSpeed
+            );
+        }
 
         if (_heldPlaceable != null) UpdateCarryPreview();
     }
@@ -136,7 +145,8 @@ public class PlayerController : ControllableMonoBehaviour
     /// al estado Carry (loop de 05_BANDEJA) en vez de volver a Locomotion.</summary>
     public void SetCarrying(bool carrying)
     {
-        _animator?.SetBool("Carrying", carrying);
+        if (_animator != null)
+            _animator.SetBool("Carrying", carrying);
         if (_trayVisual != null && _trayVisual.activeSelf != carrying)
             _trayVisual.SetActive(carrying);
     }
@@ -156,7 +166,7 @@ public class PlayerController : ControllableMonoBehaviour
     /// <summary>Llamado por InputManager al entrar a un minijuego: detiene y bloquea el movimiento.</summary>
     public void LockMovement()
     {
-        _movementLocked   = true;
+        _movementLocked = true;
         movementDirection = Vector3.zero;
         if (rb != null)
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
@@ -165,7 +175,7 @@ public class PlayerController : ControllableMonoBehaviour
     /// <summary>Llamado por InputManager al salir de un minijuego: reactiva el movimiento.</summary>
     public void UnlockMovement()
     {
-        _movementLocked   = false;
+        _movementLocked = false;
         movementDirection = Vector3.zero;
     }
 
@@ -186,22 +196,22 @@ public class PlayerController : ControllableMonoBehaviour
         //    física, que es arbitrario y hace que hables con la estación de al lado).
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
 
-        FoodStorage    bestStorage  = null;
-        EspetoMinigame bestEspeto   = null;
-        CookingStation bestStation  = null;
+        FoodStorage bestStorage = null;
+        EspetoMinigame bestEspeto = null;
+        CookingStation bestStation = null;
         ExtintorPickup bestExtintor = null;
         ExtintorSoporte bestSoporte = null;
-        FregonaPickup  bestFregona  = null;
-        FregonaSoporte bestFregSop  = null;
-        CacaGaviota    bestCaca     = null;
-        float bestFregonaDist  = float.MaxValue;
-        float bestFregSopDist  = float.MaxValue;
-        float bestCacaDist     = float.MaxValue;
-        float bestStorageDist  = float.MaxValue;
-        float bestEspetoDist   = float.MaxValue;
-        float bestStationDist  = float.MaxValue;
+        FregonaPickup bestFregona = null;
+        FregonaSoporte bestFregSop = null;
+        CacaGaviota bestCaca = null;
+        float bestFregonaDist = float.MaxValue;
+        float bestFregSopDist = float.MaxValue;
+        float bestCacaDist = float.MaxValue;
+        float bestStorageDist = float.MaxValue;
+        float bestEspetoDist = float.MaxValue;
+        float bestStationDist = float.MaxValue;
         float bestExtintorDist = float.MaxValue;
-        float bestSoporteDist  = float.MaxValue;
+        float bestSoporteDist = float.MaxValue;
         // Track the nearest pickable food too, so a station standing within range
         // can't silently swallow the interact when food is actually closer.
         float bestFoodDist = float.MaxValue;
@@ -444,9 +454,9 @@ public class PlayerController : ControllableMonoBehaviour
     private Vector3 _lastFacing = Vector3.forward;
     public float carryLerpSpeed = 12f;
     private GameObject _ghost; // translucent drop-spot preview
-    private static readonly Color GhostOk  = new Color(0.3f, 1f, 0.3f, 0.45f);
-    private static readonly Color GhostBad = new Color(1f, 0.3f, 0.3f, 0.45f);
-    
+    private static readonly Color GhostOk = new(0.3f, 1f, 0.3f, 0.45f);
+    private static readonly Color GhostBad = new(1f, 0.3f, 0.3f, 0.45f);
+
     private void TryPickUpFurniture()
     {
         Collider[] nearby = Physics.OverlapSphere(transform.position, interactionRange);
@@ -499,7 +509,7 @@ public class PlayerController : ControllableMonoBehaviour
 
         _heldPlaceable = best;
         PlayAction("Recoger");
-
+        isCarryingFurniture = true;
         Collider c = best.GetComponent<Collider>();
         if (c != null) c.enabled = false;
 
@@ -516,7 +526,7 @@ public class PlayerController : ControllableMonoBehaviour
         {
             Debug.LogError($"[PlaceableItemData] '{name}' no tiene ningún tier configurado en _tiers.", this);
             return null;
-        } 
+        }
 
         GameObject g = Instantiate(tier.prefab, initialPos, initialRot);
         foreach (var mb in g.GetComponentsInChildren<MonoBehaviour>()) mb.enabled = false;
@@ -557,11 +567,10 @@ public class PlayerController : ControllableMonoBehaviour
             : _dropTargetRot;
 
         _heldPlaceable.transform.SetParent(null);
-        _heldPlaceable.transform.position = _dropTargetPos;
-        _heldPlaceable.transform.rotation = finalRot;
+        _heldPlaceable.transform.SetPositionAndRotation(_dropTargetPos, finalRot);
 
-        Collider c = _heldPlaceable.GetComponent<Collider>();
-        if (c != null) c.enabled = true;
+        // Restaurar todos los colliders del objeto y sus hijos
+        foreach (Collider c in _heldPlaceable.GetComponentsInChildren<Collider>()) c.enabled = true;
 
         if (_ghost != null) { Destroy(_ghost); _ghost = null; }
 
@@ -575,8 +584,9 @@ public class PlayerController : ControllableMonoBehaviour
             RealignNearbyChairs(_dropTargetPos);
         }
 
-        RestaurantManager.Instance?.NotifyTablesRearranged();
-
+        if (RestaurantManager.Instance != null)
+            RestaurantManager.Instance.NotifyTablesRearranged();
+        isCarryingFurniture = false;
         _heldPlaceable = null;
     }
 
@@ -600,7 +610,7 @@ public class PlayerController : ControllableMonoBehaviour
         }
     }
 
-   private void UpdateCarryPreview()
+    private void UpdateCarryPreview()
     {
         _heldPlaceable.transform.localPosition = Vector3.Lerp(
             _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
@@ -653,7 +663,7 @@ public class PlayerController : ControllableMonoBehaviour
     }
 
     public bool IsHoldingFood() => heldFood != null;
-    public Food GetHeldFood()   => heldFood;
+    public Food GetHeldFood() => heldFood;
 
     private void OnDrawGizmosSelected()
     {
@@ -668,7 +678,7 @@ public class PlayerController : ControllableMonoBehaviour
     }
     public void SetNearInteractable(bool near)
     {
-    isNearInteractable = near;
+        isNearInteractable = near;
     }
 
     // Puerta de entrada (PuertaFinDia): la propia puerta se registra cuando el
