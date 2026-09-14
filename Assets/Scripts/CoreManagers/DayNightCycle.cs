@@ -11,7 +11,9 @@ using UnityEngine.Rendering.Universal;
 ///  - Solo el sol proyecta sombras en tiempo real. La luz interior "de noche"
 ///    (lamparas) debe ser Realtime/Mixed y SIN sombras, o se dispara el coste.
 ///  - El sol se DESACTIVA por completo cuando su intensidad es ~0 (de noche):
-///    URP se salta el main light + su shadow pass entero.
+///    URP se salta el main light + su shadow pass entero. EXCEPCIÓN showcase:
+///    ahí el componente queda encendido a intensidad ~0 porque el skybox
+///    procedural lo necesita como referencia (si se apaga, el cielo salta).
 ///  - No se toca ningún lightmap, ni se instancian materiales, ni se usan
 ///    <c>Camera.main</c> o <c>FindObjects</c> dentro de Update.
 ///  - Los valores globales (ambiente, niebla, grading) solo se escriben si
@@ -29,6 +31,16 @@ public class DayNightCycle : MonoBehaviour
     }
 
     private const float Epsilon = 1f / 512f;
+
+    // Fundido del showcase en la costura del bucle: fracción del ciclo que dura
+    // el fundido (a cada lado) y EV de oscurecimiento en el pico. Con fade=1 la
+    // exposición vale EXACTAMENTE -SeamFadeEv (la curva se anula), así que la
+    // costura no tiene ningún salto de exposición. EV casi plano: el restaurante
+    // quiere iluminación interior potente también de noche.
+    private const float SeamFadeFraction = 0.20f;
+    private const float SeamFadeEv = 0.3f;
+    // Cuántos grados se hunde el sol bajo el mar durante la noche del showcase.
+    private const float NightDiveDegrees = 15f;
 
     [Header("Origen del tiempo")]
     [Tooltip("DayManager: el ciclo va atado al día de juego. Independent: reloj propio en bucle.")]
@@ -73,10 +85,13 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField] private AnimationCurve _fogDensity = DefaultFogDensity();
 
     [Header("Luces de noche (lamparas interiores)")]
-    [Tooltip("Deja vacío y se recogen las luces NON-directional hijas de este objeto. " +
-             "Deben ser Realtime o Mixed y sin sombras.")]
+    [Tooltip("Deja vacío para recoger automáticamente las luces bajo componentes " +
+             "NightLight (la lámpara o un padre). Deben ser Realtime o Mixed y sin " +
+             "sombras: su intensidad del inspector es el tope nocturno, de día se apagan.")]
     [SerializeField] private Light[] _nightLights;
-    [Tooltip("Multiplicador de intensidad de las luces de noche (0 = apagadas).")]
+    [Tooltip("Multiplicador sobre la intensidad del inspector: nivel de día " +
+             "(interiores visibles sin 'radioactividad'), subida al atardecer y " +
+             "tope de noche. 0 = apagadas de día.")]
     [SerializeField] private AnimationCurve _nightLightsCurve = DefaultNightLights();
 
     [Header("Color grading (volume en runtime)")]
@@ -91,11 +106,15 @@ public class DayNightCycle : MonoBehaviour
     [SerializeField] private float _updatesPerSecond = 0f;
 
     [Header("Modo showcase (marketing)")]
-    [Tooltip("Segundos que tarda el ciclo en recorrer la ventana completa del día " +
-             "con el showcase activado. Ignora la duración real del día.")]
+    [Tooltip("Segundos que tarda el día del showcase en recorrer el ciclo COMPLETO " +
+             "(amanecer → noche). Ignora la duración real del día y la ventana del día de juego.")]
     [SerializeField, Min(0.1f)] private float _showcaseDurationSeconds = 10f;
-    [Tooltip("Si está activo, el barrido se repite en bucle (útil para capturar GIFs). " +
-             "Si no, el ciclo se queda al llegar al final del día.")]
+    [Tooltip("Segundos que el showcase se queda en plena noche antes de que vuelva " +
+             "a amanecer; durante la espera el sol cruza bajo el mar. Con 0 no hay " +
+             "noche, el bucle pasa directo al alba.")]
+    [SerializeField, Min(0f)] private float _showcaseNightSeconds = 4f;
+    [Tooltip("Si está activo, el ciclo día + noche se repite en bucle; la costura " +
+             "se funde a negro. Si no, el barrido se queda en la noche.")]
     [SerializeField] private bool _showcaseLoop = true;
 
     /// <summary>
@@ -107,6 +126,11 @@ public class DayNightCycle : MonoBehaviour
 
     private float _showcaseTime;
     private bool _showcasePrev;
+    private float _seamFade;
+    private bool _showcaseRotOverride;
+    private float _showcaseRotElev;
+    private float _showcaseRotYaw;
+    private float _lampNightBlend;
 
     private float _independentTime;
     private float[] _nightLightBaseIntensity;
@@ -173,24 +197,68 @@ public class DayNightCycle : MonoBehaviour
 
     private float CurrentProgress()
     {
-        // Borde del toggle: al activar el showcase el barrido empieza de mañana.
+        _seamFade = 0f;
+        _showcaseRotOverride = false;
+        _lampNightBlend = 0f;
+
+        // Borde del toggle: al activar el showcase el barrido empieza de madrugada.
         if (_showcasePrev != ShowcaseMode)
         {
             _showcasePrev = ShowcaseMode;
             _showcaseTime = 0f;
         }
 
-        // Modo showcase: recorre la ventana del día entera en _showcaseDurationSeconds,
-        // IGNORANDO el timer real (DayManager o independiente) y el desfase. Usa tiempo
+        // Modo showcase: recorre el CICLO COMPLETO (amanecer → noche) en
+        // _showcaseDurationSeconds, se queda en plena noche _showcaseNightSeconds
+        // y ahí vuelve a amanecer. IGNORA el timer real y la ventana del día de
+        // juego (esa ventana solo existe para que el restaurante no abra de
+        // noche; el showcase enseña justo lo que el juego recorta). Usa tiempo
         // sin escalar a propósito: el barrido sigue aunque el juego esté pausado
         // (p.ej. panel de fin de día), que es justo cuando se graba.
         if (ShowcaseMode)
         {
             _showcaseTime += Time.unscaledDeltaTime;
             float duracion = Mathf.Max(0.1f, _showcaseDurationSeconds);
-            if (_showcaseLoop) _showcaseTime %= duracion;
-            return Mathf.Lerp(_cycleStart, _cycleEnd > _cycleStart ? _cycleEnd : 1f,
-                              Mathf.Clamp01(_showcaseTime / duracion));
+            float noche = Mathf.Max(0f, _showcaseNightSeconds);
+            float total = duracion + noche;
+            float fase = _showcaseLoop ? _showcaseTime % total : Mathf.Min(_showcaseTime, total);
+
+            if (fase <= duracion)
+            {
+                float u = fase / duracion;
+
+                // Fundido con pico en la costura: esconde el salto de estado de
+                // las curvas y hace que el anochecer/alba sean graduales.
+                float hastaSeam = Mathf.Min(u, 1f - u);
+                _seamFade = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(hastaSeam / SeamFadeFraction));
+
+                // Madrugada: el sol sale del mar, no aparece en el horizonte.
+                // Mientras el fundido levanta, sigue sumergido (retraso de salida)
+                // y va recortando la inmersión hasta la fórmula normal del día.
+                // Las lámparas acompañan: parten de su nivel nocturno (100%) y
+                // bajan hacia la curva del día a medida que amanece.
+                if (u < SeamFadeFraction)
+                {
+                    _showcaseRotOverride = true;
+                    _showcaseRotElev = _noonElevation * Mathf.Sin(Mathf.PI * u)
+                                     - NightDiveDegrees * (1f - u / SeamFadeFraction);
+                    _showcaseRotYaw = Mathf.Lerp(_sunYawStart, _sunYawEnd, u);
+                    _lampNightBlend = 1f - u / SeamFadeFraction;
+                }
+                return u;
+            }
+
+            // Noche: la luz se queda clavada en t=1 (curva de noche) bajo negro
+            // total, pero el sol SIGUE moviéndose por debajo del mar, hundiéndose
+            // y RETROCEDIENDO en azimut hasta volver a estar bajo su propio
+            // puesto de salida. Así el resplandor del cielo solo puede aparecer
+            // y desaparecer en UN sitio (donde se puso/sale): sin warps.
+            float q = noche > 0f ? (fase - duracion) / noche : 1f;
+            _seamFade = 1f;
+            _showcaseRotOverride = true;
+            _showcaseRotElev = -NightDiveDegrees * Mathf.Sin(Mathf.PI * q * 0.5f);
+            _showcaseRotYaw = Mathf.Lerp(_sunYawEnd, _sunYawStart, q);
+            return 1f;
         }
 
         float t;
@@ -254,14 +322,36 @@ public class DayNightCycle : MonoBehaviour
 
         float intensity = _sunIntensity.Evaluate(t);
 
-        // Desactivar el sol de noche ahorra el main light y su shadow pass enteros.
-        bool shouldBeOn = intensity > 1e-4f;
+        // En showcase el sol nace y muere de cero en la costura: multiplicar su
+        // intensidad por el mismo fundido que el cielo evita que el disco
+        // (HDR: aunque esté atenuado por la exposición) "aparezca" con brillo.
+        if (_seamFade > 0f) intensity *= 1f - _seamFade;
+
+        // La rotación va ANTES del early-return del apagado: durante la noche
+        // del showcase el sol está off pero sigue su arco bajo el mar hacia su
+        // amanecer; si no se rotara aquí, reaparecería teleportado.
+        float elevation, yaw;
+        if (_showcaseRotOverride)
+        {
+            elevation = _showcaseRotElev;
+            yaw = _showcaseRotYaw;
+        }
+        else
+        {
+            elevation = _noonElevation * Mathf.Sin(Mathf.PI * t);
+            yaw = Mathf.Lerp(_sunYawStart, _sunYawEnd, t);
+        }
+        _sun.transform.rotation = Quaternion.Euler(elevation, yaw, 0f);
+
+        // El skybox procedural usa la direccional más brillante como sol
+        // (RenderSettings.sun es None en la escena): si el componente se APAGA
+        // de noche, el cielo pierde su referencia y salta a su estado por
+        // defecto — el "teleport" del sol. En showcase el componente queda
+        // siempre encendido (intensidad ~0 durante la noche); apagarlo solo
+        // puede pasar fuera del showcase, cuya ventana de día no baja de ~0.8.
+        bool shouldBeOn = ShowcaseMode || intensity > 1e-4f;
         if (_sun.enabled != shouldBeOn) _sun.enabled = shouldBeOn;
         if (!shouldBeOn) return;
-
-        float elevation = _noonElevation * Mathf.Sin(Mathf.PI * t);
-        float yaw = Mathf.Lerp(_sunYawStart, _sunYawEnd, t);
-        _sun.transform.rotation = Quaternion.Euler(elevation, yaw, 0f);
 
         Color color = _sunColor.Evaluate(t);
 
@@ -337,6 +427,12 @@ public class DayNightCycle : MonoBehaviour
         if (_nightLights == null || _nightLights.Length == 0) return;
 
         float value = _nightLightsCurve.Evaluate(t);
+        // En showcase, la madrugada baja las lámparas de su nivel nocturno
+        // (100%: noche con luces potentes) hacia la curva del día, en vez de
+        // dar el salto 100% → 35% justo en el wrap.
+        if (_lampNightBlend > 0f)
+            value = Mathf.Lerp(value, 1f, _lampNightBlend);
+
         if (Mathf.Abs(value - _lastNightLights) <= Epsilon) return;
         _lastNightLights = value;
 
@@ -356,7 +452,12 @@ public class DayNightCycle : MonoBehaviour
     {
         if (_colorAdjustments == null) return;
 
-        _colorAdjustments.postExposure.value = _postExposure.Evaluate(t);
+        // _seamFade solo es >0 en showcase, cerca de la costura del bucle. Con
+        // fade=1 la curva se anula por completo (exposición plana): la costura
+        // noche → amanecer no tiene ni un paso de exposición.
+        float fade = _seamFade;
+        _colorAdjustments.postExposure.value =
+            _postExposure.Evaluate(t) * (1f - fade) - SeamFadeEv * fade;
         _colorAdjustments.saturation.value = _saturation.Evaluate(t);
         _colorAdjustments.colorFilter.value = _colorFilter.Evaluate(t);
     }
@@ -365,15 +466,18 @@ public class DayNightCycle : MonoBehaviour
 
     private void CollectNightLights()
     {
+        // Luces del array mandan; si está vacío, se recogen las marcadas con
+        // NightLight (la propia lámpara o cualquier padre que la contenga).
         if (_nightLights == null || _nightLights.Length == 0)
         {
-            var found = new System.Collections.Generic.List<Light>();
-            foreach (var light in GetComponentsInChildren<Light>(true))
-            {
-                if (light == _sun || light.type == LightType.Directional) continue;
-                found.Add(light);
-            }
-            _nightLights = found.ToArray();
+            var marcadores = FindObjectsByType<NightLight>(FindObjectsInactive.Include);
+            var unicas = new System.Collections.Generic.HashSet<Light>();
+            foreach (var marcador in marcadores)
+                foreach (var light in marcador.GetComponentsInChildren<Light>(true))
+                    if (light != _sun && light.type != LightType.Directional)
+                        unicas.Add(light);
+            _nightLights = new Light[unicas.Count];
+            unicas.CopyTo(_nightLights);
         }
 
         _nightLightBaseIntensity = new float[_nightLights.Length];
@@ -525,8 +629,8 @@ public class DayNightCycle : MonoBehaviour
         new Keyframe(1.00f, 0.018f));
 
     private static AnimationCurve DefaultNightLights() => Smooth(
-        new Keyframe(0.00f, 0.0f),
-        new Keyframe(0.70f, 0.0f),
+        new Keyframe(0.00f, 0.35f),
+        new Keyframe(0.70f, 0.35f),
         new Keyframe(0.85f, 1.0f),
         new Keyframe(1.00f, 1.0f));
 
@@ -544,5 +648,5 @@ public class DayNightCycle : MonoBehaviour
     private static Gradient DefaultColorFilter() => GradientN(
         (0.00f, Color.white),
         (0.60f, Color.white),
-        (1.00f, new Color(0.60f, 0.68f, 1.00f)));
+        (1.00f, new Color(0.82f, 0.88f, 1.00f)));
 }
