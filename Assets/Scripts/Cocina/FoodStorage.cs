@@ -101,7 +101,7 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
         // que no haya que ir comparando la lista con la comanda a ojo.
         string nombre = current.dishName;
         if (OrderGuide.IsWanted(current))
-            nombre = $"<color={RecipeStations.ColorHex(current.type)}>{current.dishName}  \u25C4 LO PIDEN</color>";
+            nombre = $"<color={RecipeStations.ColorHex(current.type)}>{current.dishName}  \u25C4 PEDIDO</color>";
 
         recipeNameText.text = $"{nombre}\n{stockLine}(Ir a: {GetDestinationName(current.type)})";
     }

@@ -6,7 +6,7 @@ public class PickupGuideArrows : MonoBehaviour
 {
     [Header("Colocación")]
     [SerializeField] private float _height = 2.2f;
-    [SerializeField] private float _size = 0.7f;
+    [SerializeField] private float _size = 0.6f;
     [SerializeField] private float _ringRadius = 0.55f;
 
     [Header("Animación")]
@@ -14,14 +14,16 @@ public class PickupGuideArrows : MonoBehaviour
     [SerializeField] private float _bobSpeed = 3f;
 
     [Header("Comportamiento")]
-    [SerializeField] private float _hideWithinDistance = 3f;
+    [SerializeField] private float _hideWithinDistance = 3.5f;
     [SerializeField] private float _refreshInterval = 0.4f;
-    [SerializeField] private int _maxArrows = 4;
+    [SerializeField] private int _maxArrows = 3;
+    [SerializeField] private bool _soloLaMasCercana = false;
 
     [Header("Aspecto")]
     [SerializeField] private string _shaderName = "Guiri/GuideArrow";
     [Range(0.2f, 1f)]
-    [SerializeField] private float _alpha = 0.85f;
+    [SerializeField] private float _alpha = 0.75f;
+    [SerializeField] private Color _colorServir = new(1f, 0.95f, 0.4f, 0.9f);
 
     private PlayerController _player;
     private Camera _cam;
@@ -40,13 +42,9 @@ public class PickupGuideArrows : MonoBehaviour
     void LateUpdate()
     {
         if (_cam == null) _cam = Camera.main;
+        if (_player == null) { HideAll(); return; }
 
-        // Con un ingrediente en la mano manda la flecha de cocinar: estas se van.
-        if (_player == null || _player.currentRecipe != null)
-        {
-            HideAll();
-            return;
-        }
+        if (_player.currentRecipe != null) { HideAll(); return; }
 
         if (Time.time >= _nextRefresh)
         {
@@ -63,14 +61,24 @@ public class PickupGuideArrows : MonoBehaviour
     {
         _targets.Clear();
 
-        var wanted = OrderGuide.Wanted;
-        if (wanted.Count == 0) return;
+        RecipeData carried = CarriedDishRecipe();
+        if (carried != null)
+        {
+            Transform mesa = FindTableWanting(carried);
+            if (mesa != null) _targets.Add((mesa, _colorServir));
+            return;
+        }
+
+        if (OrderGuide.Wanted.Count == 0) return;
+
+        Transform mejor = null;
+        Color mejorColor = Color.white;
+        float mejorDist = float.MaxValue;
 
         foreach (FoodStorage storage in FindObjectsByType<FoodStorage>(FindObjectsSortMode.None))
         {
             if (storage == null || storage.recipes == null) continue;
 
-            // ¿Este electrodoméstico tiene algo de lo que están pidiendo?
             RecipeData match = null;
             foreach (RecipeData r in storage.recipes)
             {
@@ -83,9 +91,45 @@ public class PickupGuideArrows : MonoBehaviour
                 c = parsed;
             c.a = _alpha;
 
-            _targets.Add((storage.transform, c));
-            if (_targets.Count >= _maxArrows) break;
+            if (_soloLaMasCercana)
+            {
+                float d = (storage.transform.position - transform.position).sqrMagnitude;
+                if (d < mejorDist) { mejorDist = d; mejor = storage.transform; mejorColor = c; }
+            }
+            else
+            {
+                _targets.Add((storage.transform, c));
+                if (_targets.Count >= _maxArrows) break;
+            }
         }
+
+        if (_soloLaMasCercana && mejor != null) _targets.Add((mejor, mejorColor));
+    }
+
+    private RecipeData CarriedDishRecipe()
+    {
+        if (_player.holdPoint == null) return null;
+
+        Food food = _player.holdPoint.GetComponentInChildren<Food>();
+        return food != null ? food.recipe : null;
+    }
+
+    private Transform FindTableWanting(RecipeData recipe)
+    {
+        Transform mejor = null;
+        float mejorDist = float.MaxValue;
+
+        foreach (Table t in FindObjectsByType<Table>(FindObjectsSortMode.None))
+        {
+            ClientGroup g = t != null ? t.OccupyingGroup : null;
+            if (g == null || g.AllFed) continue;
+            if (!g.WantsRecipe(recipe)) continue;
+
+            float d = (t.transform.position - transform.position).sqrMagnitude;
+            if (d < mejorDist) { mejorDist = d; mejor = t.transform; }
+        }
+
+        return mejor;
     }
 
     private void Draw()
@@ -100,7 +144,6 @@ public class PickupGuideArrows : MonoBehaviour
             Vector3 toTarget = target.position - transform.position;
             toTarget.y = 0f;
 
-            // Ya estás al lado: la flecha estorba más que ayuda.
             if (toTarget.sqrMagnitude <= _hideWithinDistance * _hideWithinDistance) continue;
             if (toTarget.sqrMagnitude < 0.0001f) continue;
 
@@ -111,8 +154,6 @@ public class PickupGuideArrows : MonoBehaviour
             Vector3 dir = toTarget.normalized;
             float bob = Mathf.Sin(Time.time * _bobSpeed + i * 1.3f) * _bobAmplitude;
 
-            // Cada flecha se separa hacia SU objetivo, así que dos que apunten a
-            // sitios distintos nunca acaban una encima de la otra.
             arrow.position = transform.position + Vector3.up * (_height + bob) + dir * _ringRadius;
 
             Orient(arrow, target);
@@ -163,7 +204,7 @@ public class PickupGuideArrows : MonoBehaviour
 
     private void BuildArrow()
     {
-        GameObject go = new($"PickupGuideArrow_{_pool.Count}");
+        GameObject go = new($"GuideArrow_{_pool.Count}");
         go.transform.SetParent(transform, false);
 
         MeshFilter mf = go.AddComponent<MeshFilter>();
