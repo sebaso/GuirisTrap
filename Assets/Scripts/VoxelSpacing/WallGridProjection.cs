@@ -66,6 +66,7 @@ public class WallGridProjection : MonoBehaviour, IVoxelProjection
         Quaternion localRot = Quaternion.FromToRotation(Vector3.up, InwardNormalLocal);
         return transform.rotation * localRot * RotationCorrection();
     }    
+    
     private Quaternion RotationCorrection()
     {
         if (_side == WallSide.North)

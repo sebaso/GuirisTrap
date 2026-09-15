@@ -50,7 +50,7 @@ public class TranslateManager : MonoBehaviour
         for(int i = 1; i < lines.Length; i++)
         {
             string line = lines[i];
-            string[] columns = line.Split(",");
+            string[] columns = line.Split("/");
             _textsDictionary.Add(columns[0], columns[languageColumn]);
         }
     }

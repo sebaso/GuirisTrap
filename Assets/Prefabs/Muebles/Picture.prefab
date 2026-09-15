@@ -179,15 +179,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0402a86647dc3854f8c89e4377273dbc, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 33ce4d6f5cad003439ed543b6b8104b8, type: 2}
     - target: {fileID: 919132149155446097, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
       propertyPath: m_Name
       value: cuadrito
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 83538682191161992}
   m_SourcePrefab: {fileID: 100100000, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+--- !u!1 &1347370690525930503 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 98b3c31df147f874dadbfba96719361b, type: 3}
+  m_PrefabInstance: {fileID: 2194303399919294806}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &83538682191161992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347370690525930503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a45880d8721f4445a00a27cc0db664b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FadeEffectComponent
+  _fadeSpeed: 5
+  _minAlpha: 0.15
+  _maxAlpha: 1
 --- !u!4 &1871529514713120445 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98b3c31df147f874dadbfba96719361b, type: 3}

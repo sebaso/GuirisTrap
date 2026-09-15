@@ -1198,57 +1198,6 @@ MonoBehaviour:
   _textKey: tutorial_02
   _color: {r: 0, g: 0, b: 0, a: 1}
   _portrait: {fileID: 21300000, guid: 8d13aa7a3cbc11248838351b09070f87, type: 3}
---- !u!1 &74949939
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 74949940}
-  - component: {fileID: 74949941}
-  m_Layer: 0
-  m_Name: Line11
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &74949940
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74949939}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1873437031}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &74949941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 74949939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 168e3fcd5d47af94a84a6602df3387d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
-  _description: Linea 11 del dialogo del tutorial
-  _executeDirectly: 0
-  _interactable: 1
-  _duration: 3
-  _textKey: tutorial_11
-  _color: {r: 0, g: 0, b: 0, a: 1}
-  _portrait: {fileID: 21300000, guid: 8d13aa7a3cbc11248838351b09070f87, type: 3}
 --- !u!1 &77702218
 GameObject:
   m_ObjectHideFlags: 0
@@ -5788,57 +5737,6 @@ MonoBehaviour:
   _icon: {fileID: 1433861516}
   _quantityText: {fileID: 1725980030}
   _button: {fileID: 0}
---- !u!1 &338804387
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 338804388}
-  - component: {fileID: 338804389}
-  m_Layer: 0
-  m_Name: Line10
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &338804388
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 338804387}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1873437031}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &338804389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 338804387}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 168e3fcd5d47af94a84a6602df3387d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueReaction
-  _description: Linea 10 del dialogo del tutorial
-  _executeDirectly: 0
-  _interactable: 1
-  _duration: 3
-  _textKey: tutorial_10
-  _color: {r: 0, g: 0, b: 0, a: 1}
-  _portrait: {fileID: 21300000, guid: 8d13aa7a3cbc11248838351b09070f87, type: 3}
 --- !u!1 &340569661
 GameObject:
   m_ObjectHideFlags: 0
@@ -28871,6 +28769,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonLocker
   _canvasGroup: {fileID: 1332041540}
+--- !u!1 &1332078155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1332078156}
+  - component: {fileID: 1332078157}
+  m_Layer: 0
+  m_Name: BlinkButtonReaction (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1332078156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332078155}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1942336860}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1332078157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332078155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57682a4d0fc0c184eac50abfa1d2cc27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlickButtonReaction
+  _description: "Reacci\xF3n para hacer que parpadee un bot\xF3n"
+  _executeDirectly: 1
+  _interactable: 0
+  _duration: 0
+  _blinker: {fileID: 1511520833}
+  _blink: 1
 --- !u!1 &1334428757
 GameObject:
   m_ObjectHideFlags: 0
@@ -33262,6 +33210,8 @@ GameObject:
   - component: {fileID: 1511520827}
   - component: {fileID: 1511520831}
   - component: {fileID: 1511520830}
+  - component: {fileID: 1511520833}
+  - component: {fileID: 1511520832}
   m_Layer: 5
   m_Name: FoodShopButton
   m_TagString: Untagged
@@ -33393,6 +33343,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1511520832}
+        m_TargetAssemblyTypeName: ButtonClickStopBlink, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1511520828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33456,6 +33418,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopButtonLocker
   _canvasGroup: {fileID: 1511520830}
+--- !u!114 &1511520832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511520825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb9bb3a15ac9d44eb4065ebb8012871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickStopBlink
+--- !u!114 &1511520833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1511520825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f143f88957a5ebf4da9b29d0a539ba17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonBlinker
 --- !u!1 &1513477775
 GameObject:
   m_ObjectHideFlags: 0
@@ -41504,8 +41490,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 360134280}
-  - {fileID: 338804388}
-  - {fileID: 74949940}
   - {fileID: 1861388974}
   m_Father: {fileID: 1456283550}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -43260,6 +43244,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 162282187}
+  - {fileID: 1332078156}
   - {fileID: 1217766567}
   m_Father: {fileID: 1533778396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -50755,7 +50740,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2794762588557699373}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
