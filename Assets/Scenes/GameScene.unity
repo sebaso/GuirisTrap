@@ -21243,6 +21243,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463172977}
   m_CullTransparentMesh: 1
+--- !u!1 &1475097479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1475097480}
+  m_Layer: 0
+  m_Name: CamaraFinDeDia
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1475097480
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475097479}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.3799282, y: 0.59636784, z: -0.3799282, w: 0.59636784}
+  m_LocalPosition: {x: -4.47, y: 17.29, z: 2.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 65, y: 90, z: 0}
 --- !u!1 &1481696742
 GameObject:
   m_ObjectHideFlags: 0
@@ -21332,7 +21363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639e5b48b4c8e784fb8d75b088cbd6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  _dayDurationSeconds: 120
+  _dayDurationSeconds: 5
   _autoStart: 1
   _startDelay: 0.5
 --- !u!114 &1481696747
@@ -30789,6 +30820,8 @@ GameObject:
   - component: {fileID: 2425164635536000916}
   - component: {fileID: 3813357901083254739}
   - component: {fileID: 649845539}
+  - component: {fileID: 8361277563297223796}
+  - component: {fileID: 8361277563297223797}
   m_Layer: 0
   m_Name: Puerta
   m_TagString: Untagged
@@ -32270,6 +32303,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f540fdae04f642469bf63e3b1dc994e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayReport
+  _endOfDayCameraAnchor: {fileID: 1475097480}
+  _cameraRiseSeconds: 2.5
+  _cameraRiseHeight: 6.5
+  _highAnglePitch: 65
+  _nightRampSeconds: 3.5
+  _holdBeforePanelSeconds: 0.8
 --- !u!1 &1493914445998243433
 GameObject:
   m_ObjectHideFlags: 0
@@ -39239,6 +39278,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 252171478}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8361277563297223796
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59160507674801405}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.013701172, y: 0.002318284, z: 0.022503948}
+  m_Center: {x: -0.005933494, y: -0.000000008396891, z: 0.0008655377}
+--- !u!114 &8361277563297223797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59160507674801405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b601ad9464b41447b766d4db25c56ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PuertaFinDia
+  _closeSwingDegrees: -25
+  _closeDuration: 0.7
+  _closeSfx: 
 --- !u!1 &8423602188829874684
 GameObject:
   m_ObjectHideFlags: 0
@@ -40234,3 +40309,4 @@ SceneRoots:
   - {fileID: 1489541053}
   - {fileID: 862475238}
   - {fileID: 1261833996}
+  - {fileID: 1475097480}

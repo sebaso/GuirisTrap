@@ -137,6 +137,16 @@ public class DayNightCycle : MonoBehaviour
     private float _nextUpdateTime;
     private bool _dayEverStarted;
 
+    // Anochecer cinemático (lo dispara DayReport al cerrar el día): lleva el
+    // ciclo desde donde esté hasta la noche y se queda en ella. Va en tiempo
+    // real para no colgarse nunca aunque el timeScale acabe congelado.
+    private bool _nightRampActive;
+    private float _nightRampFrom = -1f;
+    private float _nightRampElapsed;
+    private float _nightRampDuration = 1f;
+    // Último t aplicado: el anochecer cinemático parte del punto visual actual.
+    private float _lastProgress = -1f;
+
     // Último estado aplicado: solo escribimos globals si algo cambió (epsilon).
     private float _lastSunIntensity = -1f;
     private Color _lastSunColor = new Color(-1f, -1f, -1f, -1f);
@@ -182,9 +192,15 @@ public class DayNightCycle : MonoBehaviour
 
     void Update()
     {
+        // El anochecer cinemático avanza en tiempo real y por encima del
+        // throttle: el atardecer del final de día debe verse fluido y no
+        // puede quedarse a medias si alguien limitó las actualizaciones.
+        if (_nightRampActive && _nightRampElapsed < _nightRampDuration)
+            _nightRampElapsed += Time.unscaledDeltaTime;
+
         // El showcase va por encima del throttle: el barrido debe verse suave
         // aunque alguien haya limitado las actualizaciones por segundo.
-        if (!ShowcaseMode && _updatesPerSecond > 0f)
+        if (!ShowcaseMode && !_nightRampActive && _updatesPerSecond > 0f)
         {
             if (Time.unscaledTime < _nextUpdateTime) return;
             _nextUpdateTime = Time.unscaledTime + 1f / _updatesPerSecond;
@@ -192,6 +208,26 @@ public class DayNightCycle : MonoBehaviour
 
         Apply(CurrentProgress(), force: false);
     }
+
+    // ------------------------------------------------------------------ anochecer cinemático
+
+    /// <summary>
+    /// Cinemática de fin de día: lleva el ciclo desde su punto actual hasta la
+    /// noche (t = 1) en <paramref name="seconds"/> segundos de tiempo real, y se
+    /// queda en noche hasta <see cref="EndNightRamp"/> o hasta que se recargue
+    /// la escena. El sol queda encendido a intensidad ~0 (como en el showcase)
+    /// para que el skybox procedural no pierda su referencia.
+    /// </summary>
+    public void BeginNightRamp(float seconds)
+    {
+        _nightRampFrom = _lastProgress >= 0f ? _lastProgress : _cycleEnd;
+        _nightRampDuration = Mathf.Max(0.01f, seconds);
+        _nightRampElapsed = 0f;
+        _nightRampActive = true;
+    }
+
+    /// <summary>Suelta el anochecer cinemático: el ciclo vuelve a su fuente de tiempo normal.</summary>
+    public void EndNightRamp() => _nightRampActive = false;
 
     // ------------------------------------------------------------------ tiempo
 
@@ -261,6 +297,16 @@ public class DayNightCycle : MonoBehaviour
             return 1f;
         }
 
+        // Cinemática de fin de día: del punto actual del ciclo a la noche, y
+        // AHÍ SE QUEDA. No se vuelve a leer el timer del día (que ya vale 1 y
+        // devolvería el atardecer del final de la ventana): el panel de
+        // resultados se muestra sobre la noche, no sobre el atardecer.
+        if (_nightRampActive)
+        {
+            float k = Mathf.Clamp01(_nightRampElapsed / _nightRampDuration);
+            return Mathf.Lerp(_nightRampFrom, 1f, k * k * (3f - 2f * k));
+        }
+
         float t;
 
         if (_timeSource == TimeSource.DayManager && DayManager.Instance != null)
@@ -309,6 +355,8 @@ public class DayNightCycle : MonoBehaviour
 
     private void Apply(float t, bool force)
     {
+        _lastProgress = t; // el anochecer cinemático parte de aquí
+
         ApplySun(t, force);
         ApplyAmbient(t, force);
         ApplyFog(t, force);
@@ -346,10 +394,11 @@ public class DayNightCycle : MonoBehaviour
         // El skybox procedural usa la direccional más brillante como sol
         // (RenderSettings.sun es None en la escena): si el componente se APAGA
         // de noche, el cielo pierde su referencia y salta a su estado por
-        // defecto — el "teleport" del sol. En showcase el componente queda
-        // siempre encendido (intensidad ~0 durante la noche); apagarlo solo
-        // puede pasar fuera del showcase, cuya ventana de día no baja de ~0.8.
-        bool shouldBeOn = ShowcaseMode || intensity > 1e-4f;
+        // defecto — el "teleport" del sol. En showcase —y durante el anochecer
+        // cinemático del fin de día— el componente queda siempre encendido
+        // (intensidad ~0 durante la noche); apagarlo solo puede pasar fuera
+        // de esos modos, cuya ventana de día no baja de ~0.8.
+        bool shouldBeOn = ShowcaseMode || _nightRampActive || intensity > 1e-4f;
         if (_sun.enabled != shouldBeOn) _sun.enabled = shouldBeOn;
         if (!shouldBeOn) return;
 

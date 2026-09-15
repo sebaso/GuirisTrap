@@ -108,10 +108,20 @@ public void EnterMinigame(IMinigameControllable minigame)
     public void OnLook(InputAction.CallbackContext context)
         => _current?.OnLook(context.ReadValue<Vector2>());
 
+    /// <summary>Cada pulsación confirmada de Interact, tenga o no receptor
+    /// actual. Para pantallas de "pulsa E para saltar" (p. ej. la cinemática
+    /// de fin de día), que corren con el jugador en pausa (_current == null)
+    /// y ningún controllable recibiendo el input.</summary>
+    public event System.Action OnInteractPressed;
+
     public void OnInteract(InputAction.CallbackContext context)
     {
         if (Time.time < _interactBlockedUntil) return;
-        if (context.performed)      _current?.OnInteractDown();
+        if (context.performed)
+        {
+            _current?.OnInteractDown();
+            OnInteractPressed?.Invoke();
+        }
         else if (context.canceled)  _current?.OnInteractUp();
     }
 

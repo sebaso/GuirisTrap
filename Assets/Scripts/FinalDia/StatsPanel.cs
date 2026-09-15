@@ -126,8 +126,19 @@ public class StatsPanel : MonoBehaviour
         _subscribed = true;
     }
 
-    /// <summary>Muestra el overlay y rellena los datos. Lo dispara OnDayEnded.</summary>
+    /// <summary>Muestra el overlay y rellena los datos. Lo dispara OnDayEnded.
+    /// Antes sale la cinemática de cierre (subida de cámara + anochecer, en
+    /// DayReport): si puede lanzarla, el panel espera a que la llame ella.</summary>
     public void ShowPanel()
+    {
+        DayReport report = DayReport.Instance;
+        if (report != null && report.TryPlayEndOfDayCinematic(ShowPanelNow))
+            return;
+
+        ShowPanelNow();
+    }
+
+    private void ShowPanelNow()
     {
         ShowRoot(true);
         Populate();
