@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 5584955899862949785}
   - component: {fileID: 1781584959241179932}
   - component: {fileID: 612606200993570246}
+  - component: {fileID: 1653265447183211225}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -134,7 +135,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3.38
+  m_Intensity: 5
   m_Range: 10.1
   m_SpotAngle: 59.728226
   m_InnerSpotAngle: 0
@@ -173,7 +174,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
@@ -217,6 +218,18 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &1653265447183211225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111774251179120895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a3feb32f4c52504af341047ded193c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightLight
 --- !u!1 &836716049456567578
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +241,7 @@ GameObject:
   - component: {fileID: 4396554287060012681}
   - component: {fileID: 7817044132745994856}
   - component: {fileID: 4996173218151333303}
+  - component: {fileID: 5021939635433377165}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -261,7 +275,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3.38
+  m_Intensity: 5
   m_Range: 10.1
   m_SpotAngle: 59.728226
   m_InnerSpotAngle: 0
@@ -300,7 +314,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
@@ -344,6 +358,18 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &5021939635433377165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836716049456567578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a3feb32f4c52504af341047ded193c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightLight
 --- !u!1 &1672902179302897911
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,7 +381,7 @@ GameObject:
   - component: {fileID: 6881497947966956451}
   - component: {fileID: 3026971882007275412}
   - component: {fileID: 4329007495388134971}
-  - component: {fileID: 6894720040635918191}
+  - component: {fileID: 5278890709620721462}
   m_Layer: 0
   m_Name: Spot Light (1)
   m_TagString: Untagged
@@ -388,8 +414,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 0
-  m_Color: {r: 1, g: 0.862322, b: 0.7225902, a: 1}
-  m_Intensity: 3.5216522
+  m_Color: {r: 0.9716981, g: 0.8621154, b: 0.5271004, a: 1}
+  m_Intensity: 5
   m_Range: 81.79
   m_SpotAngle: 179
   m_InnerSpotAngle: 138.31816
@@ -472,7 +498,7 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &6894720040635918191
+--- !u!114 &5278890709620721462
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -498,6 +524,7 @@ GameObject:
   - component: {fileID: 8913789085414925506}
   - component: {fileID: 4029812172880617495}
   - component: {fileID: 6839059997444917502}
+  - component: {fileID: 1677863490963642727}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -531,7 +558,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3.38
+  m_Intensity: 5
   m_Range: 10.1
   m_SpotAngle: 59.728226
   m_InnerSpotAngle: 0
@@ -570,7 +597,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
@@ -614,6 +641,18 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &1677863490963642727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4167263681776700701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a3feb32f4c52504af341047ded193c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightLight
 --- !u!1 &4533003576186469974
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,6 +664,7 @@ GameObject:
   - component: {fileID: 570174272061570073}
   - component: {fileID: 4605827245758299935}
   - component: {fileID: 8812973929044605308}
+  - component: {fileID: 5367511348472586604}
   m_Layer: 0
   m_Name: Spot Light
   m_TagString: Untagged
@@ -658,7 +698,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3.38
+  m_Intensity: 5
   m_Range: 10.1
   m_SpotAngle: 59.728226
   m_InnerSpotAngle: 0
@@ -697,7 +737,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0
@@ -741,6 +781,18 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &5367511348472586604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4533003576186469974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a3feb32f4c52504af341047ded193c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NightLight
 --- !u!1 &5572348836354997193
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,8 +828,181 @@ Transform:
   - {fileID: 9136765730354692165}
   - {fileID: 3440046720510004589}
   - {fileID: 996139959404696395}
+  - {fileID: 7241355212610402039}
+  - {fileID: 6750014523200286168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8875360760351747355
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7241355212610402039}
+  - component: {fileID: 3742525164390543774}
+  m_Layer: 0
+  m_Name: Cielo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7241355212610402039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8875360760351747355}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2264649187555849396}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3742525164390543774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8875360760351747355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fafdaebf1f1cde4c8285829d1b78a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyAndCelestials
+  _sunLight: {fileID: 0}
+  _skyMaterial: {fileID: 0}
+  _zenitPorAltura:
+    serializedVersion: 2
+    key0: {r: 0.06, g: 0.08, b: 0.22, a: 1}
+    key1: {r: 0.3, g: 0.38, b: 0.62, a: 1}
+    key2: {r: 0.26, g: 0.58, b: 0.92, a: 0}
+    key3: {r: 0.22, g: 0.62, b: 0.98, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 9830
+    ctime2: 36044
+    ctime3: 65535
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 4
+    m_NumAlphaKeys: 2
+  _horizontePorAltura:
+    serializedVersion: 2
+    key0: {r: 0.12, g: 0.12, b: 0.26, a: 1}
+    key1: {r: 0.98, g: 0.62, b: 0.42, a: 1}
+    key2: {r: 0.99, g: 0.88, b: 0.7, a: 0}
+    key3: {r: 0.85, g: 0.94, b: 1, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 7864
+    ctime2: 29491
+    ctime3: 65535
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 4
+    m_NumAlphaKeys: 2
+  _distancia: 150
+  _tamanoSol: 22
+  _tamanoLuna: 16
+  _spriteSol: {fileID: 21300000, guid: 8dbd7df3e0fc81e49a9f23118bc06ad3, type: 3}
+  _spriteLuna: {fileID: 21300000, guid: 851c8c7fe830a9141926c2f4433adea1, type: 3}
+  _tintaSol: {r: 1, g: 0.93, b: 0.62, a: 1}
+  _tintaLuna: {r: 0.92, g: 0.94, b: 1, a: 1}
+  _alturaDesvanecido: 0.08
+--- !u!1 &9019950350917544721
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6750014523200286168}
+  - component: {fileID: 812563772482039080}
+  m_Layer: 0
+  m_Name: Nubes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6750014523200286168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9019950350917544721}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2264649187555849396}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &812563772482039080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9019950350917544721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb51e8dc772b296499625961499de417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyClouds
+  _sprites: []
+  _cantidad: 10
+  _altura: 60
+  _distancia: 140
+  _anchoFranja: 260
+  _dispersionAltura: 25
+  _velocidadMin: 2
+  _velocidadMax: 6
+  _direccionViento: 0
+  _tamanoMin: 18
+  _tamanoMax: 40
+  _opacidad: 0.9
+  _sunLight: {fileID: 0}
 --- !u!1001 &2897847803755784838
 PrefabInstance:
   m_ObjectHideFlags: 0
