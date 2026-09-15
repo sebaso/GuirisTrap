@@ -96,7 +96,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6586929348460989015}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -334000983
   m_Radius: 0.3
   m_Speed: 3.5
   m_Acceleration: 8
@@ -109,7 +109,7 @@ NavMeshAgent:
   m_Height: 0.5
   m_BaseOffset: 0.51
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!95 &8528224078165439839
 Animator:
   serializedVersion: 7
@@ -151,3 +151,12 @@ MonoBehaviour:
   - {fileID: 3463977032449849887, guid: 7101e3774a6008331a63830280c15438, type: 3}
   loungePivotOffset: {x: 0, y: -0.15, z: 0}
   standUpSeconds: 1
+  moveSpeedRange: {x: 2.2, y: 3}
+  avoidancePriority: 75
+  arrivalTolerance: 0.6
+  arrivalBuffer: 0.15
+  walkTimeout: 30
+  decisionPauseRange: {x: 2, y: 4}
+  lookAroundInterval: {x: 2.5, y: 6}
+  lookAroundJitter: 70
+  lookTurnSpeed: 40
