@@ -45,6 +45,14 @@ public class PlayerController : ControllableMonoBehaviour
     private LayerMask _furnitureObstacleMask;
     public float dropDistance = 1.2f;
     public float dropCheckRadius = 0.45f;
+    [Tooltip("Punto en el que reposa la MESA en brazos, relativo al ORIGEN del jugador (sus pies, Z = hacia donde mira).")]
+    public Vector3 tableCarryOffset = new Vector3(0f, 1.35f, 1.1f);
+    [Tooltip("Punto en el que reposa la SILLA en brazos, relativo al ORIGEN del jugador (sus pies, Z = hacia donde mira).")]
+    public Vector3 chairCarryOffset = new Vector3(0f, 1.35f, 1.1f);
+    [Tooltip("Rotación extra de la MESA en brazos (grados euler, se suma a la orientación del jugador). Opcional: 0,0,0 = sin giro.")]
+    public Vector3 tableCarryRotationOffset = Vector3.zero;
+    [Tooltip("Rotación extra de la SILLA en brazos (grados euler, se suma a la orientación del jugador). Opcional: 0,0,0 = sin giro.")]
+    public Vector3 chairCarryRotationOffset = Vector3.zero;
     private Vector3 _dropTargetPos;
     private Quaternion _dropTargetRot;
 
@@ -53,6 +61,8 @@ public class PlayerController : ControllableMonoBehaviour
         rb = GetComponent<Rigidbody>();
         _animator = GetComponentInChildren<Animator>();
         _trayVisual?.SetActive(false);
+        SetCarrying(false);
+        SetCarryingFurniture(false);
 
         if (holdPoint == null)
         {
@@ -149,6 +159,28 @@ public class PlayerController : ControllableMonoBehaviour
             _animator.SetBool("Carrying", carrying);
         if (_trayVisual != null && _trayVisual.activeSelf != carrying)
             _trayVisual.SetActive(carrying);
+    }
+
+    /// <summary>Mantiene el estado de portar mueble: con true el Animator pasa
+    /// al estado CarryFurniture en vez de volver a Locomotion.</summary>
+    public void SetCarryingFurniture(bool carrying)
+    {
+        isCarryingFurniture = carrying;
+        if (_animator != null)
+            _animator.SetBool("CarryingFurniture", carrying);
+    }
+
+    /// <summary>Anula los triggers de acción pendientes (Servir, Recoger, Barrer, ...)
+    /// para que un gesto antiguo no salte con el mueble en brazos ni al soltarlo.</summary>
+    private void ClearActionTriggers()
+    {
+        if (_animator == null) return;
+        _animator.ResetTrigger("Recoger");
+        _animator.ResetTrigger("Servir");
+        _animator.ResetTrigger("Barrer");
+        _animator.ResetTrigger("LimpiarPlatos");
+        _animator.ResetTrigger("Cortar");
+        _animator.ResetTrigger("Cocinar");
     }
 
     // ── ControllableMonoBehaviour ─────────────────────────────────────────
@@ -403,39 +435,56 @@ public class PlayerController : ControllableMonoBehaviour
         Collider[] nearbyObjects = Physics.OverlapSphere(transform.position, interactionRange);
         bool foundAnyTable = false;
 
+        Table bestTable = null;      // first table that can receive food right now
+        Table dishMatchTable = null; // first table whose seated group ordered the dish
+
         foreach (Collider col in nearbyObjects)
         {
             Table table = col.GetComponent<Table>() ?? col.GetComponentInParent<Table>();
             if (table == null) continue;
 
             foundAnyTable = true;
-            if (table.CanPlaceFood())
-            {
-                // PlaceFood now returns false when the plate is a dish the
-                // group didn't order — in that case keep holding it so the
-                // player can carry it to the right table.
-                // Clientes especiales: veto de ingredientes (Poseidón + pescado)
-                // y pedidos "sorpréndeme". Si se queda el plato, lo perdemos.
-                if (SpecialClientManager.Instance != null &&
-                    SpecialClientManager.Instance.TryInterceptServe(table, heldFood))
-                {
-                    heldFood = null;
-                    return;
-                }
+            if (!table.CanPlaceFood()) continue;
 
-                if (table.PlaceFood(heldFood))
-                {
-                    heldFood = null;
-                    SetCarrying(false);
-                    PlayAction("Servir");
-                    _freezeTimer = _serveFreezeSeconds;
-                    Debug.Log("Placed food on table");
-                }
-                return;
+            if (bestTable == null) bestTable = table;
+
+            // Prefer the table (or bar counter cell) whose group actually ordered
+            // this dish: with a shared bar stand several groups wait at once, and
+            // nearby regular tables may too.
+            ClientGroup target = table.GetServeTarget(heldFood);
+            if (target != null && heldFood != null && heldFood.recipe != null && target.WantsRecipe(heldFood.recipe))
+            {
+                dishMatchTable = table;
+                break;
             }
         }
 
-        if (!foundAnyTable) DropFood();
+        Table serve = dishMatchTable != null ? dishMatchTable : bestTable;
+        if (serve == null)
+        {
+            if (!foundAnyTable) DropFood();
+            return;
+        }
+
+        // PlaceFood now returns false when the plate is a dish the group didn't
+        // order — in that case keep holding it so the player can carry it to the
+        // right table. Clientes especiales: veto de ingredientes (Poseidón +
+        // pescado) y pedidos "sorpréndeme". Si se queda el plato, lo perdemos.
+        if (SpecialClientManager.Instance != null &&
+            SpecialClientManager.Instance.TryInterceptServe(serve, heldFood))
+        {
+            heldFood = null;
+            return;
+        }
+
+        if (serve.PlaceFood(heldFood))
+        {
+            heldFood = null;
+            SetCarrying(false);
+            PlayAction("Servir");
+            _freezeTimer = _serveFreezeSeconds;
+            Debug.Log("Placed food on table");
+        }
     }
 
     private void DropFood()
@@ -508,12 +557,17 @@ public class PlayerController : ControllableMonoBehaviour
         }
 
         _heldPlaceable = best;
-        PlayAction("Recoger");
-        isCarryingFurniture = true;
+        // Sin gesto de acción al coger: se entra directo al estado CarryFurniture
+        // (blend tree *_CARGADO). Limpiamos triggers pendientes para que un
+        // "Servir"/"Recoger" anterior no se reproduzca con el mueble en brazos.
+        ClearActionTriggers();
+        SetCarryingFurniture(true);
         Collider c = best.GetComponent<Collider>();
         if (c != null) c.enabled = false;
 
-        best.transform.SetParent(holdPoint, worldPositionStays: true);
+        // El mueble se cuelga del ORIGEN del jugador, no del holdPoint
+        // (ese es el punto de la bandeja de comida).
+        best.transform.SetParent(transform, worldPositionStays: true);
 
         Vector3 initialGhostPos = transform.position + _lastFacing * dropDistance;
         _ghost = CreateGhost(best.GetItemData(), initialGhostPos, Quaternion.LookRotation(_lastFacing, Vector3.up));
@@ -586,7 +640,8 @@ public class PlayerController : ControllableMonoBehaviour
 
         if (RestaurantManager.Instance != null)
             RestaurantManager.Instance.NotifyTablesRearranged();
-        isCarryingFurniture = false;
+        ClearActionTriggers();
+        SetCarryingFurniture(false);
         _heldPlaceable = null;
     }
 
@@ -612,13 +667,27 @@ public class PlayerController : ControllableMonoBehaviour
 
     private void UpdateCarryPreview()
     {
-        _heldPlaceable.transform.localPosition = Vector3.Lerp(
-            _heldPlaceable.transform.localPosition, Vector3.zero, Time.fixedDeltaTime * carryLerpSpeed);
+        PlaceableItemData item = _heldPlaceable.GetItemData();
+
+        // El mueble va enraizado a las manos: posición y rotación calculadas en el
+        // espacio del jugador (origen a sus pies, Z = hacia donde mira), sin
+        // depender del holdPoint de la bandeja de comida. Cada tipo de mueble
+        // tiene su propio offset: mesa y silla no se llevan igual.
+        bool isChair = item != null && item.category == PlaceableCategory.Chair;
+        Quaternion facingRot = Quaternion.LookRotation(_lastFacing, Vector3.up);
+        Vector3 carryOffset = isChair ? chairCarryOffset : tableCarryOffset;
+        Vector3 carryTarget = transform.position + facingRot * carryOffset;
+        _heldPlaceable.transform.position = Vector3.Lerp(
+            _heldPlaceable.transform.position, carryTarget, Time.fixedDeltaTime * carryLerpSpeed);
+
+        // Rotación extra opcional por tipo de mueble (euler) encima de la
+        // orientación del jugador; con 0,0,0 el mueble queda alineado como el ghost.
+        Quaternion carryRotOffset = Quaternion.Euler(isChair ? chairCarryRotationOffset : tableCarryRotationOffset);
+        _heldPlaceable.transform.rotation = Quaternion.Slerp(
+            _heldPlaceable.transform.rotation, facingRot * carryRotOffset, Time.fixedDeltaTime * carryLerpSpeed);
 
         Vector3 targetWorld = transform.position + _lastFacing * dropDistance;
         targetWorld.y = transform.position.y;
-
-        PlaceableItemData item = _heldPlaceable.GetItemData();
 
         bool withinRoom = false;
         Vector3Int voxel = default;

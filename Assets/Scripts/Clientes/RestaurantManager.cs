@@ -201,7 +201,14 @@ public class RestaurantManager : MonoBehaviour
         bool anyFreed = false;
         foreach (var t in _placedTables)
         {
-            if (t != null && t.OccupyingGroup == group)
+            if (t == null) continue;
+            if (t.IsBarStand)
+            {
+                // Bar stands: free only the stools that group had booked, so the
+                // rest of the bar keeps serving other groups.
+                if (t.ReleaseGroup(group)) anyFreed = true;
+            }
+            else if (t.HasGroup(group))
             {
                 t.ClearReservation();
                 anyFreed = true;
@@ -241,11 +248,13 @@ public class RestaurantManager : MonoBehaviour
         foreach (var t in _placedTables)
         {
             if (t == null) continue;
-            ClientGroup g = t.OccupyingGroup;
-            if (g != null && !seen.Contains(g) && g.IsWaitingForFood && !g.AllFed)
+            foreach (ClientGroup g in t.SeatedGroups)
             {
-                seen.Add(g);
-                result.Add(g);
+                if (g != null && !seen.Contains(g) && g.IsWaitingForFood && !g.AllFed)
+                {
+                    seen.Add(g);
+                    result.Add(g);
+                }
             }
         }
         return result;
@@ -270,23 +279,38 @@ public class RestaurantManager : MonoBehaviour
 
     private void SeatGroup(ClientGroup group, TableBlock block)
     {
-        foreach (var t in block.Tables)
-        {
-            t.Reserve(group);
-        }
-
-        group.GenerateOrder();
-        Debug.Log($"[RestaurantManager] {group} ordered: {(group.Order != null ? string.Join(", ", group.Order.ConvertAll(r => r != null ? r.dishName : "?")) : "none")}");
-
         List<Transform> seatPoints = new();
         List<Table> seatTables = new();
 
+        int seatsToBook = Mathf.Min(group.Size, group.Members.Count);
+
         foreach (var t in block.Tables)
         {
+            if (t == null || !t.IsPlaced) continue;
+
+            if (t.IsBarStand)
+            {
+                // Bar stand: book only the stools this group needs. The counter
+                // keeps its remaining stools free for other groups.
+                if (seatsToBook <= 0) continue;
+                List<Transform> booked = t.BookSeats(group, seatsToBook);
+                for (int j = 0; j < booked.Count; j++)
+                {
+                    seatPoints.Add(booked[j]);
+                    seatTables.Add(t);
+                }
+                seatsToBook -= booked.Count;
+                continue;
+            }
+
+            t.Reserve(group);
             var points = t.GetSeatPoints();
             seatPoints.AddRange(points);
             for (int j = 0; j < points.Count; j++) seatTables.Add(t);
         }
+
+        group.GenerateOrder();
+        Debug.Log($"[RestaurantManager] {group} ordered: {(group.Order != null ? string.Join(", ", group.Order.ConvertAll(r => r != null ? r.dishName : "?")) : "none")}");
 
         int usableSeats = Mathf.Min(seatPoints.Count, group.Size, group.Members.Count);
 
@@ -319,10 +343,14 @@ public class RestaurantManager : MonoBehaviour
             Debug.LogWarning($"[RestaurantManager] Created overflow group of {overflowGroup.Size} for excess members");
         }
 
-        Debug.Log($"[RestaurantManager] {group} seated at TableBlock (capacity {block.Capacity}) spanning {block.Tables.Count} tables. Seated {usableSeats}/{group.Size} members.");
+        Debug.Log($"[RestaurantManager] {group} seated at block (capacity {block.Capacity}, {block.Tables.Count} table(s)). Seated {usableSeats}/{group.Size} members.");
     }
 
-    private List<TableBlock> GetTableBlocks()
+    /// <summary>Connected seating blocks. Bar stands and regular tables never
+    /// mix: a bar counter forms its own blocks (several counter segments = one
+    /// long bar), while regular tables keep the old block-merging behaviour.
+    /// </summary>
+    private List<TableBlock> GetTableBlocks(bool bars)
     {
         List<TableBlock> blocks = new();
         HashSet<Table> visited = new();
@@ -330,6 +358,7 @@ public class RestaurantManager : MonoBehaviour
         foreach (var table in _placedTables)
         {
             if (table == null || !table.IsPlaced || visited.Contains(table)) continue;
+            if (table.IsBarStand != bars) continue;
 
             TableBlock block = new();
             Queue<Table> queue = new();
@@ -343,6 +372,7 @@ public class RestaurantManager : MonoBehaviour
                 foreach (var other in _placedTables)
                 {
                     if (other == null || !other.IsPlaced || visited.Contains(other)) continue;
+                    if (other.IsBarStand != bars) continue;
 
 
                     float dist = Vector3.Distance(current.transform.position, other.transform.position);
@@ -367,33 +397,51 @@ public class RestaurantManager : MonoBehaviour
                 HUDMessage.Instance.ShowWarning("¡No hay mesas en el restaurante! Añade algunas en preparación.");
             return null;
         }
-        List<TableBlock> blocks = GetTableBlocks();
-        foreach (TableBlock b in blocks)
-        {
-            if (b.IsOccupied) continue;
-            if (b.Capacity == groupSize)
-                return b;
-        }
-        TableBlock bestFit = null;
-        int smallestCapacity = int.MaxValue;
 
-        foreach (TableBlock b in blocks)
-        {
-            if (b.IsOccupied) continue;
+        // ── Bar stands first: a group only claims the stools it needs, so a
+        //    single customer can no longer take over a whole bar. Exact free-seat
+        //    match preferred, then the counter that wastes the fewest stools. ──
+        TableBlock barExact = null;
+        TableBlock barBest = null;
+        int barBestFree = int.MaxValue;
 
-            if (b.Capacity >= groupSize && b.Capacity < smallestCapacity)
+        foreach (TableBlock b in GetTableBlocks(bars: true))
+        {
+            int free = b.FreeCapacity;
+            if (free == groupSize && barExact == null)
+                barExact = b;
+            else if (free > groupSize && free < barBestFree)
             {
-                smallestCapacity = b.Capacity;
-                bestFit = b;
+                barBestFree = free;
+                barBest = b;
             }
         }
 
-        if (bestFit == null)
+        // ── Regular tables: whole blocks, one group per block. ──
+        TableBlock regExact = null;
+        TableBlock regBest = null;
+        int regBestCap = int.MaxValue;
+
+        foreach (TableBlock b in GetTableBlocks(bars: false))
         {
-            Debug.Log($"[RestaurantManager] No suitable table block found for group size {groupSize}. Total placed tables: {_placedTables.Count}");
+            if (b.IsOccupied) continue;
+            int cap = b.Capacity;
+            if (cap == groupSize && regExact == null)
+                regExact = b;
+            else if (cap > groupSize && cap < regBestCap)
+            {
+                regBestCap = cap;
+                regBest = b;
+            }
         }
 
-        return bestFit;
+        if (barExact != null) return barExact;
+        if (regExact != null) return regExact;
+        if (barBest != null && (regBest == null || barBestFree <= regBestCap)) return barBest;
+        if (regBest != null) return regBest;
+
+        Debug.Log($"[RestaurantManager] No suitable table block found for group size {groupSize}. Total placed tables: {_placedTables.Count}");
+        return null;
     }
 
 

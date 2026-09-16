@@ -192,7 +192,9 @@ public class SpecialClientManager : MonoBehaviour
     {
         if (table == null || food == null) return false;
 
-        ClientGroup g = table.OccupyingGroup;
+        // Bar stands hold several groups at once: GetServeTarget picks the group
+        // this plate is meant for (order match, else the most urgent one).
+        ClientGroup g = table.GetServeTarget(food);
         if (g == null || !_specialGroups.TryGetValue(g, out SpecialClientData data)) return false;
 
         // ¿Contenido vetado? (Poseidón + pescado)

@@ -36,20 +36,25 @@ public static class OrderGuide
 
         foreach (Table t in Object.FindObjectsByType<Table>(FindObjectsSortMode.None))
         {
-            ClientGroup g = t != null ? t.OccupyingGroup : null;
-            if (g == null || g.Order == null || g.AllFed) continue;
+            if (t == null) continue;
 
-            // Solo cuentan los grupos que están esperando de verdad: los que ya
-            // están comiendo o largándose no necesitan que les cocines nada.
-            bool esperando = false;
-            foreach (Client m in g.Members)
+            // Bar stands seat several groups at once; check every seated group.
+            foreach (ClientGroup g in t.SeatedGroups)
             {
-                if (m != null && m.CurrentState == Client.State.WaitingForFood) { esperando = true; break; }
-            }
-            if (!esperando) continue;
+                if (g == null || g.Order == null || g.AllFed) continue;
 
-            foreach (RecipeData r in g.Order)
-                if (r != null) _wanted.Add(r);
+                // Solo cuentan los grupos que están esperando de verdad: los que ya
+                // están comiendo o largándose no necesitan que les cocines nada.
+                bool esperando = false;
+                foreach (Client m in g.Members)
+                {
+                    if (m != null && m.CurrentState == Client.State.WaitingForFood) { esperando = true; break; }
+                }
+                if (!esperando) continue;
+
+                foreach (RecipeData r in g.Order)
+                    if (r != null) _wanted.Add(r);
+            }
         }
     }
 }

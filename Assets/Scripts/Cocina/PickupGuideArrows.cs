@@ -121,9 +121,17 @@ public class PickupGuideArrows : MonoBehaviour
 
         foreach (Table t in FindObjectsByType<Table>(FindObjectsSortMode.None))
         {
-            ClientGroup g = t != null ? t.OccupyingGroup : null;
-            if (g == null || g.AllFed) continue;
-            if (!g.WantsRecipe(recipe)) continue;
+            if (t == null) continue;
+
+            // Bar stands seat several groups at once: any seated group that
+            // wants this dish makes the table a valid target.
+            bool wants = false;
+            foreach (ClientGroup g in t.SeatedGroups)
+            {
+                if (g == null || g.AllFed) continue;
+                if (g.WantsRecipe(recipe)) { wants = true; break; }
+            }
+            if (!wants) continue;
 
             float d = (t.transform.position - transform.position).sqrMagnitude;
             if (d < mejorDist) { mejorDist = d; mejor = t.transform; }

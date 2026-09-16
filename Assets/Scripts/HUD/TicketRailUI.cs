@@ -168,7 +168,7 @@ public class TicketRailUI : MonoBehaviour
     {
         foreach (var t in GameObject.FindObjectsByType<Table>())
         {
-            if (t != null && t.OccupyingGroup == g) return t.tableNumber;
+            if (t != null && t.HasGroup(g)) return t.tableNumber;
         }
         return g.GroupID;
     }

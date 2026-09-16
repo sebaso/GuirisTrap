@@ -1,6 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>Variant of a seating furniture.
+/// <list type="bullet">
+/// <item><see cref="TableVariant.Regular"/>: classic table. One group claims the
+/// whole table (and grouped tables in a block).</item>
+/// <item><see cref="TableVariant.BarStand"/>: bar counter with stools. A group
+/// only claims the stools it needs; several groups share the same bar.</item>
+/// </list></summary>
+public enum TableVariant
+{
+    Regular,
+    BarStand,
+}
+
 /// <summary>
 /// Represents a table in the restaurant with capacity and seat points for clients.
 /// </summary>
@@ -8,6 +21,15 @@ public class Table : MonoBehaviour
 {
     [Header("Table Properties")]
     public int tableNumber = 1;
+
+    [Header("Variant")]
+    [Tooltip("Regular: mesa clásica — un grupo ocupa la mesa entera (y los bloques de mesas juntas). " +
+             "BarStand: barra con taburetes — cada grupo SOLO reserva los taburetes que necesita y " +
+             "puede compartir la barra con otros grupos a la vez.")]
+    public TableVariant variant = TableVariant.Regular;
+
+    /// <summary>True when this furniture is a bar stand (counter + stools).</summary>
+    public bool IsBarStand => variant == TableVariant.BarStand;
 
     [Header("Chair-Based Capacity")]
     [Tooltip("Distance from the table center to check for chairs on each side.")]
@@ -20,6 +42,19 @@ public class Table : MonoBehaviour
     [SerializeField] private List<Chair> _registeredChairs = new();
     private float _nextScanTime = 0f;
     private const float SCAN_INTERVAL = 0.5f;
+
+    [Header("Bar Stand")]
+    [Tooltip("Máximo de taburetes que una barra registra a la vez. El reparto por columnas " +
+             "evita que dos tramos de barra contiguos reclamen el mismo taburete.")]
+    public int maxBarStools = 8;
+
+    // Bar stand only: for each seated group, the stools it has booked.
+    // A bar is never claimed wholesale: other groups can book the free stools.
+    private readonly Dictionary<ClientGroup, List<Chair>> _barGroupSeats = new();
+
+    // Regular only: the single group occupying this table.
+    private bool _regularOccupied;
+    private ClientGroup _regularGroup;
 
     [Header("Food Placement")]
     [Tooltip("Transform point where food will be placed. If null, table center will be used.")]
@@ -43,8 +78,61 @@ public class Table : MonoBehaviour
         }
     }
 
-    public bool IsOccupied { get; private set; }
-    public ClientGroup OccupyingGroup { get; private set; }
+    /// <summary>True when a group is seated here. For bar stands this means at
+    /// least one group is using some of the stools.</summary>
+    public bool IsOccupied => IsBarStand ? _barGroupSeats.Count > 0 : _regularOccupied;
+
+    // Regular: the occupying group. Bar stand: the most urgent group still
+    // waiting for food (used by the single patience/order HUD widgets on the
+    // furniture; the ticket rail and guides use SeatedGroups instead).
+    public ClientGroup OccupyingGroup
+    {
+        get
+        {
+            if (!IsBarStand) return _regularGroup;
+
+            ClientGroup best = null;
+            foreach (ClientGroup g in _barGroupSeats.Keys)
+            {
+                if (g == null || !g.IsWaitingForFood) continue;
+                if (best == null || g.PatienceRatio < best.PatienceRatio) best = g;
+            }
+            return best;
+        }
+    }
+
+    /// <summary>Every group currently seated at this table (one for regular
+    /// tables, several for a shared bar stand).</summary>
+    public IEnumerable<ClientGroup> SeatedGroups
+    {
+        get
+        {
+            if (IsBarStand) return _barGroupSeats.Keys;
+            return _regularGroup != null ? SingleGroup(_regularGroup) : EmptyGroups;
+        }
+    }
+
+    private static readonly ClientGroup[] EmptyGroups = new ClientGroup[0];
+    private static IEnumerable<ClientGroup> SingleGroup(ClientGroup g) { yield return g; }
+
+    public bool HasGroup(ClientGroup group)
+    {
+        if (group == null) return false;
+        return IsBarStand ? _barGroupSeats.ContainsKey(group) : _regularGroup == group;
+    }
+
+    /// <summary>Stools still bookable at a bar stand (0 when the bar is full);
+    /// for regular tables it's the full capacity while free, 0 while occupied.</summary>
+    public int FreeSeats
+    {
+        get
+        {
+            if (!IsBarStand) return IsOccupied ? 0 : Capacity;
+            int used = 0;
+            foreach (var kv in _barGroupSeats) used += kv.Value.Count;
+            return Mathf.Max(0, Capacity - used);
+        }
+    }
 
     public bool IsPlaced { get; private set; }
 
@@ -87,32 +175,135 @@ public class Table : MonoBehaviour
         RestaurantManager.Instance?.UnregisterTable(this);
     }
 
+    /// <summary>Regular tables only: the whole table belongs to one group.
+    /// Bar stands book individual stools via <see cref="BookSeats"/>.</summary>
     public void Reserve(ClientGroup group)
     {
         if (group == null) return;
+
+        if (IsBarStand)
+        {
+            Debug.LogWarning($"[Table {tableNumber}] BarStand usa BookSeats, no Reserve.");
+            return;
+        }
 
         if (group.Size > Capacity)
         {
             Debug.LogWarning($"[Table {tableNumber}] Group size {group.Size} exceeds capacity {Capacity}!");
         }
 
-        IsOccupied = true;
-        OccupyingGroup = group;
+        _regularOccupied = true;
+        _regularGroup = group;
         Debug.Log($"[Table {tableNumber}] Reserved for {group}");
     }
 
     public void FreeTable(ClientGroup group)
     {
-        if (!IsOccupied || OccupyingGroup != group) return;
+        if (group == null) return;
+        if (IsBarStand)
+        {
+            // A bar is freed group by group, through RestaurantManager (it also
+            // flushes waiting groups so the stools can be reused immediately).
+            if (!_barGroupSeats.ContainsKey(group)) return;
+            RestaurantManager.Instance?.FreeGroupTables(group);
+            return;
+        }
+        if (!_regularOccupied || _regularGroup != group) return;
 
         RestaurantManager.Instance?.FreeGroupTables(group);
     }
 
     public void ClearReservation()
     {
-        IsOccupied = false;
-        OccupyingGroup = null;
+        _regularOccupied = false;
+        _regularGroup = null;
         Debug.Log($"[Table {tableNumber}] Freed");
+    }
+
+    /// <summary>Bar stands only: books up to <paramref name="count"/> free stools
+    /// for <paramref name="group"/> and returns their seat transforms. Other
+    /// groups can keep using the remaining stools.</summary>
+    public List<Transform> BookSeats(ClientGroup group, int count)
+    {
+        var seats = new List<Transform>();
+        if (group == null || count <= 0 || _barGroupSeats.ContainsKey(group)) return seats;
+
+        var booked = new List<Chair>(count);
+        foreach (Chair stool in _registeredChairs)
+        {
+            if (booked.Count >= count) break;
+            if (stool == null || !stool.IsPlaced) continue;
+            if (IsStoolBooked(stool)) continue;
+
+            booked.Add(stool);
+            seats.Add(stool.SeatTransform);
+        }
+
+        if (booked.Count == 0)
+        {
+            // Normal when the group is booked across several counter segments
+            // and this segment has no free stool left.
+            return seats;
+        }
+
+        _barGroupSeats[group] = booked;
+        Debug.Log($"[Table {tableNumber}] Barra: {booked.Count} taburete(s) reservados para {group}.");
+        return seats;
+    }
+
+    /// <summary>Bar stands only: releases the stools booked by <paramref name="group"/>.</summary>
+    public bool ReleaseGroup(ClientGroup group)
+    {
+        if (group == null || !_barGroupSeats.TryGetValue(group, out var booked)) return false;
+        _barGroupSeats.Remove(group);
+
+        // Free the stools we booked for the group...
+        foreach (Chair stool in booked)
+            if (stool != null && stool.Occupant != null && stool.Occupant.Group == group)
+                stool.Occupant = null;
+
+        // ...and any registered stool whose occupant belongs to the group
+        // (covers mid-walk re-seats onto stools this table did not book).
+        foreach (Chair stool in _registeredChairs)
+            if (stool != null && stool.Occupant != null && stool.Occupant.Group == group)
+                stool.Occupant = null;
+
+        Debug.Log($"[Table {tableNumber}] Barra liberada de {group} ({booked.Count} taburetes).");
+        return true;
+    }
+
+    private bool IsStoolBooked(Chair stool)
+    {
+        if (stool.Occupant != null) return true;
+        foreach (var kv in _barGroupSeats)
+            if (kv.Value.Contains(stool)) return true;
+        return false;
+    }
+
+    /// <summary>Which seated group a served plate is meant for. Regular tables:
+    /// the occupying group. Bar stands: the first seated group whose order
+    /// matches the dish (fallback: the group with the least patience).</summary>
+    public ClientGroup GetServeTarget(Food food)
+    {
+        if (!IsBarStand) return _regularGroup;
+
+        ClientGroup fallback = null;
+        foreach (ClientGroup g in _barGroupSeats.Keys)
+        {
+            if (g == null || g.AllFed) continue;
+
+            bool waiting = false;
+            foreach (var m in g.Members)
+                if (m != null && m.CurrentState == Client.State.WaitingForFood) { waiting = true; break; }
+            if (!waiting) continue;
+
+            if (food != null && food.recipe != null && g.WantsRecipe(food.recipe))
+                return g;
+
+            if (fallback == null || g.PatienceRatio < fallback.PatienceRatio)
+                fallback = g;
+        }
+        return fallback;
     }
 
     // carried by the player; while lifted it leaves the seating pool
@@ -140,38 +331,46 @@ public class Table : MonoBehaviour
         }
 
         int previousCount = _registeredChairs.Count;
-        _registeredChairs.Clear();
 
-        Vector3[] directions = { transform.forward, -transform.forward, transform.right, -transform.right };
-
-        foreach (Vector3 dir in directions)
+        if (IsBarStand)
         {
-            if (_registeredChairs.Count >= 4) break;
+            ScanBarStools();
+        }
+        else
+        {
+            _registeredChairs.Clear();
 
-            Vector3 checkPos = transform.position + dir * chairDetectionDistance;
-            Collider[] hits = Physics.OverlapSphere(checkPos, chairDetectionRadius, chairLayer);
+            Vector3[] directions = { transform.forward, -transform.forward, transform.right, -transform.right };
 
-            Chair bestChair = null;
-            float bestDist = float.MaxValue;
-
-            foreach (Collider hit in hits)
+            foreach (Vector3 dir in directions)
             {
-                Chair chair = hit.GetComponentInParent<Chair>();
-                if (chair == null || !chair.IsPlaced) continue;
+                if (_registeredChairs.Count >= 4) break;
 
-                if (_registeredChairs.Contains(chair)) continue;
+                Vector3 checkPos = transform.position + dir * chairDetectionDistance;
+                Collider[] hits = Physics.OverlapSphere(checkPos, chairDetectionRadius, chairLayer);
 
-                float dist = Vector3.Distance(checkPos, chair.transform.position);
-                if (dist < bestDist)
+                Chair bestChair = null;
+                float bestDist = float.MaxValue;
+
+                foreach (Collider hit in hits)
                 {
-                    bestDist = dist;
-                    bestChair = chair;
-                }
-            }
+                    Chair chair = hit.GetComponentInParent<Chair>();
+                    if (chair == null || !chair.IsPlaced) continue;
 
-            if (bestChair != null)
-            {
-                _registeredChairs.Add(bestChair);
+                    if (_registeredChairs.Contains(chair)) continue;
+
+                    float dist = Vector3.Distance(checkPos, chair.transform.position);
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        bestChair = chair;
+                    }
+                }
+
+                if (bestChair != null)
+                {
+                    _registeredChairs.Add(bestChair);
+                }
             }
         }
 
@@ -180,6 +379,43 @@ public class Table : MonoBehaviour
             Debug.Log($"[Table {tableNumber}] Capacity changed: {_registeredChairs.Count}");
             RestaurantManager.Instance?.TablePlaced(this);
         }
+    }
+
+    /// <summary>Bar stands scan for stools along the counter instead of the four
+    /// chair spots. A stool belongs to the counter cell directly in front of it:
+    /// same grid column (local X ≈ 0) and one cell away (|Z| ≈ 1). Adjacent
+    /// counter segments never claim the same stool, so a long bar keeps one
+    /// stool per cell and several cells form one shared counter block.</summary>
+    private void ScanBarStools()
+    {
+        _registeredChairs.Clear();
+
+        float scanRadius = chairDetectionDistance + chairDetectionRadius + 0.5f;
+        foreach (Collider hit in Physics.OverlapSphere(transform.position, scanRadius, chairLayer))
+        {
+            if (_registeredChairs.Count >= maxBarStools) break;
+
+            Chair stool = hit.GetComponentInParent<Chair>();
+            if (stool == null || !stool.IsPlaced) continue;
+
+            Vector3 flat = stool.transform.position - transform.position;
+            flat.y = 0f;
+
+            if (Mathf.Abs(flat.x) > 0.55f) continue;                 // stool of a neighbour cell
+            float depth = Mathf.Abs(flat.z);
+            // Own stools sit one cell away (depth ≈ 1); a stool two cells away
+            // (a counter stacked along Z) is the neighbour segment's own.
+            if (depth < 0.45f || depth > chairDetectionDistance + 0.5f) continue;
+
+            _registeredChairs.Add(stool);
+        }
+
+        // Deterministic left→right order: groups book stools along the counter.
+        _registeredChairs.Sort((a, b) =>
+        {
+            int byX = a.transform.position.x.CompareTo(b.transform.position.x);
+            return byX != 0 ? byX : a.transform.position.z.CompareTo(b.transform.position.z);
+        });
     }
 
     public void RegisterChair(Chair chair) { ScanForChairs(); }
@@ -211,23 +447,24 @@ public class Table : MonoBehaviour
     public Transform GetFreeSeatPoint()
     {
         foreach (Chair c in _registeredChairs)
-            if (c != null && c.IsPlaced && c.Occupant == null)
+            if (c != null && c.IsPlaced && !IsStoolBooked(c))
                 return c.SeatTransform;
         return null;
     }
 
     public bool CanPlaceFood()
     {
-        if (!IsOccupied || OccupyingGroup == null) return false;
-
-        // One plate feeds one diner: we can keep placing while the group is not
-        // yet fully fed (and at least one member is still waiting for food).
-        if (OccupyingGroup.AllFed) return false;
-
-        foreach (var member in OccupyingGroup.Members)
+        foreach (ClientGroup g in SeatedGroups)
         {
-            if (member != null && member.CurrentState == Client.State.WaitingForFood)
-                return true;
+            if (g == null || g.AllFed) continue;
+
+            // One plate feeds one diner: we can keep placing while the group is not
+            // yet fully fed (and at least one member is still waiting for food).
+            foreach (var member in g.Members)
+            {
+                if (member != null && member.CurrentState == Client.State.WaitingForFood)
+                    return true;
+            }
         }
 
         return false;
@@ -238,13 +475,14 @@ public class Table : MonoBehaviour
     /// the player's hands so they can take it to the right table).</summary>
     public bool PlaceFood(Food food)
     {
-        if (food == null || OccupyingGroup == null) return false;
-        ClientGroup g = OccupyingGroup;
+        if (food == null) return false;
+        ClientGroup g = GetServeTarget(food);
+        if (g == null) return false;
 
         // ── Order check: reject a dish the group didn't order ──
         if (!g.WantsRecipe(food.recipe))
         {
-            RejectOrder(food);
+            RejectOrder(food, g);
             return false;
         }
 
@@ -285,9 +523,8 @@ public class Table : MonoBehaviour
     /// <summary>Called when the player serves a dish the group didn't order.
     /// Small patience penalty + feedback; the plate stays in the player's hands
     /// (PlaceFood returns false, so PlayerController keeps holding it).</summary>
-    private void RejectOrder(Food food)
+    private void RejectOrder(Food food, ClientGroup g)
     {
-        ClientGroup g = OccupyingGroup;
         // Knock a few seconds off the patience bar as a penalty (reuse the
         // existing tick; TickPatience ignores the return — we're not angering
         // the whole group over one wrong plate, just nudging the bar).
@@ -331,12 +568,20 @@ public class Table : MonoBehaviour
     {
         Gizmos.color = IsOccupied ? Color.red : (Capacity > 0 ? Color.green : Color.gray);
 
-        Vector3[] directions = { transform.forward, -transform.forward, transform.right, -transform.right };
-        foreach (Vector3 dir in directions)
+        if (IsBarStand)
         {
-            Vector3 checkPos = transform.position + dir * chairDetectionDistance;
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(checkPos, chairDetectionRadius);
+            Gizmos.color = new Color(0.6f, 0.4f, 1f);
+            Gizmos.DrawWireSphere(transform.position, chairDetectionDistance + 0.25f);
+        }
+        else
+        {
+            Vector3[] directions = { transform.forward, -transform.forward, transform.right, -transform.right };
+            foreach (Vector3 dir in directions)
+            {
+                Vector3 checkPos = transform.position + dir * chairDetectionDistance;
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireSphere(checkPos, chairDetectionRadius);
+            }
         }
 
         if (_registeredChairs != null)
