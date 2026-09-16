@@ -58,12 +58,24 @@ public class ChairRefreshUtility : MonoBehaviour
 
             obj.SetValid(isValid);
         }
+
+        var taburetes = GridManager.ValidateAllTaburetes(voxelData);
+        foreach (var kvp in taburetes)
+            registry.Get(kvp.Key)?.SetValid(kvp.Value);
+
+        var barras = GridManager.ValidateAllBarras(voxelData);
+        foreach (var kvp in barras)
+            registry.Get(kvp.Key)?.SetValid(kvp.Value);
     }
 
     public static void ApplyValidityColorsOnly(VoxelGridData voxelData, PlaceableInstanceRegistry registry)
     {
         var validity = GridManager.ValidateAllChairs(voxelData);
         foreach (var kvp in validity)
+            registry?.Get(kvp.Key)?.SetValid(kvp.Value);
+
+        var taburetes = GridManager.ValidateAllTaburetes(voxelData);
+        foreach (var kvp in taburetes)
             registry?.Get(kvp.Key)?.SetValid(kvp.Value);
     }
 }

@@ -5,6 +5,6 @@ public class VoxelCell
     public PlaceableItemData item;
     public int tierIndex;
     public UnityEngine.Vector3Int anchor;
-    public bool isEntrance = false;
+    public CellRole role = CellRole.None;
     public UnityEngine.Quaternion rotation = UnityEngine.Quaternion.identity;
 }
