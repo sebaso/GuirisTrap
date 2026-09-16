@@ -19,7 +19,18 @@ public class MinigameManager : MonoBehaviour
             Debug.LogError("[MinigameManager] La receta es null. No se puede lanzar el minijuego.");
             return;
         }
+        var tutos = MinigameTutorials.Instance;
+        if (tutos != null && tutos.HaceFalta(recipe.type))
+        {
+            tutos.Mostrar(recipe.type, () => Lanzar(recipe, player));
+            return;
+        }
 
+        Lanzar(recipe, player);
+    }
+
+    private void Lanzar(RecipeData recipe, PlayerController player)
+    {
         switch (recipe.type)
         {
             case MinigameType.Nevera:

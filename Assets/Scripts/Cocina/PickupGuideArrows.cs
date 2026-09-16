@@ -26,6 +26,9 @@ public class PickupGuideArrows : MonoBehaviour
     [SerializeField] private Color _colorServir = new(1f, 0.95f, 0.4f, 0.9f);
 
     private PlayerController _player;
+    private SandFootprints _arena;
+    private float _proximaComprobacionArena;
+    private bool _estabaEnArena;
     private Camera _cam;
     private float _nextRefresh;
 
@@ -36,6 +39,7 @@ public class PickupGuideArrows : MonoBehaviour
     void Awake()
     {
         _player = GetComponent<PlayerController>();
+        _arena = GetComponent<SandFootprints>();
         _cam = Camera.main;
     }
 

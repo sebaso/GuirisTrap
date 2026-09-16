@@ -103,7 +103,21 @@ public class SandFootprints : MonoBehaviour
             AudioManager.Instance?.PlaySFX(_sfxPisada);
     }
 
-    private bool EsArena(Collider col)
+    /// <summary>¿El jugador está ahora mismo pisando arena? Lo usan las flechas
+    /// guía para esconderse en la playa. Se expone desde aquí para que la lista
+    /// de materiales de arena se configure en UN solo sitio.</summary>
+    public bool JugadorSobreArena()
+    {
+        Vector3 origen = transform.position + Vector3.up * 0.5f;
+
+        if (!Physics.Raycast(origen, Vector3.down, out RaycastHit hit, 3f,
+                             _capasDeSuelo, QueryTriggerInteraction.Ignore))
+            return false;
+
+        return EsArena(hit.collider);
+    }
+
+    public bool EsArena(Collider col)
     {
         if (col == null) return false;
 
