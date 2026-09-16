@@ -22,6 +22,8 @@ public class PlayeroSpawner : MonoBehaviour
     public string shadePrefix = "Sombrilla";
     [Tooltip("Ajuste vertical del asiento del playero sobre la tumbona.")]
     public float loungeHeightOffset = 0f;
+    [Tooltip("Distancia máxima entre una sombrilla y una tumbona para contarlas como un conjunto: si una pieza se ocupa, todo el conjunto queda ocupado.")]
+    public float setLinkRadius = 4f;
     [Tooltip("Si al arrancar no hay sitios, los descubre automáticamente.")]
     public bool autoDiscover = true;
 
@@ -376,6 +378,24 @@ public class PlayeroSpawner : MonoBehaviour
                     nuevos++;
                 }
                 _spots.Add(existente);
+            }
+        }
+
+        // unir cada sombrilla con las tumbonas que tenga alrededor: el
+        // conjunto es de quien llega primero (ocupar una pieza lo ocupa todo)
+        foreach (var s in _spots)
+            if (s != null) s.linkedSpots.Clear();
+
+        float enlace2 = setLinkRadius * setLinkRadius;
+        foreach (var sombra in _spots)
+        {
+            if (sombra == null || sombra.kind != PlayeroSpot.Kind.Sombra) continue;
+            foreach (var tumbona in _spots)
+            {
+                if (tumbona == null || tumbona.kind != PlayeroSpot.Kind.Tumbona) continue;
+                if ((tumbona.transform.position - sombra.transform.position).sqrMagnitude > enlace2) continue;
+                if (!sombra.linkedSpots.Contains(tumbona)) sombra.linkedSpots.Add(tumbona);
+                if (!tumbona.linkedSpots.Contains(sombra)) tumbona.linkedSpots.Add(sombra);
             }
         }
 

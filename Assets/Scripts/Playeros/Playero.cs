@@ -180,7 +180,7 @@ public class Playero : MonoBehaviour
 
         ReleaseSpot();
         _spot = spot;
-        spot.occupant = this;
+        spot.Claim(this);
         _activityRemaining = Mathf.Max(0f, duracion);
         ActivityDuration = _activityRemaining;
         _standingUp = false;
@@ -311,6 +311,14 @@ public class Playero : MonoBehaviour
     {
         Freeze();
 
+        // verificación al llegar: si el sitio (o su conjunto) ya no es suyo,
+        // soltarlo y reorganizarse en vez de sentarse donde hay alguien
+        if (_spot != null && _spot.occupant != this)
+        {
+            VolverAPasear(2f);
+            return;
+        }
+
         if (_sandSeatedTarget)
         {
             _sandSeatedTarget = false;
@@ -325,9 +333,11 @@ public class Playero : MonoBehaviour
         if (_spot.kind == PlayeroSpot.Kind.Tumbona)
         {
             // se sienta sobre la tumbona: pose ajustada al spot (altura del
-            // asiento y orientación a lo largo de la hamaca)
+            // asiento y orientación a lo largo de la hamaca). El forward del
+            // spot sale del AABB del mesh y es ambiguo en signo: girar 180
+            // para que el playero mire hacia el pie de la hamaca, no al respaldo.
             transform.position = _spot.transform.position;
-            transform.rotation = _spot.transform.rotation;
+            transform.rotation = _spot.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
             if (_modelPivot != null) _modelPivot.localPosition = loungePivotOffset;
             SetAnimState(AnimStateSit);
             SetState(State.TomandoElSol);
@@ -399,8 +409,7 @@ public class Playero : MonoBehaviour
     // ------------------------------------------------------------------
     private void ReleaseSpot()
     {
-        if (_spot != null && _spot.occupant == this)
-            _spot.occupant = null;
+        if (_spot != null) _spot.Release(this);
         _spot = null;
         ActivityDuration = 0f;
         _sandSeatedTarget = false;
