@@ -264,7 +264,7 @@ public class SaveManager : MonoBehaviour
         public string itemName;
         public int tierIndex;
         public int anchorX, anchorY, anchorZ;
-        public bool isEntrance;
+        public CellRole role;
         public Quaternion rotation;
     }
 
