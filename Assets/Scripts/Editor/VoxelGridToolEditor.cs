@@ -122,7 +122,7 @@ public class VoxelGridToolEditor : EditorWindow
         GUIStyle style = new GUIStyle(GUI.skin.button) { fixedWidth = 40, fixedHeight = 40 };
 
         CellType type = _voxelData.GetType(voxel.x, voxel.y, voxel.z);
-        bool isEntrance = _voxelData.GetIsEntrance(voxel.x, voxel.y, voxel.z);
+        CellRole role = _voxelData.GetRole(voxel.x, voxel.y, voxel.z);
 
         string label = type switch
         {
@@ -130,7 +130,13 @@ public class VoxelGridToolEditor : EditorWindow
             CellType.Occupied => "O",
             _ => "E"
         };
-        if (isEntrance) label += "*";
+        label += role switch
+        {
+            CellRole.Entrada  => "*",
+            CellRole.Barra     => "$",
+            CellRole.Taburete  => "^",
+            _ => ""
+        };
 
         Color prevColor = GUI.backgroundColor;
         GUI.backgroundColor = type switch
@@ -139,6 +145,9 @@ public class VoxelGridToolEditor : EditorWindow
             CellType.Occupied => Color.yellow,
             _ => Color.white
         };
+
+        if (role == CellRole.Barra) GUI.backgroundColor = new Color(0.6f, 0.4f, 1f);
+        else if (role == CellRole.Taburete) GUI.backgroundColor = new Color(0.4f, 0.8f, 1f);
 
         if (GUILayout.Button(label, style))
             ShowCellMenu(voxel);
@@ -150,15 +159,25 @@ public class VoxelGridToolEditor : EditorWindow
     {
         GenericMenu menu = new GenericMenu();
         CellType current = _voxelData.GetType(voxel.x, voxel.y, voxel.z);
-        bool isEntrance = _voxelData.GetIsEntrance(voxel.x, voxel.y, voxel.z);
+        CellRole currentRole = _voxelData.GetRole(voxel.x, voxel.y, voxel.z);
 
         menu.AddItem(new GUIContent("Empty"), current == CellType.Empty, () => SetCellType(voxel, CellType.Empty));
         menu.AddItem(new GUIContent("Blocked"), current == CellType.Blocked, () => SetCellType(voxel, CellType.Blocked));
         menu.AddItem(new GUIContent("Occupied (sin item, solo pruebas)"), current == CellType.Occupied, () => SetCellType(voxel, CellType.Occupied));
         menu.AddSeparator("");
-        menu.AddItem(new GUIContent("Es entrada"), isEntrance, () => ToggleEntrance(voxel));
+        menu.AddItem(new GUIContent("Rol/Ninguno"), currentRole == CellRole.None, () => SetCellRole(voxel, CellRole.None));
+        menu.AddItem(new GUIContent("Rol/Entrada"), currentRole == CellRole.Entrada, () => SetCellRole(voxel, CellRole.Entrada));
+        menu.AddItem(new GUIContent("Rol/Barra"), currentRole == CellRole.Barra, () => SetCellRole(voxel, CellRole.Barra));
+        menu.AddItem(new GUIContent("Rol/Taburete"), currentRole == CellRole.Taburete, () => SetCellRole(voxel, CellRole.Taburete));
 
         menu.ShowAsContext();
+    }
+
+    private void SetCellRole(Vector3Int voxel, CellRole role)
+    {
+        _voxelData.SetRole(voxel.x, voxel.y, voxel.z, role);
+        EditorUtility.SetDirty(_voxelData);
+        Repaint();
     }
 
     private void SetCellType(Vector3Int voxel, CellType type)
@@ -171,14 +190,6 @@ public class VoxelGridToolEditor : EditorWindow
             _voxelData.SetAnchor(voxel.x, voxel.y, voxel.z, default);
         }
 
-        EditorUtility.SetDirty(_voxelData);
-        Repaint();
-    }
-
-    private void ToggleEntrance(Vector3Int voxel)
-    {
-        bool current = _voxelData.GetIsEntrance(voxel.x, voxel.y, voxel.z);
-        _voxelData.SetIsEntrance(voxel.x, voxel.y, voxel.z, !current);
         EditorUtility.SetDirty(_voxelData);
         Repaint();
     }

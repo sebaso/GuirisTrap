@@ -26,7 +26,7 @@ public class SceneController : MonoBehaviour
             if (!CanStartDay())
             {
                 if (HUDMessage.Instance != null)
-                    HUDMessage.Instance.ShowWarning("Hay sillas que no se pueden usar. Revisa el restaurante antes de empezar el día.");
+                    HUDMessage.Instance.ShowWarning("Revisa las mesas y sillas, o la barra y los taburetes, antes de empezar el día.");
                 return;
             }
             SaveManager.Instance?.ForceSave();
@@ -38,8 +38,11 @@ public class SceneController : MonoBehaviour
 
     private bool CanStartDay()
     {
-        int totalTables = 0;
-        int totalChairs = 0;
+        int totalTables = 0, totalChairs = 0;
+        int totalBarras = 0, totalTaburetes = 0;
+        bool chairsAllValid = true;
+        bool taburetesAllValid = true;
+        bool barrasAllValid = true;
 
         foreach (GridZone zone in GridZone.ActiveZones)
         {
@@ -47,12 +50,23 @@ public class SceneController : MonoBehaviour
 
             totalTables += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Table);
             totalChairs += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Chair);
+            totalBarras += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Barra);
+            totalTaburetes += GridManager.CountByCategory(zone.VoxelData, PlaceableCategory.Taburete);
 
             foreach (var kvp in GridManager.ValidateAllChairs(zone.VoxelData))
-                if (!kvp.Value) return false;
+                if (!kvp.Value) chairsAllValid = false;
+
+            foreach (var kvp in GridManager.ValidateAllTaburetes(zone.VoxelData))
+                if (!kvp.Value) taburetesAllValid = false;
+
+            foreach (var kvp in GridManager.ValidateAllBarras(zone.VoxelData))
+                if (!kvp.Value) barrasAllValid = false;
         }
 
-        return totalTables > 0 && totalChairs > 0;
+        bool hasMinimumSeating = (totalTables > 0 && totalChairs > 0) || (totalBarras > 0 && totalTaburetes > 0);
+        bool nothingInvalid = chairsAllValid && taburetesAllValid && barrasAllValid;
+
+        return hasMinimumSeating && nothingInvalid;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

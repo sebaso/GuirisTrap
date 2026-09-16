@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf4743290dc90b849b1277f266cdc967, type: 3}
-  m_Name: PIExtintor_Item
+  m_Name: PIBarra
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableItemData
   _tiers:
-  - prefab: {fileID: 8362954863925249826, guid: d13a80d5f70ddf14a934169fed962138, type: 3}
-    icon: {fileID: 21300000, guid: 77876cf373ceaf8438561251a2e9cf61, type: 3}
-    cost: 35
-  category: 3
+  - prefab: {fileID: 4810302218073276568, guid: fe98c5c6b4b7b2f4e938ed9c8a110125, type: 3}
+    icon: {fileID: 21300000, guid: 5ff69af7bf2ee5e4dada7c1f9dd6d6f7, type: 3}
+    cost: 25
+  category: 4
   surface: 0
-  maxStack: 2
+  maxStack: 24
   ocuppied: 0
   size: {x: 1, y: 1, z: 1}
-  placementOffset: {x: 0, y: 0.35, z: 0}
+  placementOffset: {x: 0, y: 0.6, z: 0}
   _allowedZones: 00000000i
-  isRotatable: 1
+  isRotatable: 0

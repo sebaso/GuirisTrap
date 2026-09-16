@@ -6,8 +6,9 @@ public enum PlacementAxis { Floor, WallNorth, WallEastWest }
 public static class GridManager
 {
     private const int MIN_TABLE_DISTANCE = 4;
+    private const int MIN_BARRA_DISTANCE = 3;
     public static event System.Action<VoxelGridData> OnGridChanged;
-
+    private static readonly Vector3Int TABURETE_BARRA_DIRECTION = new Vector3Int(0, 0, -1);
     public static bool IsInBounds(VoxelGridData voxelData, int x, int y, int z)
     {
         return voxelData != null && voxelData.IsInBounds(x, y, z);
@@ -69,9 +70,16 @@ public static class GridManager
             if (voxelData.GetType(c.x, c.y, c.z) != CellType.Empty) return false;
         }
 
+        if (!IsRoleCompatible(voxelData, cells, item.category))
+            return false;
+
         if (item.category == PlaceableCategory.Table)
         {
             if (!IsValidTablePlacement(voxelData, new Vector3Int(x, y, z), ignoreAnchor))
+                return false;
+        }else if (item.category == PlaceableCategory.Barra)
+        {
+            if (!IsValidBarraPlacement(voxelData, new Vector3Int(x, y, z), ignoreAnchor))
                 return false;
         }
 
@@ -259,6 +267,37 @@ public static class GridManager
         return false;
     }
 
+    private static readonly Dictionary<CellRole, PlaceableCategory> _roleCategory = new()
+    {
+        { CellRole.Barra, PlaceableCategory.Barra },
+        { CellRole.Taburete, PlaceableCategory.Taburete }
+    };
+
+    /// <summary>
+    /// Una casilla marcada como Barra/Taburete solo admite esa categoría exacta;
+    /// y un item de categoría Barra/Taburete solo puede ir en una casilla marcada para ello.
+    /// </summary>
+    private static bool IsRoleCompatible(VoxelGridData voxelData, List<Vector3Int> cells, PlaceableCategory category)
+    {
+        bool isReservedCategory = category == PlaceableCategory.Barra || category == PlaceableCategory.Taburete;
+
+        foreach (var c in cells)
+        {
+            CellRole role = voxelData.GetRole(c.x, c.y, c.z);
+
+            if (role == CellRole.Barra || role == CellRole.Taburete)
+            {
+                if (!_roleCategory.TryGetValue(role, out var requiredCategory) || category != requiredCategory)
+                    return false;
+            }
+            else if (isReservedCategory)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static bool IsValidTablePlacement(VoxelGridData voxelData, Vector3Int cell, Vector3Int? ignoreAnchor = null)
     {
         bool hasAdjacent = false;
@@ -300,6 +339,67 @@ public static class GridManager
             }
 
         return true;
+    }
+
+    public static bool IsValidBarraPlacement(VoxelGridData voxelData, Vector3Int cell, Vector3Int? ignoreAnchor = null)
+    {
+        bool hasAdjacent = false;
+
+        for (int z = 0; z < voxelData.depth; z++)
+            for (int x = 0; x < voxelData.width; x++)
+            {
+                Vector3Int other = new Vector3Int(x, 0, z);
+                if (voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int otherAnchor = voxelData.GetAnchor(x, 0, z);
+                if (otherAnchor != other) continue;
+                if (ignoreAnchor.HasValue && otherAnchor == ignoreAnchor.Value) continue;
+
+                PlaceableItemData item = voxelData.GetItem(otherAnchor.x, otherAnchor.y, otherAnchor.z);
+                if (item == null || item.category != PlaceableCategory.Barra) continue;
+
+                int dist = Mathf.Abs(cell.x - otherAnchor.x) + Mathf.Abs(cell.z - otherAnchor.z);
+                if (dist == 1) hasAdjacent = true;
+            }
+
+        if (hasAdjacent) return true;
+
+        for (int z = 0; z < voxelData.depth; z++)
+            for (int x = 0; x < voxelData.width; x++)
+            {
+                Vector3Int other = new Vector3Int(x, 0, z);
+                if (voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int otherAnchor = voxelData.GetAnchor(x, 0, z);
+                if (otherAnchor != other) continue;
+                if (ignoreAnchor.HasValue && otherAnchor == ignoreAnchor.Value) continue;
+
+                PlaceableItemData item = voxelData.GetItem(otherAnchor.x, otherAnchor.y, otherAnchor.z);
+                if (item == null || item.category != PlaceableCategory.Barra) continue;
+
+                int dist = Mathf.Abs(cell.x - otherAnchor.x) + Mathf.Abs(cell.z - otherAnchor.z);
+                if (dist < MIN_BARRA_DISTANCE) return false;
+            }
+
+        return true;
+    }
+
+    public static bool HasAdjacentBarra(VoxelGridData voxelData, Vector3Int cell)
+    {
+        return IsBarraAt(voxelData, cell + new Vector3Int(1, 0, 0))
+            || IsBarraAt(voxelData, cell + new Vector3Int(-1, 0, 0))
+            || IsBarraAt(voxelData, cell + new Vector3Int(0, 0, 1))
+            || IsBarraAt(voxelData, cell + new Vector3Int(0, 0, -1));
+    }
+
+    private static bool IsBarraAt(VoxelGridData voxelData, Vector3Int cell)
+    {
+        if (!IsInBounds(voxelData, cell.x, cell.y, cell.z)) return false;
+        if (voxelData.GetType(cell.x, cell.y, cell.z) != CellType.Occupied) return false;
+
+        Vector3Int anchor = voxelData.GetAnchor(cell.x, cell.y, cell.z);
+        PlaceableItemData item = voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+        return item != null && item.category == PlaceableCategory.Barra;
     }
 
     public static bool TryGetAdjacentTableDirection(VoxelGridData voxelData, Vector3Int cell, out Vector3Int direction)
@@ -380,6 +480,16 @@ public static class GridManager
         PlaceableItemData item = voxelData.GetItem(anchor.x, anchor.y, anchor.z);
         return item != null && item.category == PlaceableCategory.Table;
     }
+    public static bool HasBarraBehind(VoxelGridData voxelData, Vector3Int cell)
+    {
+        Vector3Int neighbor = cell + TABURETE_BARRA_DIRECTION;
+        if (!IsInBounds(voxelData, neighbor.x, neighbor.y, neighbor.z)) return false;
+        if (voxelData.GetType(neighbor.x, neighbor.y, neighbor.z) != CellType.Occupied) return false;
+
+        Vector3Int anchor = voxelData.GetAnchor(neighbor.x, neighbor.y, neighbor.z);
+        PlaceableItemData item = voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+        return item != null && item.category == PlaceableCategory.Barra;
+    }
 
     public static Dictionary<Vector3Int, bool> ValidateAllChairs(VoxelGridData voxelData)
     {
@@ -404,6 +514,48 @@ public static class GridManager
             }
         return result;
     }
+    
+    public static Dictionary<Vector3Int, bool> ValidateAllTaburetes(VoxelGridData voxelData)
+    {
+        var result = new Dictionary<Vector3Int, bool>();
+        if (voxelData == null) return result;
+
+        for (int z = 0; z < voxelData.depth; z++)
+            for (int x = 0; x < voxelData.width; x++)
+            {
+                if (voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int anchor = voxelData.GetAnchor(x, 0, z);
+                if (anchor != new Vector3Int(x, 0, z)) continue;
+
+                PlaceableItemData item = voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+                if (item == null || item.category != PlaceableCategory.Taburete) continue;
+
+                result[anchor] = HasBarraBehind(voxelData, anchor);
+            }
+        return result;
+    }
+
+    public static Dictionary<Vector3Int, bool> ValidateAllBarras(VoxelGridData voxelData)
+    {
+        var result = new Dictionary<Vector3Int, bool>();
+        if (voxelData == null) return result;
+
+        for (int z = 0; z < voxelData.depth; z++)
+            for (int x = 0; x < voxelData.width; x++)
+            {
+                if (voxelData.GetType(x, 0, z) != CellType.Occupied) continue;
+
+                Vector3Int anchor = voxelData.GetAnchor(x, 0, z);
+                if (anchor != new Vector3Int(x, 0, z)) continue;
+
+                PlaceableItemData item = voxelData.GetItem(anchor.x, anchor.y, anchor.z);
+                if (item == null || item.category != PlaceableCategory.Barra) continue;
+
+                result[anchor] = HasAdjacentBarra(voxelData, anchor);
+            }
+        return result;
+    }
 
     public static bool IsCellReachableFromEntrance(VoxelGridData voxelData, Vector3Int target)
     {
@@ -412,7 +564,7 @@ public static class GridManager
 
         for (int z = 0; z < voxelData.depth; z++)
             for (int x = 0; x < voxelData.width; x++)
-                if (voxelData.GetIsEntrance(x, 0, z))
+                if (voxelData.GetRole(x, 0, z) == CellRole.Entrada)
                 {
                     queue.Enqueue(new Vector2Int(x, z));
                     visited[x, z] = true;
@@ -449,11 +601,31 @@ public static class GridManager
 
     public static bool CanStartDay(VoxelGridData voxelData)
     {
+        bool hasValidTableSeating = HasValidTableSeating(voxelData);
+        bool hasValidBarSeating = HasValidBarSeating(voxelData);
+
+        return hasValidTableSeating || hasValidBarSeating;
+    }
+
+    private static bool HasValidTableSeating(VoxelGridData voxelData)
+    {
         if (CountByCategory(voxelData, PlaceableCategory.Table) == 0) return false;
         if (CountByCategory(voxelData, PlaceableCategory.Chair) == 0) return false;
 
-        var validity = ValidateAllChairs(voxelData);
-        foreach (var kvp in validity)
+        var chairValidity = ValidateAllChairs(voxelData);
+        foreach (var kvp in chairValidity)
+            if (!kvp.Value) return false;
+
+        return true;
+    }
+
+    private static bool HasValidBarSeating(VoxelGridData voxelData)
+    {
+        if (CountByCategory(voxelData, PlaceableCategory.Barra) == 0) return false;
+        if (CountByCategory(voxelData, PlaceableCategory.Taburete) == 0) return false;
+
+        var taburetesValidity = ValidateAllTaburetes(voxelData);
+        foreach (var kvp in taburetesValidity)
             if (!kvp.Value) return false;
 
         return true;
@@ -502,7 +674,7 @@ public static class GridManager
                         itemName = cell.item != null ? cell.item.name : "",
                         tierIndex = cell.tierIndex,
                         anchorX = cell.anchor.x, anchorY = cell.anchor.y, anchorZ = cell.anchor.z,
-                        isEntrance = cell.isEntrance,
+                        role = cell.role,
                         rotation = cell.rotation
                     });
                 }
@@ -519,7 +691,11 @@ public static class GridManager
 
             voxelData.SetType(c.x, c.y, c.z, c.type);
             voxelData.SetAnchor(c.x, c.y, c.z, new Vector3Int(c.anchorX, c.anchorY, c.anchorZ));
-            voxelData.SetIsEntrance(c.x, c.y, c.z, c.isEntrance);
+
+            CellRole role = c.role;
+            if (role == CellRole.None) role = CellRole.Entrada;
+            voxelData.SetRole(c.x, c.y, c.z, role);
+
             voxelData.SetRotation(c.x, c.y, c.z, c.rotation);
 
             PlaceableItemData item = string.IsNullOrEmpty(c.itemName)
@@ -528,7 +704,6 @@ public static class GridManager
             voxelData.SetItem(c.x, c.y, c.z, item);
             voxelData.SetTierIndex(c.x, c.y, c.z, c.tierIndex);
         }
-
         OnGridChanged?.Invoke(voxelData);
     }
 
