@@ -169,7 +169,13 @@ public class EspeciasMinigame : MonoBehaviour, IMinigameControllable
         // tablero. El día también se frena aquí, no al empezar a disparar.
         DayManager.SetTimeRate(ritmoDelDia);
 
-        if (explicacionPanel != null && explicacionSegundos > 0f)
+        // Si el MinigameTutorials ya se ha encargado de explicarlo (sale una
+        // sola vez, antes de lanzar el minijuego), aquí no se repite: si no,
+        // el jugador se comería dos explicaciones seguidas la primera vez.
+        bool yaExplicado = MinigameTutorials.Instance != null
+                        && !MinigameTutorials.Instance.HaceFalta(MinigameType.Especias);
+
+        if (!yaExplicado && explicacionPanel != null && explicacionSegundos > 0f)
         {
             _enExplicacion = true;
             _explicacionRestante = explicacionSegundos;

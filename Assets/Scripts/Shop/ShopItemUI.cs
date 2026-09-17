@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class ShopItemUI : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class ShopItemUI : MonoBehaviour
     private TMP_Text _priceText;
     [SerializeField] 
     private Button _button;
+    [SerializeField]
+    private bool _enable;
 
     void OnEnable()
     {
@@ -45,4 +48,7 @@ public class ShopItemUI : MonoBehaviour
     {
         GameManager.Instance.Buy(_itemData);
     }
+
+    public bool GetEnable(){ return _enable; }
+    public void SetEnable(bool enabled){ _enable = enabled; }
 }

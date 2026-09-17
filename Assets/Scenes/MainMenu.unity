@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Guiris Trap
+  m_text: Tourist Trap
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1b95307d06ae3d643b8742d9ffc0f5b9, type: 2}
   m_sharedMaterial: {fileID: 553126706705899135, guid: 1b95307d06ae3d643b8742d9ffc0f5b9, type: 2}
@@ -1734,7 +1734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c237b998294dbf428a7813f740540f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoneyManager
-  _initialMoney: 2000
+  _initialMoney: 150
 --- !u!4 &945883626
 Transform:
   m_ObjectHideFlags: 0
@@ -1763,6 +1763,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TranslateManager
   _defaultLanguage: 1
+  _textFiles:
+  - {fileID: 4900000, guid: 8a3027d4c82f8304a9e1474f35e54943, type: 3}
+  - {fileID: 4900000, guid: c24aca3eba3d29a4a96998bf52a37a6a, type: 3}
+  - {fileID: 4900000, guid: 49faa4587a68e934ebe155f97ec246cc, type: 3}
+  - {fileID: 4900000, guid: 7dee8c45be2ba0a48815960a908ad848, type: 3}
+  - {fileID: 4900000, guid: feaa256121f967a49a2571cab9a641fe, type: 3}
+  - {fileID: 4900000, guid: b21ce63bfaf1f3540934238c2b5c160b, type: 3}
+  - {fileID: 4900000, guid: 6388b90ff3ca1ec4797f255b0ec26b93, type: 3}
   testKey: 
 --- !u!114 &945883628
 MonoBehaviour:

@@ -103,7 +103,53 @@ public class SandFootprints : MonoBehaviour
             AudioManager.Instance?.PlaySFX(_sfxPisada);
     }
 
-    private bool EsArena(Collider col)
+    /// <summary>¿El jugador está ahora mismo pisando arena? Lo usan las flechas
+    /// guía para esconderse en la playa. Se expone desde aquí para que la lista
+    /// de materiales de arena se configure en UN solo sitio.</summary>
+    public bool JugadorSobreArena()
+    {
+        Vector3 origen = transform.position + Vector3.up * 0.5f;
+
+        if (!Physics.Raycast(origen, Vector3.down, out RaycastHit hit, 3f,
+                             _capasDeSuelo, QueryTriggerInteraction.Ignore))
+            return false;
+
+        return EsArena(hit.collider);
+    }
+
+    [ContextMenu("DEBUG: qué estoy pisando")]
+    public void DebugQuePiso()
+    {
+        Vector3 origen = transform.position + Vector3.up * 0.5f;
+
+        if (!Physics.Raycast(origen, Vector3.down, out RaycastHit hit, 3f,
+                             _capasDeSuelo, QueryTriggerInteraction.Ignore))
+        {
+            Debug.LogWarning($"[SandFootprints] El rayo no encuentra NADA bajo {name}. " +
+                             "Revisa Capas De Suelo y que el suelo tenga collider.", this);
+            return;
+        }
+
+        Renderer rend = hit.collider.GetComponent<Renderer>()
+                     ?? hit.collider.GetComponentInParent<Renderer>()
+                     ?? hit.collider.GetComponentInChildren<Renderer>();
+
+        string mats = "(sin Renderer)";
+        if (rend != null)
+        {
+            var nombres = new System.Text.StringBuilder();
+            foreach (Material m in rend.sharedMaterials)
+                nombres.Append(m != null ? m.name : "null").Append("  ");
+            mats = nombres.ToString();
+        }
+
+        Debug.Log($"[SandFootprints] Piso: '{hit.collider.name}'\n" +
+                  $"  Materiales: {mats}\n" +
+                  $"  ¿Cuenta como arena?: {EsArena(hit.collider)}\n" +
+                  $"  Buscando por nombre: '{_nombreMaterialContiene}'", hit.collider);
+    }
+
+    public bool EsArena(Collider col)
     {
         if (col == null) return false;
 

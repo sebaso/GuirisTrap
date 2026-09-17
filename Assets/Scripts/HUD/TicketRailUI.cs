@@ -17,6 +17,12 @@ public class TicketRailUI : MonoBehaviour
              "If null, a minimal entry is created in code.")]
     public GameObject ticketEntryPrefab;
 
+    [Tooltip("Nombre del hijo del prefab que lleva la Image del icono de la " +
+             "comida. Si no existe, el ticket sigue funcionando solo con texto.")]
+    public string nombreDelIcono = "Icono";
+
+    public bool unPlatoPorLinea = false;
+
     [Tooltip("Seconds to fade fully in/out when the rail gains/loses its last ticket.")]
     public float fadeDuration = 0.35f;
 
@@ -32,6 +38,7 @@ public class TicketRailUI : MonoBehaviour
     {
         public GameObject root;
         public TMP_Text text;
+        public Image icon;
         public Image background;
         public int tableNumber; // cached at creation; doesn't change
     }
@@ -95,12 +102,18 @@ public class TicketRailUI : MonoBehaviour
         GameObject root;
         TMP_Text text;
         Image background;
+        Image icono = null;
 
         if (ticketEntryPrefab != null)
         {
             root = Instantiate(ticketEntryPrefab, ticketContainer);
             text = root.GetComponentInChildren<TMP_Text>();
-            background = root.GetComponentInChildren<Image>();
+
+            // El icono se busca por NOMBRE, y el fondo es la primera Image que
+            // no sea el icono: con GetComponentInChildren<Image> a secas, el
+            // icono podía salir elegido como fondo y se teñía con la paciencia.
+            icono = BuscarIcono(root.transform);
+            background = PrimeraImagenQueNoSea(root.transform, icono);
         }
         else
         {
@@ -126,12 +139,54 @@ public class TicketRailUI : MonoBehaviour
             text.color = Color.white;
         }
 
-        return new TicketEntry { root = root, text = text, background = background, tableNumber = FirstTableNumberOf(g) };
+        return new TicketEntry { root = root, text = text, icon = icono,
+                                 background = background, tableNumber = FirstTableNumberOf(g) };
+    }
+
+    /// <summary>La Image del icono dentro del prefab, buscada por nombre.</summary>
+    private Image BuscarIcono(Transform root)
+    {
+        if (string.IsNullOrEmpty(nombreDelIcono)) return null;
+
+        foreach (Image img in root.GetComponentsInChildren<Image>(true))
+            if (img != null && img.name == nombreDelIcono) return img;
+
+        return null;
+    }
+
+    /// <summary>La primera Image que NO sea el icono: es la que hace de fondo y
+    /// se tiñe según la paciencia.</summary>
+    private static Image PrimeraImagenQueNoSea(Transform root, Image excluida)
+    {
+        foreach (Image img in root.GetComponentsInChildren<Image>(true))
+            if (img != null && img != excluida) return img;
+
+        return null;
+    }
+
+    /// <summary>Icono del primer plato del pedido que aún no se ha servido.</summary>
+    private static Sprite PrimerIconoPendiente(ClientGroup g)
+    {
+        if (g == null || g.Order == null) return null;
+
+        foreach (RecipeData r in g.Order)
+            if (r != null && r.icon != null) return r.icon;
+
+        return null;
     }
 
     private void RefreshEntry(ClientGroup g, TicketEntry entry)
     {
         if (entry.text != null) entry.text.text = FormatTicket(g, entry.tableNumber);
+
+        // Icono del primer plato que queda por servir: es el que el jugador
+        // tiene que ir a buscar ahora mismo.
+        if (entry.icon != null)
+        {
+            Sprite sp = PrimerIconoPendiente(g);
+            entry.icon.sprite = sp;
+            entry.icon.enabled = sp != null;
+        }
         if (entry.background != null)
         {
             float r = g.PatienceRatio;
@@ -160,7 +215,9 @@ public class TicketRailUI : MonoBehaviour
             parts.Add(kv.Value > 1 ? $"{linea} x{kv.Value}" : linea);
         }
 
-        string dishes = parts.Count > 0 ? string.Join("\n", parts) : "?";
+        string dishes = parts.Count > 0
+            ? string.Join(unPlatoPorLinea ? "\n" : ", ", parts)
+            : "?";
         return $"<b>Mesa {tableNumber}</b>  ({g.PlatesServed}/{g.PlatesNeeded})\n{dishes}";
     }
 

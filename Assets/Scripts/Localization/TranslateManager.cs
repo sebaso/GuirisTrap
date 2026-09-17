@@ -11,6 +11,9 @@ public class TranslateManager : MonoBehaviour
     }
     [SerializeField]
     private Language _defaultLanguage = Language.Spanish;
+    [SerializeField]
+    private TextAsset[] _textFiles;
+
     private Dictionary<string, string> _textsDictionary;
 
     private static TranslateManager _instance;
@@ -42,16 +45,29 @@ public class TranslateManager : MonoBehaviour
     [ContextMenu("Load Language")]
     private void LoadLanguage()
     {
-        int languageColumn = (int) _defaultLanguage;
+        int languageColumn = (int)_defaultLanguage;
         _textsDictionary = new Dictionary<string, string>();
-        TextAsset fileAsset = Resources.Load<TextAsset>("idiomas");
-        // Dividimos el texto por saltos de linea
-        string[] lines = fileAsset.text.Split("\n");
-        for(int i = 1; i < lines.Length; i++)
+
+        foreach (TextAsset fileAsset in _textFiles)
         {
-            string line = lines[i];
-            string[] columns = line.Split("/");
-            _textsDictionary.Add(columns[0], columns[languageColumn]);
+            if (fileAsset == null)
+            {
+                Debug.LogWarning("Hay un archivo de textos vacío en la lista.");
+                continue;
+            }
+
+            string[] lines = fileAsset.text.Split("\n");
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                string[] columns = line.Split("/");
+                if (!_textsDictionary.ContainsKey(columns[0]))
+                    _textsDictionary.Add(columns[0], columns[languageColumn]);
+                else
+                    Debug.LogWarning($"Clave duplicada: {columns[0]} en {fileAsset.name}");
+            }
         }
     }
 

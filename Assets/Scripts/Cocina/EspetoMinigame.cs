@@ -56,17 +56,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
 
     private Espeto[]         _espetos;
     private int              _selectedIndex   = 0;
-    private bool _isRepositioningBacking = false;
-    private bool _isRepositioning
-    {
-    get => _isRepositioningBacking;
-    set
-    {
-        if (_isRepositioningBacking != value)
-            Debug.Log($"[Espeto] _isRepositioning {_isRepositioningBacking} → {value}  | frame {Time.frameCount}\n{System.Environment.StackTrace}");
-        _isRepositioningBacking = value;
-    }
-    }
     private bool             _isPanelOpen     = false;
     private PlayerController _player;
     private float            _navCooldown     = 0f;
@@ -104,7 +93,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             };
 
         _selectedIndex   = 0;
-        _isRepositioning = false;
         _currentNav      = Vector2.zero;
     }
 
@@ -113,7 +101,9 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         TickTimers();
         if (_navCooldown > 0f) _navCooldown -= Time.deltaTime;
 
-        if (_isPanelOpen && _isRepositioning)
+        // Se mueve con solo empujar arriba o abajo, sin confirmar nada antes.
+        if (_isPanelOpen && _espetos[_selectedIndex].state == EspetoState.Cooking
+                         && Mathf.Abs(_currentNav.y) > 0.2f)
         {
             Espeto sel = _espetos[_selectedIndex];
             if (sel.state == EspetoState.Cooking)
@@ -136,7 +126,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     {
         _player          = player;
         _isPanelOpen     = true;
-        _isRepositioning = false;
         _selectedIndex   = 0;
         _currentNav      = Vector2.zero;
         _navCooldown     = 0f;
@@ -149,7 +138,6 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
     void ClosePanel()
     {
         _isPanelOpen     = false;
-        _isRepositioning = false;
         _currentNav      = Vector2.zero;
         minigamePanel.SetActive(false);
         InputManager.Instance.ExitMinigame();
@@ -171,8 +159,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
                 {
                     e.state = EspetoState.Done;
                     AudioManager.Instance?.PlaySFX("espeto_done");
-                    if (i == _selectedIndex) _isRepositioning = false;
-                    continue;
+                    if (i == _selectedIndex)                    continue;
                 }
             }
             else
@@ -182,8 +169,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
                 {
                     e.state = EspetoState.Burned;
                     AudioManager.Instance?.PlaySFX("espeto_burned");
-                    if (i == _selectedIndex) _isRepositioning = false;
-                    continue;
+                    if (i == _selectedIndex)                    continue;
                 }
             }
 
@@ -269,7 +255,9 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             // Flechas de arriba fijas
             if (selectionArrows != null && i < selectionArrows.Length && selectionArrows[i])
             {
-                selectionArrows[i].SetActive(isCurrent && !_isRepositioning);
+                // Las flechas laterales salen siempre en el seleccionado: ya
+                // nunca se pierde la posibilidad de cambiar de espetera.
+                selectionArrows[i].SetActive(isCurrent);
                 
                 Image arrowImg = selectionArrows[i].GetComponent<Image>();
                 if (arrowImg != null)
@@ -281,7 +269,9 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             // Mini flechas del cubo blanco
             if (controlArrows != null && i < controlArrows.Length && controlArrows[i])
             {
-                controlArrows[i].SetActive(isCurrent && _isRepositioning);
+                // Las de mover salen cuando hay algo cocinándose, que es cuando
+                // se puede mover.
+                controlArrows[i].SetActive(isCurrent && e.state == EspetoState.Cooking);
             }
         }
 
@@ -291,9 +281,7 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
             instructionText.text = sel.state switch
             {
                 EspetoState.Empty   => "← → Navegar  |  E Poner espeto  |  Q Cerrar",
-                EspetoState.Cooking => _isRepositioning
-                    ? "↑ ↓ Mover espeto  |  E Soltar  |  Q Cerrar"
-                    : "← → Navegar  |  E Reposicionar  |  Q Cerrar",
+                EspetoState.Cooking => "← → Cambiar espetera  |  ↑ ↓ Mover espeto  |  Q Cerrar",
                 EspetoState.Done    => "← → Navegar  |  E Recoger espeto  |  Q Cerrar",
                 EspetoState.Burned  => "← → Navegar  |  E Tirar  |  Q Cerrar",
                 _                   => ""
@@ -309,26 +297,24 @@ public class EspetoMinigame : MonoBehaviour, IMinigameControllable
         switch (sel.state)
         {
             case EspetoState.Empty:   PlaceEspeto(_selectedIndex);           break;
-            case EspetoState.Cooking: _isRepositioning = !_isRepositioning;  break;
+            // Cocinándose no hace nada: para moverlo basta con arriba/abajo.
+            case EspetoState.Cooking: break;
             case EspetoState.Done:    PickupEspeto(_selectedIndex);          break;
             case EspetoState.Burned:  DiscardEspeto(_selectedIndex);         break;
         }
 
-        if (_espetos[_selectedIndex].state != EspetoState.Cooking)
-            _isRepositioning = false;
+        RefreshUI();
+        
 
-        Debug.Log($"[Espeto] sel={_selectedIndex} estado={_espetos[_selectedIndex].state} repos DESPUÉS={_isRepositioning}");
     }
 
     public void OnNavigate(Vector2 direction)
     {
         _currentNav = direction;
 
-        if (_isRepositioning && _espetos[_selectedIndex].state != EspetoState.Cooking)
-            _isRepositioning = false;
-
-        if (_isRepositioning) return;
-
+        // Izquierda y derecha SIEMPRE cambian de espetera, aunque estés
+        // moviendo un espeto: antes había que salir del modo reposicionar
+        // primero, y era justo lo que se hacía pesado.
         if (_navCooldown > 0f) return;
         if (direction.x > 0.5f)
         {

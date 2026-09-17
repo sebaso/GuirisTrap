@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class FoodStorage : MonoBehaviour, IMinigameControllable
@@ -7,6 +8,10 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
     public RecipeData[] recipes;
     public GameObject   selectionPopup;
     public TMP_Text     recipeNameText;
+
+    [Tooltip("Opcional: Image donde se muestra el icono del plato seleccionado, " +
+             "el mismo que sale en la comanda. Si se deja vacío, no pasa nada.")]
+    public Image        recipeIconImage;
 
     private int              selectedIndex = 0;
     private bool             isPlayerClose = false;
@@ -104,6 +109,14 @@ public class FoodStorage : MonoBehaviour, IMinigameControllable
             nombre = $"<color={RecipeStations.ColorHex(current.type)}>{current.dishName}  \u25C4 PEDIDO</color>";
 
         recipeNameText.text = $"{nombre}\n{stockLine}(Ir a: {GetDestinationName(current.type)})";
+
+        // Mismo icono que sale en la comanda: así el jugador asocia de un
+        // vistazo lo que le piden con lo que está a punto de coger.
+        if (recipeIconImage != null)
+        {
+            recipeIconImage.sprite = current.icon;
+            recipeIconImage.enabled = current.icon != null;
+        }
     }
     
     string GetDestinationName(MinigameType type) => RecipeStations.LongName(type);

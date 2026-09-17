@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class ShopItemsScroller : MonoBehaviour, IScrollHandler
 {
@@ -33,7 +34,18 @@ public class ShopItemsScroller : MonoBehaviour, IScrollHandler
 
     private void SetupScrollbar()
     {
-        int total = _itemsContainer.childCount;
+        int total = 0;
+        
+        for (int i = 0; i < _itemsContainer.childCount; i++)
+        {
+            Transform child = _itemsContainer.GetChild(i);
+
+            if ((child.TryGetComponent<ShopItemUI>(out var shopItem) && shopItem.GetEnable()) ||
+                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()))
+                total += 1;
+        }
+
+
         int maxStart = Mathf.Max(0, total - _visibleCount);
 
         _scrollbar.size = total > 0 ? (float)_visibleCount / total : 1f;
@@ -42,15 +54,25 @@ public class ShopItemsScroller : MonoBehaviour, IScrollHandler
 
     private void RefreshVisibility(float scrollValue)
     {
-        int total = _itemsContainer.childCount;
-        int maxStart = Mathf.Max(0, total - _visibleCount);
+        List<Transform> enabledItems = new List<Transform>();
 
+        for (int i = 0; i < _itemsContainer.childCount; i++)
+        {
+            Transform child = _itemsContainer.GetChild(i);
+
+            if ((child.TryGetComponent<ShopItemUI>(out var shopItem) && shopItem.GetEnable()) ||
+                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()))
+                enabledItems.Add(child);
+        }
+
+        int total = enabledItems.Count;
+        int maxStart = Mathf.Max(0, total - _visibleCount);
         int startIndex = Mathf.RoundToInt(scrollValue * maxStart);
 
         for (int i = 0; i < total; i++)
         {
             bool visible = i >= startIndex && i < startIndex + _visibleCount;
-            _itemsContainer.GetChild(i).gameObject.SetActive(visible);
+            enabledItems[i].gameObject.SetActive(visible);
         }
     }
 }
