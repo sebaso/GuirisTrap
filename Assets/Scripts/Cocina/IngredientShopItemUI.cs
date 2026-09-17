@@ -21,6 +21,8 @@ public class IngredientShopItemUI : MonoBehaviour
     [SerializeField] private Color _outOfStockColor = new Color(1f, 0.42f, 0.42f);
     [Tooltip("Color del cartel GRATIS de la primera compra.")]
     [SerializeField] private Color _freeColor = new Color(0.35f, 0.85f, 0.4f);
+    [SerializeField]
+    private bool _enable;
 
     private Color _stockBaseColor = Color.white;
 
@@ -93,4 +95,5 @@ public class IngredientShopItemUI : MonoBehaviour
         if (IngredientStockManager.TryBuyPack(pack))
             Refresh();
     }
+    public bool GetEnable(){ return _enable; }
 }

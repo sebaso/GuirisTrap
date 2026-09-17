@@ -32,7 +32,7 @@ public class IngredientCatalogue : ScriptableObject
     public RecipeData[] allRecipes;
 
     [Header("Partida nueva")]
-    public int startingStockPerRecipe = 10;
+    public int startingStockPerRecipe = 5;
 
     [Header("Packs de la tienda")]
     public List<Pack> packs = new();

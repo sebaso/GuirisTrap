@@ -636,7 +636,7 @@ public class StatsPanel : MonoBehaviour
         if (_nextDayButton == null) return;
 
         _nextDayButton.onClick.RemoveAllListeners();
-
+        
         bool weekJustEnded = WeekManager.Instance != null && WeekManager.Instance.WeekJustEnded;
 
         if (weekJustEnded)
