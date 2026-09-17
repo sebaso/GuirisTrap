@@ -7,5 +7,5 @@ public static class TutorialEvents
     public static Action OnEnteredForniture;
     public static Action OnExitedShop;
     public static Action OnEnteredFoodShop;
-
+    public static Action OnInventoryEntered;
 }

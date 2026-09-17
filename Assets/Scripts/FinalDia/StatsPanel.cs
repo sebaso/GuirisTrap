@@ -70,7 +70,7 @@ public class StatsPanel : MonoBehaviour
 
     [Header("Demo")]
     [Tooltip("Último día jugable: al completarlo se muestra la pantalla final en vez de volver a preparación.")]
-    [SerializeField] private int _demoLastDay = 7;
+    [SerializeField] private int _demoLastDay = 14;
 
     [Header("Colores de la nota")]
     [SerializeField] private Color _gradeAColor = new(0.20f, 0.80f, 0.20f);
