@@ -14,10 +14,13 @@ public class ShopOpenButton : MonoBehaviour
     private int _blinkCount = 3;
     [SerializeField] 
     private float _blinkInterval = 0.15f;
+    [SerializeField]
+    private TutorialStarter _tutorialStarter;
 
     public void OnOpenShopButton()
     {
-        TutorialEvents.OnEnteredShop?.Invoke();
+        if(!_tutorialStarter.GetItemsBought())
+            TutorialEvents.OnEnteredShop?.Invoke();
         _shopPanel.SetActive(true);
         StartCoroutine(BlinkScreenOn());
     }

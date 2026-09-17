@@ -37,7 +37,7 @@ public class ButtonBlinker : MonoBehaviour
     {
         while (true)
         {
-            SetColors(Color.blue, Color.white);
+            SetColors(Color.softBlue, Color.white);
             yield return new WaitForSeconds(0.5f);
             SetColors(Color.white, Color.black);
             yield return new WaitForSeconds(0.5f);

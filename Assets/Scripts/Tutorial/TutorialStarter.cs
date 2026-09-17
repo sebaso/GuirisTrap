@@ -170,4 +170,10 @@ public class TutorialStarter : MonoBehaviour
         _popup2.TriggerDialogue();
         _tutorialActive = false;
     }
+
+    public bool GetItemsBought()
+    {
+        if (_boughtChair && _boughtTable) return true;
+        return false;
+    }
 }
