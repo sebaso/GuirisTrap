@@ -21,6 +21,8 @@ public class TicketRailUI : MonoBehaviour
              "comida. Si no existe, el ticket sigue funcionando solo con texto.")]
     public string nombreDelIcono = "Icono";
 
+    public bool unPlatoPorLinea = false;
+
     [Tooltip("Seconds to fade fully in/out when the rail gains/loses its last ticket.")]
     public float fadeDuration = 0.35f;
 
@@ -213,7 +215,9 @@ public class TicketRailUI : MonoBehaviour
             parts.Add(kv.Value > 1 ? $"{linea} x{kv.Value}" : linea);
         }
 
-        string dishes = parts.Count > 0 ? string.Join("\n", parts) : "?";
+        string dishes = parts.Count > 0
+            ? string.Join(unPlatoPorLinea ? "\n" : ", ", parts)
+            : "?";
         return $"<b>Mesa {tableNumber}</b>  ({g.PlatesServed}/{g.PlatesNeeded})\n{dishes}";
     }
 

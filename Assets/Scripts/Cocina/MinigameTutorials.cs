@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class MinigameTutorials : MonoBehaviour
 {
     [Serializable]
@@ -24,7 +23,7 @@ public class MinigameTutorials : MonoBehaviour
         public Sprite imagen;
 
         [Tooltip("Segundos antes de poder cerrarla. A 0 se puede cerrar al instante.")]
-        public float segundosMinimos = 1.0f;
+        public float segundosMinimos = 1.5f;
     }
 
     [Header("Panel")]
@@ -44,6 +43,9 @@ public class MinigameTutorials : MonoBehaviour
     [Tooltip("Texto del pie cuando ya se puede cerrar.")]
     [SerializeField] private string _textoContinuar = "Pulsa E para empezar";
 
+    [Tooltip("Escribe en consola por qué sale o no sale cada explicación.")]
+    [SerializeField] private bool _debugLogs = false;
+
     private const string PrefKey = "tuto_minijuego_";
 
     private Action _alCerrar;
@@ -55,6 +57,25 @@ public class MinigameTutorials : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        if (_panel == gameObject)
+        {
+            Debug.LogError($"[MinigameTutorials] El componente está EN el propio panel " +
+                           $"('{name}'). Sácalo a otro objeto (el del MinigameManager, " +
+                           "por ejemplo) o no funcionará.", this);
+        }
+        else if (_panel != null && _panel.transform.IsChildOf(transform) == false
+                 && transform.IsChildOf(_panel.transform))
+        {
+            Debug.LogError($"[MinigameTutorials] El componente está DENTRO del panel, que " +
+                           "se apaga. Sácalo fuera.", this);
+        }
+
+        if (_panel == null)
+            Debug.LogWarning("[MinigameTutorials] Falta el Panel: no saldrá ninguna explicación.", this);
+
+        if (_entradas == null || _entradas.Length == 0)
+            Debug.LogWarning("[MinigameTutorials] No hay Entradas: no saldrá ninguna explicación.", this);
+
         if (_panel != null) _panel.SetActive(false);
     }
 
@@ -94,15 +115,29 @@ public class MinigameTutorials : MonoBehaviour
         return false;
     }
 
+    // ------------------------------------------------------------------
 
     /// <summary>¿Hay que explicar este minijuego antes de lanzarlo?</summary>
     public bool HaceFalta(MinigameType tipo)
     {
-        if (_panel == null) return false;
-        if (Buscar(tipo) == null) return false;
+        if (_panel == null)
+        {
+            if (_debugLogs) Debug.LogWarning($"[MinigameTutorials] {tipo}: no hay Panel asignado.", this);
+            return false;
+        }
+
+        if (Buscar(tipo) == null)
+        {
+            if (_debugLogs) Debug.LogWarning($"[MinigameTutorials] {tipo}: no hay una Entrada con ese tipo.", this);
+            return false;
+        }
+
         if (!_soloUnaVez) return true;
 
-        return PlayerPrefs.GetInt(PrefKey + tipo, 0) == 0;
+        bool vista = PlayerPrefs.GetInt(PrefKey + tipo, 0) != 0;
+        if (_debugLogs) Debug.Log($"[MinigameTutorials] {tipo}: ¿ya vista? {vista}", this);
+
+        return !vista;
     }
 
     /// <summary>Muestra la explicación y llama a 'alCerrar' cuando el jugador la
@@ -157,6 +192,26 @@ public class MinigameTutorials : MonoBehaviour
         foreach (Entrada e in _entradas)
             if (e != null && e.tipo == tipo) return e;
         return null;
+    }
+
+    // ------------------------------------------------------------------
+
+    [ContextMenu("DEBUG: probar la primera explicación")]
+    private void DebugProbar()
+    {
+        if (_entradas == null || _entradas.Length == 0)
+        {
+            Debug.LogWarning("[MinigameTutorials] No hay entradas que probar.", this);
+            return;
+        }
+
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("[MinigameTutorials] Dale al play primero.", this);
+            return;
+        }
+
+        Mostrar(_entradas[0].tipo, () => Debug.Log("[MinigameTutorials] Explicación cerrada."));
     }
 
     [ContextMenu("DEBUG: olvidar todas las explicaciones")]

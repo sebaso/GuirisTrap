@@ -2171,6 +2171,7 @@ MonoBehaviour:
   ticketContainer: {fileID: 146657626}
   ticketEntryPrefab: {fileID: 2009651957535762005, guid: b6da7597d645dcb4aac8de5f34dad400, type: 3}
   nombreDelIcono: Icono
+  unPlatoPorLinea: 0
   fadeDuration: 0.35
 --- !u!114 &146657628
 MonoBehaviour:
@@ -42424,11 +42425,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1424547600137768574, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.16
+      value: 9.41
       objectReference: {fileID: 0}
     - target: {fileID: 1424547600137768574, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.93
+      value: -2.1799998
       objectReference: {fileID: 0}
     - target: {fileID: 1518271666442382128, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -42526,6 +42527,18 @@ PrefabInstance:
       propertyPath: recipeIconImage
       value: 
       objectReference: {fileID: 1124624980}
+    - target: {fileID: 2336785471637285869, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Size.x
+      value: 1.2848407
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336785471637285869, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.x
+      value: -0.052177697
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336785471637285869, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.z
+      value: 0.92797357
+      objectReference: {fileID: 0}
     - target: {fileID: 2353143146298822052, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_Type
       value: 0
@@ -43325,6 +43338,7 @@ MonoBehaviour:
     segundosMinimos: 0
   _soloUnaVez: 1
   _textoContinuar: Pulsa E para empezar
+  _debugLogs: 0
 --- !u!1 &2023985864
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,6 +40,16 @@ public class PickupGuideArrows : MonoBehaviour
     {
         _player = GetComponent<PlayerController>();
         _arena = GetComponent<SandFootprints>();
+
+        // Sin SandFootprints no hay forma de saber qué es arena, así que la
+        // opción de esconderse en la playa no puede funcionar. Se avisa una vez
+        // en vez de dejar que parezca que el check está roto.
+        if (_ocultarEnLaArena && _arena == null)
+        {
+            Debug.LogWarning($"[PickupGuideArrows] 'Ocultar En La Arena' está activo " +
+                             $"pero '{name}' no tiene SandFootprints. Añádeselo (es quien " +
+                             "sabe qué materiales son arena) o desmarca la opción.", this);
+        }
         _cam = Camera.main;
     }
 
