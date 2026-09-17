@@ -32,10 +32,10 @@ public class Client : MonoBehaviour
              "ModelPivot al sentarse, para asentar cada modelo en la silla. " +
              "Se restaura a cero al levantarse.")]
     public Vector3[] seatOffsets;
-    [Tooltip("Segundos que dura Levantarse antes de empezar a andar hacia la salida.")]
+    [Tooltip("Segundos que dura Levantarse antes de la reacción o de andar.")]
     [SerializeField] private float _standUpSeconds = 1.0f;
-    [Tooltip("Segundos de Enfadado sentado antes de levantarse.")]
-    [SerializeField] private float _angryBeatSeconds = 1.2f;
+    [Tooltip("Segundos que dura la reacción (Feliz/Enfadado) de pie antes de caminar hacia la salida.")]
+    [SerializeField] private float _reactionSeconds = 2.9f;
 
 
     private ClientGroup _group;
@@ -47,10 +47,12 @@ public class Client : MonoBehaviour
     private Transform _seatPoint;
     private Chair _seatChair;
     private Transform _entrancePoint;
-    // NavMeshAgent avoidance: lower value = right of way. Placed clients (queue,
-    // seated) never yield; walkers weave around them instead of shoving them.
+    // NavMeshAgent avoidance: lower value = right of way. Seated clients never
+    // yield; queued clients leave avoidance entirely (None) so walkers pass
+    // through them instead of deadlocking against the group at the door.
     private const int StationaryAvoidancePriority = 25;
     private const int WalkingAvoidancePriority = 75;
+    private ObstacleAvoidanceType _walkAvoidanceType;
 
     // vivos ahora mismo; DayManager.IsWindingDown espera a que llegue a 0.
     // OnEnable/OnDisable (no OnDestroy) para que los descargues de escena también descuenten.
@@ -63,6 +65,9 @@ public class Client : MonoBehaviour
     private Vector3 _queueSlotPosition;
     private bool Initialized = false;
     private bool _hasStartedWalking = false;
+    // comida terminada y reacción ya reproducidas: solo falta que el grupo
+    // entero pueda marcharse (FinishAndLeave espera a esto para andar)
+    private bool _canLeave;
 
     private Animator _animator;
     private Transform _modelPivot;
@@ -74,6 +79,7 @@ public class Client : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _agent.avoidancePriority = WalkingAvoidancePriority;
+        _walkAvoidanceType = _agent.obstacleAvoidanceType;
     }
 
     void OnEnable()
@@ -301,8 +307,10 @@ public class Client : MonoBehaviour
         DayReport.Instance?.RegisterAngryClient();
         HUDMessage.Instance?.ShowBad("¡Cliente se fue enfadado sin pagar!");
 
-        if (IsSeated())
-            StartCoroutine(StandUpAndLeave(_angryBeatSeconds));
+        if (CurrentState == State.DoneEating)
+            _canLeave = true; // ya reaccionó: FinishAndLeave lo saca a andar
+        else if (IsSeated())
+            StartCoroutine(StandUpAndLeave(true));
         else
         {
             SetState(State.Angry);
@@ -366,35 +374,15 @@ public class Client : MonoBehaviour
         AudioManager.Instance?.PlaySFX(leavesHappy ? "client_happy" : "client_angry");
 
         SetState(State.DoneEating);
+        // Levantarse y Feliz de pie en el sitio; la corrutina decide cuándo
+        // andar. En edit mode no hay player loop que la avance.
+        if (Application.isPlaying)
+            StartCoroutine(FinishAndLeave());
         _group?.OnMemberFinishedEating(this);
 
         // Solo diners leave immediately; group members wait for the last diner.
         if (!IsInGroup)
             StartLeaving();
-    }
-
-    private void LeaveAngry()
-    {
-        happiness -= 10;
-        Debug.Log($"[Client] Patience ran out! Leaving WITHOUT paying {money}€. (Group: {(IsInGroup ? Group.ToString() : "Solo")})");
-
-        DayReport.Instance?.RegisterAngryClient();
-
-        // Solo el líder o un cliente individual libera la mesa
-        if (!IsInGroup || IsGroupLeader)
-        {
-            _assignedTable?.FreeTable(Group);
-        }
-
-        AudioManager.Instance?.PlaySFX("client_angry");
-
-        if (IsSeated())
-            StartCoroutine(StandUpAndLeave(_angryBeatSeconds));
-        else
-        {
-            SetState(State.Angry);
-            WalkToExit();
-        }
     }
 
     public void StartLeaving()
@@ -405,8 +393,14 @@ public class Client : MonoBehaviour
             _assignedTable?.FreeTable(Group);
         }
 
-        if (IsSeated())
-            StartCoroutine(StandUpAndLeave(0f));
+        if (CurrentState == State.DoneEating)
+        {
+            _canLeave = true; // FinishAndLeave completa la salida tras la reacción
+        }
+        else if (IsSeated())
+        {
+            StartCoroutine(StandUpAndLeave(false));
+        }
         else
         {
             SetState(State.Leaving);
@@ -434,21 +428,35 @@ public class Client : MonoBehaviour
     private bool IsSeated()
         => CurrentState == State.WaitingForFood || CurrentState == State.Eating || CurrentState == State.DoneEating;
 
-    // Levantarse (y el beat de rabia si lo hay) en el sitio; el agente solo
-    // arranca al final para que el cliente no se deslice mientras se levanta.
-    private IEnumerator StandUpAndLeave(float angryBeat)
+    // Levantarse y Feliz de pie, en el sitio; el agente solo arranca cuando el
+    // grupo entero puede marcharse (o al instante si va solo) para que el
+    // cliente no se deslice durante los clips.
+    private IEnumerator FinishAndLeave()
     {
         Freeze();
         if (_modelPivot != null) _modelPivot.localPosition = Vector3.zero;
 
-        if (angryBeat > 0f)
-        {
-            SetState(State.Angry);
-            yield return new WaitForSeconds(angryBeat);
-        }
+        yield return new WaitForSeconds(_standUpSeconds);   // clip Levantarse
+        yield return new WaitForSeconds(_reactionSeconds);  // clip Feliz, de pie
+        yield return new WaitUntil(() => _canLeave);
 
         SetState(State.Leaving);
-        yield return new WaitForSeconds(_standUpSeconds);
+        WalkToExit();
+    }
+
+    // Enfado (Levantarse + Enfadado de pie) o salida forzada sin reacción
+    // (solo Levantarse); congelado durante los clips por lo mismo.
+    private IEnumerator StandUpAndLeave(bool angry)
+    {
+        Freeze();
+        if (_modelPivot != null) _modelPivot.localPosition = Vector3.zero;
+
+        SetState(angry ? State.Angry : State.Leaving);
+        yield return new WaitForSeconds(_standUpSeconds);   // clip Levantarse
+        if (angry)
+            yield return new WaitForSeconds(_reactionSeconds); // clip Enfadado, de pie
+
+        SetState(State.Leaving);
         WalkToExit();
     }
 
@@ -522,9 +530,16 @@ public class Client : MonoBehaviour
         _timeStateEntered = Time.time;
         // _agent puede ser null si Awake no corrió (herramientas de editor)
         if (_agent != null)
+        {
             _agent.avoidancePriority = IsStationaryState(newState)
                 ? StationaryAvoidancePriority
                 : WalkingAvoidancePriority;
+            // Waiting = en cola: atravesable (el grupo que bloquea la puerta no
+            // puede frenar a los que sí tienen mesa). El resto evita normal.
+            _agent.obstacleAvoidanceType = newState == State.Waiting
+                ? ObstacleAvoidanceType.NoObstacleAvoidance
+                : _walkAvoidanceType;
+        }
         if (_animator != null)
             _animator.SetInteger(ClientAnimationParams.State, (int)newState);
     }
