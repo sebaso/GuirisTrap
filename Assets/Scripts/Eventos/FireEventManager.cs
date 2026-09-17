@@ -124,17 +124,24 @@ public class FireEventManager : MonoBehaviour
         {
             vfx = Instantiate(_fireVfxPrefab, station);
             vfx.transform.localPosition = _fireVfxOffset;
+
+            // El prefab ya trae su propia luz parpadeante, pero si viene de una
+            // versión antigua sin ella se la añadimos aquí para no quedarnos sin
+            // la iluminación naranja que vende el fuego.
+            if (!vfx.TryGetComponent(out Light _)) AddFireLight(vfx);
+
             return vfx;
         }
 
         // Sin prefab de arte: placeholder. Si el shader de llama procedural
         // está en el proyecto, quad con fuego animado; si no, esfera naranja.
-        Shader fireShader = Shader.Find("Guiri/Fire");
+        // Se prueban los dos nombres para no romper si el shader se renombra.
+        Shader fireShader = Shader.Find("Guiri/FireFlame") ?? Shader.Find("Guiri/Fire");
 
         if (fireShader != null)
         {
             vfx = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            vfx.name = "FirePlaceholder (Guiri/Fire)";
+            vfx.name = "FirePlaceholder (" + fireShader.name + ")";
             Object.Destroy(vfx.GetComponent<Collider>());
             vfx.transform.SetParent(station);
             vfx.transform.localPosition = _fireVfxOffset;
@@ -159,13 +166,32 @@ public class FireEventManager : MonoBehaviour
 
         // Luz naranja parpadeante en ambos casos: vende el fuego aunque el
         // VFX quede tapado por un mueble.
+        AddFireLight(vfx);
+
+        return vfx;
+    }
+
+    /// <summary>
+    /// Añade (si no existe ya) una luz naranja con parpadeo orgánico.
+    /// La usan tanto el prefab de arte como los placeholders.
+    /// </summary>
+    private static void AddFireLight(GameObject vfx)
+    {
+        if (vfx.TryGetComponent(out Light existing))
+        {
+            // Ya trae luz (p. ej. el prefab): solo aseguramos el parpadeo.
+            existing.color = new Color(1f, 0.5f, 0.1f);
+            existing.range = 4f;
+            if (vfx.GetComponent<FireLightFlicker>() == null) vfx.AddComponent<FireLightFlicker>();
+            return;
+        }
+
         Light light = vfx.AddComponent<Light>();
         light.color = new Color(1f, 0.5f, 0.1f);
         light.range = 4f;
         light.intensity = 2.5f;
+        light.shadows = LightShadows.None;
         vfx.AddComponent<FireLightFlicker>();
-
-        return vfx;
     }
 
     [ContextMenu("Forzar incendio ahora")]

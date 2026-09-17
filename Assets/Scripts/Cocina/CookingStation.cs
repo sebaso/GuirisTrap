@@ -34,11 +34,9 @@ public class CookingStation : MonoBehaviour
         {
             Debug.Log($"<color=green>¡Éxito! Iniciando {playerRef.currentRecipe.dishName}</color>");
             HUDMessage.Instance?.ShowGood($"¡Cocinando {playerRef.currentRecipe.dishName}!");
-            if (playerRef.redCubeIngredient != null)
-                playerRef.redCubeIngredient.SetActive(false);
 
             MinigameManager.Instance.LaunchMinigame(playerRef.currentRecipe, playerRef);
-            playerRef.currentRecipe = null;
+            playerRef.ClearCurrentIngredients();
         }
         else
         {

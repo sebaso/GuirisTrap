@@ -22,7 +22,9 @@ public class PlayerController : ControllableMonoBehaviour
 
     [Header("Minigame System")]
     public RecipeData currentRecipe;
-    public GameObject redCubeIngredient;
+    // icono 2D del plato YA COCINADO, flotando sobre la bandeja; antes de cocinar
+    // no se muestra nada (las flechas y la comanda ya guían al jugador)
+    private FoodIcon _trayIcon;
 
     [Header("UI Interaction Feedback")]
     public GameObject interactPrompt; // Arrastra aquí el Quad/Sprite flotante que harás de hijo
@@ -71,6 +73,10 @@ public class PlayerController : ControllableMonoBehaviour
             holdObj.transform.localPosition = new Vector3(0, 1.5f, 0.5f);
             holdPoint = holdObj.transform;
         }
+
+        // el icono flota sobre la bandeja a altura mundial fija: solo con comida cocinada
+        if (_trayVisual != null)
+            _trayIcon = FoodIcon.Create(_trayVisual.transform, 0.35f, 0.35f);
 
         if (interactPrompt != null)
         {
@@ -231,6 +237,7 @@ public class PlayerController : ControllableMonoBehaviour
         FoodStorage bestStorage = null;
         EspetoMinigame bestEspeto = null;
         CookingStation bestStation = null;
+        CookingStation bestStationMatch = null;
         ExtintorPickup bestExtintor = null;
         ExtintorSoporte bestSoporte = null;
         FregonaPickup bestFregona = null;
@@ -242,6 +249,7 @@ public class PlayerController : ControllableMonoBehaviour
         float bestStorageDist = float.MaxValue;
         float bestEspetoDist = float.MaxValue;
         float bestStationDist = float.MaxValue;
+        float bestStationMatchDist = float.MaxValue;
         float bestExtintorDist = float.MaxValue;
         float bestSoporteDist = float.MaxValue;
         // Track the nearest pickable food too, so a station standing within range
@@ -260,6 +268,11 @@ public class PlayerController : ControllableMonoBehaviour
 
             CookingStation cs = col.GetComponent<CookingStation>();
             if (cs != null && dist < bestStationDist) { bestStation = cs; bestStationDist = dist; }
+            // Los triggers de estaciones solapan: recuerda también la más
+            // cercana que encaje con la receta en mano, para preferirla
+            // aunque el pivot de otra esté un poco más cerca.
+            if (cs != null && currentRecipe != null && cs.stationType == currentRecipe.type && dist < bestStationMatchDist)
+            { bestStationMatch = cs; bestStationMatchDist = dist; }
 
             // Extintor físico: si NO llevas uno, se puede coger. Si SÍ lo
             // llevas, interactuar con un soporte lo devuelve a su sitio.
@@ -298,52 +311,59 @@ public class PlayerController : ControllableMonoBehaviour
             }
         }
 
+        // Estación efectiva: si algún trigger en rango encaja con la receta,
+        // esa es la estación a interactuar, aunque otra tenga el pivot más
+        // cerca (los triggers solapan). El mensaje de error solo sale si
+        // NINGUNA estación en rango encaja.
+        CookingStation station = bestStationMatch != null ? bestStationMatch : bestStation;
+        float stationDist = bestStationMatch != null ? bestStationMatchDist : bestStationDist;
+
         // Atender al más cercano de entre los tipos encontrados.
         // (Storage y Espeto tienen prioridad porque abren su propio menú; la
         //  estación de cocina es la acción de "cocinar" lo que llevas.)
         // Cada estación solo gana si además está más cerca que la comida suelta;
         // si la comida es lo más cercano, caemos a TryPickUpFood más abajo.
-        if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= bestStationDist && bestExtintorDist <= bestFoodDist
+        if (bestExtintor != null && bestExtintorDist <= bestStorageDist && bestExtintorDist <= bestEspetoDist && bestExtintorDist <= stationDist && bestExtintorDist <= bestFoodDist
             && bestExtintorDist <= bestFregonaDist && bestExtintorDist <= bestCacaDist && bestExtintorDist <= bestFregSopDist)
         {
             bestExtintor.TryPickUp(this); return;
         }
         // Coger la fregona de su soporte.
-        if (bestFregona != null && bestFregonaDist <= bestStorageDist && bestFregonaDist <= bestEspetoDist && bestFregonaDist <= bestStationDist && bestFregonaDist <= bestFoodDist)
+        if (bestFregona != null && bestFregonaDist <= bestStorageDist && bestFregonaDist <= bestEspetoDist && bestFregonaDist <= stationDist && bestFregonaDist <= bestFoodDist)
         {
             bestFregona.TryPickUp(this); return;
         }
         // Limpiar una caca de gaviota con la fregona.
-        if (bestCaca != null && bestCacaDist <= bestStorageDist && bestCacaDist <= bestEspetoDist && bestCacaDist <= bestStationDist && bestCacaDist <= bestFoodDist && bestCacaDist <= bestFregSopDist)
+        if (bestCaca != null && bestCacaDist <= bestStorageDist && bestCacaDist <= bestEspetoDist && bestCacaDist <= stationDist && bestCacaDist <= bestFoodDist && bestCacaDist <= bestFregSopDist)
         {
             PlayAction("Barrer");
             bestCaca.LimpiarConFregona(); return;
         }
         // Devolver la fregona a su soporte.
-        if (bestFregSop != null && bestFregSopDist <= bestStorageDist && bestFregSopDist <= bestEspetoDist && bestFregSopDist <= bestStationDist && bestFregSopDist <= bestFoodDist)
+        if (bestFregSop != null && bestFregSopDist <= bestStorageDist && bestFregSopDist <= bestEspetoDist && bestFregSopDist <= stationDist && bestFregSopDist <= bestFoodDist)
         {
             FregonaPickup.Carried?.ReturnToHolder();
             AudioManager.Instance?.PlaySFX("fregona_pickup");
             return;
         }
         // Devolver el extintor a su soporte pulsando E (si lo llevas encima).
-        if (bestSoporte != null && bestSoporteDist <= bestStorageDist && bestSoporteDist <= bestEspetoDist && bestSoporteDist <= bestStationDist && bestSoporteDist <= bestFoodDist)
+        if (bestSoporte != null && bestSoporteDist <= bestStorageDist && bestSoporteDist <= bestEspetoDist && bestSoporteDist <= stationDist && bestSoporteDist <= bestFoodDist)
         {
             ExtintorPickup.Carried?.ReturnToHolder();
             AudioManager.Instance?.PlaySFX("extintor_pickup");
             return;
         }
-        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= bestStationDist && bestStorageDist <= bestFoodDist)
+        if (bestStorage != null && bestStorageDist <= bestEspetoDist && bestStorageDist <= stationDist && bestStorageDist <= bestFoodDist)
         {
             bestStorage.TryOpen(); return;
         }
-        if (bestEspeto != null && bestEspetoDist <= bestStationDist && bestEspetoDist <= bestFoodDist)
+        if (bestEspeto != null && bestEspetoDist <= stationDist && bestEspetoDist <= bestFoodDist)
         {
             bestEspeto.TryOpen(this); return;
         }
-        if (bestStation != null && bestStationDist <= bestFoodDist)
+        if (station != null && stationDist <= bestFoodDist)
         {
-            bestStation.TryInteract(); return;
+            station.TryInteract(); return;
         }
 
         // 2. Si lleva comida, intentar colocarla
@@ -356,13 +376,34 @@ public class PlayerController : ControllableMonoBehaviour
         TryPickUpFurniture();
     }
 
+    // Qué se ve llevando: la bandeja con el icono del plato SOLO cuando hay
+    // comida cocinada (crudo = nada visual). Sin icono disponible (receta sin
+    // sprite) cae al modelo 3D de siempre. Llamar tras cada cambio de heldFood.
+    private void UpdateCarriedVisual()
+    {
+        bool cooked = heldFood != null;
+        Sprite dishIcon = cooked && heldFood.recipe != null ? heldFood.recipe.icon : null;
+
+        SetCarrying(cooked);
+
+        if (!cooked)
+        {
+            _trayIcon?.Set(null);
+            return;
+        }
+
+        bool showIcon = _trayIcon != null && dishIcon != null;
+        _trayIcon?.Set(showIcon ? dishIcon : null);
+        heldFood.SetModelVisible(!showIcon);
+    }
+
     /// <summary>Pierde el plato que lleva (impacto de caca de gaviota).</summary>
     public void LoseHeldFood()
     {
         if (heldFood == null) return;
         Destroy(heldFood.gameObject);
         heldFood = null;
-        SetCarrying(false);
+        UpdateCarriedVisual();
     }
 
     // ── Pickup System ─────────────────────────────────────────────────────
@@ -404,6 +445,7 @@ public class PlayerController : ControllableMonoBehaviour
         if (heldFood != null && heldFood != food) DropFood();
         heldFood = food;
         food.PickUp(holdPoint);
+        UpdateCarriedVisual();
         Debug.Log($"Picked up: {food.foodName}");
     }
 
@@ -474,13 +516,14 @@ public class PlayerController : ControllableMonoBehaviour
             SpecialClientManager.Instance.TryInterceptServe(serve, heldFood))
         {
             heldFood = null;
+            UpdateCarriedVisual();
             return;
         }
 
         if (serve.PlaceFood(heldFood))
         {
             heldFood = null;
-            SetCarrying(false);
+            UpdateCarriedVisual();
             PlayAction("Servir");
             _freezeTimer = _serveFreezeSeconds;
             Debug.Log("Placed food on table");
@@ -492,7 +535,7 @@ public class PlayerController : ControllableMonoBehaviour
         if (heldFood == null) return;
         heldFood.Drop();
         heldFood = null;
-        SetCarrying(false);
+        UpdateCarriedVisual();
     }
 
     // ── Furniture Carry ───────────────────────────────────────────────────
@@ -743,7 +786,11 @@ public class PlayerController : ControllableMonoBehaviour
     public void SetCurrentIngredients(RecipeData data)
     {
         currentRecipe = data;
-        if (redCubeIngredient != null) redCubeIngredient.SetActive(true);
+    }
+
+    public void ClearCurrentIngredients()
+    {
+        currentRecipe = null;
     }
     public void SetNearInteractable(bool near)
     {

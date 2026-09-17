@@ -56,6 +56,15 @@ public class Table : MonoBehaviour
     private bool _regularOccupied;
     private ClientGroup _regularGroup;
 
+    [Header("Reasiento")]
+    [Tooltip("Segundos tras liberarse la mesa en que ningún grupo nuevo puede sentarse en ella: los clientes anteriores siguen levantándose y reaccionando al lado.")]
+    [SerializeField] private float seatCooldownSeconds = 8f;
+    private float _rebookableAt;
+
+    /// <summary>False durante el cooldown posterior a ClearReservation: el hueco
+    /// queda libre pero aún hay un cliente levantándose/reaccionando en el sitio.</summary>
+    public bool IsRebookable => Time.time >= _rebookableAt;
+
     [Header("Food Placement")]
     [Tooltip("Transform point where food will be placed. If null, table center will be used.")]
     public Transform foodPoint;
@@ -217,6 +226,8 @@ public class Table : MonoBehaviour
     {
         _regularOccupied = false;
         _regularGroup = null;
+        // cooldown de reasiento: el grupo anterior aún está de pie al lado
+        _rebookableAt = Time.time + seatCooldownSeconds;
         Debug.Log($"[Table {tableNumber}] Freed");
     }
 
@@ -498,6 +509,7 @@ public class Table : MonoBehaviour
             if (member != null && member.CurrentState == Client.State.WaitingForFood)
             {
                 member.ReceiveFood();
+                food.RegisterFedMember(member);
                 fed++;
                 if (fed >= dinersToFeed) break;
             }
