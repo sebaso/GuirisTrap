@@ -14,10 +14,16 @@ public class ShopBackButton : MonoBehaviour
     private GameObject _HUD;
     [SerializeField]
     private GameObject _mobileMenu;
-
+    [SerializeField]
+    private TutorialStarter _tutorialStarter;
+    private bool _aux = false;
     public void OnBackToGameButton()
     {
-        TutorialEvents.OnExitedShop?.Invoke();
+        if(_tutorialStarter.GetItemsBought() && _aux == false)
+        {
+            TutorialEvents.OnExitedShop?.Invoke();
+            _aux = true;
+        }
         _shopPanel.SetActive(false);
         _mobiliaryPanel.SetActive(false);
         _screenOff.SetActive(false);

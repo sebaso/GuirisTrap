@@ -11,7 +11,8 @@ public class InventorySlotUI : MonoBehaviour
     private TMP_Text _quantityText;
     [SerializeField] 
     private Button _button;
-
+    [SerializeField]
+    private bool _enable = true;
     private int _posX;
     private int _posY;
 
@@ -75,4 +76,6 @@ public class InventorySlotUI : MonoBehaviour
     {
         PlacementInputController.Instance?.EndInventoryPress();
     }
+    public bool GetEnable(){ return _enable; }
+    public void SetEnable(bool enabled){ _enable = enabled; }
 }

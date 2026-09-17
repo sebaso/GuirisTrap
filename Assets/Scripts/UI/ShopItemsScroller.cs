@@ -41,7 +41,8 @@ public class ShopItemsScroller : MonoBehaviour, IScrollHandler
             Transform child = _itemsContainer.GetChild(i);
 
             if ((child.TryGetComponent<ShopItemUI>(out var shopItem) && shopItem.GetEnable()) ||
-                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()))
+                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()) ||
+                (child.TryGetComponent<InventorySlotUI>(out var inventorySlot) && inventorySlot.GetEnable()))
                 total += 1;
         }
 
@@ -61,7 +62,8 @@ public class ShopItemsScroller : MonoBehaviour, IScrollHandler
             Transform child = _itemsContainer.GetChild(i);
 
             if ((child.TryGetComponent<ShopItemUI>(out var shopItem) && shopItem.GetEnable()) ||
-                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()))
+                (child.TryGetComponent<IngredientShopItemUI>(out var ingredientItem) && ingredientItem.GetEnable()) || 
+                (child.TryGetComponent<InventorySlotUI>(out var inventorySlot) && inventorySlot.GetEnable()))
                 enabledItems.Add(child);
         }
 
