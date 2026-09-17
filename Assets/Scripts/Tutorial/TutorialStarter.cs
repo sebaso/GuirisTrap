@@ -15,6 +15,10 @@ public class TutorialStarter : MonoBehaviour
     [SerializeField] 
     private DialogueTrigger _part5;
     [SerializeField]
+    private DialogueTrigger _popup1;
+    [SerializeField]
+    private DialogueTrigger _popup2;
+    [SerializeField]
     private PlaceableItemData  _chair;
     [SerializeField]
     private PlaceableItemData  _table;
@@ -51,6 +55,7 @@ public class TutorialStarter : MonoBehaviour
         TutorialEvents.OnEnteredForniture += OnEnteredFurniture;
         TutorialEvents.OnExitedShop += OnExitedShop;
         TutorialEvents.OnEnteredFoodShop += OnEnteredFoodShop;
+        TutorialEvents.OnInventoryEntered += OnInventoryEntered;
     }
 
     void OnDisable()
@@ -60,6 +65,7 @@ public class TutorialStarter : MonoBehaviour
         TutorialEvents.OnEnteredForniture -= OnEnteredFurniture;
         TutorialEvents.OnExitedShop -= OnExitedShop;
         TutorialEvents.OnEnteredFoodShop -= OnEnteredFoodShop;
+        TutorialEvents.OnInventoryEntered -= OnInventoryEntered;
     }
 
     void Start()
@@ -155,7 +161,13 @@ public class TutorialStarter : MonoBehaviour
         if (_boughtChair && _boughtTable)
         {
             _part4.TriggerDialogue();
-            _tutorialActive = false;
+            _popup1.TriggerDialogue();
         }
+    }
+    private void OnInventoryEntered()
+    {
+        if (!_tutorialActive) return;
+        _popup2.TriggerDialogue();
+        _tutorialActive = false;
     }
 }
