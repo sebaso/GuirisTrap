@@ -19,6 +19,8 @@ public class PickupGuideArrows : MonoBehaviour
     [SerializeField] private int _maxArrows = 3;
     [SerializeField] private bool _soloLaMasCercana = false;
 
+    [SerializeField] private bool _ocultarEnLaArena = true;
+
     [Header("Aspecto")]
     [SerializeField] private string _shaderName = "Guiri/GuideArrow";
     [Range(0.2f, 1f)]
@@ -40,6 +42,13 @@ public class PickupGuideArrows : MonoBehaviour
     {
         _player = GetComponent<PlayerController>();
         _arena = GetComponent<SandFootprints>();
+
+        if (_ocultarEnLaArena && _arena == null)
+        {
+            Debug.LogWarning($"[PickupGuideArrows] 'Ocultar En La Arena' está activo " +
+                             $"pero '{name}' no tiene SandFootprints. Añádeselo (es quien " +
+                             "sabe qué materiales son arena) o desmarca la opción.", this);
+        }
         _cam = Camera.main;
     }
 
@@ -48,7 +57,21 @@ public class PickupGuideArrows : MonoBehaviour
         if (_cam == null) _cam = Camera.main;
         if (_player == null) { HideAll(); return; }
 
+        // Fase 2: con el ingrediente crudo manda el RecipeGuideArrow.
         if (_player.currentRecipe != null) { HideAll(); return; }
+
+        // En la playa no hay nada a lo que guiar, así que las flechas sobran.
+        // Se comprueba cada poco y no cada frame, porque es un raycast.
+        if (_ocultarEnLaArena && _arena != null)
+        {
+            if (Time.time >= _proximaComprobacionArena)
+            {
+                _proximaComprobacionArena = Time.time + 0.25f;
+                _estabaEnArena = _arena.JugadorSobreArena();
+            }
+
+            if (_estabaEnArena) { HideAll(); return; }
+        }
 
         if (Time.time >= _nextRefresh)
         {
