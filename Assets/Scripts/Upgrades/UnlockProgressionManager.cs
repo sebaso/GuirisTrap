@@ -19,12 +19,12 @@ public class UnlockProgressionManager : MonoBehaviour
         if (days >= 3) _items[2].SetEnable(true);
         if (days >= 5) _items[3].SetEnable(true);
         if (days >= 7) UpgradeManager.Instance.TryUpgrade(_table);
-        if (days >= 13)
+        if (days >= 12)
         {
             _items[4].SetEnable(true);
             _items[5].SetEnable(true);
         }
-        if (days >= 15) _items[6].SetEnable(true);
-        if (days >= 17) _items[7].SetEnable(true);
+        if (days >= 13) _items[6].SetEnable(true);
+        if (days >= 14) _items[7].SetEnable(true);
     }
 }
