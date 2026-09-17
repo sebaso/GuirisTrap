@@ -37,7 +37,9 @@ public class Client : MonoBehaviour
     [Tooltip("Segundos que dura la reacción (Feliz/Enfadado) de pie antes de caminar hacia la salida.")]
     [SerializeField] private float _reactionSeconds = 2.9f;
     [Tooltip("Metros que se aleja andando de la silla antes de soltar la reacción.")]
-    [SerializeField] private float _stepOutDistance = 1.25f;
+    [SerializeField] private float _stepOutDistance = 1.75f;
+    [Tooltip("Velocidad del pasito de salida (m/s): más lento que el andar normal para que se lea como un paso deliberado.")]
+    [SerializeField] private float _stepOutSpeed = 1.6f;
 
 
     private ClientGroup _group;
@@ -504,15 +506,22 @@ public class Client : MonoBehaviour
     }
 
     // Paso corto hacia la salida y frenado al llegar (con tope de tiempo por
-    // si el paso queda bloqueado).
+    // si el paso queda bloqueado). Va a media velocidad para que el paso se
+    // lea como deliberado y no un micro-salto.
     private IEnumerator StepOutAndSettle()
     {
         if (_agent != null) _agent.avoidancePriority = WalkingAvoidancePriority;
+        float normalSpeed = _agent != null ? _agent.speed : 0f;
+        if (_agent != null) _agent.speed = _stepOutSpeed;
         WalkTo(StepOutTarget());
         float deadline = Time.time + StepOutTimeout;
         yield return new WaitUntil(() =>
             _agent == null || !_agent.isActiveAndEnabled || !_agent.isOnNavMesh
-            || _agent.remainingDistance <= 0.35f || Time.time >= deadline);
+            // sin path aún, remainingDistance es 0: exigir hasPath o el paso
+            // se "asienta" al instante y Freeze cancela la caminata entera
+            || (_agent.hasPath && !_agent.pathPending && _agent.remainingDistance <= 0.35f)
+            || Time.time >= deadline);
+        if (_agent != null) _agent.speed = normalSpeed;
         Freeze();
     }
 
@@ -531,9 +540,11 @@ public class Client : MonoBehaviour
         dir.y = 0f;
         dir = dir.sqrMagnitude > 0.001f ? dir.normalized : transform.forward;
         Vector3 target = transform.position + dir * _stepOutDistance;
-        return NavMesh.SamplePosition(target, out NavMeshHit hit, _stepOutDistance, NavMesh.AllAreas)
+        // radio de muestra estrecho: si el punto cae fuera de malla mejor
+        // reaccionar en el sitio que acabar desplazado a mitad de paso
+        return NavMesh.SamplePosition(target, out NavMeshHit hit, 0.6f, NavMesh.AllAreas)
             ? hit.position
-            : transform.position; // nada andable cerca: reacciona en el sitio
+            : transform.position;
     }
 
     private void WalkToExit()

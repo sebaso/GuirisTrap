@@ -1,29 +1,22 @@
 // ============================================================================
-//  Guiri/FireFlame - llama procedural para el evento de incendio (v3)
+//  Guiri/FireFlame - llama procedural para el evento de incendio (v4)
 //
-//  Fuego 100% procedural: ruido fBm en el fragment shader, sin texturas.
+//  Fuego 100% procedural: ruido fBm con warp de dominio, sin texturas.
 //
-//  Por que existe esta v3 (el Shader Graph "Fire_Cartton" no servia):
-//    - El material estaba en modo OPACO (_Surface=0, _ZWrite=1), asi que el
-//      canal alfa se descartaba y el quad se dibujaba como una tarjeta
-//      rectangular solida en vez de una llama.
-//    - El BaseColor del grafo venia de "Vertex Color", pero el Quad de Unity
-//      no tiene stream COLOR, asi que el color nunca se modulaba por la silueta.
-//    - Todo el ruido/twirl/mascara alimentaba solo el Alpha, con lo que al
-//      descartarse el alfa casi no se veia nada del trabajo procedural.
-//
-//  Diseno:
-//    - BILLBOARD CILINDRICO: la llama gira solo alrededor del eje Y del mundo,
-//      por lo que siempre queda de pie y encara la camara solo en horizontal
-//      (correcto para la camara isometrica del juego).
-//    - La BASE de la llama queda anclada al origen del objeto: el offset del
+//  Invariantes que no romper:
+//    - BILLBOARD CILINDRICO: gira solo alrededor del eje Y del mundo
+//      (correcto para la camara isometrica).
+//    - La BASE queda anclada al origen del objeto: el offset del
 //      FireEventManager marca donde nace el fuego, no su centro.
-//    - Silueta ancha abajo y afilada arriba, con bordes rotos por ruido y
-//      lenguas que ondulan mas cuanto mas alto.
-//    - Rampa de color: nucleo amarillo-blanco -> naranja -> rojo exterior.
-//    - Mezcla ADITIVA (SrcAlpha One) + ZWrite Off: el fuego suma luz.
+//    - Blending ADITIVO (SrcAlpha One) + ZWrite Off: el fuego suma luz.
+//      _Intensity escala el COLOR (luz), no el alfa (silueta).
+//    - La punta se consume por si sola (body -= pow(uv.y, 1.4)); la llama
+//      debe cerrarse antes del borde superior del quad, nunca recortarse.
 //
-//  Propiedades expuestas para ajustar el look sin tocar el shader.
+//  v4: warp de dominio (remolinos), frecuencia lateral creciente con la
+//  altura (la punta se rompe en lenguas), flamelets ridged en el nucleo,
+//  borde firme (smoothstep), nucleo blanco-caliente y base azulada sutil
+//  (_BaseColor.a controla la fuerza de esa mezcla).
 // ============================================================================
 Shader "Guiri/FireFlame"
 {
@@ -32,6 +25,7 @@ Shader "Guiri/FireFlame"
         _InnerColor ("Color nucleo",   Color)           = (1.0, 0.95, 0.55, 1)
         _MidColor   ("Color medio",    Color)           = (1.0, 0.45, 0.05, 1)
         _OuterColor ("Color exterior", Color)           = (0.85, 0.10, 0.00, 0)
+        _BaseColor  ("Color base (azulado)", Color)     = (0.25, 0.45, 1.00, 0.5)
         _Speed      ("Velocidad",      Range(0, 6))     = 1.9
         _Turbulence ("Turbulencia",    Range(0, 1))     = 0.5
         _Intensity  ("Intensidad",     Range(0, 4))     = 1.35
@@ -67,6 +61,7 @@ Shader "Guiri/FireFlame"
             fixed4 _InnerColor;
             fixed4 _MidColor;
             fixed4 _OuterColor;
+            fixed4 _BaseColor;
             float  _Speed;
             float  _Turbulence;
             float  _Intensity;
@@ -150,35 +145,64 @@ Shader "Guiri/FireFlame"
 
                 float x = (uv.x - 0.5) * 2.0;
 
-                float n1 = fbm(float2(uv.x * 3.0,       uv.y * 2.2 - t));
-                float n2 = fbm(float2(uv.x * 5.5 + 7.3, uv.y * 3.4 - t * 1.6));
+                // Frecuencia lateral crece con la altura: masa solida abajo,
+                // lengua pequenas y quebradas arriba.
+                float fx = 3.0 + 2.5 * uv.y;
 
-                float sway = (n1 - 0.5) * _Turbulence * (0.25 + uv.y * 1.6);
-                sway += (n2 - 0.5) * _Turbulence * uv.y * 0.6;
+                // El patron sube mas rapido cuanto mas alto (gas acelerando).
+                float rise = t * (1.0 + uv.y * 0.6);
+
+                float n1 = fbm(float2(uv.x * fx,             uv.y * 1.6 - rise));
+                float n2 = fbm(float2(uv.x * fx * 1.9 + 7.3, uv.y * 2.6 - rise * 1.8));
+
+                // Warp del dominio: dos fbm lentos curvan la llama (remolinos
+                // en vez de scroll recto). Solo desplazan en horizontal.
+                float warpX = fbm(float2(uv.x * 2.0 + 3.1, uv.y * 1.3 - t * 0.55)) - 0.5;
+                float warpY = fbm(float2(uv.x * 2.0 - 1.7, uv.y * 1.3 - t * 0.45)) - 0.5;
+
+                float sway = warpX * _Turbulence * (0.35 + uv.y * 1.8);
+                sway += 0.10 * _Turbulence * sin(t * 1.3 + n1 * 3.0) * uv.y;
                 x += sway;
 
-                float width = max(0.06, 1.0 - uv.y * 0.88);
+                // Silueta: base ancha y punta afilada (taper curvado, no cono).
+                float width = 0.95 * pow(saturate(1.0 - uv.y), 0.62) + 0.05;
                 float body  = 1.0 - abs(x) / width;
 
-                body -= uv.y * uv.y * 0.30;
-                body += (n1 - 0.5) * 0.55 + (n2 - 0.5) * 0.25;
+                body -= pow(uv.y, 1.4) * 0.95;
+                body += (n1 - 0.5) * 0.55 + (n2 - 0.5) * 0.30;
+                body += warpY * _Turbulence * 0.35;
+                body += (vnoise(float2(t * 3.1, 3.7)) - 0.5) * _Flicker * uv.y * 0.5;
 
                 float flame = saturate(body / max(_Softness, 0.001));
+                flame = flame * flame * (3.0 - 2.0 * flame);
 
-                float core = saturate(1.0 - abs(x) / max(width * 0.55, 0.001));
-                core *= saturate(1.0 - uv.y * 1.35);
-                core *= 0.65 + 0.35 * n2;
+                // Nucleo estrecho y bajo, con filamentas ridged (lenguas
+                // brillantes dentro del cuerpo).
+                float tongues = 1.0 - abs(2.0 * n2 - 1.0);
+                float core = saturate(1.0 - abs(x) / max(width * 0.5, 0.001));
+                core *= saturate(1.0 - uv.y * 1.45);
+                core *= 0.55 + 0.45 * tongues;
 
-                float flicker = 1.0 - _Flicker * (0.5 + 0.5 * vnoise(float2(t * 3.1, 3.7)));
+                // Parpadeo global de brillo (ruido independiente del aleteo).
+                float flicker = 1.0 - _Flicker * (0.5 + 0.5 * vnoise(float2(t * 2.3, 9.1)));
 
-                float k = saturate(flame * 0.8 + core * 0.9);
-                fixed3 col = lerp(_OuterColor.rgb, _MidColor.rgb, smoothstep(0.0, 0.55, k));
-                col = lerp(col, _InnerColor.rgb, smoothstep(0.45, 1.0, k));
+                // Rampa de temperatura: rojo -> naranja -> amarillo ->
+                // blanco-caliente en el centro del nucleo.
+                float k = saturate(flame * 0.85 + core * 0.75);
+                fixed3 col = lerp(_OuterColor.rgb, _MidColor.rgb, smoothstep(0.0, 0.5, k));
+                col = lerp(col, _InnerColor.rgb, smoothstep(0.35, 0.85, k));
 
-                float a = flame * flicker * _Intensity;
-                a *= lerp(1.0, 0.85, uv.y);
+                float hot = saturate((core - 0.5) * 2.0);
+                col = lerp(col, fixed3(1.0, 0.98, 0.90), hot * 0.65);
 
-                return fixed4(col * a, a);
+                // Base azulada sutil (gas recien encendido); _BaseColor.a
+                // regula la fuerza de la mezcla (0 = apagarla).
+                float blueBase = smoothstep(0.15, 0.5, flame) * saturate(1.0 - uv.y * 4.5);
+                col = lerp(col, _BaseColor.rgb, blueBase * saturate(_BaseColor.a));
+
+                float a = flame * lerp(1.0, 0.85, uv.y);
+
+                return fixed4(col * _Intensity * flicker, a);
             }
             ENDCG
         }
