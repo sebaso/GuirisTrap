@@ -183,4 +183,22 @@ public class Inventory : MonoBehaviour
         }
         NotifyChanged();
     }
+    public InventorySlot GetItem(PlaceableItemData item)
+    {
+        if (_inventory == null) Init();
+        if (_inventory == null || item == null) return null;
+
+        for (int y = 0; y < _height; y++)
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                var slot = _inventory[x, y];
+                if (slot != null && slot.item == item)
+                {
+                    return slot;
+                }
+            }
+        }
+        return null;
+    }
 }

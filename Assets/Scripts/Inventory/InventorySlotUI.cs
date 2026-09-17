@@ -29,18 +29,31 @@ public class InventorySlotUI : MonoBehaviour
         _posY = y;
     }
 
-   public void SetSlot(InventorySlot slot, bool isCompatible)
+    public void SetSlot(InventorySlot slot, bool isCompatible)
     {
         _isCompatible = isCompatible;
 
         if (slot == null)
         {
-            gameObject.SetActive(false);
             _currentItem = null;
+
+            if (_icon != null)
+            {
+                _icon.sprite = null;
+                Color c = _icon.color;
+                c.a = ENABLED_ALPHA;
+                _icon.color = c;
+            }
+
+            if (_button != null)
+                _button.interactable = false;
+
+            if (_quantityText != null)
+                _quantityText.text = "";
+
             return;
         }
 
-        gameObject.SetActive(true);
         _currentItem = slot.item;
         _currentTierIndex = slot.tierIndex;
 

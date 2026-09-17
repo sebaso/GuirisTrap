@@ -92,8 +92,11 @@ public class TutorialStarter : MonoBehaviour
 
         if(days == 0)
         {
-            _tutorialActive = true;
-            StartCoroutine(LaunchTutorial());
+            if(Inventory.Instance.GetItem(_chair) == null && Inventory.Instance.GetItem(_table) == null)
+            {
+                _tutorialActive = true;
+                StartCoroutine(LaunchTutorial());
+            }
         }else if(days == 1)
         {
             StartCoroutine(LaunchDay2Dialogues());
