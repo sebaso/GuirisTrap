@@ -1172,6 +1172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &84698014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,11 +2152,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1525155059}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -759.3364, y: -1.6071777}
+  m_AnchoredPosition: {x: -759.3364, y: -479}
   m_SizeDelta: {x: -1532.6729, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &146657627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2205,11 +2206,11 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 8
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -4548,6 +4549,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &292514789
 GameObject:
   m_ObjectHideFlags: 0
@@ -19428,6 +19430,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.5799999
       objectReference: {fileID: 0}
+    - target: {fileID: 2935840552847057241, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935840552847057241, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.7
+      objectReference: {fileID: 0}
     - target: {fileID: 3193207455623267196, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.699
@@ -21084,7 +21094,7 @@ Transform:
   m_GameObject: {fileID: 440581786}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.8032584, y: -0.11400002, z: 7.259388}
+  m_LocalPosition: {x: 1.69, y: -0.11400002, z: 6.93}
   m_LocalScale: {x: 0.1567533, y: 1, z: 0.4324613}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26678,6 +26688,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -26982,7 +26993,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.046666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 46d277f1d16237a41acdf6c0e684ea46, type: 2}
   m_BuildHeightMesh: 0
@@ -27171,6 +27182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!114 &870473175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27345,6 +27357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &883086431
 GameObject:
   m_ObjectHideFlags: 0
@@ -28246,6 +28259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &947877680
 GameObject:
   m_ObjectHideFlags: 0
@@ -29108,6 +29122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &1019942293
 GameObject:
   m_ObjectHideFlags: 0
@@ -29154,6 +29169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &1022387253
 GameObject:
   m_ObjectHideFlags: 0
@@ -29290,6 +29306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &1038848992
 GameObject:
   m_ObjectHideFlags: 0
@@ -30325,7 +30342,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.046666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 72851fe1910ae0746a9792b5f4fc39fd, type: 2}
   m_BuildHeightMesh: 0
@@ -31328,6 +31345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!4 &1177108037 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -9109944600222189845, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
@@ -32200,6 +32218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!114 &1255017188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34018,6 +34037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &1363061328
 GameObject:
   m_ObjectHideFlags: 0
@@ -34681,7 +34701,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1b4b377b7f5154343abd1eb89dc6d2d5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.708
+      value: -5.135
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1b4b377b7f5154343abd1eb89dc6d2d5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -35231,6 +35251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &1440785529
 GameObject:
   m_ObjectHideFlags: 0
@@ -35893,6 +35914,7 @@ MonoBehaviour:
   loungePrefix: Tumbona
   shadePrefix: Sombrilla
   loungeHeightOffset: -0.1
+  setLinkRadius: 4
   autoDiscover: 1
   maxPlayeros: 9
   spawnInterval: 10
@@ -37134,6 +37156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!4 &1570567928 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3364428629757876782, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
@@ -37200,7 +37223,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.046666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f96d0ce494f318446a4c3faef6ceb296, type: 2}
   m_BuildHeightMesh: 0
@@ -37250,6 +37273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!4 &1584472026 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1290218575074663340, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
@@ -39217,6 +39241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!4 &1779758604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7744832562257406863, guid: 98cf138264542cb4889efc470ce16f37, type: 3}
@@ -42423,6 +42448,14 @@ PrefabInstance:
       propertyPath: m_hasFontAssetChanged
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1404669350308551749, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1404669350308551749, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 1424547600137768574, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.41
@@ -42643,6 +42676,22 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2790898295099050795, guid: b3a082a0cdbab7b478df0d926b7303f0, type: 2}
+    - target: {fileID: 3250596356066046806, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Size.x
+      value: 1.3090286
+      objectReference: {fileID: 0}
+    - target: {fileID: 3250596356066046806, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Size.z
+      value: 0.6416196
+      objectReference: {fileID: 0}
+    - target: {fileID: 3250596356066046806, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.x
+      value: -0.60548574
+      objectReference: {fileID: 0}
+    - target: {fileID: 3250596356066046806, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.z
+      value: -0.17919023
+      objectReference: {fileID: 0}
     - target: {fileID: 3301729468948270472, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -42654,6 +42703,18 @@ PrefabInstance:
     - target: {fileID: 3323380774944273959, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697084710608149369, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Size.z
+      value: 0.68802255
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697084710608149369, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.x
+      value: 9.92997e-16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697084710608149369, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.z
+      value: -0.15598875
       objectReference: {fileID: 0}
     - target: {fileID: 3765173546621688775, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_IsActive
@@ -42830,6 +42891,14 @@ PrefabInstance:
     - target: {fileID: 5592274795452397663, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_Color.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5610080630674127315, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Size.z
+      value: 2.2168972
+      objectReference: {fileID: 0}
+    - target: {fileID: 5610080630674127315, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_Center.z
+      value: 0.46070117
       objectReference: {fileID: 0}
     - target: {fileID: 5619092629790520018, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -43040,6 +43109,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6951364536691146553, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.3399677
+      objectReference: {fileID: 0}
+    - target: {fileID: 6951364536691146553, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.979
       objectReference: {fileID: 0}
@@ -43049,7 +43122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6951364536691146553, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.62
+      value: -1.976
       objectReference: {fileID: 0}
     - target: {fileID: 7114210582470206013, guid: 4d70eb8b7e0f04d4bb827d7228c60f7f, type: 3}
       propertyPath: m_IsActive
@@ -43472,6 +43545,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 0
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &2036087220
 GameObject:
   m_ObjectHideFlags: 0
@@ -43709,6 +43783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayeroSpot
   kind: 1
   occupant: {fileID: 0}
+  linkedSpots: []
 --- !u!1 &2058257073
 GameObject:
   m_ObjectHideFlags: 0
@@ -52248,7 +52323,7 @@ Transform:
   m_GameObject: {fileID: 7765900624118739433}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071069, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 3.638708, y: -0.104170084, z: -5.028966}
+  m_LocalPosition: {x: 3.638708, y: -0.104170084, z: -5.954}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -54638,7 +54713,7 @@ Transform:
   m_GameObject: {fileID: 874587267610846147}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071069, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 3.529, y: -0.11617005, z: -4.892}
+  m_LocalPosition: {x: 3.529, y: -0.11617005, z: -5.8170347}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []

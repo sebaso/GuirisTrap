@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 /// <summary>
 /// World-space "order bubble" floating above a table, showing what the seated
-/// group has ordered (text-only for now; <see cref="RecipeData.icon"/> is ready
-/// for art later). Mirrors <see cref="PatienceBar"/>: the component lives on the
-/// Table root and drives a separate <see cref="bubbleRoot"/> Transform, which it
-/// billboards toward the camera and toggles on/off. Do NOT billboard the table
-/// itself.
+/// group has ordered: text (dish + cooking station) plus a row of dish icons
+/// (<see cref="RecipeData.icon"/>). Mirrors <see cref="PatienceBar"/>: the
+/// component lives on the Table root and drives a separate <see cref="bubbleRoot"/>
+/// Transform, which it billboards toward the camera and toggles on/off. Do NOT
+/// billboard the table itself.
 /// </summary>
 public class OrderBubble : MonoBehaviour
 {
@@ -22,8 +22,19 @@ public class OrderBubble : MonoBehaviour
              "Leave null to auto-build (uses the default bubble).")]
     public TMP_Text orderText;
 
+    [Tooltip("Horizontal container inside the bubble where one icon Image per " +
+             "distinct ordered dish is created. Leave null to use the auto-built " +
+             "row of the default bubble; wired bubbles without it stay text-only.")]
+    public Transform iconsRow;
+
+    [Tooltip("Icon size in canvas pixels inside the auto-built icon row.")]
+    public float iconSize = 54f;
+
     private Table _table;
     private Camera _cam;
+
+    private readonly List<Image> _iconImages = new();
+    private readonly List<RecipeData> _distinctDishes = new();
 
     void Awake()
     {
@@ -39,9 +50,9 @@ public class OrderBubble : MonoBehaviour
     }
 
     /// <summary>Builds a self-contained world-space bubble: a Canvas (World) →
-    /// background Image → TMP_Text, parented to this Table. Rendered text needs
-    /// a World-space Canvas ancestor, which the existing client/table UI lacks
-    /// (a latent bug); this guarantees one.
+    /// background Image → TMP_Text + icon row, parented to this Table. Rendered
+    /// text needs a World-space Canvas ancestor, which the existing client/table
+    /// UI lacks (a latent bug); this guarantees one.
     ///
     /// Sizing note: in a World-space canvas the rect is in PIXELS, and the on-
     /// world size comes from a uniform localScale. We pick a generous pixel size
@@ -52,7 +63,7 @@ public class OrderBubble : MonoBehaviour
         if (_table == null) return;
 
         const float widthPx = 260f;
-        const float heightPx = 130f;
+        const float heightPx = 230f;
         // On-world size (meters) ≈ pixelSize * localScale. 260px * 0.005 ≈ 1.3m wide.
         const float worldScale = 0.005f;
 
@@ -81,13 +92,14 @@ public class OrderBubble : MonoBehaviour
         var bg = bgGo.GetComponent<Image>();
         bg.color = new Color(0.08f, 0.08f, 0.12f, 0.85f);
 
-        // Text (fills the canvas with a small margin).
+        // Text (upper area, above the icon strip).
         var textGo = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
         textGo.transform.SetParent(rootRt, false);
         var textRt = (RectTransform)textGo.transform;
-        textRt.anchorMin = Vector2.zero; textRt.anchorMax = Vector2.one;
-        textRt.offsetMin = new Vector2(14f, 10f);   // left, bottom padding in px
-        textRt.offsetMax = new Vector2(-14f, -10f); // right, top padding in px
+        textRt.anchorMin = new Vector2(0f, 1f); textRt.anchorMax = new Vector2(1f, 1f);
+        textRt.pivot = new Vector2(0.5f, 1f);
+        textRt.offsetMin = new Vector2(14f, -160f);  // left + height of the text area
+        textRt.offsetMax = new Vector2(-14f, -8f);   // right + top padding
         orderText = textGo.GetComponent<TextMeshProUGUI>();
         orderText.textWrappingMode = TextWrappingModes.Normal;
         orderText.alignment = TextAlignmentOptions.Center;
@@ -95,7 +107,62 @@ public class OrderBubble : MonoBehaviour
         orderText.richText = true;
         orderText.color = Color.white;
 
+        // Icon strip (bottom): one icon per distinct dish, laid out centered.
+        var rowGo = new GameObject("Iconos", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        rowGo.transform.SetParent(rootRt, false);
+        var rowRt = (RectTransform)rowGo.transform;
+        rowRt.anchorMin = new Vector2(0f, 0f); rowRt.anchorMax = new Vector2(1f, 0f);
+        rowRt.pivot = new Vector2(0.5f, 0f);
+        rowRt.anchoredPosition = new Vector2(0f, 6f);
+        rowRt.sizeDelta = new Vector2(0f, iconSize + 4f);
+        var rowLayout = rowGo.GetComponent<HorizontalLayoutGroup>();
+        rowLayout.childAlignment = TextAnchor.MiddleCenter;
+        rowLayout.spacing = 10f;
+        rowLayout.childForceExpandWidth = false;
+        rowLayout.childForceExpandHeight = false;
+        rowLayout.childControlWidth = false;
+        rowLayout.childControlHeight = false;
+        iconsRow = rowRt;
+
         bubbleRoot = rootRt;
+    }
+
+    /// <summary>One icon per distinct dish in the order, created/destroyed and
+    /// (re)sprited to match. Dishes without art just hide their icon.</summary>
+    private void SyncIconsRow(ClientGroup g)
+    {
+        if (iconsRow == null) return;
+
+        _distinctDishes.Clear();
+        if (g != null && g.Order != null)
+            foreach (var r in g.Order)
+                if (r != null && !_distinctDishes.Contains(r))
+                    _distinctDishes.Add(r);
+
+        while (_iconImages.Count < _distinctDishes.Count)
+        {
+            var iconGo = new GameObject("Icono" + _iconImages.Count, typeof(RectTransform), typeof(Image));
+            iconGo.transform.SetParent(iconsRow, false);
+            var iconRt = (RectTransform)iconGo.transform;
+            iconRt.sizeDelta = new Vector2(iconSize, iconSize);
+            var img = iconGo.GetComponent<Image>();
+            img.preserveAspect = true;
+            img.raycastTarget = false;
+            _iconImages.Add(img);
+        }
+        while (_iconImages.Count > _distinctDishes.Count)
+        {
+            int last = _iconImages.Count - 1;
+            if (_iconImages[last] != null) Destroy(_iconImages[last].gameObject);
+            _iconImages.RemoveAt(last);
+        }
+
+        for (int i = 0; i < _distinctDishes.Count; i++)
+        {
+            Sprite sp = _distinctDishes[i].icon;
+            _iconImages[i].sprite = sp;
+            _iconImages[i].enabled = sp != null;
+        }
     }
 
     void Update()
@@ -114,6 +181,8 @@ public class OrderBubble : MonoBehaviour
 
         if (orderText != null)
             orderText.text = FormatOrder(g);
+
+        SyncIconsRow(g);
     }
 
     private string FormatOrder(ClientGroup g)
