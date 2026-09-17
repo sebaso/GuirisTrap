@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -18,6 +19,14 @@ public class TutorialStarter : MonoBehaviour
     private DialogueTrigger _popup1;
     [SerializeField]
     private DialogueTrigger _popup2;
+    [SerializeField]
+    private DialogueTrigger _popupErrorSilla;
+[SerializeField]
+    private DialogueTrigger _popupErrorTaburete;
+    [SerializeField]
+    private DialogueTrigger _popupErrorBarra;
+    [SerializeField]
+    private DialogueTrigger _popupErrorMinimo;
     [SerializeField]
     private PlaceableItemData  _chair;
     [SerializeField]
@@ -41,7 +50,8 @@ public class TutorialStarter : MonoBehaviour
     [Header("Day 7")]
     [SerializeField]
     private DialogueTrigger _day7;
-
+    [SerializeField]
+    private DialogueTrigger _day11;
     private bool _tutorialActive = false;
 
     private const string TUTORIAL_KEY = "tutorial_done";
@@ -56,6 +66,10 @@ public class TutorialStarter : MonoBehaviour
         TutorialEvents.OnExitedShop += OnExitedShop;
         TutorialEvents.OnEnteredFoodShop += OnEnteredFoodShop;
         TutorialEvents.OnInventoryEntered += OnInventoryEntered;
+        TutorialEvents.OnPlayChairError += OnPlayChairError;
+        TutorialEvents.OnPlayStoolError += OnPlayStoolError;
+        TutorialEvents.OnPlayBarError += OnPlayBarError;
+        TutorialEvents.OnPlayMinimoError += OnPlayMinimoError;
     }
 
     void OnDisable()
@@ -66,7 +80,11 @@ public class TutorialStarter : MonoBehaviour
         TutorialEvents.OnExitedShop -= OnExitedShop;
         TutorialEvents.OnEnteredFoodShop -= OnEnteredFoodShop;
         TutorialEvents.OnInventoryEntered -= OnInventoryEntered;
-    }
+        TutorialEvents.OnPlayChairError -= OnPlayChairError;
+        TutorialEvents.OnPlayStoolError -= OnPlayStoolError;
+        TutorialEvents.OnPlayBarError -= OnPlayBarError;   
+        TutorialEvents.OnPlayMinimoError -= OnPlayMinimoError; 
+        }
 
     void Start()
     {
@@ -94,6 +112,10 @@ public class TutorialStarter : MonoBehaviour
         }else if(days == 6)
         {
             StartCoroutine(LaunchDay7Dialogues());
+        }
+        else if(days == 11)
+        {
+            StartCoroutine(LaunchDay11Dialogues());
         }
     }
 
@@ -137,6 +159,11 @@ public class TutorialStarter : MonoBehaviour
         yield return null;
         _day7.TriggerDialogue();
     }
+    private IEnumerator LaunchDay11Dialogues()
+    {
+        yield return null;
+        _day11.TriggerDialogue();
+    }
     private void OnEnteredShop()
     {
         if (!_tutorialActive) return;
@@ -170,7 +197,22 @@ public class TutorialStarter : MonoBehaviour
         _popup2.TriggerDialogue();
         _tutorialActive = false;
     }
-
+    private void OnPlayChairError()
+    {
+        _popupErrorSilla.TriggerDialogue();
+    }
+    private void OnPlayStoolError()
+    {
+        _popupErrorTaburete.TriggerDialogue();
+    }
+    private void OnPlayBarError()
+    {
+        _popupErrorBarra.TriggerDialogue();
+    }
+    private void OnPlayMinimoError()
+    {
+        _popupErrorMinimo.TriggerDialogue();
+    }
     public bool GetItemsBought()
     {
         if (_boughtChair && _boughtTable) return true;

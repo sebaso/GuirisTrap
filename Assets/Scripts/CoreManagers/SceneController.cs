@@ -23,12 +23,7 @@ public class SceneController : MonoBehaviour
     {
         if (sceneName == "GameScene")
         {
-            if (!CanStartDay())
-            {
-                if (HUDMessage.Instance != null)
-                    HUDMessage.Instance.ShowWarning("Revisa las mesas y sillas, o la barra y los taburetes, antes de empezar el día.");
-                return;
-            }
+            if (!CanStartDay()) return;
             SaveManager.Instance?.ForceSave();
         }
 
@@ -62,9 +57,15 @@ public class SceneController : MonoBehaviour
             foreach (var kvp in GridManager.ValidateAllBarras(zone.VoxelData))
                 if (!kvp.Value) barrasAllValid = false;
         }
+        
+        if(!chairsAllValid) TutorialEvents.OnPlayChairError?.Invoke();
+        if(!taburetesAllValid) TutorialEvents.OnPlayStoolError?.Invoke();
+        if(!barrasAllValid) TutorialEvents.OnPlayBarError?.Invoke();
 
         bool hasMinimumSeating = (totalTables > 0 && totalChairs > 0) || (totalBarras > 0 && totalTaburetes > 0);
         bool nothingInvalid = chairsAllValid && taburetesAllValid && barrasAllValid;
+
+        if(!hasMinimumSeating) TutorialEvents.OnPlayMinimoError?.Invoke();
 
         return hasMinimumSeating && nothingInvalid;
     }
