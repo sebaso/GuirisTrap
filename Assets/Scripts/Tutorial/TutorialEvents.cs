@@ -8,4 +8,8 @@ public static class TutorialEvents
     public static Action OnExitedShop;
     public static Action OnEnteredFoodShop;
     public static Action OnInventoryEntered;
+    public static Action OnPlayChairError;
+    public static Action OnPlayStoolError;
+    public static Action OnPlayBarError;
+    public static Action OnPlayMinimoError;
 }
