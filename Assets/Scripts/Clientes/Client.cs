@@ -36,6 +36,8 @@ public class Client : MonoBehaviour
     [SerializeField] private float _standUpSeconds = 1.0f;
     [Tooltip("Segundos que dura la reacción (Feliz/Enfadado) de pie antes de caminar hacia la salida.")]
     [SerializeField] private float _reactionSeconds = 2.9f;
+    [Tooltip("Metros que se aleja andando de la silla antes de soltar la reacción.")]
+    [SerializeField] private float _stepOutDistance = 1.25f;
 
 
     private ClientGroup _group;
@@ -68,6 +70,12 @@ public class Client : MonoBehaviour
     // comida terminada y reacción ya reproducidas: solo falta que el grupo
     // entero pueda marcharse (FinishAndLeave espera a esto para andar)
     private bool _canLeave;
+    // hay un coroutine de salida en curso (FinishAndLeave/StandUpAndLeave):
+    // evita arrancar un segundo (p. ej. expulsión durante el enfado)
+    private bool _leaving;
+    private Coroutine _departureRoutine;
+
+    private const float StepOutTimeout = 3f;
 
     private Animator _animator;
     private Transform _modelPivot;
@@ -308,9 +316,14 @@ public class Client : MonoBehaviour
         HUDMessage.Instance?.ShowBad("¡Cliente se fue enfadado sin pagar!");
 
         if (CurrentState == State.DoneEating)
+        {
             _canLeave = true; // ya reaccionó: FinishAndLeave lo saca a andar
-        else if (IsSeated())
-            StartCoroutine(StandUpAndLeave(true));
+            return;
+        }
+        if (_leaving) return; // salida ya en curso
+
+        if (IsSeated())
+            _departureRoutine = StartCoroutine(StandUpAndLeave(true));
         else
         {
             SetState(State.Angry);
@@ -374,10 +387,12 @@ public class Client : MonoBehaviour
         AudioManager.Instance?.PlaySFX(leavesHappy ? "client_happy" : "client_angry");
 
         SetState(State.DoneEating);
-        // Levantarse y Feliz de pie en el sitio; la corrutina decide cuándo
-        // andar. En edit mode no hay player loop que la avance.
+        // int 6 ya: Levantarse acaba en Locomotion para el pasito hacia la
+        // salida; la reacción (int 5) la lanza la corrutina al llegar.
+        PlayAnimatorState(State.Leaving);
+        // En edit mode no hay player loop que avance la corrutina.
         if (Application.isPlaying)
-            StartCoroutine(FinishAndLeave());
+            _departureRoutine = StartCoroutine(FinishAndLeave());
         _group?.OnMemberFinishedEating(this);
 
         // Solo diners leave immediately; group members wait for the last diner.
@@ -393,13 +408,15 @@ public class Client : MonoBehaviour
             _assignedTable?.FreeTable(Group);
         }
 
-        if (CurrentState == State.DoneEating)
+        if (_leaving || CurrentState == State.DoneEating)
         {
             _canLeave = true; // FinishAndLeave completa la salida tras la reacción
+            return;
         }
-        else if (IsSeated())
+
+        if (IsSeated())
         {
-            StartCoroutine(StandUpAndLeave(false));
+            _departureRoutine = StartCoroutine(StandUpAndLeave(false));
         }
         else
         {
@@ -413,6 +430,18 @@ public class Client : MonoBehaviour
     public void KickOut()
     {
         if (CurrentState == State.Leaving || CurrentState == State.Angry) return;
+
+        // Cierre de puerta: corta el pasito y la reacción y que se marche
+        // andando ya; el cierre del día no debe esperar la coreografía entera.
+        if (_leaving)
+        {
+            if (_departureRoutine != null) StopCoroutine(_departureRoutine);
+            _departureRoutine = null;
+            SetState(State.Leaving);
+            WalkToExit();
+            return;
+        }
+
         StartLeaving();
     }
 
@@ -428,15 +457,21 @@ public class Client : MonoBehaviour
     private bool IsSeated()
         => CurrentState == State.WaitingForFood || CurrentState == State.Eating || CurrentState == State.DoneEating;
 
-    // Levantarse y Feliz de pie, en el sitio; el agente solo arranca cuando el
-    // grupo entero puede marcharse (o al instante si va solo) para que el
-    // cliente no se deslice durante los clips.
+    // Comida terminada: Levantarse en la silla, un pasito hacia la salida para
+    // despejarla, y la reacción de pie ahí; el grupo espera a _canLeave para
+    // el tramo final. CurrentState queda en DoneEating mientras: Leaving
+    // destruiría al cliente al llegar al paso.
     private IEnumerator FinishAndLeave()
     {
+        _leaving = true;
         Freeze();
         if (_modelPivot != null) _modelPivot.localPosition = Vector3.zero;
 
         yield return new WaitForSeconds(_standUpSeconds);   // clip Levantarse
+
+        yield return StepOutAndSettle();
+
+        PlayAnimatorState(State.DoneEating);                // Locomotion → Feliz
         yield return new WaitForSeconds(_reactionSeconds);  // clip Feliz, de pie
         yield return new WaitUntil(() => _canLeave);
 
@@ -444,20 +479,61 @@ public class Client : MonoBehaviour
         WalkToExit();
     }
 
-    // Enfado (Levantarse + Enfadado de pie) o salida forzada sin reacción
-    // (solo Levantarse); congelado durante los clips por lo mismo.
+    // Enfado (Levantarse → Enfadado) o expulsión sin reacción; mismo paso
+    // intermedio para no reaccionar encima de la silla. CurrentState no
+    // cambia hasta el final por lo mismo que en FinishAndLeave.
     private IEnumerator StandUpAndLeave(bool angry)
     {
+        _leaving = true;
         Freeze();
         if (_modelPivot != null) _modelPivot.localPosition = Vector3.zero;
+        PlayAnimatorState(State.Leaving);                   // int 6: clip → Locomotion
 
-        SetState(angry ? State.Angry : State.Leaving);
-        yield return new WaitForSeconds(_standUpSeconds);   // clip Levantarse
+        yield return new WaitForSeconds(_standUpSeconds);
+
+        yield return StepOutAndSettle();
+
         if (angry)
-            yield return new WaitForSeconds(_reactionSeconds); // clip Enfadado, de pie
+        {
+            PlayAnimatorState(State.Angry);                 // Locomotion → Enfadado
+            yield return new WaitForSeconds(_reactionSeconds);
+        }
 
         SetState(State.Leaving);
         WalkToExit();
+    }
+
+    // Paso corto hacia la salida y frenado al llegar (con tope de tiempo por
+    // si el paso queda bloqueado).
+    private IEnumerator StepOutAndSettle()
+    {
+        if (_agent != null) _agent.avoidancePriority = WalkingAvoidancePriority;
+        WalkTo(StepOutTarget());
+        float deadline = Time.time + StepOutTimeout;
+        yield return new WaitUntil(() =>
+            _agent == null || !_agent.isActiveAndEnabled || !_agent.isOnNavMesh
+            || _agent.remainingDistance <= 0.35f || Time.time >= deadline);
+        Freeze();
+    }
+
+    // CurrentState y el int del animator divergen a propósito durante la
+    // salida: el estado lógico protege la maquinaria de Update mientras los
+    // clips cuentan la historia.
+    private void PlayAnimatorState(State s)
+    {
+        if (_animator != null) _animator.SetInteger(ClientAnimationParams.State, (int)s);
+    }
+
+    private Vector3 StepOutTarget()
+    {
+        Vector3 exit = _entrancePoint != null ? _entrancePoint.position : transform.position + Vector3.back * 10f;
+        Vector3 dir = exit - transform.position;
+        dir.y = 0f;
+        dir = dir.sqrMagnitude > 0.001f ? dir.normalized : transform.forward;
+        Vector3 target = transform.position + dir * _stepOutDistance;
+        return NavMesh.SamplePosition(target, out NavMeshHit hit, _stepOutDistance, NavMesh.AllAreas)
+            ? hit.position
+            : transform.position; // nada andable cerca: reacciona en el sitio
     }
 
     private void WalkToExit()
@@ -534,11 +610,13 @@ public class Client : MonoBehaviour
             _agent.avoidancePriority = IsStationaryState(newState)
                 ? StationaryAvoidancePriority
                 : WalkingAvoidancePriority;
-            // Waiting = en cola: atravesable (el grupo que bloquea la puerta no
-            // puede frenar a los que sí tienen mesa). El resto evita normal.
-            _agent.obstacleAvoidanceType = newState == State.Waiting
-                ? ObstacleAvoidanceType.NoObstacleAvoidance
-                : _walkAvoidanceType;
+            // Waiting = en cola y Leaving/Angry = caminata final: atravesables.
+            // Sin esto, un cliente que se va puede quedarse clavado detrás de
+            // un comensal sentado (prioridad 25, no ceden) en un hueco estrecho.
+            _agent.obstacleAvoidanceType =
+                newState == State.Waiting || newState == State.Leaving || newState == State.Angry
+                    ? ObstacleAvoidanceType.NoObstacleAvoidance
+                    : _walkAvoidanceType;
         }
         if (_animator != null)
             _animator.SetInteger(ClientAnimationParams.State, (int)newState);

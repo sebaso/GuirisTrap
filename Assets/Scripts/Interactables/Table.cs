@@ -498,6 +498,7 @@ public class Table : MonoBehaviour
             if (member != null && member.CurrentState == Client.State.WaitingForFood)
             {
                 member.ReceiveFood();
+                food.RegisterFedMember(member);
                 fed++;
                 if (fed >= dinersToFeed) break;
             }
