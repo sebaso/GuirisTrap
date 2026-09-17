@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoxelGridData
   width: 12
   height: 3
-  depth: 9
+  depth: 8
   _cells:
-  - type: 0
+  - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
@@ -64,179 +64,179 @@ MonoBehaviour:
     anchor: {x: 0, y: 0, z: 0}
     role: 2
     rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: ae344fc8d7685d641bdab2d9207e71ca, type: 2}
+  - type: 0
+    item: {fileID: 0}
     tierIndex: 0
-    anchor: {x: 8, y: 0, z: 0}
+    anchor: {x: 0, y: 0, z: 0}
     role: 2
-    rotation: {x: -0, y: -0, z: -0, w: 1}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 2
     item: {fileID: 11400000, guid: ae344fc8d7685d641bdab2d9207e71ca, type: 2}
     tierIndex: 0
     anchor: {x: 9, y: 0, z: 0}
     role: 2
     rotation: {x: -0, y: -0, z: -0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: ae344fc8d7685d641bdab2d9207e71ca, type: 2}
-    tierIndex: 0
-    anchor: {x: 10, y: 0, z: 0}
-    role: 2
-    rotation: {x: -0, y: -0, z: -0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: ae344fc8d7685d641bdab2d9207e71ca, type: 2}
-    tierIndex: 0
-    anchor: {x: 11, y: 0, z: 0}
-    role: 2
-    rotation: {x: -0, y: -0, z: -0, w: 1}
-  - type: 0
+  - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
@@ -280,1249 +280,1303 @@ MonoBehaviour:
     anchor: {x: 0, y: 0, z: 0}
     role: 3
     rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: b3849b5a07130d547ac166eaf5b32dd7, type: 2}
+  - type: 0
+    item: {fileID: 0}
     tierIndex: 0
-    anchor: {x: 8, y: 0, z: 1}
+    anchor: {x: 0, y: 0, z: 0}
     role: 3
-    rotation: {x: -0, y: -0, z: -0, w: 1}
+    rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 2
     item: {fileID: 11400000, guid: b3849b5a07130d547ac166eaf5b32dd7, type: 2}
     tierIndex: 0
     anchor: {x: 9, y: 0, z: 1}
     role: 3
     rotation: {x: -0, y: -0, z: -0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: b3849b5a07130d547ac166eaf5b32dd7, type: 2}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
     tierIndex: 0
-    anchor: {x: 10, y: 0, z: 1}
-    role: 3
-    rotation: {x: -0, y: -0, z: -0, w: 1}
-  - type: 2
-    item: {fileID: 11400000, guid: b3849b5a07130d547ac166eaf5b32dd7, type: 2}
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 0
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 0
+    item: {fileID: 0}
     tierIndex: 0
-    anchor: {x: 11, y: 0, z: 1}
-    role: 3
-    rotation: {x: -0, y: -0, z: -0, w: 1}
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
@@ -1538,211 +1592,7 @@ MonoBehaviour:
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
@@ -1754,209 +1604,143 @@ MonoBehaviour:
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
+    rotation: {x: 0, y: 0, z: 0, w: 1}
+  - type: 0
+    item: {fileID: 0}
+    tierIndex: 0
+    anchor: {x: 0, y: 0, z: 0}
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 1
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 1
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
   - type: 0
     item: {fileID: 0}
     tierIndex: 0
     anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
-    rotation: {x: 0, y: 0, z: 0, w: 1}
-  - type: 0
-    item: {fileID: 0}
-    tierIndex: 0
-    anchor: {x: 0, y: 0, z: 0}
-    role: 1
+    role: 0
     rotation: {x: 0, y: 0, z: 0, w: 1}
